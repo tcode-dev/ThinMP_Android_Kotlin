@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThinMP">
         <activity
+            android:name=".activity.SongsActivity"
+            android:exported="true" />
+        <activity
             android:name=".activity.MainActivity"
             android:exported="true">
             <intent-filter>
