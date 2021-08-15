@@ -13,7 +13,7 @@ import kotlin.reflect.KProperty
  * See [com.airbnb.epoxy.kotlinsample.models.ItemEpoxyHolder] for a usage example.
  */
 abstract class KotlinEpoxyHolder : EpoxyHolder() {
-    private lateinit var view: View
+    lateinit var view: View
 
     override fun bindView(itemView: View) {
         view = itemView

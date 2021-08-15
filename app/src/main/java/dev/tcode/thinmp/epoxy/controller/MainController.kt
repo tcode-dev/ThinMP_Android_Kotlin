@@ -3,6 +3,7 @@ package dev.tcode.thinmp.epoxy.controller
 import com.airbnb.epoxy.TypedEpoxyController
 import dev.tcode.thinmp.constant.MainMenuEnum
 import dev.tcode.thinmp.epoxy.model.mainMenu
+import dev.tcode.thinmp.listener.MainMenuClickListener
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 class MainController: TypedEpoxyController<MainViewModel>() {
@@ -16,6 +17,7 @@ class MainController: TypedEpoxyController<MainViewModel>() {
                 mainMenu {
                     id(menu.key)
                     primaryText(menu.label)
+                    clickListener(MainMenuClickListener(menu.link))
                     spanSizeOverride { _, _, _ -> spanSize }
                 }
             }

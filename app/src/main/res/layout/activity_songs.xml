@@ -6,4 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activity.SongsActivity">
 
+    <TextView android:id="@+id/primaryText" android:layout_width="match_parent" android:layout_height="match_parent" android:text="SongsActivity" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
