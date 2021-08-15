@@ -4,11 +4,11 @@ import com.airbnb.epoxy.EpoxyModelClass
 import dev.tcode.thinmp.R
 import com.airbnb.epoxy.EpoxyAttribute
 import com.airbnb.epoxy.EpoxyModelWithHolder
-import android.widget.TextView
 import androidx.annotation.LayoutRes
+import dev.tcode.thinmp.epoxy.viewHolder.MainMenuViewHolder
 
 @EpoxyModelClass
-abstract class MainMenuModel: EpoxyModelWithHolder<MainMenuHolder>() {
+abstract class MainMenuModel: EpoxyModelWithHolder<MainMenuViewHolder>() {
     @EpoxyAttribute lateinit var primaryText: String
 
     @LayoutRes
@@ -16,11 +16,7 @@ abstract class MainMenuModel: EpoxyModelWithHolder<MainMenuHolder>() {
         return R.layout.list_item_linear_main_menu
     }
 
-    override fun bind(holder: MainMenuHolder) {
+    override fun bind(holder: MainMenuViewHolder) {
         holder.primaryText.text = primaryText
     }
-}
-
-class MainMenuHolder: KotlinEpoxyHolder() {
-    val primaryText by bind<TextView>(R.id.primaryText)
 }

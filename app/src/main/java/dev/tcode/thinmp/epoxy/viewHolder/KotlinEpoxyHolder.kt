@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.epoxy.model
+package dev.tcode.thinmp.epoxy.viewHolder
 
 // @see https://github.com/airbnb/epoxy/blob/master/kotlinsample/src/main/java/com/airbnb/epoxy/kotlinsample/helpers/KotlinEpoxyHolder.kt
 
