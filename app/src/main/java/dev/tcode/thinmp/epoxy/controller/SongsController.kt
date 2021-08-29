@@ -18,7 +18,7 @@ class SongsController: TypedEpoxyController<SongsViewModel>() {
                 song {
                     id(song.id)
                     primaryText(song.name)
-                    clickListener(PlayClickListener())
+                    clickListener(PlayClickListener(song))
                 }
             }
     }

@@ -19,7 +19,7 @@ abstract class SongModel: EpoxyModelWithHolder<SongViewHolder>() {
 
     @LayoutRes
     override fun getDefaultLayout(): Int {
-        return R.layout.list_item_linear_main_menu
+        return R.layout.list_item_linear_song
     }
 
     override fun bind(holder: SongViewHolder) {
