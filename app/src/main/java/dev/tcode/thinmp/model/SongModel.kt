@@ -1,8 +1,8 @@
 package dev.tcode.thinmp.model
 
 class SongModel(
-    override var id: String?,
-    override var name: String?,
+    public override var id: String?,
+    public override var name: String?,
     val artistId: String?,
     val artistName: String?,
     val albumId: String?,

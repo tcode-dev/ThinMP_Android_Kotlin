@@ -8,9 +8,7 @@ import dev.tcode.thinmp.model.Music
 
 abstract class MediaStoreRepository<T : Music>(private val context: Context, private val uri: Uri, private val projection: Array<String>) {
     protected var cursor: Cursor? = null
-//    lateinit var uri: Uri
-//    lateinit var projection: Array<String>
-    lateinit var selection: String
+    var selection: String? = null
     var selectionArgs: Array<String>? = null
     var sortOrder: String? = null
 
