@@ -48,8 +48,9 @@ class MiniPlayerFragment : Fragment() {
             false
         )
         miniPlayer = MiniPlayer.createInstance(binding)
-        binding.setMiniPlayer(miniPlayer)
-        return binding.getRoot()
+        binding.miniPlayer = miniPlayer
+
+        return binding.root
     }
 
     /**

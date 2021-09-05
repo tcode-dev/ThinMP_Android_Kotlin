@@ -23,7 +23,7 @@
             android:clipToPadding="false"
             android:fitsSystemWindows="true"
             android:scrollbars="vertical" />
-
+        <include layout="@layout/include_mini_player" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
