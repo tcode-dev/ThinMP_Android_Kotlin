@@ -9,13 +9,16 @@ import dev.tcode.thinmp.model.SongModel
 
 class MusicService : Service() {
     var binder: IBinder = MusicBinder()
+    lateinit var song: SongModel
     private var mediaPlayer: MediaPlayer? = null
+
 
     override fun onBind(intent: Intent): IBinder? {
         return binder
     }
 
     fun initStart(song: SongModel) {
+        this.song = song
         mediaPlayer = MediaPlayer.create(baseContext, song.getUri())
         mediaPlayer?.start()
     }
@@ -26,5 +29,35 @@ class MusicService : Service() {
     inner class MusicBinder : Binder() {
         val service: MusicService
             get() = this@MusicService
+    }
+
+    /**
+     * interface
+     */
+    interface OnMusicServiceListener {
+        /**
+         * 曲変更
+         */
+        fun onChangeTrack(song: SongModel)
+
+        /**
+         * 再生開始
+         */
+        fun onStarted()
+
+        /**
+         * 再生終了
+         */
+        fun onFinished()
+
+        /**
+         * 強制終了
+         */
+        fun onForceFinished()
+
+        /**
+         * 画面を更新する必要がある
+         */
+        fun onScreenUpdate()
     }
 }

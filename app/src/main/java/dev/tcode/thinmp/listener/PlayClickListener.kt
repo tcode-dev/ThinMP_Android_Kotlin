@@ -1,13 +1,11 @@
 package dev.tcode.thinmp.listener
 
 import android.view.View
-import dev.tcode.thinmp.model.SongModel
-import dev.tcode.thinmp.fragment.MiniPlayerFragment
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import dev.tcode.thinmp.R
-
+import dev.tcode.thinmp.fragment.MiniPlayerFragment
+import dev.tcode.thinmp.model.SongModel
 
 class PlayClickListener(private val song: SongModel) : View.OnClickListener {
     override fun onClick(view: View) {
