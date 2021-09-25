@@ -2,4 +2,12 @@ package dev.tcode.thinmp.viewModel
 
 import dev.tcode.thinmp.constant.MainMenuEnum
 
-class MainViewModel(val menuList: Array<MainMenuEnum>, val mainMenuSpanSize: Int, val layoutSpanSize: Int)
+class MainViewModel {
+    val mainMenuSpanSize = 2
+    val layoutSpanSize = 2
+    lateinit var menuList: Array<MainMenuEnum>
+
+    fun load() {
+        menuList = MainMenuEnum.values()
+    }
+}

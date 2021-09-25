@@ -10,8 +10,7 @@ import dev.tcode.thinmp.model.SongModel
 class MusicService : Service() {
     var binder: IBinder = MusicBinder()
     lateinit var song: SongModel
-    private var mediaPlayer: MediaPlayer? = null
-
+    private lateinit var mediaPlayer: MediaPlayer
 
     override fun onBind(intent: Intent): IBinder? {
         return binder
@@ -20,7 +19,7 @@ class MusicService : Service() {
     fun initStart(song: SongModel) {
         this.song = song
         mediaPlayer = MediaPlayer.create(baseContext, song.getUri())
-        mediaPlayer?.start()
+        mediaPlayer.start()
     }
 
     /**

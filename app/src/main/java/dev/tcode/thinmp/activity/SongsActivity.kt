@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.epoxy.controller.SongsController
-import dev.tcode.thinmp.viewModelCreator.SongsViewModelCreator
+import dev.tcode.thinmp.viewModel.SongsViewModel
 
 class SongsActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,12 +16,12 @@ class SongsActivity : BaseActivity() {
     }
 
     override fun init() {
+        val viewModel = SongsViewModel()
         val listView = findViewById<RecyclerView>(R.id.list)
-        val viewModelCreator = SongsViewModelCreator()
-        val viewModel = viewModelCreator.create(this)
         val controller = SongsController()
         val layout = LinearLayoutManager(this)
 
+        viewModel.load(this)
         controller.setData(viewModel)
         listView.adapter = controller.adapter
         listView.layoutManager = layout

@@ -1,12 +1,12 @@
 package dev.tcode.thinmp.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import dev.tcode.thinmp.R
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.epoxy.controller.MainController
-import dev.tcode.thinmp.viewModelCreator.MainViewModelCreator
+import dev.tcode.thinmp.viewModel.MainViewModel
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,12 +17,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
+        val viewModel = MainViewModel()
         val listView = findViewById<RecyclerView>(R.id.list)
-        val viewModelCreator = MainViewModelCreator()
-        val viewModel = viewModelCreator.create()
         val controller = MainController()
         val layout = GridLayoutManager(this, viewModel.layoutSpanSize)
 
+        viewModel.load()
         controller.setData(viewModel)
         listView.adapter = controller.adapter
         controller.spanCount = viewModel.layoutSpanSize

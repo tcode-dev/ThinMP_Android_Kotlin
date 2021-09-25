@@ -44,7 +44,7 @@ class MiniPlayerFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         val binding: FragmentMiniPlayerBinding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_mini_player,
@@ -58,7 +58,7 @@ class MiniPlayerFragment : Fragment() {
     }
 
     fun start(song: SongModel) {
-        musicService?.initStart(song)
+        musicService.initStart(song)
         this.view?.let { updateView(it.height) }
         update(song)
     }
@@ -90,7 +90,7 @@ class MiniPlayerFragment : Fragment() {
     }
 
     /**
-     * MusicServiceのListener
+     * createMusicServiceListener
      */
     private fun createMusicServiceListener(): OnMusicServiceListener {
         return object : OnMusicServiceListener {
@@ -100,11 +100,8 @@ class MiniPlayerFragment : Fragment() {
 
             override fun onStarted() {}
             override fun onFinished() {}
-            override fun onForceFinished() {
-            }
-
-            override fun onScreenUpdate() {
-            }
+            override fun onForceFinished() {}
+            override fun onScreenUpdate() {}
         }
     }
 
@@ -132,13 +129,13 @@ class MiniPlayerFragment : Fragment() {
     private fun bindMusicService() {
         val intent = Intent(activity, MusicService::class.java)
 
-        activity?.bindService(intent, connection!!, Context.BIND_AUTO_CREATE)
+        activity?.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
     /**
      * unbindMusicService
      */
     private fun unbindMusicService() {
-        activity?.unbindService(connection!!)
+        activity?.unbindService(connection)
     }
 }
