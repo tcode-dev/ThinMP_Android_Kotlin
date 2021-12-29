@@ -13,6 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThinMP">
         <activity
+            android:name=".activity.AlbumsActivity"
+            android:exported="false"
+            android:label="@string/title_activity_albums"
+            android:theme="@style/Theme.ThinMP.NoActionBar" />
+        <activity
             android:name=".activity.SongsActivity"
             android:exported="true" />
         <activity

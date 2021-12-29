@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ThinMP</string>
+    <string name="title_activity_albums">AlbumsActivity</string>
 </resources>
