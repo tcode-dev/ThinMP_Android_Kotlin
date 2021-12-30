@@ -8,9 +8,9 @@ import dev.tcode.thinmp.view.list.AlbumListView
 
 @ExperimentalFoundationApi
 @Composable
-fun AlbumsPageView(names: Array<String>) {
+fun AlbumsPageView() {
     Column{
         Text(text = "Albums")
-        AlbumListView(names)
+//        AlbumListView(names)
     }
 }
