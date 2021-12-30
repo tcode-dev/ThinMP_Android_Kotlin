@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -16,16 +15,16 @@ fun MainPageView() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MainScreen(navController) }
+        composable("main") { MainScreen{ navController.navigate("albums") } }
         composable("albums") { AlbumsPageView() }
     }
 }
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(navigate: () -> Unit) {
     Column {
         Text("Main Screen!!")
-        Button(onClick = { navController.navigate("albums") }) {
+        Button(onClick = navigate) {
             Text(text = "next albums")
         }
     }
