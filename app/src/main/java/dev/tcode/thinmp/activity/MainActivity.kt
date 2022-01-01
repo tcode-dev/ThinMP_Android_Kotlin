@@ -6,13 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import dev.tcode.thinmp.R
 import dev.tcode.thinmp.activity.ui.theme.ThinMPTheme
-import dev.tcode.thinmp.epoxy.controller.MainController
-import dev.tcode.thinmp.view.page.MainPageView
-import dev.tcode.thinmp.viewModel.MainViewModel
+import dev.tcode.thinmp.view.nav.Nav
 
 class MainActivity : AppCompatActivity() {
     @ExperimentalFoundationApi
@@ -22,7 +17,7 @@ class MainActivity : AppCompatActivity() {
             ThinMPTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    MainPageView()
+                    Nav()
                 }
             }
         }
