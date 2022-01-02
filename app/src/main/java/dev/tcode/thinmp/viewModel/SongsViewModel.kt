@@ -11,9 +11,13 @@ data class SongsUiState(
     var songs: List<SongModel> = emptyList()
 )
 
-class SongsViewModel {
+class SongsViewModel(context: Context) {
     var uiState by mutableStateOf(SongsUiState())
         private set
+
+    init {
+        load(context)
+    }
 
     fun load(context: Context) {
         val repository = SongRepository(context)
