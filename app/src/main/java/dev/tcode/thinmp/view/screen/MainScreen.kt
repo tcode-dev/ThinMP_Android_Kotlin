@@ -6,18 +6,20 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavController
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
-fun MainScreen(viewModel: MainViewModel = MainViewModel(), navigate: () -> Unit) {
+fun MainScreen(navController: NavController) {
+    val viewModel = MainViewModel()
     Column {
         Text("Main Screen!!")
-        Button(onClick = navigate) {
-            Text(text = "next albums")
-        }
         LazyColumn{
             items(viewModel.uiState.menuList) { menu ->
                 Text(menu.label)
+                Button(onClick = { navController.navigate(menu.key) }) {
+                    Text(text = menu.label)
+                }
             }
         }
     }

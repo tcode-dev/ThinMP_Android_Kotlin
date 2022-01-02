@@ -14,7 +14,7 @@ fun Nav() {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MainScreen{ navController.navigate("albums") } }
+        composable("main") { MainScreen(navController) }
         composable("albums") { AlbumsScreen() }
     }
 }
