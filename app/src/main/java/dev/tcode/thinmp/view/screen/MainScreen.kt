@@ -14,12 +14,9 @@ fun MainScreen(navController: NavController) {
     val viewModel = MainViewModel()
     Column {
         Text("Main Screen!!")
-        LazyColumn{
-            items(viewModel.uiState.menuList) { menu ->
-                Text(menu.label)
-                Button(onClick = { navController.navigate(menu.key) }) {
-                    Text(text = menu.label)
-                }
+        viewModel.uiState.menuList.forEach { menu ->
+            Button(onClick = { navController.navigate(menu.key) }) {
+                Text(text = menu.label)
             }
         }
     }
