@@ -1,8 +1,8 @@
 package dev.tcode.thinmp.model
 
 abstract class Music {
-    protected open var id: String? = null
-    protected open var name: String? = null
+    protected open lateinit var id: String
+    protected open lateinit var name: String
 
     abstract fun getTrackList(): List<SongModel>
 

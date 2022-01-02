@@ -4,12 +4,12 @@ import android.net.Uri
 import android.provider.MediaStore
 
 class SongModel(
-    public override var id: String?,
-    public override var name: String?,
-    val artistId: String?,
-    val artistName: String?,
-    val albumId: String?,
-    val albumName: String?,
+    public override var id: String,
+    public override var name: String,
+    val artistId: String,
+    val artistName: String,
+    val albumId: String,
+    val albumName: String,
     val duration: Int?
 ): Music() {
     override fun getTrackList(): List<SongModel> {

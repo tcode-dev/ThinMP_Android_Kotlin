@@ -21,7 +21,7 @@ fun SongsScreen() {
             Text(text = "Songs")
         }
         items(viewModel.uiState.songs) { song ->
-            song.name?.let { Text(it) }
+            Text(song.name)
 //            Button(onClick = { navController.navigate(menu.key) }) {
 //                Text(text = menu.label)
 //            }
