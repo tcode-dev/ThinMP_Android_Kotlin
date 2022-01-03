@@ -24,12 +24,4 @@ class SongsViewModel(context: Context) {
 
         uiState.songs = repository.findAll()
     }
-
-//    lateinit var songs: List<SongModel>
-
-//    fun load(context: Context) {
-//        val repository = SongRepository(context)
-//
-//        songs = repository.findAll()
-//    }
 }

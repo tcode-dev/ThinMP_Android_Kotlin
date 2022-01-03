@@ -15,32 +15,28 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberImagePainter
 import dev.tcode.thinmp.R
 import java.io.IOException
 
 
 @Composable
-fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri?) {
+fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri) {
     var bitmap: Bitmap? = null
+    val source = ImageDecoder.createSource(LocalContext.current.contentResolver, uri)
 
-    if (uri != null) {
-        val source = ImageDecoder.createSource(LocalContext.current.contentResolver, uri)
-        try {
-            bitmap = ImageDecoder.decodeBitmap(source)
-        } catch (e: IOException) {
-            // handle exception.
-        }
+    try {
+        bitmap = ImageDecoder.decodeBitmap(source)
+    } catch (e: IOException) {
+        // handle exception.
     }
 
     Row(modifier = Modifier.padding(10.dp)) {
-        if (uri != null) {
-//            Image(
-//                bitmap = bitmap.asImageBitmap(),
-//                contentDescription = "",
-//                modifier = Modifier.size(44.dp)
-//            )
-            Image(painter = rememberImagePainter(uri), contentDescription = "")
+        if (bitmap != null) {
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = "",
+                modifier = Modifier.size(44.dp)
+            )
         } else {
             Image(
                 painter = painterResource(R.drawable.song_dark),
