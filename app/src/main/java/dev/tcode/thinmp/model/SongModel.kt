@@ -21,6 +21,6 @@ class SongModel(
     }
 
     fun getUri(): Uri {
-        return Uri.parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI.toString()}/${id}")
+        return Uri.parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${albumId}")
     }
 }

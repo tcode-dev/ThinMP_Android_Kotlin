@@ -8,6 +8,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
+import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
@@ -21,7 +22,7 @@ fun SongsScreen() {
             Text(text = "Songs")
         }
         items(viewModel.uiState.songs) { song ->
-            Text(song.name)
+            MediaRowView(song.name, song.artistName, song.getUri())
 //            Button(onClick = { navController.navigate(menu.key) }) {
 //                Text(text = menu.label)
 //            }
