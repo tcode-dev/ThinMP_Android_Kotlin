@@ -15,6 +15,7 @@
 
 * Android Studio
 * Kotlin
+* Jetpack Compose
 * Gradle
 * minSdkVersion 30
 * targetSdkVersion 31
@@ -22,6 +23,5 @@
 
 ## Libraries
 
-* Epoxy - https://github.com/airbnb/epoxy
-* Glide - https://github.com/bumptech/glide
+* Coil - https://github.com/coil-kt/coil
 * Realm - https://realm.io/
