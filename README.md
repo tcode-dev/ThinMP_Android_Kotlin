@@ -20,6 +20,7 @@
 * minSdkVersion 30
 * targetSdkVersion 31
 * Google Pixel 4a
+* Android Version 12
 
 ## Libraries
 
