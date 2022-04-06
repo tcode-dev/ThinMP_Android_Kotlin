@@ -6,8 +6,7 @@ class AlbumModel(
     public override var id: String,
     public override var name: String,
     val artistId: String,
-    val artistName: String,
-    val duration: Int?
+    val artistName: String
 ): Music() {
     override fun getTrackList(): List<SongModel> {
         val trackList: MutableList<SongModel> = ArrayList()

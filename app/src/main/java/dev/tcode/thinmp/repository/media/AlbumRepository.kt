@@ -65,11 +65,6 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
             ?: ""
     }
 
-    private fun getTitle(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.TITLE)?.let { cursor?.getString(it) }
-            ?: ""
-    }
-
     private fun getArtistId(): String {
         return cursor?.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)
             ?.let { cursor?.getString(it) }
@@ -86,18 +81,12 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
             ?: ""
     }
 
-    private fun getNumSongs(): Int {
-        return cursor?.getColumnIndex(MediaStore.Audio.Albums.NUMBER_OF_SONGS)?.let { cursor?.getInt(it) }
-            ?: 0
-    }
-
     private fun getAlbum(): AlbumModel {
         return AlbumModel(
             getId(),
-            getTitle(),
+            getAlbumName(),
             getArtistId(),
             getArtistName(),
-            getNumSongs()
         )
     }
 
