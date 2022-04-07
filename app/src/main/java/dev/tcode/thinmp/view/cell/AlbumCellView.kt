@@ -14,9 +14,9 @@ import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
 fun AlbumCellView(primaryText: String, secondaryText: String, uri: Uri) {
-  Column(modifier = Modifier.padding(start = 8.dp)) {
+  Column(modifier = Modifier.padding(8.dp)) {
     ImageView(uri = uri)
-    Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+    Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
     Text(secondaryText, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
   }
 }
