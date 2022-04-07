@@ -2,10 +2,13 @@ package dev.tcode.thinmp.view.cell
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.view.image.ImageView
 
@@ -13,7 +16,7 @@ import dev.tcode.thinmp.view.image.ImageView
 fun AlbumCellView(primaryText: String, secondaryText: String, uri: Uri) {
   Column(modifier = Modifier.padding(start = 8.dp)) {
     ImageView(uri = uri)
-    Text(primaryText)
-    Text(secondaryText)
+    Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+    Text(secondaryText, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
   }
 }
