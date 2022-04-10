@@ -6,6 +6,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.tcode.thinmp.view.screen.AlbumsScreen
+import dev.tcode.thinmp.view.screen.ArtistsScreen
 import dev.tcode.thinmp.view.screen.MainScreen
 import dev.tcode.thinmp.view.screen.SongsScreen
 
@@ -16,6 +17,7 @@ fun Nav() {
 
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { MainScreen(navController) }
+        composable("artists") { ArtistsScreen() }
         composable("albums") { AlbumsScreen() }
         composable("songs") { SongsScreen() }
     }

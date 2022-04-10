@@ -21,4 +21,3 @@ fun FlatListItemView(primaryText: String, secondaryText: String, uri: Uri) {
         }
     }
 }
-
