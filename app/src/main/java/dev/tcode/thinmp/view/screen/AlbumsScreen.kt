@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import dev.tcode.thinmp.view.list.AlbumListView
+import dev.tcode.thinmp.view.list.GridListView
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @ExperimentalFoundationApi
@@ -16,6 +16,6 @@ fun AlbumsScreen() {
 
     Column{
         Text(text = "Albums")
-        AlbumListView(viewModel.uiState.albums)
+        GridListView(viewModel.uiState.albums)
     }
 }

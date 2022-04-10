@@ -9,17 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.model.AlbumModel
-import dev.tcode.thinmp.view.cell.AlbumCellView
+import dev.tcode.thinmp.view.listItem.GridListItemView
 
 @ExperimentalFoundationApi
 @Composable
-fun AlbumListView(albums: List<AlbumModel>) {
+fun GridListView(albums: List<AlbumModel>) {
     LazyVerticalGrid(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         cells = GridCells.Fixed(2),
     ) {
         items(albums) { album ->
-            AlbumCellView(album.name, album.artistName, album.getUri())
+            GridListItemView(album.name, album.artistName, album.getUri())
         }
     }
 }
