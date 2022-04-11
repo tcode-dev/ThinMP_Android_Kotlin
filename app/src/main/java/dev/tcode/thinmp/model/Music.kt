@@ -1,18 +1,10 @@
 package dev.tcode.thinmp.model
 
-import android.net.Uri
-
 abstract class Music {
     protected open lateinit var id: String
     protected open lateinit var name: String
 
     abstract fun getTrackList(): List<SongModel>
-    abstract fun getUri(): Uri?
-
-    val primaryText: String
-        get() = name
-
-    abstract val secondaryText: String?
 
     fun getIdList(): List<String?> {
         return getTrackList().map(Music::id).toList();

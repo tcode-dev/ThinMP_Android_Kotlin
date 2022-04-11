@@ -1,7 +1,5 @@
 package dev.tcode.thinmp.model
 
-import android.net.Uri
-
 class ArtistModel(
     public override var id: String,
     public override var name: String,
@@ -15,12 +13,4 @@ class ArtistModel(
 
         return trackList
     }
-
-    override fun getUri(): Uri? {
-        return null
-    }
-
-    override var secondaryText: String? = null
-
-
 }

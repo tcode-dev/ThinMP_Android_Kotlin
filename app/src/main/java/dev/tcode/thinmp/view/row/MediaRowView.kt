@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.view.listItem
+package dev.tcode.thinmp.view.row
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Column
@@ -12,14 +12,12 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
-fun FlatListItemView(primaryText: String, secondaryText: String?, uri: Uri?) {
+fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri) {
     Row(modifier = Modifier.padding(10.dp)) {
         ImageView(uri = uri, size = 44.dp)
         Column(modifier = Modifier.padding(start = 8.dp)) {
             Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            if (secondaryText != null) {
-                Text(secondaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
+            Text(secondaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }

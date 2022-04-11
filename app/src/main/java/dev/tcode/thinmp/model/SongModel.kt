@@ -19,10 +19,7 @@ class SongModel(
         return trackList
     }
 
-    override var secondaryText: String? = null
-        get() = artistName
-
-    override fun getUri(): Uri? {
+    fun getUri(): Uri {
         return Uri.parse("content://media/external/audio/albumart/${albumId}")
     }
 }

@@ -15,13 +15,13 @@ import dev.tcode.thinmp.R
 import java.io.IOException
 
 @Composable
-fun ImageView(uri: Uri?, size: Dp? = null) {
+fun ImageView(uri: Uri, size: Dp? = null) {
     var bitmap: Bitmap? = null
-    val source = uri?.let { ImageDecoder.createSource(LocalContext.current.contentResolver, it) }
+    val source = ImageDecoder.createSource(LocalContext.current.contentResolver, uri)
     val modifier = if (size != null) Modifier.size(size) else Modifier
 
     try {
-        bitmap = source?.let { ImageDecoder.decodeBitmap(it) }
+        bitmap = ImageDecoder.decodeBitmap(source)
     } catch (e: IOException) {
         // handle exception.
     }
