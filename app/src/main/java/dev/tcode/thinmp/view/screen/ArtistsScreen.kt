@@ -6,16 +6,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import dev.tcode.thinmp.view.list.FlatListView
-import dev.tcode.thinmp.viewModel.SongsViewModel
+import dev.tcode.thinmp.viewModel.ArtistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun ArtistsScreen() {
     val context = LocalContext.current
-//    val viewModel = SongsViewModel(context)
+    val viewModel = ArtistsViewModel(context)
 
     Column{
-        Text(text = "Artists")
-//        FlatListView(viewModel.uiState.songs)
+        Text(text = "Albums")
+        FlatListView(viewModel.uiState.artists)
     }
 }

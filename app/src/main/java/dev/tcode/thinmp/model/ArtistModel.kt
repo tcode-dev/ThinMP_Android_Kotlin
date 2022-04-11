@@ -2,11 +2,11 @@ package dev.tcode.thinmp.model
 
 import android.net.Uri
 
-class AlbumModel(
+class ArtistModel(
     public override var id: String,
     public override var name: String,
-    val artistId: String,
-    val artistName: String
+    public var numberOfAlbums: String,
+    public var numberOfTracks: String,
 ): Music() {
     override fun getTrackList(): List<SongModel> {
         val trackList: MutableList<SongModel> = ArrayList()
@@ -16,10 +16,11 @@ class AlbumModel(
         return trackList
     }
 
-    override var secondaryText: String? = null
-        get() = artistName
-
     override fun getUri(): Uri? {
-        return Uri.parse("content://media/external/audio/albumart/${id}")
+        return null
     }
+
+    override var secondaryText: String? = null
+
+
 }

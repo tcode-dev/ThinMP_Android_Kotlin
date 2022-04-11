@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
-fun GridListItemView(primaryText: String, secondaryText: String, uri: Uri) {
+fun GridListItemView(primaryText: String, secondaryText: String?, uri: Uri?) {
     Column(modifier = Modifier.padding(8.dp)) {
         ImageView(uri = uri)
         Text(
@@ -25,12 +25,14 @@ fun GridListItemView(primaryText: String, secondaryText: String, uri: Uri) {
               .fillMaxWidth()
               .padding(top = 4.dp)
         )
-        Text(
-            secondaryText,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+        if (secondaryText != null) {
+            Text(
+                secondaryText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
