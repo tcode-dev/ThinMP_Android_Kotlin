@@ -8,18 +8,19 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import dev.tcode.thinmp.model.AlbumModel
 import dev.tcode.thinmp.view.listItem.AlbumListItemView
 
 @ExperimentalFoundationApi
 @Composable
-fun AlbumListView(albums: List<AlbumModel>) {
+fun AlbumListView(navController: NavHostController, albums: List<AlbumModel>) {
     LazyVerticalGrid(
         modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         cells = GridCells.Fixed(2),
     ) {
         items(albums) { album ->
-            AlbumListItemView(album.name, album.artistName, album.getUri())
+            AlbumListItemView(navController, album.id, album.name, album.artistName, album.getUri())
         }
     }
 }

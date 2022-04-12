@@ -2,13 +2,12 @@ package dev.tcode.thinmp.view.nav
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.tcode.thinmp.view.screen.AlbumsScreen
-import dev.tcode.thinmp.view.screen.ArtistsScreen
-import dev.tcode.thinmp.view.screen.MainScreen
-import dev.tcode.thinmp.view.screen.SongsScreen
+import androidx.navigation.navArgument
+import dev.tcode.thinmp.view.screen.*
 
 @ExperimentalFoundationApi
 @Composable
@@ -18,7 +17,18 @@ fun Nav() {
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { MainScreen(navController) }
         composable("artists") { ArtistsScreen() }
-        composable("albums") { AlbumsScreen() }
+        composable("albums") { AlbumsScreen(navController) }
         composable("songs") { SongsScreen() }
+        composable(
+            "albumDetail/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        )
+        { backStackEntry ->
+
+//            AlbumDetailScreen(backStackEntry.arguments?.getString("id"))
+
+            AlbumDetailScreen(id = backStackEntry.arguments?.getString("id").let(::requireNotNull))
+//            backStackEntry.arguments?.getString("id")?.let { AlbumDetailScreen(it) }
+        }
     }
 }
