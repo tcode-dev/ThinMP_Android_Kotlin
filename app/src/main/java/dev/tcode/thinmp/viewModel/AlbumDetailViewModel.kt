@@ -6,10 +6,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dev.tcode.thinmp.model.AlbumModel
+import dev.tcode.thinmp.model.SongModel
 import dev.tcode.thinmp.repository.media.AlbumRepository
+import dev.tcode.thinmp.repository.media.SongRepository
 
 data class AlbumDetailUiState(
-    var album: AlbumModel? = null
+    var album: AlbumModel? = null,
+    var songs: List<SongModel> = emptyList()
 )
 
 class AlbumDetailViewModel(context: Context, id: String) : ViewModel() {
@@ -21,8 +24,10 @@ class AlbumDetailViewModel(context: Context, id: String) : ViewModel() {
     }
 
     private fun load(context: Context, id: String) {
-        val repository = AlbumRepository(context)
+        val albumRepository = AlbumRepository(context)
+        val songRepository = SongRepository(context)
 
-        uiState.album = repository.findById(id)
+        uiState.album = albumRepository.findById(id)
+        uiState.songs = songRepository.findByAlbumId(id)
     }
 }

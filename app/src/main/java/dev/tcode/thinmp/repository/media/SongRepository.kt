@@ -40,11 +40,12 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList()
     }
 
-    fun findByAlbum(albumId: String): List<SongModel> {
+    fun findByAlbumId(albumId: String): List<SongModel> {
         selection =
             MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = arrayOf(albumId)
         sortOrder = MediaStore.Audio.Media._ID + " ASC"
+
         return getList()
     }
 
