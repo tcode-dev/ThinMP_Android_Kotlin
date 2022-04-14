@@ -5,17 +5,15 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import dev.tcode.thinmp.view.list.AlbumListView
-import dev.tcode.thinmp.viewModel.AlbumsViewModel
+import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun AlbumDetailScreen(id: String) {
     val context = LocalContext.current
-//    val viewModel = AlbumsViewModel(context)
+    val viewModel = AlbumDetailViewModel(context, id)
 
     Column{
-        Text(text = id)
-//        AlbumListView(viewModel.uiState.albums)
+        viewModel.uiState.album?.name?.let { Text(it) }
     }
 }

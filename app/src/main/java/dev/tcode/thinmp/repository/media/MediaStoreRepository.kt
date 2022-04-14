@@ -12,13 +12,15 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     var selectionArgs: Array<String>? = null
     var sortOrder: String? = null
 
-    init {
+    private fun initialize() {
         cursor = createCursor();
     }
 
     abstract fun fetch(): T
 
     protected fun get(): T? {
+        initialize()
+
         if (!cursor?.moveToNext()!!) return null
 
         val item: T? = fetch()
@@ -29,6 +31,8 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     }
 
     protected fun getList(): List<T> {
+        initialize()
+
         val list: MutableList<T> = ArrayList()
 
         while (cursor?.moveToNext() == true) {
