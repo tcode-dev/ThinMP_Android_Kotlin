@@ -24,11 +24,7 @@ fun Nav() {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         )
         { backStackEntry ->
-
-//            AlbumDetailScreen(backStackEntry.arguments?.getString("id"))
-
             AlbumDetailScreen(id = backStackEntry.arguments?.getString("id").let(::requireNotNull))
-//            backStackEntry.arguments?.getString("id")?.let { AlbumDetailScreen(it) }
         }
     }
 }
