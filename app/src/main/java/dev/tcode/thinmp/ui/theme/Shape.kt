@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.activity.ui.theme
+package dev.tcode.thinmp.ui.theme
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes

@@ -2,18 +2,20 @@ package dev.tcode.thinmp.activity
 
 import android.os.Bundle
 import android.view.WindowManager
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
-import dev.tcode.thinmp.activity.ui.theme.ThinMPTheme
+import dev.tcode.thinmp.ui.theme.ThinMPTheme
 import dev.tcode.thinmp.view.nav.Nav
 
-class MainActivity : AppCompatActivity() {
-    @ExperimentalFoundationApi
+class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,7 +31,10 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             ThinMPTheme {
-                Surface(color = MaterialTheme.colors.background) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colors.background
+                ) {
                     Nav()
                 }
             }
