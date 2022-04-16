@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import dev.tcode.thinmp.ui.theme.ThinMPTheme
 import dev.tcode.thinmp.view.nav.Nav
+import dev.tcode.thinmp.view.permission.PermissionView
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalFoundationApi::class)
@@ -35,7 +36,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Nav()
+                    PermissionView {
+                        Nav()
+                    }
                 }
             }
         }

@@ -16,9 +16,8 @@ fun AlbumsScreen(navController: NavHostController) {
     val context = LocalContext.current
     val viewModel = AlbumsViewModel(context)
 
-    PermissionView()
-//        Column{
-//            Text(text = "Albums")
-//            AlbumListView(navController, viewModel.uiState.albums)
-//        }
+    Column{
+        Text(text = "Albums")
+        AlbumListView(navController, viewModel.uiState.albums)
+    }
 }

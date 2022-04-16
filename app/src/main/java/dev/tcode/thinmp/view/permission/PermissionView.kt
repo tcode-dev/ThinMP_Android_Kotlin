@@ -13,14 +13,14 @@ import com.google.accompanist.permissions.shouldShowRationale
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun PermissionView() {
+fun PermissionView(content: @Composable BoxScope.() -> Unit) {
     val permissionState = rememberPermissionState(
         android.Manifest.permission.READ_EXTERNAL_STORAGE
     )
 
     when (permissionState.status) {
         PermissionStatus.Granted -> {
-            Text("Granted")
+            Box(content = content)
         }
         is PermissionStatus.Denied -> {
             Column(
