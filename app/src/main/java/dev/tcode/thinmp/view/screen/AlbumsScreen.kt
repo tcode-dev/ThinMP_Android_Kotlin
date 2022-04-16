@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.list.AlbumListView
+import dev.tcode.thinmp.view.permission.PermissionView
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @ExperimentalFoundationApi
@@ -15,8 +16,9 @@ fun AlbumsScreen(navController: NavHostController) {
     val context = LocalContext.current
     val viewModel = AlbumsViewModel(context)
 
-    Column{
-        Text(text = "Albums")
-        AlbumListView(navController, viewModel.uiState.albums)
-    }
+    PermissionView()
+//        Column{
+//            Text(text = "Albums")
+//            AlbumListView(navController, viewModel.uiState.albums)
+//        }
 }
