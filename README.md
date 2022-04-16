@@ -24,5 +24,6 @@
 
 ## Libraries
 
+* Accompanist - https://google.github.io/accompanist
 * Coil - https://github.com/coil-kt/coil
-* Realm - https://realm.io/
+* Realm - https://realm.io

@@ -2,10 +2,13 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -17,7 +20,11 @@ fun AlbumDetailScreen(id: String) {
     val context = LocalContext.current
     val viewModel = AlbumDetailViewModel(context, id)
 
-    Column{
+    Column(
+        Modifier
+        .fillMaxWidth()
+        .statusBarsPadding()
+    ){
         viewModel.uiState.album?.getUri()?.let { ImageView(uri = it) }
         viewModel.uiState.album?.name?.let { Text(it) }
         viewModel.uiState.album?.artistName?.let { Text(it) }
