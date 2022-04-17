@@ -6,8 +6,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import dev.tcode.thinmp.view.list.AlbumListView
-import dev.tcode.thinmp.view.permission.PermissionView
+import dev.tcode.thinmp.view.grid.AlbumGridView
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @ExperimentalFoundationApi
@@ -18,6 +17,6 @@ fun AlbumsScreen(navController: NavHostController) {
 
     Column{
         Text(text = "Albums")
-        AlbumListView(navController, viewModel.uiState.albums)
+        AlbumGridView(navController, viewModel.uiState.albums)
     }
 }

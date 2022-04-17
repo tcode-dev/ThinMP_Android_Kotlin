@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.view.listItem
+package dev.tcode.thinmp.view.cell
 
 import android.net.Uri
 import androidx.compose.foundation.clickable
