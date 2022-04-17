@@ -15,15 +15,15 @@
 
 * Android Studio
 * Kotlin
-* Jetpack Compose
 * Gradle
 * minSdkVersion 30
 * targetSdkVersion 31
-* Google Pixel 4a
 * Android Version 12
+* Google Pixel 4a
 
 ## Libraries
 
 * Accompanist - https://google.github.io/accompanist
 * Coil - https://github.com/coil-kt/coil
+* Jetpack Compose - https://developer.android.com/jetpack/compose
 * Realm - https://realm.io
