@@ -2,10 +2,7 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
@@ -13,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import com.google.accompanist.insets.ui.Scaffold
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
@@ -27,14 +23,13 @@ fun AlbumDetailScreen(id: String) {
     Box(
         Modifier
             .fillMaxWidth()
-            .statusBarsPadding()
             .background(Color.Blue)
     ) {
         Column {
             viewModel.uiState.album?.getUri()?.let { ImageView(uri = it) }
             viewModel.uiState.album?.name?.let { Text(it) }
             viewModel.uiState.album?.artistName?.let { Text(it) }
-            LazyColumn {
+            LazyColumn() {
                 items(viewModel.uiState.songs) { song ->
                     MediaRowView(song.name, song.artistName, song.getUri())
                 }

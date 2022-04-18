@@ -4,10 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -18,7 +20,7 @@ import java.io.IOException
 fun ImageView(uri: Uri, size: Dp? = null) {
     var bitmap: Bitmap? = null
     val source = ImageDecoder.createSource(LocalContext.current.contentResolver, uri)
-    val modifier = if (size != null) Modifier.size(size) else Modifier
+    val modifier = if (size != null) Modifier.size(size) else Modifier.fillMaxWidth()
 
     try {
         bitmap = ImageDecoder.decodeBitmap(source)
@@ -31,6 +33,7 @@ fun ImageView(uri: Uri, size: Dp? = null) {
             bitmap = bitmap.asImageBitmap(),
             contentDescription = "",
             modifier = modifier,
+            contentScale = ContentScale.FillWidth,
         )
     } else {
         Image(
