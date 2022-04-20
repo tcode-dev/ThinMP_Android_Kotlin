@@ -15,7 +15,7 @@ import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
-fun AlbumListItemView(navController: NavHostController, id: String, primaryText: String, secondaryText: String, uri: Uri) {
+fun AlbumCellView(navController: NavHostController, id: String, primaryText: String, secondaryText: String, uri: Uri) {
     Column(modifier = Modifier.padding(8.dp).clickable {
         navController.navigate("albumDetail/${id}")
     }) {

@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.model.AlbumModel
-import dev.tcode.thinmp.view.cell.AlbumListItemView
+import dev.tcode.thinmp.view.cell.AlbumCellView
 
 @ExperimentalFoundationApi
 @Composable
@@ -21,7 +21,7 @@ fun AlbumGridView(navController: NavHostController, albums: List<AlbumModel>) {
         columns = GridCells.Fixed(2),
     ) {
         items(albums) { album ->
-            AlbumListItemView(navController, album.id, album.name, album.artistName, album.getUri())
+            AlbumCellView(navController, album.id, album.name, album.artistName, album.getUri())
         }
     }
 }
