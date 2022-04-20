@@ -16,6 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
@@ -77,6 +78,7 @@ fun AlbumDetailScreen(id: String) {
             LazyColumn() {
                 items(viewModel.uiState.songs) { song ->
                     MediaRowView(song.name, song.artistName, song.getUri())
+                    DividerView()
                 }
             }
         }
