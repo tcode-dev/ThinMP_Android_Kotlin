@@ -15,10 +15,18 @@ import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
-fun AlbumCellView(navController: NavHostController, id: String, primaryText: String, secondaryText: String, uri: Uri) {
-    Column(modifier = Modifier.padding(8.dp).clickable {
-        navController.navigate("albumDetail/${id}")
-    }) {
+fun AlbumCellView(
+    navController: NavHostController,
+    id: String,
+    primaryText: String,
+    secondaryText: String,
+    uri: Uri
+) {
+    Column(modifier = Modifier
+        .padding(8.dp)
+        .clickable {
+            navController.navigate("albumDetail/${id}")
+        }) {
         ImageView(uri = uri)
         Text(
             primaryText,
@@ -26,8 +34,8 @@ fun AlbumCellView(navController: NavHostController, id: String, primaryText: Str
             overflow = TextOverflow.Ellipsis,
             textAlign = TextAlign.Center,
             modifier = Modifier
-              .fillMaxWidth()
-              .padding(top = 4.dp)
+                .fillMaxWidth()
+                .padding(top = 4.dp)
         )
         Text(
             secondaryText,

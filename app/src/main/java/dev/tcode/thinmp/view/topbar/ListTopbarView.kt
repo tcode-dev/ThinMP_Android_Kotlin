@@ -11,26 +11,32 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun ListTopbarView(title: String) {
-    var visible by remember { mutableStateOf(true) }
-
-    AnimatedVisibility(
-        visible = visible,
-        enter = fadeIn(),
-        exit = fadeOut()
-    ) {
-        Surface(
-            color = MaterialTheme.colors.background,
-            modifier = Modifier.fillMaxWidth()
+fun ListTopbarView(title: String, offset: Int) {
+    Box() {
+        AnimatedVisibility(
+            visible = offset > 1,
+            enter = fadeIn(),
+            exit = fadeOut()
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(50.dp)
+            Surface(
+                color = MaterialTheme.colors.secondary,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(title, fontSize = 24.sp)
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .statusBarsPadding()
+                        .height(50.dp)
+                ) {}
             }
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .height(50.dp)
+        ) {
+            Text(title, fontSize = 24.sp)
         }
     }
 }

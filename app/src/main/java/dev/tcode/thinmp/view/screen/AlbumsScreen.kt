@@ -2,7 +2,7 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -18,10 +18,12 @@ fun AlbumsScreen(navController: NavHostController) {
     val context = LocalContext.current
     val viewModel = AlbumsViewModel(context)
 
-    Box() {
-        Box(Modifier.zIndex(1F)) {
-            ListTopbarView("Albums")
+    Box {
+        val lazyGridState = rememberLazyGridState()
+
+        Box(Modifier.zIndex(3F)) {
+            ListTopbarView("Albums", lazyGridState.firstVisibleItemScrollOffset)
         }
-        AlbumGridView(navController, viewModel.uiState.albums)
+        AlbumGridView(navController, viewModel.uiState.albums, lazyGridState)
     }
 }

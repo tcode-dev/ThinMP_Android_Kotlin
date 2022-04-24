@@ -11,7 +11,9 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DividerView() {
     Divider(
-        color = MaterialTheme.colors.secondary,
-        modifier = Modifier.fillMaxWidth().height(1.dp)
+        color = MaterialTheme.colors.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(0.5.dp)
     )
 }
