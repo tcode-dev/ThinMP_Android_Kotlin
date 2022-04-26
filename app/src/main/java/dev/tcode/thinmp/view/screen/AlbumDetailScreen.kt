@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
@@ -38,7 +39,13 @@ fun AlbumDetailScreen(id: String) {
             ) {
                 val (primary, secondary) = createRefs()
 
-                viewModel.uiState.album?.getUri()?.let { ImageView(uri = it) }
+                viewModel.uiState.album?.getUri()?.let {
+                    ImageView(
+                        uri = it,
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
                 Column(
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier
