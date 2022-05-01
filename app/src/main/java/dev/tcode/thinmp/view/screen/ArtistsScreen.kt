@@ -14,12 +14,12 @@ import dev.tcode.thinmp.viewModel.ArtistsViewModel
 @Composable
 fun ArtistsScreen() {
     val context = LocalContext.current
-    val viewModel = ArtistsViewModel(context)
+    val vm = ArtistsViewModel(context)
 
     Column{
         Text(text = "Artists")
         LazyColumn{
-            items(viewModel.uiState.artists) { artist ->
+            items(vm.uiState.artists) { artist ->
                 PlainRowView(artist.name)
             }
         }

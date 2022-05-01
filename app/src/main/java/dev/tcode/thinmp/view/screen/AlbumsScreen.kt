@@ -16,7 +16,7 @@ import dev.tcode.thinmp.viewModel.AlbumsViewModel
 @Composable
 fun AlbumsScreen(navController: NavHostController) {
     val context = LocalContext.current
-    val viewModel = AlbumsViewModel(context)
+    val vm = AlbumsViewModel(context)
 
     Box {
         val lazyGridState = rememberLazyGridState()
@@ -24,6 +24,6 @@ fun AlbumsScreen(navController: NavHostController) {
         Box(Modifier.zIndex(3F)) {
             ListTopbarView("Albums", lazyGridState.firstVisibleItemScrollOffset)
         }
-        AlbumGridView(navController, viewModel.uiState.albums, lazyGridState)
+        AlbumGridView(navController, vm.uiState.albums, lazyGridState)
     }
 }

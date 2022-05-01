@@ -1,6 +1,8 @@
-package dev.tcode.thinmp.model
+package dev.tcode.thinmp.model.media
 
 import android.net.Uri
+import dev.tcode.thinmp.model.Music
+import dev.tcode.thinmp.model.SongModel
 
 class AlbumModel(
     public override var id: String,

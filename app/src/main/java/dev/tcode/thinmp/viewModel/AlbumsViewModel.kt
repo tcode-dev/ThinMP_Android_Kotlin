@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import dev.tcode.thinmp.model.AlbumModel
-import dev.tcode.thinmp.repository.media.AlbumRepository
+import dev.tcode.thinmp.model.media.AlbumModel
+import dev.tcode.thinmp.service.AlbumsService
 
 data class AlbumsUiState(
     var albums: List<AlbumModel> = emptyList()
@@ -20,8 +20,8 @@ class AlbumsViewModel(context: Context) {
     }
 
     fun load(context: Context) {
-        val repository = AlbumRepository(context)
+        val service = AlbumsService(context)
 
-        uiState.albums = repository.findAll()
+        uiState.albums = service.findAll()
     }
 }

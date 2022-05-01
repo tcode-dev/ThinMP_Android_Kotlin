@@ -26,7 +26,7 @@ import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 @Composable
 fun AlbumDetailScreen(id: String) {
     val context = LocalContext.current
-    val viewModel = AlbumDetailViewModel(context, id)
+    val vm = AlbumDetailViewModel(context, id)
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp.dp
 
@@ -38,14 +38,11 @@ fun AlbumDetailScreen(id: String) {
                     .height(screenWidth)
             ) {
                 val (primary, secondary) = createRefs()
-
-                viewModel.uiState.album?.getUri()?.let {
-                    ImageView(
-                        uri = it,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier.fillMaxSize()
-                    )
-                }
+                ImageView(
+                    uri = vm.uiState.imgUri,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier.fillMaxSize()
+                )
                 Column(
                     verticalArrangement = Arrangement.Bottom,
                     modifier = Modifier
@@ -61,29 +58,25 @@ fun AlbumDetailScreen(id: String) {
                             )
                         ),
                 ) {
-                    viewModel.uiState.album?.name?.let {
-                        Text(
-                            it,
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 10.dp),
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    viewModel.uiState.album?.artistName?.let {
-                        Text(
-                            it,
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 20.dp),
-                            textAlign = TextAlign.Center
-                        )
-                    }
+                    Text(
+                        vm.uiState.primaryText,
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 10.dp),
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        vm.uiState.secondaryText,
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 20.dp),
+                        textAlign = TextAlign.Center
+                    )
                 }
             }
             LazyColumn() {
-                items(viewModel.uiState.songs) { song ->
+                items(vm.uiState.songs) { song ->
                     MediaRowView(song.name, song.artistName, song.getUri())
                     DividerView()
                 }

@@ -2,7 +2,7 @@ package dev.tcode.thinmp.repository.media
 
 import android.content.Context
 import android.provider.MediaStore
-import dev.tcode.thinmp.model.AlbumModel
+import dev.tcode.thinmp.model.media.AlbumModel
 
 class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(

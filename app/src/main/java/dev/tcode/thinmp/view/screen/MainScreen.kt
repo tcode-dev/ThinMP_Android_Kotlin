@@ -9,11 +9,11 @@ import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
 fun MainScreen(navController: NavController) {
-    val viewModel = MainViewModel()
+    val vm = MainViewModel()
 
     Column {
         Text("Main Screen!!")
-        viewModel.uiState.menuList.forEach { menu ->
+        vm.uiState.menuList.forEach { menu ->
             Button(onClick = { navController.navigate(menu.key) }) {
                 Text(text = menu.label)
             }
