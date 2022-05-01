@@ -34,55 +34,55 @@ fun AlbumDetailScreen(
     val uiState = viewModel.uiState
 
     Box(Modifier.fillMaxWidth()) {
-        Column {
-            ConstraintLayout(
-                Modifier
-                    .fillMaxWidth()
-                    .height(LocalConfiguration.current.screenWidthDp.dp)
-            ) {
-                val (primary, secondary) = createRefs()
-                ImageView(
-                    uri = uiState.imgUri,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier.fillMaxSize()
-                )
-                Column(
-                    verticalArrangement = Arrangement.Bottom,
-                    modifier = Modifier
+        LazyColumn() {
+            item {
+                ConstraintLayout(
+                    Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
-                        .constrainAs(primary) {
-                            top.linkTo(parent.bottom, margin = (-200).dp)
-                        }
-                        .background(
-                            brush = Brush.verticalGradient(
-                                0.0f to MaterialTheme.colors.surface.copy(alpha = 0F),
-                                1.0F to MaterialTheme.colors.surface,
-                            )
-                        ),
+                        .height(LocalConfiguration.current.screenWidthDp.dp)
                 ) {
-                    Text(
-                        uiState.primaryText,
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 10.dp),
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center
+                    val (primary, secondary) = createRefs()
+                    ImageView(
+                        uri = uiState.imgUri,
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier.fillMaxSize()
                     )
-                    Text(
-                        uiState.secondaryText,
-                        Modifier
+                    Column(
+                        verticalArrangement = Arrangement.Bottom,
+                        modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = 20.dp),
-                        textAlign = TextAlign.Center
-                    )
+                            .height(200.dp)
+                            .constrainAs(primary) {
+                                top.linkTo(parent.bottom, margin = (-200).dp)
+                            }
+                            .background(
+                                brush = Brush.verticalGradient(
+                                    0.0f to MaterialTheme.colors.surface.copy(alpha = 0F),
+                                    1.0F to MaterialTheme.colors.surface,
+                                )
+                            ),
+                    ) {
+                        Text(
+                            uiState.primaryText,
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 10.dp),
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            uiState.secondaryText,
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 20.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    }
                 }
             }
-            LazyColumn() {
-                items(uiState.songs) { song ->
-                    MediaRowView(song.name, song.artistName, song.getUri())
-                    DividerView()
-                }
+            items(uiState.songs) { song ->
+                MediaRowView(song.name, song.artistName, song.getUri())
+                DividerView()
             }
         }
     }
