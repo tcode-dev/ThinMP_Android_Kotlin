@@ -8,12 +8,12 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
-fun MainScreen(navController: NavController) {
-    val vm = MainViewModel()
+fun MainScreen(navController: NavController, viewModel: MainViewModel = MainViewModel()) {
+    val uiState = viewModel.uiState
 
     Column {
         Text("Main Screen!!")
-        vm.uiState.menuList.forEach { menu ->
+        uiState.menuList.forEach { menu ->
             Button(onClick = { navController.navigate(menu.key) }) {
                 Text(text = menu.label)
             }

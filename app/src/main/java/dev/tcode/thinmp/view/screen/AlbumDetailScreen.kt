@@ -24,22 +24,25 @@ import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun AlbumDetailScreen(id: String) {
-    val context = LocalContext.current
-    val vm = AlbumDetailViewModel(context, id)
-    val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp.dp
+fun AlbumDetailScreen(
+    id: String,
+    viewModel: AlbumDetailViewModel = AlbumDetailViewModel(
+        LocalContext.current,
+        id
+    )
+) {
+    val uiState = viewModel.uiState
 
     Box(Modifier.fillMaxWidth()) {
         Column {
             ConstraintLayout(
                 Modifier
                     .fillMaxWidth()
-                    .height(screenWidth)
+                    .height(LocalConfiguration.current.screenWidthDp.dp)
             ) {
                 val (primary, secondary) = createRefs()
                 ImageView(
-                    uri = vm.uiState.imgUri,
+                    uri = uiState.imgUri,
                     contentScale = ContentScale.FillWidth,
                     modifier = Modifier.fillMaxSize()
                 )
@@ -59,7 +62,7 @@ fun AlbumDetailScreen(id: String) {
                         ),
                 ) {
                     Text(
-                        vm.uiState.primaryText,
+                        uiState.primaryText,
                         Modifier
                             .fillMaxWidth()
                             .padding(bottom = 10.dp),
@@ -67,7 +70,7 @@ fun AlbumDetailScreen(id: String) {
                         textAlign = TextAlign.Center
                     )
                     Text(
-                        vm.uiState.secondaryText,
+                        uiState.secondaryText,
                         Modifier
                             .fillMaxWidth()
                             .padding(bottom = 20.dp),
@@ -76,7 +79,7 @@ fun AlbumDetailScreen(id: String) {
                 }
             }
             LazyColumn() {
-                items(vm.uiState.songs) { song ->
+                items(uiState.songs) { song ->
                     MediaRowView(song.name, song.artistName, song.getUri())
                     DividerView()
                 }

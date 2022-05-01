@@ -12,14 +12,13 @@ import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun SongsScreen() {
-    val context = LocalContext.current
-    val vm = SongsViewModel(context)
+fun SongsScreen(viewModel: SongsViewModel = SongsViewModel(LocalContext.current)) {
+    val uiState = viewModel.uiState
 
-    Column{
+    Column {
         Text(text = "Songs")
-        LazyColumn{
-            items(vm.uiState.songs) { song ->
+        LazyColumn {
+            items(uiState.songs) { song ->
                 MediaRowView(song.name, song.artistName, song.getUri())
             }
         }
