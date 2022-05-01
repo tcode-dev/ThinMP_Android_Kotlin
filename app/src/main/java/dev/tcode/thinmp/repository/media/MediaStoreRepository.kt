@@ -4,7 +4,7 @@ import android.content.Context
 import android.database.Cursor
 import android.net.Uri
 import android.text.TextUtils
-import dev.tcode.thinmp.model.Music
+import dev.tcode.thinmp.model.media.Music
 
 abstract class MediaStoreRepository<T : Music>(private val context: Context, private val uri: Uri, private val projection: Array<String>) {
     protected var cursor: Cursor? = null

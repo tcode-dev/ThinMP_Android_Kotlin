@@ -2,7 +2,7 @@ package dev.tcode.thinmp.repository.media
 
 import android.content.Context
 import android.provider.MediaStore
-import dev.tcode.thinmp.model.ArtistModel
+import dev.tcode.thinmp.model.media.ArtistModel
 
 class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
     context, MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, arrayOf(

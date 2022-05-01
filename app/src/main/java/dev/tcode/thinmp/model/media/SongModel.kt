@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.model
+package dev.tcode.thinmp.model.media
 
 import android.net.Uri
 

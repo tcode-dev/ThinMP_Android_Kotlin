@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import dev.tcode.thinmp.model.SongModel
+import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.repository.media.SongRepository
 
 data class SongsUiState(

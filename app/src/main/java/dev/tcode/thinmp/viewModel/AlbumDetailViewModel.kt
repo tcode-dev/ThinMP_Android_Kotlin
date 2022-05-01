@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import dev.tcode.thinmp.model.SongModel
+import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.service.AlbumDetailService
 
 data class AlbumDetailUiState(

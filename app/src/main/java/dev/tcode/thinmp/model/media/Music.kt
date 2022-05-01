@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.model
+package dev.tcode.thinmp.model.media
 
 abstract class Music {
     protected open lateinit var id: String

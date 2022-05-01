@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.model
+package dev.tcode.thinmp.model.media
 
 class ArtistModel(
     public override var id: String,
