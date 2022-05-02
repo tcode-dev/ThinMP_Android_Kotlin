@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,10 +17,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
+import dev.tcode.thinmp.view.topbar.HeroTopbarView
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @ExperimentalFoundationApi
@@ -34,7 +37,12 @@ fun AlbumDetailScreen(
     val uiState = viewModel.uiState
 
     Box(Modifier.fillMaxWidth()) {
-        LazyColumn() {
+        val lazyListState = rememberLazyListState()
+
+        Box(Modifier.zIndex(1F)) {
+            HeroTopbarView(uiState.primaryText, lazyListState.firstVisibleItemScrollOffset)
+        }
+        LazyColumn(state = lazyListState) {
             item {
                 ConstraintLayout(
                     Modifier
