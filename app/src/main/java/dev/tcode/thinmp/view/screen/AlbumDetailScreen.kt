@@ -9,13 +9,13 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -40,7 +40,11 @@ fun AlbumDetailScreen(
         val lazyListState = rememberLazyListState()
 
         Box(Modifier.zIndex(1F)) {
-            HeroTopbarView(uiState.primaryText, lazyListState.firstVisibleItemScrollOffset)
+            HeroTopbarView(
+                uiState.primaryText,
+                index = lazyListState.firstVisibleItemIndex,
+                lazyListState.firstVisibleItemScrollOffset
+            )
         }
         LazyColumn(state = lazyListState) {
             item {
@@ -49,14 +53,13 @@ fun AlbumDetailScreen(
                         .fillMaxWidth()
                         .height(LocalConfiguration.current.screenWidthDp.dp)
                 ) {
-                    val (primary, secondary) = createRefs()
+                    val (primary, secondary, tertiary) = createRefs()
                     ImageView(
                         uri = uiState.imgUri,
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier.fillMaxSize()
                     )
-                    Column(
-                        verticalArrangement = Arrangement.Bottom,
+                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -70,20 +73,34 @@ fun AlbumDetailScreen(
                                 )
                             ),
                     ) {
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(50.dp)
+                            .constrainAs(secondary) {
+                                top.linkTo(parent.bottom, margin = (-90).dp)
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
                         Text(
                             uiState.primaryText,
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 10.dp),
                             fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center
                         )
+                    }
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .height(25.dp)
+                            .constrainAs(tertiary) {
+                                top.linkTo(parent.bottom, margin = (-55).dp)
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
                         Text(
                             uiState.secondaryText,
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 20.dp),
-                            textAlign = TextAlign.Center
                         )
                     }
                 }
