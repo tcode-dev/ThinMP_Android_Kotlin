@@ -16,7 +16,7 @@ fun Nav() {
 
     NavHost(navController = navController, startDestination = "main") {
         composable("main") { MainScreen(navController) }
-        composable("artists") { ArtistsScreen() }
+        composable("artists") { ArtistsScreen(navController) }
         composable("albums") { AlbumsScreen(navController) }
         composable("songs") { SongsScreen() }
         composable(
@@ -25,6 +25,13 @@ fun Nav() {
         )
         { backStackEntry ->
             AlbumDetailScreen(id = backStackEntry.arguments?.getString("id").let(::requireNotNull))
+        }
+        composable(
+            "artistDetail/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        )
+        { backStackEntry ->
+            ArtistDetailScreen(id = backStackEntry.arguments?.getString("id").let(::requireNotNull))
         }
     }
 }

@@ -9,8 +9,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun PlainRowView(primaryText: String) {
-    Row(modifier = Modifier.padding(10.dp)) {
+fun PlainRowView(primaryText: String, modifier: Modifier = Modifier) {
+    Row(modifier = modifier.padding(10.dp)) {
         Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
     }
 }
