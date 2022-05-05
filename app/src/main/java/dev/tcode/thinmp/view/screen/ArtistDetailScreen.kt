@@ -6,11 +6,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -57,7 +60,14 @@ fun ArtistDetailScreen(
                     ImageView(
                         uri = uiState.imgUri,
                         contentScale = ContentScale.FillWidth,
-                        modifier = Modifier.fillMaxSize()
+                        modifier = Modifier.fillMaxSize().blur(10.dp)
+                    )
+                    ImageView(
+                        uri = uiState.imgUri,
+                        contentScale = ContentScale.FillWidth,
+                        modifier = Modifier
+                            .size(150.dp)
+                            .clip(CircleShape)
                     )
                     Box(
                         modifier = Modifier
