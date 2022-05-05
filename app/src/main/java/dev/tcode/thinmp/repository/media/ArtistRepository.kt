@@ -2,6 +2,7 @@ package dev.tcode.thinmp.repository.media
 
 import android.content.Context
 import android.provider.MediaStore
+import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ArtistModel
 
 class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
@@ -18,6 +19,14 @@ class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
         sortOrder = MediaStore.Audio.Artists.ARTIST + " ASC"
 
         return getList();
+    }
+
+    fun findById(artistId: String): ArtistModel? {
+        selection = MediaStore.Audio.Media._ID + " = ?"
+        selectionArgs = arrayOf(artistId)
+        sortOrder = null
+
+        return get()
     }
 
     private fun getId(): String {

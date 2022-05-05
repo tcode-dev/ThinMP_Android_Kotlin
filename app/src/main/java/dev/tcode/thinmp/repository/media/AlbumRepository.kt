@@ -28,6 +28,14 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         return get()
     }
 
+    fun findByArtistId(artistId: String): List<AlbumModel> {
+        selection = MediaStore.Audio.Media.ARTIST_ID + " = ?"
+        selectionArgs = arrayOf(artistId)
+        sortOrder = null
+
+        return getList()
+    }
+
     private fun getId(): String {
         return cursor?.getColumnIndex(MediaStore.Audio.Albums._ID)?.let { cursor?.getString(it) }
             ?: ""

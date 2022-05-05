@@ -32,7 +32,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList()
     }
 
-    fun findByArtist(artistId: String): List<SongModel> {
+    fun findByArtistId(artistId: String): List<SongModel> {
         selection =
             MediaStore.Audio.Media.ARTIST_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = arrayOf(artistId)
