@@ -19,9 +19,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavHostController
+import com.google.accompanist.flowlayout.FlowMainAxisAlignment
+import com.google.accompanist.flowlayout.FlowRow
+import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -31,6 +36,7 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 @ExperimentalFoundationApi
 @Composable
 fun ArtistDetailScreen(
+    navController: NavHostController,
     id: String,
     viewModel: ArtistDetailViewModel = ArtistDetailViewModel(
         LocalContext.current,
@@ -81,7 +87,7 @@ fun ArtistDetailScreen(
                             .fillMaxWidth()
                             .height(200.dp)
                             .constrainAs(primary) {
-                                top.linkTo(parent.bottom, margin = (-200).dp)
+                                top.linkTo(parent.top, margin = 200.dp)
                             }
                             .background(
                                 brush = Brush.verticalGradient(
@@ -119,6 +125,24 @@ fun ArtistDetailScreen(
                         Text(
                             uiState.secondaryText,
                         )
+                    }
+                }
+            }
+            item {
+                val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
+                FlowRow(
+                    mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween
+                ) {
+                    for (album in uiState.albums) {
+                        Box(modifier = Modifier.width(itemSize)) {
+                            AlbumCellView(
+                                navController,
+                                album.id,
+                                album.name,
+                                album.artistName,
+                                album.getUri()
+                            )
+                        }
                     }
                 }
             }

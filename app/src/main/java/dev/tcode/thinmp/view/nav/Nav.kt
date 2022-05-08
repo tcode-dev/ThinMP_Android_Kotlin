@@ -24,14 +24,14 @@ fun Nav() {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         )
         { backStackEntry ->
-            AlbumDetailScreen(id = backStackEntry.arguments?.getString("id").let(::requireNotNull))
+            AlbumDetailScreen(backStackEntry.arguments?.getString("id").let(::requireNotNull))
         }
         composable(
             "artistDetail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         )
         { backStackEntry ->
-            ArtistDetailScreen(id = backStackEntry.arguments?.getString("id").let(::requireNotNull))
+            ArtistDetailScreen(navController, backStackEntry.arguments?.getString("id").let(::requireNotNull))
         }
     }
 }
