@@ -15,7 +15,11 @@ class ArtistDetailService(val context: Context) {
         val albums = albumRepository.findByArtistId(id)
         val songs = songRepository.findByArtistId(id)
         val secondaryText = "${albums.count()} albums, ${songs.count()} songs"
-        val imgUri = albums.first().getUri()
+        val imgUri = if (albums.isNotEmpty()) {
+            albums.first().getUri()
+        } else {
+            songs.first().getUri()
+        }
 
         return if (artist != null) {
             ArtistDetailModel(id, artist.name, secondaryText, imgUri, albums, songs)
