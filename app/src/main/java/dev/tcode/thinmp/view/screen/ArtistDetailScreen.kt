@@ -1,5 +1,8 @@
 package dev.tcode.thinmp.view.screen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -47,12 +51,13 @@ fun ArtistDetailScreen(
 
     Box(Modifier.fillMaxWidth()) {
         val lazyListState = rememberLazyListState()
+        val visibleHeroTopbarView =
+            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
                 uiState.primaryText,
-                index = lazyListState.firstVisibleItemIndex,
-                lazyListState.firstVisibleItemScrollOffset
+                visible = visibleHeroTopbarView,
             )
         }
         LazyColumn(state = lazyListState) {
@@ -107,6 +112,13 @@ fun ArtistDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                     ) {
+                        AnimatedVisibility(
+                            visible = !visibleHeroTopbarView,
+                            enter = fadeIn(),
+                            exit = fadeOut()
+                        ) {
+
+                        }
                         Text(
                             uiState.primaryText,
                             fontWeight = FontWeight.Bold,

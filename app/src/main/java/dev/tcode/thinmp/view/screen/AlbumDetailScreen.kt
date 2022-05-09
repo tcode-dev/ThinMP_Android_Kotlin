@@ -38,12 +38,13 @@ fun AlbumDetailScreen(
 
     Box(Modifier.fillMaxWidth()) {
         val lazyListState = rememberLazyListState()
+        val visible =
+            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
                 uiState.primaryText,
-                index = lazyListState.firstVisibleItemIndex,
-                lazyListState.firstVisibleItemScrollOffset
+                visible = visible,
             )
         }
         LazyColumn(state = lazyListState) {

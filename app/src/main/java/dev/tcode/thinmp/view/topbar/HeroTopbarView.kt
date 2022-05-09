@@ -8,19 +8,18 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun HeroTopbarView(title: String, index: Int, offset: Int) {
+fun HeroTopbarView(title: String, visible: Boolean) {
     Box() {
         AnimatedVisibility(
-            visible = index > 0 || offset / 2 > LocalConfiguration.current.screenWidthDp - 40,
-            enter = fadeIn(),
-            exit = fadeOut()
+            visible = visible,
+            enter = fadeIn(initialAlpha = 0.3F),
+            exit = fadeOut(targetAlpha = 0.3F)
         ) {
             Surface(
                 color = MaterialTheme.colors.secondary,
