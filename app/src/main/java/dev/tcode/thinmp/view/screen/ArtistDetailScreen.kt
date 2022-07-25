@@ -51,20 +51,31 @@ fun ArtistDetailScreen(
 
     Box(Modifier.fillMaxWidth()) {
         val lazyListState = rememberLazyListState()
+//        val visibleHeroTopbarView =
+//            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
         val visibleHeroTopbarView =
-            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
-
+            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources().getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - 50)
+//        var currentDp = lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources().getDisplayMetrics().density
+//        val screenWidthDp = LocalConfiguration.current.screenWidthDp
+//        val visibleHeroTopbarView =
+//            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources().getDisplayMetrics().density) > LocalConfiguration.current.screenWidthDp
+//        val visibleHeroTopbarView =
+//            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset) > LocalConfiguration.current.screenWidthDp
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
                 uiState.primaryText,
+//                LocalContext.current.getResources().getDisplayMetrics().widthPixels.toString(),
+//                lazyListState.firstVisibleItemScrollOffset.toString(),
                 visible = visibleHeroTopbarView,
+//            true
             )
         }
         LazyColumn(state = lazyListState) {
             item {
                 ConstraintLayout(
                     Modifier
-                        .fillMaxWidth()
+//                        .fillMaxWidth()
+                        .width(LocalConfiguration.current.screenWidthDp.dp)
                         .height(LocalConfiguration.current.screenWidthDp.dp)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
@@ -87,30 +98,34 @@ fun ArtistDetailScreen(
                                 .clip(CircleShape)
                         )
                     }
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                            .constrainAs(primary) {
-                                top.linkTo(parent.top, margin = 200.dp)
-                            }
-                            .background(
-                                brush = Brush.verticalGradient(
-                                    0.0f to MaterialTheme.colors.surface.copy(alpha = 0F),
-                                    1.0F to MaterialTheme.colors.surface,
-                                )
-                            ),
-                    ) {
-                    }
+//                    Box(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(200.dp)
+//                            .constrainAs(primary) {
+//                                top.linkTo(parent.top, margin = 200.dp)
+//                            }
+//                            .background(
+//                                brush = Brush.verticalGradient(
+//                                    0.0f to MaterialTheme.colors.surface.copy(alpha = 0F),
+//                                    1.0F to MaterialTheme.colors.surface,
+//                                )
+//                            ),
+//                    ) {
+//                    }
                     Row(
                         Modifier
-                            .fillMaxWidth()
+//                            .fillMaxWidth()
                             .height(50.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = (-90).dp)
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
+                                top.linkTo(parent.bottom, margin = (-50).dp)
+                            }
+                            .background(
+                                color = Color(0xAAAAAA00)
+                            ),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+
                     ) {
                         AnimatedVisibility(
                             visible = !visibleHeroTopbarView,
@@ -119,25 +134,32 @@ fun ArtistDetailScreen(
                         ) {
 
                         }
+//                        Text(
+//                            uiState.primaryText,
+//                            fontWeight = FontWeight.Bold,
+//                        )
                         Text(
                             uiState.primaryText,
-                            fontWeight = FontWeight.Bold,
+//                            "$currentDp : $screenWidthDp" ,
+                            modifier = Modifier.background(
+                                color = Color(0xFFFF0000)
+                            )
                         )
                     }
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .height(25.dp)
-                            .constrainAs(tertiary) {
-                                top.linkTo(parent.bottom, margin = (-55).dp)
-                            },
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            uiState.secondaryText,
-                        )
-                    }
+//                    Row(
+//                        Modifier
+//                            .fillMaxWidth()
+//                            .height(25.dp)
+//                            .constrainAs(tertiary) {
+//                                top.linkTo(parent.bottom, margin = (-55).dp)
+//                            },
+//                        verticalAlignment = Alignment.CenterVertically,
+//                        horizontalArrangement = Arrangement.Center,
+//                    ) {
+//                        Text(
+//                            uiState.secondaryText,
+//                        )
+//                    }
                 }
             }
             item {
