@@ -51,7 +51,6 @@ fun HeroTopbarView(title: String, visible: Boolean) {
 //                    .blur(10.dp)
 //                    .alpha(0.9F)
 //            )
-
 //                Box(
 //                    modifier = Modifier
 //                        .fillMaxWidth()
@@ -65,16 +64,11 @@ fun HeroTopbarView(title: String, visible: Boolean) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-//                    .statusBarsPadding()
-                    .height(50.dp)
-                    .background(
-                        color = Color(0xAA00AA00)
-                    ),
+                    .statusBarsPadding()
+                    .height(50.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center,
             ) {
-//                LocalConfiguration.current.screenHeightDp
-//                val statusBarsPadding = Modifier.statusBarsPadding().toString()
                 Text(
                     title,
                     textAlign = TextAlign.Center,
