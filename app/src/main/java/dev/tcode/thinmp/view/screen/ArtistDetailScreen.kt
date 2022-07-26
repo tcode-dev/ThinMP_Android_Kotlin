@@ -1,8 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -51,7 +48,9 @@ fun ArtistDetailScreen(
     Box(Modifier.fillMaxWidth()) {
         val lazyListState = rememberLazyListState()
         val visibleHeroTopbarView =
-            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources().getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues().calculateTopPadding().value + 90))
+            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
+                .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
+                .calculateTopPadding().value + 90))
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -108,17 +107,11 @@ fun ArtistDetailScreen(
                             .constrainAs(secondary) {
                                 top.linkTo(parent.bottom, margin = (-90).dp)
                             },
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.Center,
 
-                    ) {
-                        AnimatedVisibility(
-                            visible = !visibleHeroTopbarView,
-                            enter = fadeIn(),
-                            exit = fadeOut()
                         ) {
 
-                        }
                         Text(
                             uiState.primaryText,
                             fontWeight = FontWeight.Bold,
