@@ -1,6 +1,6 @@
 # ThinMP_Android_Kotlin
 
-`ThinMP` is simple music player for Android.
+`ThinMP` is a simple music player for Android.
 
 ## Features
 
