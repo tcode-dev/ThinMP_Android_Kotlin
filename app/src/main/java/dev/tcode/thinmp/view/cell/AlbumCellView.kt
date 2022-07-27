@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -20,27 +21,35 @@ fun AlbumCellView(
     secondaryText: String,
     uri: Uri
 ) {
-    Column(modifier = Modifier
-        .padding(8.dp)
-        .clickable {
-            navController.navigate("albumDetail/${id}")
-        }) {
-        ImageView(uri = uri)
-        Text(
-            primaryText,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 4.dp)
-        )
-        Text(
-            secondaryText,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth()
-        )
+    BoxWithConstraints {
+        val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
+
+        Column(modifier = Modifier
+            .padding(8.dp)
+            .clickable {
+                navController.navigate("albumDetail/${id}")
+            }) {
+            Box {
+                ImageView(uri = uri, modifier = Modifier
+                    .width(size)
+                    .height(size))
+            }
+            Text(
+                primaryText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+            Text(
+                secondaryText,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
     }
 }
