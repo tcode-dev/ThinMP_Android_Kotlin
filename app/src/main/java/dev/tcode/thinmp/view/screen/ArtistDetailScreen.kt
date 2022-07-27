@@ -109,13 +109,13 @@ fun ArtistDetailScreen(
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
-
-                        ) {
-
-                        Text(
-                            uiState.primaryText,
-                            fontWeight = FontWeight.Bold,
-                        )
+                    ) {
+                        if (!visibleHeroTopbarView) {
+                            Text(
+                                uiState.primaryText,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
                     }
                     Row(
                         Modifier
