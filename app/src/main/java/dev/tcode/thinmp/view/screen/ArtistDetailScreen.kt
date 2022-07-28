@@ -54,6 +54,7 @@ fun ArtistDetailScreen(
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
+                navController,
                 uiState.primaryText,
                 visible = visibleHeroTopbarView,
             )

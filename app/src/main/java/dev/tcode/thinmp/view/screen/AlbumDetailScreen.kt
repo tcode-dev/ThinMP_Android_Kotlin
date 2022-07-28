@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -28,6 +29,7 @@ import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 @ExperimentalFoundationApi
 @Composable
 fun AlbumDetailScreen(
+    navController: NavHostController,
     id: String,
     viewModel: AlbumDetailViewModel = AlbumDetailViewModel(
         LocalContext.current,
@@ -43,6 +45,7 @@ fun AlbumDetailScreen(
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
+                navController,
                 uiState.primaryText,
                 visible = visible,
             )

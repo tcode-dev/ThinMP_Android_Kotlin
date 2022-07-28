@@ -24,7 +24,7 @@ fun Nav() {
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         )
         { backStackEntry ->
-            AlbumDetailScreen(backStackEntry.arguments?.getString("id").let(::requireNotNull))
+            AlbumDetailScreen(navController, backStackEntry.arguments?.getString("id").let(::requireNotNull))
         }
         composable(
             "artistDetail/{id}",
