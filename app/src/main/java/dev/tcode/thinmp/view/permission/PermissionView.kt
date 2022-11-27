@@ -15,7 +15,7 @@ import com.google.accompanist.permissions.shouldShowRationale
 @Composable
 fun PermissionView(content: @Composable BoxScope.() -> Unit) {
     val permissionState = rememberPermissionState(
-        android.Manifest.permission.READ_EXTERNAL_STORAGE
+        android.Manifest.permission.READ_MEDIA_AUDIO
     )
 
     when (permissionState.status) {
