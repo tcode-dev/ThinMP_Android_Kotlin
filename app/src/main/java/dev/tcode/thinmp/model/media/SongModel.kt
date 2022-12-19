@@ -1,6 +1,8 @@
 package dev.tcode.thinmp.model.media
 
 import android.net.Uri
+import android.provider.MediaStore
+import android.net.Uri.parse
 
 class SongModel(
     public override var id: String,
@@ -20,6 +22,6 @@ class SongModel(
     }
 
     fun getUri(): Uri {
-        return Uri.parse("content://media/external/audio/albumart/${albumId}")
+        return parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${id}")
     }
 }
