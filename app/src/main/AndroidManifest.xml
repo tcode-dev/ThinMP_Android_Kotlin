@@ -12,9 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ThinMP">
         <service
-            android:name=".MusicService"
+            android:name=".player.MusicService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false" />
 
         <activity
             android:name=".activity.MainActivity"
