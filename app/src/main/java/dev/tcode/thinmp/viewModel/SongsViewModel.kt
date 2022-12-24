@@ -11,25 +11,23 @@ import androidx.compose.runtime.setValue
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicService
 import dev.tcode.thinmp.repository.media.SongRepository
+import dev.tcode.thinmp.view.screen.PlayInterface
 
 data class SongsUiState(
     var songs: List<SongModel> = emptyList()
 )
 
-class SongsViewModel(context: Context) {
-    private var musicService: MusicService? = null
-    private var connection: ServiceConnection? = null
-    private var bound: Boolean = false
+class SongsViewModel(
+    context: Context
+) : PlayInterface {
+    override lateinit var musicService: MusicService
+    override lateinit var connection: ServiceConnection
+    override var bound: Boolean = false
     var uiState by mutableStateOf(SongsUiState())
         private set
 
     init {
-        connection = createConnection()
-        context.bindService(
-            Intent(context, MusicService::class.java),
-            connection!!,
-            Context.BIND_AUTO_CREATE
-        )
+        bindService(context)
         load(context)
     }
 
@@ -37,24 +35,5 @@ class SongsViewModel(context: Context) {
         val repository = SongRepository(context)
 
         uiState.songs = repository.findAll()
-    }
-
-    fun start(song: SongModel) {
-        musicService?.start(song)
-    }
-
-    private fun createConnection(): ServiceConnection {
-        return object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, service: IBinder) {
-                val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
-                musicService = binder.getService()
-//                musicService.setListener(musicServiceListener)
-                bound = true;
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {
-                bound = false;
-            }
-        }
     }
 }

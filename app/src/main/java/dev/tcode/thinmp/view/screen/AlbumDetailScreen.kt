@@ -2,6 +2,7 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -110,8 +111,12 @@ fun AlbumDetailScreen(
                 }
             }
             items(uiState.songs) { song ->
-                MediaRowView(song.name, song.artistName, song.getUri())
-                DividerView()
+                Row(modifier = Modifier.clickable {
+                    viewModel.start(song)
+                }) {
+                    MediaRowView(song.name, song.artistName, song.getUri())
+                    DividerView()
+                }
             }
         }
     }
