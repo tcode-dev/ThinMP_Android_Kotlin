@@ -26,7 +26,7 @@ fun SongsScreen(viewModel: SongsViewModel = SongsViewModel(LocalContext.current)
                 Row(modifier = Modifier.clickable {
                     viewModel.start(song)
                 }) {
-                    MediaRowView(song.name, song.artistName, song.getUri())
+                    MediaRowView(song.name, song.artistName, song.getImageUri())
                 }
             }
         }

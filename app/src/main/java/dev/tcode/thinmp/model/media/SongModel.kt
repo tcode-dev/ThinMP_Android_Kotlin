@@ -21,7 +21,11 @@ class SongModel(
         return trackList
     }
 
-    fun getUri(): Uri {
+    fun getImageUri(): Uri {
+        return Uri.parse("content://media/external/audio/albumart/${albumId}")
+    }
+
+    fun getMediaUri(): Uri {
         return parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${id}")
     }
 }

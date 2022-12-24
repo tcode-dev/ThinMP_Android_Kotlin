@@ -11,7 +11,7 @@ class MusicService : Service() {
     private val binder = MusicBinder()
 
     fun start(song: SongModel) {
-        val mediaPlayer = MediaPlayer.create(baseContext, song.getUri())
+        val mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
 
         mediaPlayer?.start()
     }

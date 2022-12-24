@@ -18,7 +18,7 @@ class ArtistDetailService(val context: Context) {
         val imgUri = if (albums.isNotEmpty()) {
             albums.first().getUri()
         } else {
-            songs.first().getUri()
+            songs.first().getImageUri()
         }
 
         return if (artist != null) {

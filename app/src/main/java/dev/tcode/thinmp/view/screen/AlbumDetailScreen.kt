@@ -114,7 +114,7 @@ fun AlbumDetailScreen(
                 Row(modifier = Modifier.clickable {
                     viewModel.start(song)
                 }) {
-                    MediaRowView(song.name, song.artistName, song.getUri())
+                    MediaRowView(song.name, song.artistName, song.getImageUri())
                     DividerView()
                 }
             }
