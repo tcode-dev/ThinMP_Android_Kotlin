@@ -9,14 +9,26 @@ import dev.tcode.thinmp.model.media.SongModel
 
 class MusicService : Service() {
     private val binder = MusicBinder()
+    private var mediaPlayer : MediaPlayer? = null
     private var songs: List<SongModel> = emptyList()
 
     fun start(songs: List<SongModel>, index: Int) {
         this.songs = songs
 
-        val mediaPlayer = MediaPlayer.create(baseContext, this.songs[index].getMediaUri())
+        destroy()
+
+        mediaPlayer = MediaPlayer.create(baseContext, this.songs[index].getMediaUri())
 
         mediaPlayer?.start()
+    }
+
+    private fun destroy() {
+        if (mediaPlayer?.isPlaying == true) {
+            mediaPlayer?.stop()
+        }
+
+        mediaPlayer?.release()
+        mediaPlayer = null
     }
 
     override fun onBind(intent: Intent): IBinder {
