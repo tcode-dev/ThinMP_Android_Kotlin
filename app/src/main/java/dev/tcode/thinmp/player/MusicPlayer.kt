@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.view.screen
+package dev.tcode.thinmp.player
 
 import android.content.ComponentName
 import android.content.Context
@@ -6,24 +6,27 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.player.MusicService
 
-interface PlayInterface {
-    var musicService: MusicService
-    var connection: ServiceConnection
-    var bound: Boolean
+class MusicPlayer(context: Context) {
+    private lateinit var musicService: MusicService
+    private lateinit var connection: ServiceConnection
+    var bound: Boolean = false
 
-    fun bindService(context: Context) {
+    init {
+        bindService(context)
+    }
+
+    fun start(song: SongModel) {
+        musicService.start(song)
+    }
+
+    private fun bindService(context: Context) {
         connection = createConnection()
         context.bindService(
             Intent(context, MusicService::class.java),
             connection,
             Context.BIND_AUTO_CREATE
         )
-    }
-
-    fun start(song: SongModel) {
-        musicService.start(song)
     }
 
     private fun createConnection(): ServiceConnection {

@@ -1,15 +1,13 @@
 package dev.tcode.thinmp.viewModel
 
 import android.content.Context
-import android.content.ServiceConnection
 import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.player.MusicService
+import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.service.AlbumDetailService
-import dev.tcode.thinmp.view.screen.PlayInterface
 
 data class AlbumDetailUiState(
     var primaryText: String = "",
@@ -18,16 +16,18 @@ data class AlbumDetailUiState(
     var songs: List<SongModel> = emptyList()
 )
 
-class AlbumDetailViewModel(context: Context, id: String) : PlayInterface {
-    override lateinit var musicService: MusicService
-    override lateinit var connection: ServiceConnection
-    override var bound: Boolean = false
+class AlbumDetailViewModel(context: Context, id: String) {
+    private var musicPlayer: MusicPlayer
     var uiState by mutableStateOf(AlbumDetailUiState())
         private set
 
     init {
-        bindService(context)
+        musicPlayer = MusicPlayer(context)
         load(context, id)
+    }
+
+    fun start(song: SongModel) {
+        musicPlayer.start(song)
     }
 
     private fun load(context: Context, id: String) {
