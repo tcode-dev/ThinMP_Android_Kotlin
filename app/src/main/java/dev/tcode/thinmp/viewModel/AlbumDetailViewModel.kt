@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.ViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.service.AlbumDetailService
@@ -16,7 +17,7 @@ data class AlbumDetailUiState(
     var songs: List<SongModel> = emptyList()
 )
 
-class AlbumDetailViewModel(context: Context, id: String) {
+class AlbumDetailViewModel(context: Context, id: String) : ViewModel() {
     private var musicPlayer: MusicPlayer
     var uiState by mutableStateOf(AlbumDetailUiState())
         private set
