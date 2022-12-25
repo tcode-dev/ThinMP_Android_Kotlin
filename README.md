@@ -16,10 +16,11 @@
 * Android Studio
 * Kotlin
 * Gradle
-* minSdkVersion 30
-* targetSdkVersion 31
-* Android Version 12
+* minSdkVersion 33
+* targetSdkVersion 33
+* Android Version 13
 * Google Pixel 4a
+* Google Pixel 7 Pro
 
 ## Libraries
 
