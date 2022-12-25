@@ -9,6 +9,7 @@ import dev.tcode.thinmp.constant.MainMenuEnum
 data class MainUiState(
     var menuList: List<MainMenuEnum> = emptyList()
 )
+
 class MainViewModel : ViewModel() {
     var uiState by mutableStateOf(MainUiState())
         private set
