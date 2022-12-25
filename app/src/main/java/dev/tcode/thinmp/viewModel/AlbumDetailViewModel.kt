@@ -12,7 +12,7 @@ import dev.tcode.thinmp.service.AlbumDetailService
 data class AlbumDetailUiState(
     var primaryText: String = "",
     var secondaryText: String = "",
-    var imgUri: Uri = Uri.EMPTY,
+    var imageUri: Uri = Uri.EMPTY,
     var songs: List<SongModel> = emptyList()
 )
 
@@ -37,7 +37,7 @@ class AlbumDetailViewModel(context: Context, id: String) {
         if (album != null) {
             uiState.primaryText = album.primaryText
             uiState.secondaryText = album.secondaryText
-            uiState.imgUri = album.imgUri
+            uiState.imageUri = album.imageUri
             uiState.songs = album.songs
         }
     }

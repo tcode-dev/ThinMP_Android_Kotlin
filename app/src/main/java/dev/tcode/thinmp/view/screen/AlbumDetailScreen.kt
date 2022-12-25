@@ -61,7 +61,7 @@ fun AlbumDetailScreen(
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
-                        uri = uiState.imgUri,
+                        uri = uiState.imageUri,
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier.fillMaxSize()
                     )

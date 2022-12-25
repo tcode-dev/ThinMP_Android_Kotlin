@@ -6,6 +6,6 @@ data class AlbumDetailModel (
     var id: String,
     var primaryText: String,
     var secondaryText: String,
-    var imgUri: Uri,
+    var imageUri: Uri,
     var songs: List<SongModel> = emptyList()
 )

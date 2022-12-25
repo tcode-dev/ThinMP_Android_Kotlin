@@ -68,7 +68,7 @@ fun ArtistDetailScreen(
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
-                        uri = uiState.imgUri,
+                        uri = uiState.imageUri,
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
                             .fillMaxSize()
@@ -79,7 +79,7 @@ fun ArtistDetailScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         ImageView(
-                            uri = uiState.imgUri,
+                            uri = uiState.imageUri,
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier
                                 .size(120.dp)
