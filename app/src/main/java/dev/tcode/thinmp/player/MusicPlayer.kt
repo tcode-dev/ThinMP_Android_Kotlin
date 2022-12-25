@@ -16,8 +16,8 @@ class MusicPlayer(context: Context) {
         bindService(context)
     }
 
-    fun start(song: SongModel) {
-        musicService.start(song)
+    fun start(songs: List<SongModel>, index: Int) {
+        musicService.start(songs, index)
     }
 
     private fun bindService(context: Context) {

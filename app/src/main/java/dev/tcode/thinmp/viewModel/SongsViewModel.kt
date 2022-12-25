@@ -28,7 +28,7 @@ class SongsViewModel(context: Context) {
         uiState.songs = repository.findAll()
     }
 
-    fun start(song: SongModel) {
-        musicPlayer.start(song)
+    fun start(index: Int) {
+        musicPlayer.start(uiState.songs, index)
     }
 }

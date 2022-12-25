@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -110,9 +111,9 @@ fun AlbumDetailScreen(
                     }
                 }
             }
-            items(uiState.songs) { song ->
+            itemsIndexed(uiState.songs) { index, song ->
                 Row(modifier = Modifier.clickable {
-                    viewModel.start(song)
+                    viewModel.start(index)
                 }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
                     DividerView()

@@ -6,7 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,9 +22,9 @@ fun SongsScreen(viewModel: SongsViewModel = SongsViewModel(LocalContext.current)
     Column {
         Text(text = "Songs")
         LazyColumn {
-            items(uiState.songs) { song ->
+            itemsIndexed(uiState.songs) { index, song ->
                 Row(modifier = Modifier.clickable {
-                    viewModel.start(song)
+                    viewModel.start(index)
                 }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
                 }

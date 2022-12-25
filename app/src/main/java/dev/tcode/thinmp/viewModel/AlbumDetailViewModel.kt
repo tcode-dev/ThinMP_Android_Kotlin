@@ -26,8 +26,8 @@ class AlbumDetailViewModel(context: Context, id: String) {
         load(context, id)
     }
 
-    fun start(song: SongModel) {
-        musicPlayer.start(song)
+    fun start(index: Int) {
+        musicPlayer.start(uiState.songs, index)
     }
 
     private fun load(context: Context, id: String) {

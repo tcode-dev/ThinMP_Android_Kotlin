@@ -9,9 +9,12 @@ import dev.tcode.thinmp.model.media.SongModel
 
 class MusicService : Service() {
     private val binder = MusicBinder()
+    private var songs: List<SongModel> = emptyList()
 
-    fun start(song: SongModel) {
-        val mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
+    fun start(songs: List<SongModel>, index: Int) {
+        this.songs = songs
+
+        val mediaPlayer = MediaPlayer.create(baseContext, this.songs[index].getMediaUri())
 
         mediaPlayer?.start()
     }
