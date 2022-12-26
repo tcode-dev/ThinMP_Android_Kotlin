@@ -3,6 +3,7 @@ package dev.tcode.thinmp.player
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
+import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
 import dev.tcode.thinmp.model.media.SongModel
@@ -10,16 +11,21 @@ import dev.tcode.thinmp.model.media.SongModel
 class MusicService : Service() {
     private val binder = MusicBinder()
     private var mediaPlayer : MediaPlayer? = null
-    private var songs: List<SongModel> = emptyList()
+    private var songs: ListIterator<SongModel> = listOf<SongModel>().listIterator()
 
     fun start(songs: List<SongModel>, index: Int) {
-        this.songs = songs
+        this.songs = songs.listIterator(index)
 
-        destroy()
-
-        mediaPlayer = MediaPlayer.create(baseContext, this.songs[index].getMediaUri())
+        setMediaPlayer(this.songs.next())
 
         mediaPlayer?.start()
+    }
+
+    private fun setMediaPlayer(song: SongModel) {
+        destroy()
+
+        mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
+        mediaPlayer?.setOnCompletionListener(createCompletionListener())
     }
 
     private fun destroy() {
@@ -29,6 +35,18 @@ class MusicService : Service() {
 
         mediaPlayer?.release()
         mediaPlayer = null
+    }
+
+    private fun createCompletionListener(): OnCompletionListener {
+        return label@ OnCompletionListener { mp: MediaPlayer? ->
+            if (songs.hasNext()) {
+                setMediaPlayer(songs.next())
+
+                mediaPlayer?.start()
+            } else {
+                destroy()
+            }
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
