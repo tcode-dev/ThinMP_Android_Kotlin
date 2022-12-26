@@ -11,6 +11,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
@@ -23,10 +24,11 @@ fun SongsScreen(viewModel: SongsViewModel = SongsViewModel(LocalContext.current)
         Text(text = "Songs")
         LazyColumn {
             itemsIndexed(uiState.songs) { index, song ->
-                Row(modifier = Modifier.clickable {
+                Column(modifier = Modifier.clickable {
                     viewModel.start(index)
                 }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
+                    DividerView()
                 }
             }
         }

@@ -111,7 +111,7 @@ fun AlbumDetailScreen(
                 }
             }
             itemsIndexed(uiState.songs) { index, song ->
-                Row(modifier = Modifier.clickable {
+                Column(modifier = Modifier.clickable {
                     viewModel.start(index)
                 }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
