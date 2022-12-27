@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.image.ImageView
 
@@ -25,17 +26,19 @@ fun AlbumCellView(
         val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
 
         Column(modifier = Modifier
-            .padding(8.dp)
             .clickable {
                 navController.navigate("albumDetail/${id}")
             }) {
             Box {
-                ImageView(uri = uri, modifier = Modifier
-                    .width(size)
-                    .height(size))
+                ImageView(
+                    uri = uri, modifier = Modifier
+                        .width(size)
+                        .height(size)
+                )
             }
             Text(
                 primaryText,
+                fontSize = 14.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,
@@ -45,6 +48,7 @@ fun AlbumCellView(
             )
             Text(
                 secondaryText,
+                fontSize = 12.sp,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 textAlign = TextAlign.Center,

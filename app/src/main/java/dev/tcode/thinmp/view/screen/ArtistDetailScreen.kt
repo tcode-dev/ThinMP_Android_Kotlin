@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
@@ -135,12 +136,29 @@ fun ArtistDetailScreen(
                 }
             }
             item {
+                Text(
+                    "Albums",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
+                )
+            }
+            item {
                 val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
                 FlowRow(
                     mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween
                 ) {
-                    for (album in uiState.albums) {
-                        Box(modifier = Modifier.width(itemSize)) {
+                    for ((index, album) in uiState.albums.withIndex()) {
+                        val even = (index % 2) == 0
+                        val start = if (even) 20.dp else 10.dp
+                        val end = if (even) 10.dp else 20.dp
+                        Box(modifier = Modifier.width(itemSize)
+                            .padding(
+                                start = start,
+                                end = end,
+                                top = 0.dp,
+                                bottom = 20.dp
+                            )) {
                             AlbumCellView(
                                 navController,
                                 album.id,
@@ -152,9 +170,19 @@ fun ArtistDetailScreen(
                     }
                 }
             }
+            item {
+                Text(
+                    "Songs",
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp,
+                    modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
+                )
+            }
             items(uiState.songs) { song ->
-                MediaRowView(song.name, song.artistName, song.getImageUri())
-                DividerView()
+                Column(modifier = Modifier.padding(start = 20.dp)) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri())
+                    DividerView()
+                }
             }
         }
     }
