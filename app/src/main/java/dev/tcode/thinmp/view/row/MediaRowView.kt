@@ -11,15 +11,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
 fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri) {
-    Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
-        ImageView(uri = uri, modifier = Modifier.size(44.dp))
-        Column(modifier = Modifier.padding(start = 8.dp)) {
-            Text(primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(secondaryText, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    Column(modifier = Modifier.padding(start = 20.dp)) {
+        Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
+            ImageView(uri = uri, modifier = Modifier.size(44.dp))
+            Column(modifier = Modifier.padding(start = 8.dp)) {
+                Text(primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(secondaryText, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
         }
+        DividerView()
     }
 }

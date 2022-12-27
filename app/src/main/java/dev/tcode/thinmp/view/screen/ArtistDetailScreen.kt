@@ -28,7 +28,6 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.flowlayout.FlowMainAxisAlignment
 import com.google.accompanist.flowlayout.FlowRow
 import dev.tcode.thinmp.view.cell.AlbumCellView
-import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
@@ -152,13 +151,16 @@ fun ArtistDetailScreen(
                         val even = (index % 2) == 0
                         val start = if (even) 20.dp else 10.dp
                         val end = if (even) 10.dp else 20.dp
-                        Box(modifier = Modifier.width(itemSize)
-                            .padding(
-                                start = start,
-                                end = end,
-                                top = 0.dp,
-                                bottom = 20.dp
-                            )) {
+                        Box(
+                            modifier = Modifier
+                                .width(itemSize)
+                                .padding(
+                                    start = start,
+                                    end = end,
+                                    top = 0.dp,
+                                    bottom = 20.dp
+                                )
+                        ) {
                             AlbumCellView(
                                 navController,
                                 album.id,
@@ -179,10 +181,7 @@ fun ArtistDetailScreen(
                 )
             }
             items(uiState.songs) { song ->
-                Column(modifier = Modifier.padding(start = 20.dp)) {
-                    MediaRowView(song.name, song.artistName, song.getImageUri())
-                    DividerView()
-                }
+                MediaRowView(song.name, song.artistName, song.getImageUri())
             }
         }
     }

@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
-import dev.tcode.thinmp.view.divider.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
@@ -115,7 +114,6 @@ fun AlbumDetailScreen(
                     viewModel.start(index)
                 }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
-                    DividerView()
                 }
             }
         }
