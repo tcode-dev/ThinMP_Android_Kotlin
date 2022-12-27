@@ -91,7 +91,7 @@ fun ArtistDetailScreen(
                             .fillMaxWidth()
                             .height(200.dp)
                             .constrainAs(primary) {
-                                top.linkTo(parent.top, margin = 200.dp)
+                                top.linkTo(parent.bottom, margin = (-200).dp)
                             }
                             .background(
                                 brush = Brush.verticalGradient(
