@@ -2,6 +2,9 @@
 
 `ThinMP` is a simple music player for Android.
 
+## Demo
+<img src="https://user-images.githubusercontent.com/42083313/209638544-d11277e0-687c-455b-a01f-ff9ebcb09845.png" width="156"> <img src="https://user-images.githubusercontent.com/42083313/209638596-68124f8f-67b9-470b-b7de-63db2d961364.png" width="156">
+
 ## Features
 
 * device music play
