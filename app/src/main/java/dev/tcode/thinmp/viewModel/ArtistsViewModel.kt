@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
-import dev.tcode.thinmp.repository.media.ArtistRepository
+import dev.tcode.thinmp.service.ArtistsService
 
 data class ArtistsUiState(
     var artists: List<ArtistModel> = emptyList()
@@ -21,8 +21,8 @@ class ArtistsViewModel(context: Context) : ViewModel() {
     }
 
     fun load(context: Context) {
-        val repository = ArtistRepository(context)
+        val service = ArtistsService(context)
 
-        uiState.artists = repository.findAll()
+        uiState.artists = service.findAll()
     }
 }

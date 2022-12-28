@@ -7,7 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.repository.media.SongRepository
+import dev.tcode.thinmp.service.SongsService
 
 data class SongsUiState(
     var songs: List<SongModel> = emptyList()
@@ -24,7 +24,7 @@ class SongsViewModel(context: Context) : ViewModel() {
     }
 
     fun load(context: Context) {
-        val repository = SongRepository(context)
+        val repository = SongsService(context)
 
         uiState.songs = repository.findAll()
     }
