@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import dev.tcode.thinmp.view.grid.SpacerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.viewModel.ArtistsViewModel

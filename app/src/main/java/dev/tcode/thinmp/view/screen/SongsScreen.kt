@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
+import dev.tcode.thinmp.view.grid.SpacerView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.viewModel.SongsViewModel
@@ -44,14 +45,4 @@ fun SongsScreen(
             }
         }
     }
-}
-
-// TODO: 暫定でtopbarの下に余白を追加しているので削除
-@Composable
-fun SpacerView() {
-    Spacer(
-        Modifier
-            .statusBarsPadding()
-            .height(50.dp)
-    )
 }
