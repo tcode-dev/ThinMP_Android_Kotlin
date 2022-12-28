@@ -24,7 +24,7 @@ fun AlbumsScreen(
         val lazyGridState = rememberLazyGridState()
 
         Box(Modifier.zIndex(3F)) {
-            ListTopbarView("Albums", lazyGridState.firstVisibleItemScrollOffset)
+            ListTopbarView(navController, "Albums", lazyGridState.firstVisibleItemScrollOffset)
         }
         AlbumGridView(navController, uiState.albums, lazyGridState)
     }
