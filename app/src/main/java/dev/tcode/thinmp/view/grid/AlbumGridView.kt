@@ -2,13 +2,12 @@ package dev.tcode.thinmp.view.grid
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.lazy.itemsIndexed
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.model.media.AlbumModel
@@ -19,10 +18,10 @@ import dev.tcode.thinmp.view.cell.AlbumCellView
 fun AlbumGridView(
     navController: NavHostController,
     albums: List<AlbumModel>,
-    lazyGridState: LazyGridState
+    lazyGridState: LazyGridState,
+    itemSize: Dp
 ) {
     LazyVerticalGrid(
-        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
         columns = GridCells.Fixed(2),
         state = lazyGridState
     ) {
@@ -32,8 +31,28 @@ fun AlbumGridView(
         item {
             SpacerView()
         }
-        items(albums) { album ->
-            AlbumCellView(navController, album.id, album.name, album.artistName, album.getUri())
+        itemsIndexed(albums) { index, album ->
+            val even = (index % 2) == 0
+            val start = if (even) 20.dp else 10.dp
+            val end = if (even) 10.dp else 20.dp
+            Box(
+                modifier = Modifier
+                    .width(itemSize)
+                    .padding(
+                        start = start,
+                        end = end,
+                        top = 0.dp,
+                        bottom = 20.dp
+                    )
+            ) {
+                AlbumCellView(
+                    navController,
+                    album.id,
+                    album.name,
+                    album.artistName,
+                    album.getUri()
+                )
+            }
         }
     }
 }
