@@ -2,6 +2,7 @@ package dev.tcode.thinmp.view.topbar
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Icon
@@ -42,12 +43,18 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                     .statusBarsPadding()
                     .height(50.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(onClick = { navController.popBackStack() }) {
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+                    .clickable { navController.popBackStack() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_arrow_back),
-                        contentDescription = null
+                        contentDescription = null,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
                 Text(
@@ -57,6 +64,13 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
                 )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
+                        .clickable { }) {
+                }
             }
         }
     }
