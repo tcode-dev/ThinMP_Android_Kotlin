@@ -10,12 +10,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun SongsScreen(viewModel: SongsViewModel = SongsViewModel(LocalContext.current), context: Context = LocalContext.current) {
+fun SongsScreen(
+    navController: NavHostController,
+    viewModel: SongsViewModel = SongsViewModel(LocalContext.current)
+) {
     val uiState = viewModel.uiState
 
     Column {

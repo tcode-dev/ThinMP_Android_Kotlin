@@ -18,7 +18,7 @@ fun Nav() {
         composable("main") { MainScreen(navController) }
         composable("artists") { ArtistsScreen(navController) }
         composable("albums") { AlbumsScreen(navController) }
-        composable("songs") { SongsScreen() }
+        composable("songs") { SongsScreen(navController) }
         composable(
             "albumDetail/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
