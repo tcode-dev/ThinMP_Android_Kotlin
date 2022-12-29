@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import dev.tcode.thinmp.view.divider.DividerView
+import dev.tcode.thinmp.view.util.DividerView
 
 @Composable
 fun PlainRowView(primaryText: String, modifier: Modifier = Modifier) {

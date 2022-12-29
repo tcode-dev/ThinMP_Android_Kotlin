@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.view.divider
+package dev.tcode.thinmp.view.util
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
