@@ -4,10 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -27,14 +24,15 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
-import com.google.accompanist.flowlayout.FlowMainAxisAlignment
-import com.google.accompanist.flowlayout.FlowRow
+import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
+
+const val MAX_SPAN_COUNT = 2
 
 @ExperimentalFoundationApi
 @Composable
@@ -49,9 +47,9 @@ fun ArtistDetailScreen(
     val uiState = viewModel.uiState
 
     Box(Modifier.fillMaxWidth()) {
-        val lazyListState = rememberLazyListState()
+        val lazyGridState = rememberLazyGridState()
         val visibleHeroTopbarView =
-            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
+            lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
                 .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
 
@@ -62,8 +60,8 @@ fun ArtistDetailScreen(
                 visible = visibleHeroTopbarView,
             )
         }
-        LazyColumn(state = lazyListState) {
-            item {
+        LazyVerticalGrid(columns = GridCells.Fixed(MAX_SPAN_COUNT), state = lazyGridState) {
+            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
@@ -137,7 +135,7 @@ fun ArtistDetailScreen(
                     }
                 }
             }
-            item {
+            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
                 Text(
                     "Albums",
                     fontWeight = FontWeight.Bold,
@@ -145,25 +143,20 @@ fun ArtistDetailScreen(
                     modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
                 )
             }
-            item {
+            itemsIndexed(items = uiState.albums) { index, album ->
                 val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
-                FlowRow(
-                    mainAxisAlignment = FlowMainAxisAlignment.SpaceBetween
-                ) {
-                    for ((index, album) in uiState.albums.withIndex()) {
-                        GridCellView(index, 2, itemSize) {
-                            AlbumCellView(
-                                navController,
-                                album.id,
-                                album.name,
-                                album.artistName,
-                                album.getUri()
-                            )
-                        }
-                    }
+
+                GridCellView(index, MAX_SPAN_COUNT, itemSize) {
+                    AlbumCellView(
+                        navController,
+                        album.id,
+                        album.name,
+                        album.artistName,
+                        album.getUri()
+                    )
                 }
             }
-            item {
+            item(span = { GridItemSpan(2) }) {
                 Text(
                     "Songs",
                     fontWeight = FontWeight.Bold,
@@ -171,7 +164,7 @@ fun ArtistDetailScreen(
                     modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
                 )
             }
-            itemsIndexed(uiState.songs) { index, song ->
+            itemsIndexed(items = uiState.songs, span = { i: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
                 Column(modifier = Modifier.clickable {
                     viewModel.start(index)
                 }) {
