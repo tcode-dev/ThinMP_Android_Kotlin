@@ -156,7 +156,7 @@ fun ArtistDetailScreen(
                     )
                 }
             }
-            item(span = { GridItemSpan(2) }) {
+            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
                 Text(
                     "Songs",
                     fontWeight = FontWeight.Bold,
@@ -164,7 +164,7 @@ fun ArtistDetailScreen(
                     modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
                 )
             }
-            itemsIndexed(items = uiState.songs, span = { i: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
+            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
                 Column(modifier = Modifier.clickable {
                     viewModel.start(index)
                 }) {
