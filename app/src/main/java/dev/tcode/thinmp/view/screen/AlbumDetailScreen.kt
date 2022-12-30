@@ -22,6 +22,7 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
@@ -117,5 +118,6 @@ fun AlbumDetailScreen(
                 }
             }
         }
+        MiniPlayerView()
     }
 }

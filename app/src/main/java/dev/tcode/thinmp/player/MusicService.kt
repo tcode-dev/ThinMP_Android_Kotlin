@@ -12,6 +12,7 @@ class MusicService : Service() {
     private val binder = MusicBinder()
     private var mediaPlayer : MediaPlayer? = null
     private var songs: ListIterator<SongModel> = listOf<SongModel>().listIterator()
+    var song: SongModel? = null
 
     fun start(songs: List<SongModel>, index: Int) {
         this.songs = songs.listIterator(index)
@@ -24,6 +25,7 @@ class MusicService : Service() {
     private fun setMediaPlayer(song: SongModel) {
         destroy()
 
+        this.song = song
         mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
         mediaPlayer?.setOnCompletionListener(createCompletionListener())
     }
@@ -35,6 +37,7 @@ class MusicService : Service() {
 
         mediaPlayer?.release()
         mediaPlayer = null
+        song = null
     }
 
     private fun createCompletionListener(): OnCompletionListener {
