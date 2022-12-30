@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.viewModel.MainViewModel
 
@@ -51,5 +52,6 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = MainView
                     navController.navigate(menu.key)
                 })
         }
+        MiniPlayerView()
     }
 }
