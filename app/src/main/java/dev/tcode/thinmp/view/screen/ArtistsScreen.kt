@@ -13,7 +13,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
-import dev.tcode.thinmp.view.util.EmptyView
+import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.ArtistsViewModel
 
 @ExperimentalFoundationApi
@@ -32,7 +32,7 @@ fun ArtistsScreen(
         }
         LazyColumn(state = lazyListState) {
             item {
-                EmptyView()
+                EmptyTopbarView()
             }
             items(uiState.artists) { artist ->
                 PlainRowView(artist.name, modifier = Modifier

@@ -17,7 +17,7 @@ import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
-import dev.tcode.thinmp.view.util.EmptyView
+import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @ExperimentalFoundationApi
@@ -40,10 +40,10 @@ fun AlbumsScreen(
             state = lazyGridState
         ) {
             item {
-                EmptyView()
+                EmptyTopbarView()
             }
             item {
-                EmptyView()
+                EmptyTopbarView()
             }
             itemsIndexed(uiState.albums) { index, album ->
                 GridCellView(index, 2, itemSize) {

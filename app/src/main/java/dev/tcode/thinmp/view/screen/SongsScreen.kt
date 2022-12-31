@@ -13,7 +13,7 @@ import androidx.compose.ui.zIndex
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
-import dev.tcode.thinmp.view.util.EmptyView
+import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
@@ -32,7 +32,7 @@ fun SongsScreen(
         }
         LazyColumn(state = lazyListState) {
             item {
-                EmptyView()
+                EmptyTopbarView()
             }
             itemsIndexed(uiState.songs) { index, song ->
                 Column(modifier = Modifier.clickable {
