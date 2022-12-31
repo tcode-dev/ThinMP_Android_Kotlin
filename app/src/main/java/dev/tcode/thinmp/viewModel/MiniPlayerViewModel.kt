@@ -1,13 +1,10 @@
 package dev.tcode.thinmp.viewModel
 
+import android.app.Application
 import android.content.Context
 import android.net.Uri
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,51 +18,38 @@ data class MiniPlayerUiState(
     var isVisible: Boolean = false
 )
 
-class MiniPlayerViewModel( private val context: Context) : ViewModel(), MusicPlayerListener {
+class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener {
+    private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
-//    var uiState by mutableStateOf(MiniPlayerUiState())
-//        private set
-//    private var musicPlayer: MusicPlayer
 
     init {
-//        musicPlayer = MusicPlayer(context)
-//        musicPlayer.setListener(this)
+        musicPlayer = MusicPlayer(application as Context)
+        musicPlayer.setListener(this)
     }
 
     fun update() {
-//        val song = musicPlayer.getCurrentSong()
-//        if (song != null) {
-//            Log.d("MiniPlayerViewModel", "true")
-//            Log.d("MiniPlayerViewModel", song.name)
-//            _uiState.update { currentState ->
-//                currentState.copy(
-//                    primaryText = song.name,
-//                    imageUri = song.getImageUri(),
-//                    isVisible = true
-//                )
-//            }
-//        } else {
-//            Log.d("MiniPlayerViewModel", "false")
-//            _uiState.update { currentState ->
-//                currentState.copy(
-//                    primaryText = "",
-//                    imageUri = Uri.EMPTY,
-//                    isVisible = false
-//                )
-//            }
-//        }
-    }
-
-    fun forceUpdate() {
-        Log.d("MiniPlayerViewModel", "forceUpdate")
+        val song = musicPlayer.getCurrentSong()
+        if (song != null) {
+            Log.d("MiniPlayerViewModel", "true")
+            Log.d("MiniPlayerViewModel", song.name)
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = "testtest",
-                    imageUri = Uri.EMPTY,
+                    primaryText = song.name,
+                    imageUri = song.getImageUri(),
                     isVisible = true
                 )
             }
+        } else {
+            Log.d("MiniPlayerViewModel", "false")
+            _uiState.update { currentState ->
+                currentState.copy(
+                    primaryText = "",
+                    imageUri = Uri.EMPTY,
+                    isVisible = false
+                )
+            }
+        }
     }
 
     override fun onBind() {
