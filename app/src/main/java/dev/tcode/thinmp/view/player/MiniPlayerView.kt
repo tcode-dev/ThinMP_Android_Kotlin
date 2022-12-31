@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.player
 
-import android.util.Log
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,10 +22,9 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     if (!uiState.isVisible) {
-        Log.d("MiniPlayerView", "false")
         return
     }
-    Log.d("MiniPlayerView", uiState.primaryText)
+
     Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
         ImageView(
             uri = uiState.imageUri,

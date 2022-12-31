@@ -7,8 +7,8 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import dev.tcode.thinmp.model.media.SongModel
 
-interface MusicPlayerListener {
-    fun onBind() {}
+interface MusicPlayerListener: MusicServiceListener {
+    fun onBind()
 }
 
 class MusicPlayer(context: Context) {
@@ -52,8 +52,12 @@ class MusicPlayer(context: Context) {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
-                bound = true;
-                listener?.onBind()
+                if (listener != null) {
+                    musicService.setListener(listener as MusicServiceListener)
+                    listener?.onBind()
+                }
+
+                bound = true
             }
 
             override fun onServiceDisconnected(name: ComponentName) {

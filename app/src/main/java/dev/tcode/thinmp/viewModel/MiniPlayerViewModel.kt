@@ -1,9 +1,7 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
@@ -24,15 +22,13 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application as Context)
+        musicPlayer = MusicPlayer(application)
         musicPlayer.setListener(this)
     }
 
     fun update() {
         val song = musicPlayer.getCurrentSong()
         if (song != null) {
-            Log.d("MiniPlayerViewModel", "true")
-            Log.d("MiniPlayerViewModel", song.name)
             _uiState.update { currentState ->
                 currentState.copy(
                     primaryText = song.name,
@@ -41,7 +37,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
                 )
             }
         } else {
-            Log.d("MiniPlayerViewModel", "false")
             _uiState.update { currentState ->
                 currentState.copy(
                     primaryText = "",
@@ -53,6 +48,10 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     override fun onBind() {
+        update()
+    }
+
+    override fun onStart() {
         update()
     }
 }

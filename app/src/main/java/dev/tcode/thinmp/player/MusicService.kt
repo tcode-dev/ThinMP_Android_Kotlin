@@ -8,11 +8,20 @@ import android.os.Binder
 import android.os.IBinder
 import dev.tcode.thinmp.model.media.SongModel
 
+interface MusicServiceListener {
+    fun onStart()
+}
+
 class MusicService : Service() {
     private val binder = MusicBinder()
     private var mediaPlayer : MediaPlayer? = null
+    private var listener: MusicServiceListener? = null
     private var songs: ListIterator<SongModel> = listOf<SongModel>().listIterator()
     var song: SongModel? = null
+
+    fun setListener(listener: MusicServiceListener) {
+        this.listener = listener
+    }
 
     fun start(songs: List<SongModel>, index: Int) {
         this.songs = songs.listIterator(index)
@@ -20,6 +29,7 @@ class MusicService : Service() {
         setMediaPlayer(this.songs.next())
 
         mediaPlayer?.start()
+        listener?.onStart()
     }
 
     private fun setMediaPlayer(song: SongModel) {
