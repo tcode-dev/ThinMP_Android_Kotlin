@@ -54,9 +54,8 @@ class MusicPlayer(context: Context) {
                 musicService = binder.getService()
                 if (listener != null) {
                     musicService.setListener(listener as MusicServiceListener)
-                    listener?.onBind()
                 }
-
+                listener?.onBind()
                 bound = true
             }
 

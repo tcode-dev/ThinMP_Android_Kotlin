@@ -39,7 +39,8 @@ fun AlbumDetailScreen(
 ) {
     val uiState = viewModel.uiState
 
-    Box(Modifier.fillMaxWidth()) {
+    ConstraintLayout(Modifier.fillMaxWidth()) {
+        val (miniPlayer) = createRefs()
         val lazyListState = rememberLazyListState()
         val visible =
             lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
@@ -118,6 +119,11 @@ fun AlbumDetailScreen(
                 }
             }
         }
-        MiniPlayerView()
+        Box(modifier = Modifier
+            .constrainAs(miniPlayer) {
+                top.linkTo(parent.bottom, margin = (-50).dp)
+            }) {
+            MiniPlayerView()
+        }
     }
 }

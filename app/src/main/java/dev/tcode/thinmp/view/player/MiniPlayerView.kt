@@ -1,8 +1,7 @@
 package dev.tcode.thinmp.view.player
 
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -25,7 +25,12 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
         return
     }
 
-    Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.Gray)
+            .padding(top = 3.dp, bottom = 3.dp)
+    ) {
         ImageView(
             uri = uiState.imageUri,
             modifier = Modifier
