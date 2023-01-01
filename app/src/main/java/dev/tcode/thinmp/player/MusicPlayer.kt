@@ -8,22 +8,17 @@ import android.os.IBinder
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicPlayerListener: MusicServiceListener {
-    fun onBind()
+    fun onBind() {}
 }
 
-class MusicPlayer(context: Context) {
+class MusicPlayer(context: Context, val listener: MusicPlayerListener? = null) {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
-    private var listener: MusicPlayerListener? = null
 
     var bound: Boolean = false
 
     init {
         bindService(context)
-    }
-
-    fun setListener(listener: MusicPlayerListener) {
-        this.listener = listener
     }
 
     fun start(songs: List<SongModel>, index: Int) {

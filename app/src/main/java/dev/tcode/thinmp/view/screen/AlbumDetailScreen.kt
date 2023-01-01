@@ -10,16 +10,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
@@ -33,12 +35,9 @@ import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 fun AlbumDetailScreen(
     navController: NavHostController,
     id: String,
-    viewModel: AlbumDetailViewModel = AlbumDetailViewModel(
-        LocalContext.current,
-        id
-    )
+    viewModel: AlbumDetailViewModel = viewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
 
     ConstraintLayout(Modifier.fillMaxWidth()) {
         val (miniPlayer) = createRefs()

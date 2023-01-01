@@ -22,8 +22,7 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application)
-        musicPlayer.setListener(this)
+        musicPlayer = MusicPlayer(application, this)
     }
 
     fun update() {
