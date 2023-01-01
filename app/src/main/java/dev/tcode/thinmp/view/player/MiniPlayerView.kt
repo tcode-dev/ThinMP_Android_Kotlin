@@ -27,8 +27,9 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
 
     Row(
         modifier = Modifier
-            .fillMaxWidth()
             .background(Color.Gray)
+            .fillMaxWidth()
+            .navigationBarsPadding()
             .padding(top = 3.dp, bottom = 3.dp)
     ) {
         ImageView(

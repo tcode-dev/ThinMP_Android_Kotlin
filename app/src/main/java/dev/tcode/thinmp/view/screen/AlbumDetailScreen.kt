@@ -44,6 +44,7 @@ fun AlbumDetailScreen(
         val lazyListState = rememberLazyListState()
         val visible =
             lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
+        val MiniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -126,7 +127,7 @@ fun AlbumDetailScreen(
         }
         Box(modifier = Modifier
             .constrainAs(miniPlayer) {
-                top.linkTo(parent.bottom, margin = (-50).dp)
+                top.linkTo(parent.bottom, margin = (-MiniPlayerHeight).dp)
             }) {
             MiniPlayerView()
         }
