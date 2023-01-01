@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -60,9 +62,15 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-insets-ui:0.24.6-alpha'
     implementation 'com.google.accompanist:accompanist-permissions:0.24.6-alpha'
     implementation 'com.google.accompanist:accompanist-flowlayout:0.24.7-alpha'
+    implementation "com.google.dagger:hilt-android:2.44"
+    implementation 'androidx.hilt:hilt-navigation-fragment:1.0.0'
+    kapt "com.google.dagger:hilt-compiler:2.44"
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.4'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.3.2'
     debugImplementation 'androidx.compose.ui:ui-tooling:1.3.2'
+}
+kapt {
+    correctErrorTypes true
 }
