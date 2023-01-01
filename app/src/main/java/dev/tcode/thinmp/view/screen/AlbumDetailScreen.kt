@@ -25,6 +25,7 @@ import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @ExperimentalFoundationApi
@@ -116,6 +117,11 @@ fun AlbumDetailScreen(
                     viewModel.start(index)
                 }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
+                }
+            }
+            item {
+                if (uiState.shouldShowPlayer) {
+                    EmptyMiniPlayerView()
                 }
             }
         }

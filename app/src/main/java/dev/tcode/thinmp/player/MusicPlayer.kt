@@ -12,7 +12,7 @@ interface MusicPlayerListener: MusicServiceListener {
 }
 
 class MusicPlayer(context: Context) {
-    private lateinit var musicService: MusicService
+    private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
     private var listener: MusicPlayerListener? = null
 
@@ -27,15 +27,15 @@ class MusicPlayer(context: Context) {
     }
 
     fun start(songs: List<SongModel>, index: Int) {
-        musicService.start(songs, index)
+        musicService?.start(songs, index)
+    }
+
+    fun isActive(): Boolean {
+        return musicService?.isActive() ?: false
     }
 
     fun getCurrentSong(): SongModel? {
-        return if (bound) {
-            musicService.song
-        } else {
-            null
-        }
+        return musicService?.song
     }
 
     private fun bindService(context: Context) {
@@ -53,7 +53,7 @@ class MusicPlayer(context: Context) {
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
                 if (listener != null) {
-                    musicService.setListener(listener as MusicServiceListener)
+                    musicService!!.setListener(listener as MusicServiceListener)
                 }
                 listener?.onBind()
                 bound = true

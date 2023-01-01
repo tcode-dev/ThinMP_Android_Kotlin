@@ -32,6 +32,10 @@ class MusicService : Service() {
         listener?.onStart()
     }
 
+    fun isActive(): Boolean {
+        return mediaPlayer != null
+    }
+
     private fun setMediaPlayer(song: SongModel) {
         destroy()
 

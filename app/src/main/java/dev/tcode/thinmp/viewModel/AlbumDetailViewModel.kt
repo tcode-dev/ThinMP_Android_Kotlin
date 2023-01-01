@@ -14,7 +14,8 @@ data class AlbumDetailUiState(
     var primaryText: String = "",
     var secondaryText: String = "",
     var imageUri: Uri = Uri.EMPTY,
-    var songs: List<SongModel> = emptyList()
+    var songs: List<SongModel> = emptyList(),
+    var shouldShowPlayer: Boolean = false
 )
 
 class AlbumDetailViewModel(context: Context, id: String) : ViewModel() {
@@ -40,6 +41,7 @@ class AlbumDetailViewModel(context: Context, id: String) : ViewModel() {
             uiState.secondaryText = album.secondaryText
             uiState.imageUri = album.imageUri
             uiState.songs = album.songs
+            uiState.shouldShowPlayer = musicPlayer.isActive()
         }
     }
 }
