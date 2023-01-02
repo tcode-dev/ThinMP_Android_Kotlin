@@ -29,5 +29,6 @@
 
 * Accompanist - https://google.github.io/accompanist
 * Coil - https://github.com/coil-kt/coil
+* hilt - https://developer.android.com/training/dependency-injection/hilt-android
 * Jetpack Compose - https://developer.android.com/jetpack/compose
 * Realm - https://realm.io
