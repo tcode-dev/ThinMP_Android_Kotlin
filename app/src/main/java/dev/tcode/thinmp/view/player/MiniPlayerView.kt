@@ -80,5 +80,17 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
                 )
             }
         }
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .width(50.dp)
+                .height(50.dp)
+                .clickable { }) {
+            Icon(
+                painter = painterResource(id = R.drawable.round_skip_next_24),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp)
+            )
+        }
     }
 }
