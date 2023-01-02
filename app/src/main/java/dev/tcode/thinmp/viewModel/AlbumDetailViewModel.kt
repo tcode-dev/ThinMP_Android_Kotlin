@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.AlbumDetailService
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
