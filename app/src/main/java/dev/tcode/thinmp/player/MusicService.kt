@@ -56,7 +56,7 @@ class MusicService : Service() {
     }
 
     private fun createCompletionListener(): OnCompletionListener {
-        return label@ OnCompletionListener { mp: MediaPlayer? ->
+        return OnCompletionListener {
             if (songs.hasNext()) {
                 setMediaPlayer(songs.next())
 
