@@ -25,8 +25,8 @@ class MusicPlayer(context: Context, val listener: MusicPlayerListener? = null) {
         musicService?.start(songs, index)
     }
 
-    fun isActive(): Boolean {
-        return musicService?.isActive() ?: false
+    fun isPlaying(): Boolean {
+        return musicService?.isPlaying() ?: false
     }
 
     fun getCurrentSong(): SongModel? {

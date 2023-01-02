@@ -1,8 +1,10 @@
 package dev.tcode.thinmp.view.player
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -12,10 +14,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
@@ -46,7 +50,36 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
             fontSize = 14.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .weight(1f)
         )
+        if (uiState.isPlaying) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+                    .clickable { }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_pause_24),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        } else {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .width(50.dp)
+                    .height(50.dp)
+                    .clickable { }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_play_arrow_24),
+                    contentDescription = null,
+                    modifier = Modifier.size(40.dp)
+                )
+            }
+        }
     }
 }

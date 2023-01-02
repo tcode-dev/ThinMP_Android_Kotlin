@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.update
 data class MiniPlayerUiState(
     var primaryText: String = "",
     var imageUri: Uri = Uri.EMPTY,
-    var isVisible: Boolean = false
+    var isVisible: Boolean = false,
+    var isPlaying: Boolean = false
 )
 
 class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener {
@@ -32,7 +33,8 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
                 currentState.copy(
                     primaryText = song.name,
                     imageUri = song.getImageUri(),
-                    isVisible = true
+                    isVisible = true,
+                    isPlaying = musicPlayer.isPlaying()
                 )
             }
         } else {
@@ -40,7 +42,8 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
                 currentState.copy(
                     primaryText = "",
                     imageUri = Uri.EMPTY,
-                    isVisible = false
+                    isVisible = false,
+                    isPlaying = false
                 )
             }
         }
