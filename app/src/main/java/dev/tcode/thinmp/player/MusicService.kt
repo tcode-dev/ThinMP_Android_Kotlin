@@ -33,6 +33,14 @@ class MusicService : Service() {
         listener?.onStart()
     }
 
+    fun play() {
+        mediaPlayer?.start()
+    }
+
+    fun pause() {
+        mediaPlayer?.pause()
+    }
+
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying ?: false
     }

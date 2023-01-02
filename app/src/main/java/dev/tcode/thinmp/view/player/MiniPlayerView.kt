@@ -60,7 +60,7 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
-                    .clickable { }) {
+                    .clickable { viewModel.pause() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_pause_24),
                     contentDescription = null,
@@ -73,7 +73,7 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
                 modifier = Modifier
                     .width(50.dp)
                     .height(50.dp)
-                    .clickable { }) {
+                    .clickable { viewModel.play() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_play_arrow_24),
                     contentDescription = null,
