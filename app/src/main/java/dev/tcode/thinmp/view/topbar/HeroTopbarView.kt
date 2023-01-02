@@ -51,7 +51,7 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                     .height(50.dp)
                     .clickable { navController.popBackStack() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_arrow_back),
+                        painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
                         contentDescription = null,
                         modifier = Modifier.size(24.dp)
                     )
