@@ -6,11 +6,12 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
-import android.util.Log
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicServiceListener {
     fun onStart() {}
+    fun onPlay() {}
+    fun onPause() {}
 }
 
 class MusicService : Service() {
@@ -35,10 +36,12 @@ class MusicService : Service() {
 
     fun play() {
         mediaPlayer?.start()
+        listener?.onPlay()
     }
 
     fun pause() {
         mediaPlayer?.pause()
+        listener?.onPause()
     }
 
     fun isPlaying(): Boolean {
