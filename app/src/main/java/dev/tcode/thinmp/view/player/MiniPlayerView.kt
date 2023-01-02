@@ -3,10 +3,12 @@ package dev.tcode.thinmp.view.player
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,15 +29,16 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
 
     Row(
         modifier = Modifier
-            .background(Color.Gray)
+            .background(color = MaterialTheme.colors.secondary)
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(top = 3.dp, bottom = 3.dp)
+            .padding(start = 20.dp, top = 5.dp, end = 20.dp, bottom = 5.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         ImageView(
             uri = uiState.imageUri,
             modifier = Modifier
-                .size(44.dp)
+                .size(40.dp)
                 .clip(RoundedCornerShape(4.dp))
         )
         Text(
