@@ -65,15 +65,7 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         update()
     }
 
-    override fun onStart() {
-        update()
-    }
-
-    override fun onPlay() {
-        update()
-    }
-
-    override fun onPause() {
+    override fun onChange() {
         update()
     }
 }

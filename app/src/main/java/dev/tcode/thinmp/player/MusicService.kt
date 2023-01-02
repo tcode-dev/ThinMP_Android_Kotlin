@@ -9,9 +9,7 @@ import android.os.IBinder
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicServiceListener {
-    fun onStart() {}
-    fun onPlay() {}
-    fun onPause() {}
+    fun onChange() {}
 }
 
 class MusicService : Service() {
@@ -31,17 +29,17 @@ class MusicService : Service() {
         setMediaPlayer(this.songs.next())
 
         mediaPlayer?.start()
-        listener?.onStart()
+        listener?.onChange()
     }
 
     fun play() {
         mediaPlayer?.start()
-        listener?.onPlay()
+        listener?.onChange()
     }
 
     fun pause() {
         mediaPlayer?.pause()
-        listener?.onPause()
+        listener?.onChange()
     }
 
     fun next() {
@@ -52,6 +50,8 @@ class MusicService : Service() {
         if (isContinue == true) {
             mediaPlayer?.start()
         }
+
+        listener?.onChange()
     }
 
     fun isPlaying(): Boolean {
@@ -82,6 +82,7 @@ class MusicService : Service() {
                 setMediaPlayer(songs.next())
 
                 mediaPlayer?.start()
+                listener?.onChange()
             } else {
                 destroy()
             }
