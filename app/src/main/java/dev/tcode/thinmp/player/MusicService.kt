@@ -44,6 +44,16 @@ class MusicService : Service() {
         listener?.onPause()
     }
 
+    fun next() {
+        val isContinue = mediaPlayer?.isPlaying
+
+        setMediaPlayer(songs.next())
+
+        if (isContinue == true) {
+            mediaPlayer?.start()
+        }
+    }
+
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying ?: false
     }

@@ -33,6 +33,10 @@ class MusicPlayer(context: Context, val listener: MusicPlayerListener? = null) {
         musicService?.pause()
     }
 
+    fun next() {
+        musicService?.next()
+    }
+
     fun isPlaying(): Boolean {
         return musicService?.isPlaying() ?: false
     }

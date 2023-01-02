@@ -85,7 +85,7 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
             modifier = Modifier
                 .width(50.dp)
                 .height(50.dp)
-                .clickable { }) {
+                .clickable { viewModel.next() }) {
             Icon(
                 painter = painterResource(id = R.drawable.round_skip_next_24),
                 contentDescription = null,

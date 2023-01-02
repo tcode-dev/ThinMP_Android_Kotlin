@@ -57,6 +57,10 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         musicPlayer.pause()
     }
 
+    fun next() {
+        musicPlayer.next()
+    }
+
     override fun onBind() {
         update()
     }
