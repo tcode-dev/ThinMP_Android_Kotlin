@@ -49,7 +49,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     }
 
     protected fun makePlaceholders(size: Int): String {
-        return TextUtils.join(",", listOf(0, size).map { i -> "?" })
+        return TextUtils.join(",", listOf(0, size).map { "?" })
     }
 
     private fun createCursor(): Cursor? {
