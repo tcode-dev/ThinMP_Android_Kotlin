@@ -44,7 +44,8 @@ fun AlbumDetailScreen(
         val lazyListState = rememberLazyListState()
         val visible =
             lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
-        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
+        val miniPlayerHeight =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -120,9 +121,7 @@ fun AlbumDetailScreen(
                 }
             }
             item {
-                if (uiState.shouldShowPlayer) {
-                    EmptyMiniPlayerView()
-                }
+                EmptyMiniPlayerView()
             }
         }
         Box(modifier = Modifier

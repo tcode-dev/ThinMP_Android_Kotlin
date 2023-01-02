@@ -17,21 +17,20 @@ data class AlbumDetailUiState(
     var primaryText: String = "",
     var secondaryText: String = "",
     var imageUri: Uri = Uri.EMPTY,
-    var songs: List<SongModel> = emptyList(),
-    var shouldShowPlayer: Boolean = false
+    var songs: List<SongModel> = emptyList()
 )
 
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
     application: Application,
     savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application), MusicPlayerListener {
+) : AndroidViewModel(application) {
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application, this)
+        musicPlayer = MusicPlayer(application)
 
         savedStateHandle.get<String>("id")?.let {
             load(application, it)
@@ -46,12 +45,6 @@ class AlbumDetailViewModel @Inject constructor(
         }
 
         musicPlayer.start(songs, index)
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                shouldShowPlayer = true
-            )
-        }
     }
 
     private fun load(context: Context, id: String) {
@@ -64,8 +57,7 @@ class AlbumDetailViewModel @Inject constructor(
                     primaryText = album.primaryText,
                     secondaryText = album.secondaryText,
                     imageUri = album.imageUri,
-                    songs = album.songs,
-                    shouldShowPlayer = musicPlayer.isActive()
+                    songs = album.songs
                 )
             }
         }
