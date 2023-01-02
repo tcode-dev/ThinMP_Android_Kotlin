@@ -19,8 +19,8 @@ import dev.tcode.thinmp.view.image.ImageView
 @Composable
 fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri) {
     Column(modifier = Modifier.padding(start = 20.dp)) {
-        Row(modifier = Modifier.padding(top = 3.dp, bottom = 3.dp)) {
-            ImageView(uri = uri, modifier = Modifier.size(44.dp).clip(RoundedCornerShape(4.dp)))
+        Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
+            ImageView(uri = uri, modifier = Modifier.size(40.dp).clip(RoundedCornerShape(4.dp)))
             Column(modifier = Modifier.padding(start = 8.dp)) {
                 Text(primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(secondaryText, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
