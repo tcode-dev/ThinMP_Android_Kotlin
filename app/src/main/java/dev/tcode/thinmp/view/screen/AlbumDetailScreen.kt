@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -42,8 +43,10 @@ fun AlbumDetailScreen(
     ConstraintLayout(Modifier.fillMaxWidth()) {
         val (miniPlayer) = createRefs()
         val lazyListState = rememberLazyListState()
-        val visible =
-            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / 2) > (LocalConfiguration.current.screenWidthDp - 46)
+        val visibleHeroTopbarView =
+            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
+                .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
+                .calculateTopPadding().value + 90))
         val miniPlayerHeight =
             WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
 
@@ -51,7 +54,7 @@ fun AlbumDetailScreen(
             HeroTopbarView(
                 navController,
                 uiState.primaryText,
-                visible = visible,
+                visible = visibleHeroTopbarView,
             )
         }
         LazyColumn(state = lazyListState) {
