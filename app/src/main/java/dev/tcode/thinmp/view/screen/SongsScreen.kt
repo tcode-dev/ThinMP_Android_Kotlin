@@ -35,11 +35,9 @@ fun SongsScreen(
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.songs) { index, song ->
-                Column(modifier = Modifier.clickable {
+                MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.clickable {
                     viewModel.start(index)
-                }) {
-                    MediaRowView(song.name, song.artistName, song.getImageUri())
-                }
+                })
             }
         }
     }

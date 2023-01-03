@@ -164,12 +164,12 @@ fun ArtistDetailScreen(
                     modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
                 )
             }
-            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
-                Column(modifier = Modifier.clickable {
+            itemsIndexed(
+                items = uiState.songs,
+                span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
+                MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.clickable {
                     viewModel.start(index)
-                }) {
-                    MediaRowView(song.name, song.artistName, song.getImageUri())
-                }
+                })
             }
         }
     }
