@@ -14,8 +14,8 @@ import dev.tcode.thinmp.view.util.DividerView
 
 @Composable
 fun PlainRowView(primaryText: String, modifier: Modifier = Modifier) {
-    Column(modifier = Modifier.padding(start = 20.dp)) {
-        Row(modifier = modifier.height(40.dp), verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = modifier.padding(start = 20.dp)) {
+        Row(modifier = Modifier.height(40.dp), verticalAlignment = Alignment.CenterVertically) {
             Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         DividerView()
