@@ -27,9 +27,7 @@ class MusicService : Service() {
         this.songs = songs.listIterator(index)
 
         setMediaPlayer(this.songs.next())
-
-        mediaPlayer?.start()
-        listener?.onChange()
+        play()
     }
 
     fun play() {
