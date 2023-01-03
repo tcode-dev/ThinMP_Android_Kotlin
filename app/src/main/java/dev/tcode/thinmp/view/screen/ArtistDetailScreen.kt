@@ -49,8 +49,8 @@ fun ArtistDetailScreen(
     Box(Modifier.fillMaxWidth()) {
         val lazyGridState = rememberLazyGridState()
         val visibleHeroTopbarView =
-            lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
-                .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
+            lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources
+                .displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
 
         Box(Modifier.zIndex(1F)) {
