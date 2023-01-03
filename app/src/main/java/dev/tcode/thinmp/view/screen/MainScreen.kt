@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -11,47 +13,62 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MainViewModel = MainViewModel()) {
-    val uiState = viewModel.uiState
+fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
+    val uiState by viewModel.uiState.collectAsState()
 
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding()
-                .height(50.dp)
-                .padding(start = 20.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Text(
-                "Library",
-                textAlign = TextAlign.Left,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                fontSize = 24.sp
-            )
-            Box(
-                contentAlignment = Alignment.Center,
+    ConstraintLayout(Modifier.fillMaxSize()) {
+        val (miniPlayer) = createRefs()
+        val miniPlayerHeight =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
+
+        Column {
+            Row(
                 modifier = Modifier
-                    .width(50.dp)
+                    .fillMaxWidth()
+                    .statusBarsPadding()
                     .height(50.dp)
-                    .clickable { }) {
+                    .padding(start = 20.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    "Library",
+                    textAlign = TextAlign.Left,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 24.sp
+                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .width(50.dp)
+                        .height(50.dp)
+                        .clickable { }) {
+                }
             }
+            uiState.menuList.forEach { menu ->
+                PlainRowView(menu.label, modifier = Modifier
+                    .clickable {
+                        navController.navigate(menu.key)
+                    })
+            }
+            EmptyMiniPlayerView()
         }
-        uiState.menuList.forEach { menu ->
-            PlainRowView(menu.label, modifier = Modifier
-                .clickable {
-                    navController.navigate(menu.key)
-                })
+        Box(modifier = Modifier
+            .constrainAs(miniPlayer) {
+                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+            }) {
+            MiniPlayerView()
         }
-        MiniPlayerView()
     }
 }
