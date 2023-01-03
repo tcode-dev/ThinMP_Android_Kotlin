@@ -148,11 +148,13 @@ fun ArtistDetailScreen(
 
                 GridCellView(index, MAX_SPAN_COUNT, itemSize) {
                     AlbumCellView(
-                        navController,
-                        album.id,
                         album.name,
                         album.artistName,
-                        album.getUri()
+                        album.getUri(),
+                        Modifier
+                            .clickable {
+                                navController.navigate("albumDetail/${album.id}")
+                            }
                     )
                 }
             }

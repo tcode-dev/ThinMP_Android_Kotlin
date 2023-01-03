@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -48,11 +49,13 @@ fun AlbumsScreen(
             itemsIndexed(uiState.albums) { index, album ->
                 GridCellView(index, 2, itemSize) {
                     AlbumCellView(
-                        navController,
-                        album.id,
                         album.name,
                         album.artistName,
-                        album.getUri()
+                        album.getUri(),
+                        Modifier
+                            .clickable {
+                                navController.navigate("albumDetail/${album.id}")
+                            }
                     )
                 }
             }
