@@ -40,7 +40,7 @@ fun AlbumDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    ConstraintLayout(Modifier.fillMaxWidth()) {
+    ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
         val lazyListState = rememberLazyListState()
         val visibleHeroTopbarView =
