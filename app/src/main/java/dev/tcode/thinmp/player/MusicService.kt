@@ -19,8 +19,12 @@ class MusicService : Service() {
     private var songs: ListIterator<SongModel> = listOf<SongModel>().listIterator()
     var song: SongModel? = null
 
-    fun setListener(listener: MusicServiceListener) {
+    fun addEventListener(listener: MusicServiceListener) {
         this.listener = listener
+    }
+
+    fun removeEventListener() {
+        this.listener = null
     }
 
     fun start(songs: List<SongModel>, index: Int) {

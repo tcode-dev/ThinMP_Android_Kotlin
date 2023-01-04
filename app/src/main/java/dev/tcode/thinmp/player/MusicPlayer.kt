@@ -11,9 +11,10 @@ interface MusicPlayerListener: MusicServiceListener {
     fun onBind() {}
 }
 
-class MusicPlayer(context: Context, val listener: MusicPlayerListener? = null) {
+class MusicPlayer(context: Context) {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
+    private var listener: MusicPlayerListener? = null
 
     var bound: Boolean = false
 
@@ -45,6 +46,16 @@ class MusicPlayer(context: Context, val listener: MusicPlayerListener? = null) {
         return musicService?.song
     }
 
+    fun addEventListener(listener: MusicPlayerListener) {
+        this.listener = listener
+        musicService?.addEventListener(listener)
+    }
+
+    fun removeEventListener() {
+        this.listener = null
+        musicService?.removeEventListener()
+    }
+
     private fun bindService(context: Context) {
         connection = createConnection()
         context.bindService(
@@ -59,9 +70,7 @@ class MusicPlayer(context: Context, val listener: MusicPlayerListener? = null) {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
-                if (listener != null) {
-                    musicService!!.setListener(listener as MusicServiceListener)
-                }
+                listener?.let { musicService!!.addEventListener(it) }
                 listener?.onBind()
                 bound = true
             }

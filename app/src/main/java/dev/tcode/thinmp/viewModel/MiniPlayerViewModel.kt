@@ -27,7 +27,8 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application, this)
+        musicPlayer = MusicPlayer(application)
+        musicPlayer.addEventListener(this)
     }
 
     fun update() {
@@ -74,10 +75,11 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     override fun onResume(context: Context) {
+        musicPlayer.addEventListener(this)
         update()
     }
 
     override fun onStop() {
-
+        musicPlayer.removeEventListener()
     }
 }
