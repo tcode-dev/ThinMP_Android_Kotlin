@@ -56,6 +56,10 @@ class MusicPlayer(context: Context) {
         musicService?.removeEventListener()
     }
 
+    fun unbindService(context: Context) {
+        context.unbindService(connection)
+    }
+
     private fun bindService(context: Context) {
         connection = createConnection()
         context.bindService(

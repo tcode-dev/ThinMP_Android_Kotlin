@@ -82,4 +82,8 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     override fun onStop() {
         musicPlayer.removeEventListener()
     }
+
+    override fun onDestroy(context: Context) {
+        musicPlayer.unbindService(context)
+    }
 }

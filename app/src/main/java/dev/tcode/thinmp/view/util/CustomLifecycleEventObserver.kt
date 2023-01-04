@@ -11,8 +11,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 
 interface CustomLifecycleEventObserverListener {
-    fun onResume(context: Context)
-    fun onStop()
+    fun onResume(context: Context) {}
+    fun onStop() {}
+    fun onDestroy(context: Context) {}
 }
 
 @Composable
@@ -26,6 +27,7 @@ fun CustomLifecycleEventObserver(listener: CustomLifecycleEventObserverListener)
             when (event) {
                 Lifecycle.Event.ON_RESUME -> listener.onResume(context)
                 Lifecycle.Event.ON_STOP -> listener.onStop()
+                Lifecycle.Event.ON_DESTROY -> listener.onDestroy(context)
                 else -> {}
             }
         }

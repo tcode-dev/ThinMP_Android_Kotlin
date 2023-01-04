@@ -29,8 +29,4 @@ class AlbumsViewModel() : ViewModel(), CustomLifecycleEventObserverListener {
             )
         }
     }
-
-    override fun onStop() {
-        Log.d("AlbumsViewModel", "onStop")
-    }
 }
