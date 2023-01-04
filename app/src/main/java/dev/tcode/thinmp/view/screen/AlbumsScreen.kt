@@ -2,11 +2,8 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,13 +12,16 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
+import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @ExperimentalFoundationApi
@@ -34,21 +34,21 @@ fun AlbumsScreen(
 
     CustomLifecycleEventObserver(viewModel)
 
-    Box {
+    ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyGridState = rememberLazyGridState()
         val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
+        val (miniPlayer) = createRefs()
+        val miniPlayerHeight =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Albums", lazyGridState.firstVisibleItemScrollOffset)
         }
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+            columns = GridCells.Fixed(MAX_SPAN_COUNT),
             state = lazyGridState
         ) {
-            item {
-                EmptyTopbarView()
-            }
-            item {
+            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.albums) { index, album ->
@@ -64,6 +64,15 @@ fun AlbumsScreen(
                     )
                 }
             }
+            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
+                EmptyMiniPlayerView()
+            }
+        }
+        Box(modifier = Modifier
+            .constrainAs(miniPlayer) {
+                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+            }) {
+            MiniPlayerView()
         }
     }
 }
