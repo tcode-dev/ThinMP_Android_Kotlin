@@ -20,11 +20,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
 @Composable
 fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+
+    CustomLifecycleEventObserver(viewModel)
 
     if (!uiState.isVisible) {
         return

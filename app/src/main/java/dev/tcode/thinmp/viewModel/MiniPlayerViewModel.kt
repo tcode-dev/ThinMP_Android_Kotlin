@@ -1,10 +1,12 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
+import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +19,9 @@ data class MiniPlayerUiState(
     var isPlaying: Boolean = false
 )
 
-class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener {
+class MiniPlayerViewModel(application: Application) : AndroidViewModel(application),
+    MusicPlayerListener,
+    CustomLifecycleEventObserverListener {
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
@@ -67,5 +71,13 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
 
     override fun onChange() {
         update()
+    }
+
+    override fun onResume(context: Context) {
+        update()
+    }
+
+    override fun onStop() {
+
     }
 }
