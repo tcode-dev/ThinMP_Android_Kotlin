@@ -146,7 +146,7 @@ fun ArtistDetailScreen(
                 )
             }
             itemsIndexed(items = uiState.albums) { index, album ->
-                val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
+                val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
 
                 GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                     AlbumCellView(

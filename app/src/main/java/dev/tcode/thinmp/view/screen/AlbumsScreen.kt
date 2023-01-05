@@ -37,7 +37,8 @@ fun AlbumsScreen(
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyGridState = rememberLazyGridState()
-        val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
+        val itemSize: Dp =
+            LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
         val (miniPlayer) = createRefs()
         val miniPlayerHeight =
             WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
