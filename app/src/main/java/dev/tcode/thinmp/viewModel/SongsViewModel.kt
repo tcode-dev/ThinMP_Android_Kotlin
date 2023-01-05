@@ -28,13 +28,7 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     fun start(index: Int) {
-        val songs = _uiState.asStateFlow().value.songs
-
-        if (songs.isEmpty()) {
-            return
-        }
-
-        musicPlayer.start(songs, index)
+        musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
     override fun onResume(context: Context) {

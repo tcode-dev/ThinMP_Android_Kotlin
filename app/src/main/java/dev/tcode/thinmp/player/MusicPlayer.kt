@@ -23,6 +23,10 @@ class MusicPlayer(context: Context) {
     }
 
     fun start(songs: List<SongModel>, index: Int) {
+        if (songs.isEmpty()) {
+            return
+        }
+
         musicService?.start(songs, index)
     }
 
