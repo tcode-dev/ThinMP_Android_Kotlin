@@ -12,5 +12,6 @@ class StyleConstant {
         const val PADDING_SMALL = 10
         const val PADDING_TINY = 5
         const val ROW_HEIGHT = 50
+        const val GRID_MAX_SPAN_COUNT = 2
     }
 }

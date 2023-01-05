@@ -33,8 +33,6 @@ import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
-const val MAX_SPAN_COUNT = 2
-
 @ExperimentalFoundationApi
 @Composable
 fun ArtistDetailScreen(
@@ -61,8 +59,8 @@ fun ArtistDetailScreen(
                 visible = visibleHeroTopbarView,
             )
         }
-        LazyVerticalGrid(columns = GridCells.Fixed(MAX_SPAN_COUNT), state = lazyGridState) {
-            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
+        LazyVerticalGrid(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
@@ -136,7 +134,7 @@ fun ArtistDetailScreen(
                     }
                 }
             }
-            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
                     "Albums",
                     fontWeight = FontWeight.Bold,
@@ -150,7 +148,7 @@ fun ArtistDetailScreen(
             itemsIndexed(items = uiState.albums) { index, album ->
                 val itemSize: Dp = (LocalConfiguration.current.screenWidthDp.dp / 2)
 
-                GridCellView(index, MAX_SPAN_COUNT, itemSize) {
+                GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                     AlbumCellView(
                         album.name,
                         album.artistName,
@@ -162,7 +160,7 @@ fun ArtistDetailScreen(
                     )
                 }
             }
-            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
                     "Songs",
                     fontWeight = FontWeight.Bold,

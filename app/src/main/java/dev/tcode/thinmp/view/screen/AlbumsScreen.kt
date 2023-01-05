@@ -15,6 +15,7 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.player.MiniPlayerView
@@ -45,10 +46,10 @@ fun AlbumsScreen(
             ListTopbarView(navController, "Albums", lazyGridState.firstVisibleItemScrollOffset)
         }
         LazyVerticalGrid(
-            columns = GridCells.Fixed(MAX_SPAN_COUNT),
+            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
             state = lazyGridState
         ) {
-            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.albums) { index, album ->
@@ -64,7 +65,7 @@ fun AlbumsScreen(
                     )
                 }
             }
-            item(span = { GridItemSpan(MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 EmptyMiniPlayerView()
             }
         }
