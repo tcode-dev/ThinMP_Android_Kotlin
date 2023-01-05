@@ -82,7 +82,8 @@ fun ArtistDetailScreen(
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
                             .fillMaxSize()
-                            .blur(10.dp)
+                            .blur(10.dp),
+                        painter = null
                     )
                     Box(
                         contentAlignment = Alignment.Center,
