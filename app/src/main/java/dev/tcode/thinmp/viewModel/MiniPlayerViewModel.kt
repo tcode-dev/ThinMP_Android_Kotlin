@@ -31,29 +31,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         musicPlayer.addEventListener(this)
     }
 
-    fun update() {
-        val song = musicPlayer.getCurrentSong()
-        if (song != null) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = song.name,
-                    imageUri = song.getImageUri(),
-                    isVisible = true,
-                    isPlaying = musicPlayer.isPlaying()
-                )
-            }
-        } else {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = "",
-                    imageUri = Uri.EMPTY,
-                    isVisible = false,
-                    isPlaying = false
-                )
-            }
-        }
-    }
-
     fun play() {
         musicPlayer.play()
     }
@@ -85,5 +62,23 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
 
     override fun onDestroy(context: Context) {
         musicPlayer.unbindService(context)
+    }
+
+    private fun update() {
+        val song = musicPlayer.getCurrentSong()
+        if (song != null) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    primaryText = song.name,
+                    imageUri = song.getImageUri(),
+                    isVisible = true,
+                    isPlaying = musicPlayer.isPlaying()
+                )
+            }
+        } else {
+            _uiState.update {
+                MiniPlayerUiState()
+            }
+        }
     }
 }
