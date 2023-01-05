@@ -16,7 +16,7 @@ class AlbumModel(
         return trackList
     }
 
-    fun getUri(): Uri {
+    fun getImageUri(): Uri {
         return Uri.parse("content://media/external/audio/albumart/${id}")
     }
 }

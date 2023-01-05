@@ -58,7 +58,7 @@ fun AlbumsScreen(
                     AlbumCellView(
                         album.name,
                         album.artistName,
-                        album.getUri(),
+                        album.getImageUri(),
                         Modifier
                             .clickable {
                                 navController.navigate("albumDetail/${album.id}")

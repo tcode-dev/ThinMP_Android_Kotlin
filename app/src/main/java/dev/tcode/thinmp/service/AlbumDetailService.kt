@@ -13,7 +13,7 @@ class AlbumDetailService(val context: Context) {
         val songs = songRepository.findByAlbumId(id)
 
         return if (album != null) {
-            AlbumDetailModel(id, album.name, album.artistName, album.getUri(), songs)
+            AlbumDetailModel(id, album.name, album.artistName, album.getImageUri(), songs)
         } else {
             null
         }
