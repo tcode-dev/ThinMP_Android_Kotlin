@@ -1,8 +1,8 @@
 package dev.tcode.thinmp.viewModel
 
+import android.app.Application
 import android.content.Context
-import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.service.AlbumsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -15,11 +15,24 @@ data class AlbumsUiState(
     var albums: List<AlbumModel> = emptyList()
 )
 
-class AlbumsViewModel() : ViewModel(), CustomLifecycleEventObserverListener {
+class AlbumsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+    private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(AlbumsUiState())
     val uiState: StateFlow<AlbumsUiState> = _uiState.asStateFlow()
 
+    init {
+        load(application)
+    }
+
     override fun onResume(context: Context) {
+        if (initialized) {
+            load(context)
+        } else {
+            initialized = true
+        }
+    }
+
+    private fun load(context: Context) {
         val service = AlbumsService(context)
         val albums = service.findAll()
 
