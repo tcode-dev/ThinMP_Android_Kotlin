@@ -59,6 +59,7 @@ fun ArtistDetailScreen(
         val (miniPlayer) = createRefs()
         val miniPlayerHeight =
             WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -75,6 +76,7 @@ fun ArtistDetailScreen(
                         .height(LocalConfiguration.current.screenWidthDp.dp)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
+
                     ImageView(
                         uri = uiState.imageUri,
                         contentScale = ContentScale.FillWidth,
@@ -90,7 +92,7 @@ fun ArtistDetailScreen(
                             uri = uiState.imageUri,
                             contentScale = ContentScale.FillWidth,
                             modifier = Modifier
-                                .size(120.dp)
+                                .size(imageSize)
                                 .clip(CircleShape)
                         )
                     }
