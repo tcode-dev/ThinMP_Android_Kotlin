@@ -24,6 +24,7 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -48,7 +49,7 @@ fun AlbumDetailScreen(
                 .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
         val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(

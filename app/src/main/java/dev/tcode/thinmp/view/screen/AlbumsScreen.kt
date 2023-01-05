@@ -41,7 +41,7 @@ fun AlbumsScreen(
             LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
         val (miniPlayer) = createRefs()
         val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Albums", lazyGridState.firstVisibleItemScrollOffset)

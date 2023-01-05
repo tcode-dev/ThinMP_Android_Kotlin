@@ -29,7 +29,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
         val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + 50
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Column {
             Row(
