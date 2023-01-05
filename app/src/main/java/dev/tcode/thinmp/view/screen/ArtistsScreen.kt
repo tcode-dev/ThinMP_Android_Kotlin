@@ -19,6 +19,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.ArtistsViewModel
@@ -30,6 +31,8 @@ fun ArtistsScreen(
     viewModel: ArtistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+
+    CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
