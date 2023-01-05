@@ -32,8 +32,8 @@ fun ArtistsScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
         val lazyListState = rememberLazyListState()
+        val (miniPlayer) = createRefs()
         val miniPlayerHeight =
             WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 

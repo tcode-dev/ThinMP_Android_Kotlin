@@ -42,12 +42,12 @@ fun AlbumDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
         val lazyListState = rememberLazyListState()
         val visibleHeroTopbarView =
             lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
                 .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
+        val (miniPlayer) = createRefs()
         val miniPlayerHeight =
             WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 

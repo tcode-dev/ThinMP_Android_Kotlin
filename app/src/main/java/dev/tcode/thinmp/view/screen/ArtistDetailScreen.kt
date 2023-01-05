@@ -48,12 +48,12 @@ fun ArtistDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
         val lazyGridState = rememberLazyGridState()
         val visibleHeroTopbarView =
             lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources
                 .displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
+        val (miniPlayer) = createRefs()
         val miniPlayerHeight =
             WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
