@@ -7,12 +7,19 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
@@ -20,12 +27,15 @@ import dev.tcode.thinmp.viewModel.SongsViewModel
 @Composable
 fun SongsScreen(
     navController: NavHostController,
-    viewModel: SongsViewModel = SongsViewModel(LocalContext.current)
+    viewModel: SongsViewModel = viewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
 
-    Box {
+    ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
+        val (miniPlayer) = createRefs()
+        val miniPlayerHeight =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Songs", lazyListState.firstVisibleItemScrollOffset)
@@ -39,6 +49,15 @@ fun SongsScreen(
                     viewModel.start(index)
                 })
             }
+            item {
+                EmptyMiniPlayerView()
+            }
+        }
+        Box(modifier = Modifier
+            .constrainAs(miniPlayer) {
+                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+            }) {
+            MiniPlayerView()
         }
     }
 }
