@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.service.AlbumDetailService
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -23,17 +24,18 @@ data class AlbumDetailUiState(
 class AlbumDetailViewModel @Inject constructor(
     application: Application,
     savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application) {
+) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+    private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
+    val id: String
 
     init {
         musicPlayer = MusicPlayer(application)
+        id = savedStateHandle.get<String>("id").toString()
 
-        savedStateHandle.get<String>("id")?.let {
-            load(application, it)
-        }
+        load(application)
     }
 
     fun start(index: Int) {
@@ -46,7 +48,15 @@ class AlbumDetailViewModel @Inject constructor(
         musicPlayer.start(songs, index)
     }
 
-    private fun load(context: Context, id: String) {
+    override fun onResume(context: Context) {
+        if (initialized) {
+            load(context)
+        } else {
+            initialized = true
+        }
+    }
+
+    private fun load(context: Context) {
         val service = AlbumDetailService(context)
         val album = service.findById(id)
 
