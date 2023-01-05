@@ -17,6 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
 fun HeroTopbarView(navController: NavHostController, title: String, visible: Boolean) {
@@ -31,7 +32,7 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                     .background(color = MaterialTheme.colors.secondary)
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .height(50.dp)
+                    .height(StyleConstant.ROW_HEIGHT.dp)
             ) {
             }
         }
@@ -40,7 +41,7 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .height(50.dp),
+                    .height(StyleConstant.ROW_HEIGHT.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
