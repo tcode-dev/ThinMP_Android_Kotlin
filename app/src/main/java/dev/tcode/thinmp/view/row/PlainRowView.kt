@@ -10,12 +10,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.util.DividerView
 
 @Composable
 fun PlainRowView(primaryText: String, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(start = 20.dp)) {
-        Row(modifier = Modifier.height(40.dp), verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = modifier.padding(start = StyleConstant.PADDING_LARGE.dp)) {
+        Row(
+            modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         DividerView()

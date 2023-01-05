@@ -6,12 +6,13 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
 fun EmptyMiniPlayerView() {
     Spacer(
         Modifier
             .navigationBarsPadding()
-            .height(50.dp)
+            .height(StyleConstant.ROW_HEIGHT.dp)
     )
 }

@@ -17,10 +17,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
 fun ListTopbarView(navController: NavHostController, title: String, offset: Int) {
-    Box() {
+    Box {
         AnimatedVisibility(
             visible = offset > 1,
             enter = fadeIn(),
@@ -34,7 +35,7 @@ fun ListTopbarView(navController: NavHostController, title: String, offset: Int)
                     modifier = Modifier
                         .fillMaxWidth()
                         .statusBarsPadding()
-                        .height(50.dp)
+                        .height(StyleConstant.ROW_HEIGHT.dp)
                 ) {}
             }
         }
@@ -42,20 +43,19 @@ fun ListTopbarView(navController: NavHostController, title: String, offset: Int)
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .height(50.dp),
+                .height(StyleConstant.ROW_HEIGHT.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
+                    .size(StyleConstant.BUTTON_SIZE.dp)
                     .clickable { navController.popBackStack() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
                     contentDescription = null,
-                    modifier = Modifier.size(24.dp)
+                    modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                 )
             }
             Text(
@@ -68,8 +68,7 @@ fun ListTopbarView(navController: NavHostController, title: String, offset: Int)
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
+                    .size(StyleConstant.BUTTON_SIZE.dp)
                     .clickable { }) {
             }
         }

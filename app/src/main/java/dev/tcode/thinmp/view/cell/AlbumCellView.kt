@@ -12,6 +12,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
@@ -31,7 +32,7 @@ fun AlbumCellView(
                     modifier = Modifier
                         .width(size)
                         .height(size)
-                        .clip(RoundedCornerShape(4.dp))
+                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                 )
             }
             Text(
@@ -42,7 +43,7 @@ fun AlbumCellView(
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 4.dp)
+                    .padding(top = StyleConstant.PADDING_TINY.dp)
             )
             Text(
                 secondaryText,

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
 fun GridCellView(
@@ -14,16 +15,16 @@ fun GridCellView(
     content: @Composable BoxScope.() -> Unit,
 ) {
     val even = (index % colNumber) == 0
-    val start = if (even) 20.dp else 10.dp
-    val end = if (even) 10.dp else 20.dp
+    val start = if (even) StyleConstant.PADDING_LARGE.dp else StyleConstant.PADDING_SMALL.dp
+    val end = if (even) StyleConstant.PADDING_SMALL.dp else StyleConstant.PADDING_LARGE.dp
+
     Box(
         modifier = Modifier
             .width(itemSize)
             .padding(
                 start = start,
                 end = end,
-                top = 0.dp,
-                bottom = 20.dp
+                bottom = StyleConstant.PADDING_LARGE.dp
             ),
         content = content
     )

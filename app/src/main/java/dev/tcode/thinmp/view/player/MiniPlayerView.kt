@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
@@ -38,14 +39,19 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
             .background(color = MaterialTheme.colors.secondary)
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(start = 20.dp, top = 5.dp, end = 20.dp, bottom = 5.dp),
+            .padding(
+                start = StyleConstant.PADDING_LARGE.dp,
+                top = StyleConstant.PADDING_TINY.dp,
+                end = StyleConstant.PADDING_LARGE.dp,
+                bottom = StyleConstant.PADDING_TINY.dp
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageView(
             uri = uiState.imageUri,
             modifier = Modifier
-                .size(40.dp)
-                .clip(RoundedCornerShape(4.dp))
+                .size(StyleConstant.IMAGE_SIZE.dp)
+                .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
         )
         Text(
             uiState.primaryText,
@@ -53,46 +59,43 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = StyleConstant.PADDING_SMALL.dp)
                 .weight(1f)
         )
         if (uiState.isPlaying) {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
+                    .size(StyleConstant.BUTTON_SIZE.dp)
                     .clickable { viewModel.pause() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_pause_24),
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                 )
             }
         } else {
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
+                    .size(StyleConstant.BUTTON_SIZE.dp)
                     .clickable { viewModel.play() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_play_arrow_24),
                     contentDescription = null,
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                 )
             }
         }
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .width(50.dp)
-                .height(50.dp)
+                .size(StyleConstant.BUTTON_SIZE.dp)
                 .clickable { viewModel.next() }) {
             Icon(
                 painter = painterResource(id = R.drawable.round_skip_next_24),
                 contentDescription = null,
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
             )
         }
     }

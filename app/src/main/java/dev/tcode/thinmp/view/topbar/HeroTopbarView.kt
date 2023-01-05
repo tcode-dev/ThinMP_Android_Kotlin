@@ -48,13 +48,12 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                    .width(50.dp)
-                    .height(50.dp)
-                    .clickable { navController.popBackStack() }) {
+                        .size(StyleConstant.BUTTON_SIZE.dp)
+                        .clickable { navController.popBackStack() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
                         contentDescription = null,
-                        modifier = Modifier.size(24.dp)
+                        modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                     )
                 }
                 Text(
@@ -67,8 +66,7 @@ fun HeroTopbarView(navController: NavHostController, title: String, visible: Boo
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(50.dp)
+                        .size(StyleConstant.BUTTON_SIZE.dp)
                         .clickable { }) {
                 }
             }

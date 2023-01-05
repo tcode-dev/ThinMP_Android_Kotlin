@@ -24,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavHostController
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
@@ -140,7 +141,10 @@ fun ArtistDetailScreen(
                     "Albums",
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(
+                        start = StyleConstant.PADDING_LARGE.dp,
+                        bottom = StyleConstant.PADDING_MEDIUM.dp
+                    )
                 )
             }
             itemsIndexed(items = uiState.albums) { index, album ->
@@ -163,7 +167,10 @@ fun ArtistDetailScreen(
                     "Songs",
                     fontWeight = FontWeight.Bold,
                     fontSize = 24.sp,
-                    modifier = Modifier.padding(start = 20.dp, bottom = 15.dp)
+                    modifier = Modifier.padding(
+                        start = StyleConstant.PADDING_LARGE.dp,
+                        bottom = StyleConstant.PADDING_MEDIUM.dp
+                    )
                 )
             }
             itemsIndexed(

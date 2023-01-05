@@ -13,17 +13,38 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.util.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
-fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri, modifier: Modifier = Modifier) {
-    Column(modifier = modifier.padding(start = 20.dp)) {
-        Row(modifier = Modifier.padding(top = 5.dp, bottom = 5.dp)) {
-            ImageView(uri = uri, modifier = Modifier.size(40.dp).clip(RoundedCornerShape(4.dp)))
-            Column(modifier = Modifier.padding(start = 8.dp)) {
+fun MediaRowView(
+    primaryText: String,
+    secondaryText: String,
+    uri: Uri,
+    modifier: Modifier = Modifier
+) {
+    Column(modifier = modifier.padding(start = StyleConstant.PADDING_LARGE.dp)) {
+        Row(
+            modifier = Modifier.padding(
+                top = StyleConstant.PADDING_TINY.dp,
+                bottom = StyleConstant.PADDING_TINY.dp
+            )
+        ) {
+            ImageView(
+                uri = uri,
+                modifier = Modifier
+                    .size(StyleConstant.IMAGE_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+            )
+            Column(modifier = Modifier.padding(start = StyleConstant.PADDING_SMALL.dp)) {
                 Text(primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(secondaryText, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(
+                    secondaryText,
+                    fontSize = 12.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
             }
         }
         DividerView()

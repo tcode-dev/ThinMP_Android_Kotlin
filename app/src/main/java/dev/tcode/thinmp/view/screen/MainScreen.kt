@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
@@ -35,8 +36,8 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .height(50.dp)
-                    .padding(start = 20.dp),
+                    .height(StyleConstant.ROW_HEIGHT.dp)
+                    .padding(start = StyleConstant.PADDING_LARGE.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
@@ -51,8 +52,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 Box(
                     contentAlignment = Alignment.Center,
                     modifier = Modifier
-                        .width(50.dp)
-                        .height(50.dp)
+                        .size(StyleConstant.BUTTON_SIZE.dp)
                         .clickable { }) {
                 }
             }
