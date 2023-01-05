@@ -1,15 +1,20 @@
 package dev.tcode.thinmp.viewModel
 
+import android.app.Application
 import android.content.Context
 import android.net.Uri
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.SavedStateHandle
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.service.ArtistDetailService
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class ArtistDetailUiState(
     var primaryText: String = "",
@@ -19,14 +24,30 @@ data class ArtistDetailUiState(
     var songs: List<SongModel> = emptyList()
 )
 
-class ArtistDetailViewModel(context: Context, id: String) : ViewModel() {
+@HiltViewModel
+class ArtistDetailViewModel @Inject constructor(
+    application: Application,
+    savedStateHandle: SavedStateHandle
+) : AndroidViewModel(application) {
     private var musicPlayer: MusicPlayer
-    var uiState by mutableStateOf(ArtistDetailUiState())
-        private set
+    private val _uiState = MutableStateFlow(ArtistDetailUiState())
+    val uiState: StateFlow<ArtistDetailUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(context)
-        load(context, id)
+        musicPlayer = MusicPlayer(application)
+        savedStateHandle.get<String>("id")?.let {
+            load(application, it)
+        }
+    }
+
+    fun start(index: Int) {
+        val songs = _uiState.asStateFlow().value.songs
+
+        if (songs.isEmpty()) {
+            return
+        }
+
+        musicPlayer.start(songs, index)
     }
 
     private fun load(context: Context, id: String) {
@@ -34,15 +55,15 @@ class ArtistDetailViewModel(context: Context, id: String) : ViewModel() {
         val artist = service.findById(id)
 
         if (artist != null) {
-            uiState.primaryText = artist.primaryText
-            uiState.secondaryText = artist.secondaryText
-            uiState.imageUri = artist.imageUri
-            uiState.albums = artist.albums
-            uiState.songs = artist.songs
+            _uiState.update { currentState ->
+                currentState.copy(
+                    primaryText = artist.primaryText,
+                    secondaryText = artist.secondaryText,
+                    imageUri = artist.imageUri,
+                    albums = artist.albums,
+                    songs = artist.songs
+                )
+            }
         }
-    }
-
-    fun start(index: Int) {
-        musicPlayer.start(uiState.songs, index)
     }
 }

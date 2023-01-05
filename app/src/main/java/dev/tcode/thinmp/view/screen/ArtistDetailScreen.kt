@@ -9,6 +9,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -23,14 +25,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.HeroTopbarView
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @ExperimentalFoundationApi
@@ -38,19 +43,19 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 fun ArtistDetailScreen(
     navController: NavHostController,
     id: String,
-    viewModel: ArtistDetailViewModel = ArtistDetailViewModel(
-        LocalContext.current,
-        id
-    )
+    viewModel: ArtistDetailViewModel = viewModel()
 ) {
-    val uiState = viewModel.uiState
+    val uiState by viewModel.uiState.collectAsState()
 
-    Box(Modifier.fillMaxWidth()) {
+    ConstraintLayout(Modifier.fillMaxSize()) {
+        val (miniPlayer) = createRefs()
         val lazyGridState = rememberLazyGridState()
         val visibleHeroTopbarView =
             lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources
                 .displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
+        val miniPlayerHeight =
+            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -178,6 +183,15 @@ fun ArtistDetailScreen(
                     viewModel.start(index)
                 })
             }
+            item {
+                EmptyMiniPlayerView()
+            }
+        }
+        Box(modifier = Modifier
+            .constrainAs(miniPlayer) {
+                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+            }) {
+            MiniPlayerView()
         }
     }
 }
