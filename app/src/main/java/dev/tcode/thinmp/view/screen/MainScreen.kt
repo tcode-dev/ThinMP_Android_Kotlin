@@ -19,12 +19,15 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+
+    CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
