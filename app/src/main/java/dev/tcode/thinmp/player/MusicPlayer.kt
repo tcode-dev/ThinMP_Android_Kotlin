@@ -38,6 +38,10 @@ class MusicPlayer(context: Context) {
         musicService?.pause()
     }
 
+    fun prev() {
+        musicService?.prev()
+    }
+
     fun next() {
         musicService?.next()
     }

@@ -115,7 +115,7 @@ fun PlayerScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.next() }) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.prev() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, modifier = Modifier.size(72.dp)
                     )

@@ -13,8 +13,9 @@ interface MusicServiceListener {
 }
 
 class MusicService : Service() {
+    private val PREV_MS = 3000
     private val binder = MusicBinder()
-    private var mediaPlayer : MediaPlayer? = null
+    private var mediaPlayer: MediaPlayer? = null
     private var listener: MusicServiceListener? = null
     private var songs: ListIterator<SongModel> = listOf<SongModel>().listIterator()
     var song: SongModel? = null
@@ -44,6 +45,22 @@ class MusicService : Service() {
         listener?.onChange()
     }
 
+    fun prev() {
+        val isContinue = mediaPlayer?.isPlaying
+
+        if (currentPosition() <= PREV_MS) {
+            setMediaPlayer(songs.next())
+        } else {
+            song?.let { setMediaPlayer(it) }
+        }
+
+        if (isContinue == true) {
+            mediaPlayer?.start()
+        }
+
+        listener?.onChange()
+    }
+
     fun next() {
         val isContinue = mediaPlayer?.isPlaying
 
@@ -58,6 +75,10 @@ class MusicService : Service() {
 
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying ?: false
+    }
+
+    fun currentPosition(): Int {
+        return mediaPlayer?.currentPosition ?: 0
     }
 
     private fun setMediaPlayer(song: SongModel) {

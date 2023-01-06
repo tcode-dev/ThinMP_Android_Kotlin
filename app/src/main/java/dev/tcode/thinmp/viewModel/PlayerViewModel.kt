@@ -39,6 +39,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         musicPlayer.pause()
     }
 
+    fun prev() {
+        musicPlayer.prev()
+    }
+
     fun next() {
         musicPlayer.next()
     }
