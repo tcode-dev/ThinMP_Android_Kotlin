@@ -71,7 +71,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             .constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
-            MiniPlayerView()
+            MiniPlayerView(navController)
         }
     }
 }

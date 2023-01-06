@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -27,7 +27,7 @@ import dev.tcode.thinmp.viewModel.ArtistsViewModel
 @ExperimentalFoundationApi
 @Composable
 fun ArtistsScreen(
-    navController: NavHostController,
+    navController: NavController,
     viewModel: ArtistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -61,7 +61,7 @@ fun ArtistsScreen(
             .constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
-            MiniPlayerView()
+            MiniPlayerView(navController)
         }
     }
 }

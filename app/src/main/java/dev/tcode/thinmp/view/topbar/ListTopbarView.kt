@@ -15,12 +15,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
-fun ListTopbarView(navController: NavHostController, title: String, offset: Int) {
+fun ListTopbarView(navController: NavController, title: String, offset: Int) {
     Box {
         AnimatedVisibility(
             visible = offset > 1,

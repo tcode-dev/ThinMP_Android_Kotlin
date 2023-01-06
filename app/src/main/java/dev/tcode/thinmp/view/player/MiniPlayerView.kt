@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
@@ -25,7 +26,7 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
 @Composable
-fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
+fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     CustomLifecycleEventObserver(viewModel)
@@ -44,7 +45,8 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
                 top = StyleConstant.PADDING_TINY.dp,
                 end = StyleConstant.PADDING_LARGE.dp,
                 bottom = StyleConstant.PADDING_TINY.dp
-            ),
+            )
+            .clickable { navController.navigate("player") },
         verticalAlignment = Alignment.CenterVertically
     ) {
         ImageView(

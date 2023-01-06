@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
+import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.view.cell.AlbumCellView
@@ -42,7 +42,7 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 @ExperimentalFoundationApi
 @Composable
 fun ArtistDetailScreen(
-    navController: NavHostController,
+    navController: NavController,
     id: String,
     viewModel: ArtistDetailViewModel = viewModel()
 ) {
@@ -197,7 +197,7 @@ fun ArtistDetailScreen(
             .constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
-            MiniPlayerView()
+            MiniPlayerView(navController)
         }
     }
 }

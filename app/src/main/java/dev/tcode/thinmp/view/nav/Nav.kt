@@ -33,5 +33,6 @@ fun Nav() {
         { backStackEntry ->
             ArtistDetailScreen(navController, backStackEntry.arguments?.getString("id").let(::requireNotNull))
         }
+        composable("player") { PlayerScreen(navController) }
     }
 }
