@@ -115,7 +115,13 @@ fun PlayerScreen(
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
             var sliderPosition by remember { mutableStateOf(0f) }
-            Slider(value = sliderPosition, onValueChange = { sliderPosition = it }, modifier = Modifier.padding(start = 30.dp, end = 30.dp))
+            Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
+                Slider(value = sliderPosition, onValueChange = { sliderPosition = it })
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Text("1:35")
+                    Text("5:28")
+                }
+            }
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
             ) {
