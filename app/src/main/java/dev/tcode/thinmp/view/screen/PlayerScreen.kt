@@ -40,7 +40,8 @@ fun PlayerScreen(
     CustomLifecycleEventObserver(viewModel)
 
     Column(Modifier.fillMaxSize()) {
-        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 70
+        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 64
+        val imageBottomPosition: Dp = LocalConfiguration.current.screenWidthDp.dp - imageSize - WindowInsets.systemBars.asPaddingValues().calculateTopPadding() - StyleConstant.ROW_HEIGHT.dp
 
         ConstraintLayout(
             Modifier
@@ -69,12 +70,22 @@ fun PlayerScreen(
                     ),
             ) {}
             Box(
-                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                contentAlignment = Alignment.BottomCenter, modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = imageBottomPosition)
             ) {
                 ImageView(
                     uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
                         .size(imageSize)
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                        .clip(RoundedCornerShape(8.dp))
+                )
+            }
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .statusBarsPadding()
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { navController.popBackStack() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                 )
             }
         }
