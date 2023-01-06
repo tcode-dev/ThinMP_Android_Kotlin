@@ -11,10 +11,7 @@ import dev.tcode.thinmp.R
 
 @Composable
 fun ImageView(
-    uri: Uri,
-    modifier: Modifier = Modifier,
-    contentScale: ContentScale = ContentScale.Fit,
-    painter: Painter? = painterResource(R.drawable.song_dark)
+    uri: Uri, modifier: Modifier = Modifier, contentScale: ContentScale = ContentScale.Fit, painter: Painter? = painterResource(R.drawable.song_dark)
 ) {
     AsyncImage(
         model = uri,

@@ -42,9 +42,7 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 @ExperimentalFoundationApi
 @Composable
 fun ArtistDetailScreen(
-    navController: NavController,
-    id: String,
-    viewModel: ArtistDetailViewModel = viewModel()
+    navController: NavController, id: String, viewModel: ArtistDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -53,12 +51,10 @@ fun ArtistDetailScreen(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyGridState = rememberLazyGridState()
         val visibleHeroTopbarView =
-            lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources
-                .displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
+            lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
                 .calculateTopPadding().value + 90))
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
         val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
 
         Box(Modifier.zIndex(1F)) {
@@ -78,21 +74,15 @@ fun ArtistDetailScreen(
                     val (primary, secondary, tertiary) = createRefs()
 
                     ImageView(
-                        uri = uiState.imageUri,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier
+                        uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
                             .fillMaxSize()
-                            .blur(20.dp),
-                        painter = null
+                            .blur(20.dp), painter = null
                     )
                     Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
+                        contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
                     ) {
                         ImageView(
-                            uri = uiState.imageUri,
-                            contentScale = ContentScale.FillWidth,
-                            modifier = Modifier
+                            uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
                                 .size(imageSize)
                                 .clip(CircleShape)
                         )
@@ -110,8 +100,7 @@ fun ArtistDetailScreen(
                                     1.0F to MaterialTheme.colors.surface,
                                 )
                             ),
-                    ) {
-                    }
+                    ) {}
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -147,12 +136,8 @@ fun ArtistDetailScreen(
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    "Albums",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(
-                        start = StyleConstant.PADDING_LARGE.dp,
-                        bottom = StyleConstant.PADDING_MEDIUM.dp
+                    "Albums", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                        start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
                     )
                 )
             }
@@ -160,31 +145,19 @@ fun ArtistDetailScreen(
                 val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
 
                 GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                    AlbumCellView(
-                        album.name,
-                        album.artistName,
-                        album.getImageUri(),
-                        Modifier
-                            .clickable {
-                                navController.navigate("albumDetail/${album.id}")
-                            }
-                    )
+                    AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.clickable {
+                            navController.navigate("albumDetail/${album.id}")
+                        })
                 }
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    "Songs",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    modifier = Modifier.padding(
-                        start = StyleConstant.PADDING_LARGE.dp,
-                        bottom = StyleConstant.PADDING_MEDIUM.dp
+                    "Songs", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                        start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
                     )
                 )
             }
-            itemsIndexed(
-                items = uiState.songs,
-                span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
+            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
                 MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.clickable {
                     viewModel.start(index)
                 })
@@ -193,8 +166,7 @@ fun ArtistDetailScreen(
                 EmptyMiniPlayerView()
             }
         }
-        Box(modifier = Modifier
-            .constrainAs(miniPlayer) {
+        Box(modifier = Modifier.constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
             MiniPlayerView(navController)

@@ -17,10 +17,7 @@ import dev.tcode.thinmp.view.image.ImageView
 
 @Composable
 fun AlbumCellView(
-    primaryText: String,
-    secondaryText: String,
-    uri: Uri,
-    modifier: Modifier = Modifier
+    primaryText: String, secondaryText: String, uri: Uri, modifier: Modifier = Modifier
 ) {
     BoxWithConstraints {
         val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
@@ -28,8 +25,7 @@ fun AlbumCellView(
         Column(modifier = modifier) {
             Box {
                 ImageView(
-                    uri = uri,
-                    modifier = Modifier
+                    uri = uri, modifier = Modifier
                         .width(size)
                         .height(size)
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
@@ -46,12 +42,7 @@ fun AlbumCellView(
                     .padding(top = StyleConstant.PADDING_TINY.dp)
             )
             Text(
-                secondaryText,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
+                secondaryText, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth()
             )
         }
     }

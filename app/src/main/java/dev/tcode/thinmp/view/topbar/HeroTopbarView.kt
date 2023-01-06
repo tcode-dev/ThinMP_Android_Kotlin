@@ -21,11 +21,9 @@ import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
 fun HeroTopbarView(navController: NavController, title: String, visible: Boolean) {
-    Box() {
+    Box {
         AnimatedVisibility(
-            visible = visible,
-            enter = fadeIn(initialAlpha = 0.3F),
-            exit = fadeOut(targetAlpha = 0.3F)
+            visible = visible, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
         ) {
             Box(
                 modifier = Modifier
@@ -33,8 +31,7 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .height(StyleConstant.ROW_HEIGHT.dp)
-            ) {
-            }
+            ) {}
         }
         if (visible) {
             Row(
@@ -45,15 +42,11 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(StyleConstant.BUTTON_SIZE.dp)
-                        .clickable { navController.popBackStack() }) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clickable { navController.popBackStack() }) {
                     Icon(
-                        painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
-                        contentDescription = null,
-                        modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                        painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                     )
                 }
                 Text(
@@ -63,12 +56,9 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
                 )
-                Box(
-                    contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(StyleConstant.BUTTON_SIZE.dp)
-                        .clickable { }) {
-                }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clickable { }) {}
             }
         }
     }

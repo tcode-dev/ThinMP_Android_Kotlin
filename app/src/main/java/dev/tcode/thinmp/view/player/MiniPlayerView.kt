@@ -41,63 +41,42 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(
-                start = StyleConstant.PADDING_LARGE.dp,
-                top = StyleConstant.PADDING_TINY.dp,
-                end = StyleConstant.PADDING_LARGE.dp,
-                bottom = StyleConstant.PADDING_TINY.dp
+                start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_TINY.dp
             )
-            .clickable { navController.navigate("player") },
-        verticalAlignment = Alignment.CenterVertically
+            .clickable { navController.navigate("player") }, verticalAlignment = Alignment.CenterVertically
     ) {
         ImageView(
-            uri = uiState.imageUri,
-            modifier = Modifier
+            uri = uiState.imageUri, modifier = Modifier
                 .size(StyleConstant.IMAGE_SIZE.dp)
                 .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
         )
         Text(
-            uiState.primaryText,
-            fontSize = 14.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
+            uiState.primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier
                 .padding(start = StyleConstant.PADDING_SMALL.dp)
                 .weight(1f)
         )
         if (uiState.isPlaying) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { viewModel.pause() }) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { viewModel.pause() }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.round_pause_24),
-                    contentDescription = null,
-                    modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    painter = painterResource(id = R.drawable.round_pause_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                 )
             }
         } else {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { viewModel.play() }) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { viewModel.play() }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.round_play_arrow_24),
-                    contentDescription = null,
-                    modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    painter = painterResource(id = R.drawable.round_play_arrow_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                 )
             }
         }
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clickable { viewModel.next() }) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier
+            .size(StyleConstant.BUTTON_SIZE.dp)
+            .clickable { viewModel.next() }) {
             Icon(
-                painter = painterResource(id = R.drawable.round_skip_next_24),
-                contentDescription = null,
-                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
             )
         }
     }

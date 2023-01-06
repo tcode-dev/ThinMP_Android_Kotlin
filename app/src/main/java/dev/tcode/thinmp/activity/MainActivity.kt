@@ -25,8 +25,7 @@ class MainActivity : ComponentActivity() {
         // 画面全体に表示
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.setFlags(
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
         )
 
         // StatusBarを透過
@@ -35,8 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             ThinMPTheme {
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
+                    modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background
                 ) {
                     PermissionView {
                         Nav()

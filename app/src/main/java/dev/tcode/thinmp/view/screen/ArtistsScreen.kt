@@ -27,8 +27,7 @@ import dev.tcode.thinmp.viewModel.ArtistsViewModel
 @ExperimentalFoundationApi
 @Composable
 fun ArtistsScreen(
-    navController: NavController,
-    viewModel: ArtistsViewModel = viewModel()
+    navController: NavController, viewModel: ArtistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -37,8 +36,7 @@ fun ArtistsScreen(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Artists", lazyListState.firstVisibleItemScrollOffset)
@@ -48,8 +46,7 @@ fun ArtistsScreen(
                 EmptyTopbarView()
             }
             items(uiState.artists) { artist ->
-                PlainRowView(artist.name, modifier = Modifier
-                    .clickable {
+                PlainRowView(artist.name, modifier = Modifier.clickable {
                         navController.navigate("artistDetail/${artist.id}")
                     })
             }
@@ -57,8 +54,7 @@ fun ArtistsScreen(
                 EmptyMiniPlayerView()
             }
         }
-        Box(modifier = Modifier
-            .constrainAs(miniPlayer) {
+        Box(modifier = Modifier.constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
             MiniPlayerView(navController)

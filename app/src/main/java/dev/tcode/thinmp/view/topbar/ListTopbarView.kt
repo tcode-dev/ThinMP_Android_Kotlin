@@ -23,13 +23,10 @@ import dev.tcode.thinmp.constant.StyleConstant
 fun ListTopbarView(navController: NavController, title: String, offset: Int) {
     Box {
         AnimatedVisibility(
-            visible = offset > 1,
-            enter = fadeIn(),
-            exit = fadeOut()
+            visible = offset > 1, enter = fadeIn(), exit = fadeOut()
         ) {
             Surface(
-                color = MaterialTheme.colors.secondary,
-                modifier = Modifier.fillMaxWidth()
+                color = MaterialTheme.colors.secondary, modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier
@@ -43,19 +40,13 @@ fun ListTopbarView(navController: NavController, title: String, offset: Int) {
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .height(StyleConstant.ROW_HEIGHT.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { navController.popBackStack() }) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { navController.popBackStack() }) {
                 Icon(
-                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
-                    contentDescription = null,
-                    modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                 )
             }
             Text(
@@ -65,12 +56,9 @@ fun ListTopbarView(navController: NavController, title: String, offset: Int) {
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
             )
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { }) {
-            }
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { }) {}
         }
     }
 }

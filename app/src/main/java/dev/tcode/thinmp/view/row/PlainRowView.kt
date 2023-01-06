@@ -17,8 +17,7 @@ import dev.tcode.thinmp.view.util.DividerView
 fun PlainRowView(primaryText: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(start = StyleConstant.PADDING_LARGE.dp)) {
         Row(
-            modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically
         ) {
             Text(primaryText, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }

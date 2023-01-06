@@ -27,8 +27,7 @@ import dev.tcode.thinmp.viewModel.SongsViewModel
 @ExperimentalFoundationApi
 @Composable
 fun SongsScreen(
-    navController: NavController,
-    viewModel: SongsViewModel = viewModel()
+    navController: NavController, viewModel: SongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -37,8 +36,7 @@ fun SongsScreen(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Songs", lazyListState.firstVisibleItemScrollOffset)
@@ -56,8 +54,7 @@ fun SongsScreen(
                 EmptyMiniPlayerView()
             }
         }
-        Box(modifier = Modifier
-            .constrainAs(miniPlayer) {
+        Box(modifier = Modifier.constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
             MiniPlayerView(navController)

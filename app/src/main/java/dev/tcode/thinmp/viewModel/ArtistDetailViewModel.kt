@@ -18,9 +18,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class ArtistDetailUiState(
-    var primaryText: String = "",
-    var secondaryText: String = "",
-    var imageUri: Uri = Uri.EMPTY,
+    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY,
     var albums: List<AlbumModel> = emptyList(),
     var songs: List<SongModel> = emptyList()
 )

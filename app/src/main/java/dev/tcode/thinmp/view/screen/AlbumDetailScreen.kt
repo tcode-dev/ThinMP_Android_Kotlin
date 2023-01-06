@@ -36,9 +36,7 @@ import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 @ExperimentalFoundationApi
 @Composable
 fun AlbumDetailScreen(
-    navController: NavController,
-    id: String,
-    viewModel: AlbumDetailViewModel = viewModel()
+    navController: NavController, id: String, viewModel: AlbumDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -46,13 +44,10 @@ fun AlbumDetailScreen(
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
-        val visibleHeroTopbarView =
-            lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
-                .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
-                .calculateTopPadding().value + 90))
+        val visibleHeroTopbarView = lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
+            .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues().calculateTopPadding().value + 90))
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -70,9 +65,7 @@ fun AlbumDetailScreen(
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
-                        uri = uiState.imageUri,
-                        contentScale = ContentScale.FillWidth,
-                        modifier = Modifier.fillMaxSize()
+                        uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxSize()
                     )
                     Box(
                         modifier = Modifier
@@ -87,8 +80,7 @@ fun AlbumDetailScreen(
                                     1.0F to MaterialTheme.colors.surface,
                                 )
                             ),
-                    ) {
-                    }
+                    ) {}
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -129,8 +121,7 @@ fun AlbumDetailScreen(
                 EmptyMiniPlayerView()
             }
         }
-        Box(modifier = Modifier
-            .constrainAs(miniPlayer) {
+        Box(modifier = Modifier.constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
             MiniPlayerView(navController)

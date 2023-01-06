@@ -24,9 +24,7 @@ fun PermissionView(content: @Composable BoxScope.() -> Unit) {
         }
         is PermissionStatus.Denied -> {
             Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 val textToShow = if (permissionState.status.shouldShowRationale) {
                     "拒否されている"

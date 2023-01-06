@@ -22,10 +22,7 @@ fun GridCellView(
         modifier = Modifier
             .width(itemSize)
             .padding(
-                start = start,
-                end = end,
-                bottom = StyleConstant.PADDING_LARGE.dp
-            ),
-        content = content
+                start = start, end = end, bottom = StyleConstant.PADDING_LARGE.dp
+            ), content = content
     )
 }

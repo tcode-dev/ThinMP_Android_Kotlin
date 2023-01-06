@@ -12,8 +12,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 @Composable
 fun DividerView() {
     Divider(
-        color = MaterialTheme.colors.primary,
-        modifier = Modifier
+        color = MaterialTheme.colors.primary, modifier = Modifier
             .fillMaxWidth()
             .height(StyleConstant.DIVIDER_HEIGHT.dp)
     )

@@ -13,15 +13,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class MiniPlayerUiState(
-    var primaryText: String = "",
-    var imageUri: Uri = Uri.EMPTY,
-    var isVisible: Boolean = false,
-    var isPlaying: Boolean = false
+    var primaryText: String = "", var imageUri: Uri = Uri.EMPTY, var isVisible: Boolean = false, var isPlaying: Boolean = false
 )
 
-class MiniPlayerViewModel(application: Application) : AndroidViewModel(application),
-    MusicPlayerListener,
-    CustomLifecycleEventObserverListener {
+class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
@@ -69,10 +64,7 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         if (song != null) {
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = song.name,
-                    imageUri = song.getImageUri(),
-                    isVisible = true,
-                    isPlaying = musicPlayer.isPlaying()
+                    primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = musicPlayer.isPlaying()
                 )
             }
         } else {
