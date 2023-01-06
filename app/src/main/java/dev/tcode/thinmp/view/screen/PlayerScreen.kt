@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.accompanist.flowlayout.MainAxisAlignment
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
@@ -41,14 +40,14 @@ fun PlayerScreen(
     CustomLifecycleEventObserver(viewModel)
 
     Column(Modifier.fillMaxSize()) {
-        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 2
+        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 70
 
         ConstraintLayout(
             Modifier
                 .fillMaxWidth()
                 .height(LocalConfiguration.current.screenWidthDp.dp)
         ) {
-            val (primary, secondary, tertiary, utilButton) = createRefs()
+            val (primary) = createRefs()
 
             ImageView(
                 uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
@@ -78,44 +77,35 @@ fun PlayerScreen(
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                 )
             }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .constrainAs(secondary) {
-                        top.linkTo(parent.bottom, margin = (-90).dp)
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    uiState.primaryText,
-                    fontWeight = FontWeight.Bold,
-                )
-            }
-            Row(
-                Modifier
-                    .fillMaxWidth()
-                    .height(25.dp)
-                    .constrainAs(tertiary) {
-                        top.linkTo(parent.bottom, margin = (-55).dp)
-                    },
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    uiState.secondaryText,
-                )
-            }
         }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(LocalConfiguration.current.screenWidthDp.dp),
-            verticalArrangement = Arrangement.SpaceEvenly
+                .height(LocalConfiguration.current.screenWidthDp.dp), verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            var sliderPosition by remember { mutableStateOf(0f) }
+            Column {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        uiState.primaryText,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        uiState.secondaryText,
+                    )
+                }
+            }
             Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
+                var sliderPosition by remember { mutableStateOf(0f) }
                 Slider(value = sliderPosition, onValueChange = { sliderPosition = it })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text("1:35")
@@ -125,20 +115,17 @@ fun PlayerScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .clickable { viewModel.next() }) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.next() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, modifier = Modifier.size(72.dp)
                     )
                 }
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .clickable { viewModel.next() }) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.next() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_play_arrow_24), contentDescription = null, modifier = Modifier.size(88.dp)
                     )
                 }
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .clickable { viewModel.next() }) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.next() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(72.dp)
                     )
