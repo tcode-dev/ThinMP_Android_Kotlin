@@ -3,6 +3,7 @@ package dev.tcode.thinmp.view.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -11,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlayerViewModel
@@ -49,20 +52,9 @@ fun PlayerScreen(
                 contentScale = ContentScale.FillWidth,
                 modifier = Modifier
                     .fillMaxSize()
-                    .blur(10.dp),
+                    .blur(20.dp),
                 painter = null
             )
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.fillMaxSize()
-            ) {
-                ImageView(
-                    uri = uiState.imageUri,
-                    contentScale = ContentScale.FillWidth,
-                    modifier = Modifier
-                        .size(imageSize)
-                )
-            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -77,6 +69,18 @@ fun PlayerScreen(
                         )
                     ),
             ) {
+            }
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()
+            ) {
+                ImageView(
+                    uri = uiState.imageUri,
+                    contentScale = ContentScale.FillWidth,
+                    modifier = Modifier
+                        .size(imageSize)
+                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                )
             }
             Row(
                 Modifier

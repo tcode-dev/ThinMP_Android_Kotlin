@@ -82,7 +82,7 @@ fun ArtistDetailScreen(
                         contentScale = ContentScale.FillWidth,
                         modifier = Modifier
                             .fillMaxSize()
-                            .blur(10.dp),
+                            .blur(20.dp),
                         painter = null
                     )
                     Box(

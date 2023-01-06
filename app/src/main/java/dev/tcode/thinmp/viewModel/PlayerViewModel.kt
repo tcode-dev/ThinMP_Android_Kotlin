@@ -70,6 +70,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
             _uiState.update { currentState ->
                 currentState.copy(
                     primaryText = song.name,
+                    secondaryText = song.artistName,
                     imageUri = song.getImageUri(),
                     isPlaying = musicPlayer.isPlaying()
                 )
