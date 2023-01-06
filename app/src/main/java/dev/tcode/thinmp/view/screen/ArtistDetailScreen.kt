@@ -79,15 +79,6 @@ fun ArtistDetailScreen(
                             .blur(20.dp), painter = null
                     )
                     Box(
-                        contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
-                    ) {
-                        ImageView(
-                            uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
-                                .size(imageSize)
-                                .clip(CircleShape)
-                        )
-                    }
-                    Box(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(200.dp)
@@ -101,6 +92,15 @@ fun ArtistDetailScreen(
                                 )
                             ),
                     ) {}
+                    Box(
+                        contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                    ) {
+                        ImageView(
+                            uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
+                                .size(imageSize)
+                                .clip(CircleShape)
+                        )
+                    }
                     Row(
                         Modifier
                             .fillMaxWidth()
