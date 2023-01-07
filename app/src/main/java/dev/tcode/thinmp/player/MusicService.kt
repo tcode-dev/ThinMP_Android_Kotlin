@@ -51,6 +51,10 @@ class MusicService : Service() {
         val isContinue = mediaPlayer?.isPlaying
 
         if (currentPosition() <= PREV_MS) {
+            if (!playingList.hasPrevious()) {
+                playingList = originalSongs.listIterator(originalSongs.count())
+            }
+
             setMediaPlayer(playingList.previous())
         } else {
             song?.let { setMediaPlayer(it) }
