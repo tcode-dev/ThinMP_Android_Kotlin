@@ -82,19 +82,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun seekBarProgress() {
-        seekBarProgress(musicPlayer.getCurrentPosition())
-    }
-
-    private fun seekBarProgress(currentPosition: Int) {
-        val song = musicPlayer.getCurrentSong()
-
-        if (song != null) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    sliderPosition = (musicPlayer.getCurrentPosition().toFloat() / song.duration.toFloat()),
-                    currentTime = String.format(TIME_FORMAT, currentPosition.toLong()),
-                )
-            }
+        _uiState.update { currentState ->
+            currentState.copy(
+                sliderPosition = getSliderPosition(),
+                currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
+            )
         }
     }
 
@@ -124,8 +116,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     primaryText = song.name,
                     secondaryText = song.artistName,
                     imageUri = song.getImageUri(),
-                    sliderPosition = 0f,
-                    currentTime = START_TIME,
+                    sliderPosition = getSliderPosition(),
+                    currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
                     durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
                     isPlaying = musicPlayer.isPlaying()
                 )
@@ -135,5 +127,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                 PlayerUiState()
             }
         }
+    }
+
+    private fun getSliderPosition(): Float {
+        val song = musicPlayer.getCurrentSong() ?: return 0f
+
+        return (musicPlayer.getCurrentPosition().toFloat() / song.duration.toFloat())
     }
 }
