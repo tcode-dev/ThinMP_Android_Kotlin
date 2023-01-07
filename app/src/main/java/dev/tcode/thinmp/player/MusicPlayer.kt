@@ -68,6 +68,10 @@ class MusicPlayer(context: Context) {
         context.unbindService(connection)
     }
 
+    fun getCurrentPosition(): Int {
+        return musicService?.getCurrentPosition() ?: 0
+    }
+
     private fun bindService(context: Context) {
         connection = createConnection()
         context.bindService(

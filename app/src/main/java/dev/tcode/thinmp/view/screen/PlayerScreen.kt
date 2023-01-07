@@ -119,8 +119,8 @@ fun PlayerScreen(
                 var sliderPosition by remember { mutableStateOf(0f) }
                 Slider(value = sliderPosition, onValueChange = { sliderPosition = it })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text("1:35")
-                    Text("5:28")
+                    Text(uiState.currentTime)
+                    Text(uiState.durationTime)
                 }
             }
             Row(

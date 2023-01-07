@@ -50,7 +50,7 @@ class MusicService : Service() {
     fun prev() {
         val isContinue = mediaPlayer?.isPlaying
 
-        if (currentPosition() <= PREV_MS) {
+        if (getCurrentPosition() <= PREV_MS) {
             if (!playingList.hasPrevious()) {
                 playingList = originalSongs.listIterator(originalSongs.count())
             }
@@ -87,7 +87,7 @@ class MusicService : Service() {
         return mediaPlayer?.isPlaying ?: false
     }
 
-    fun currentPosition(): Int {
+    fun getCurrentPosition(): Int {
         return mediaPlayer?.currentPosition ?: 0
     }
 
