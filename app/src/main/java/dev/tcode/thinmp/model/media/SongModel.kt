@@ -11,7 +11,7 @@ class SongModel(
     val artistName: String,
     val albumId: String,
     val albumName: String,
-    val duration: Int?
+    val duration: Int
 ): Music() {
     override fun getTrackList(): List<SongModel> {
         val trackList: MutableList<SongModel> = ArrayList()

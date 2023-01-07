@@ -17,14 +17,13 @@ data class PlayerUiState(
     var primaryText: String = "",
     var secondaryText: String = "",
     var imageUri: Uri = Uri.EMPTY,
+    var sliderPosition: Float = 0f,
     var currentTime: String = "00:00",
     var durationTime: String = "00:00",
     var isPlaying: Boolean = false
 )
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application),
-    MusicPlayerListener,
-    CustomLifecycleEventObserverListener {
+class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
@@ -33,15 +32,16 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     init {
         musicPlayer = MusicPlayer(application)
         musicPlayer.addEventListener(this)
-        setSeekBarProgressTask()
     }
 
     fun play() {
         musicPlayer.play()
+        setSeekBarProgressTask()
     }
 
     fun pause() {
         musicPlayer.pause()
+        cancelSeekBarProgressTask()
     }
 
     fun prev() {
@@ -54,6 +54,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     override fun onBind() {
         update()
+
+        if (musicPlayer.isPlaying()) {
+            setSeekBarProgressTask()
+        }
     }
 
     override fun onChange() {
@@ -67,6 +71,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     override fun onStop() {
         musicPlayer.removeEventListener()
+        cancelSeekBarProgressTask()
     }
 
     override fun onDestroy(context: Context) {
@@ -77,22 +82,19 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         seekBarProgress(musicPlayer.getCurrentPosition())
     }
 
-    /**
-     * seekBarProgress
-     */
     private fun seekBarProgress(currentPosition: Int) {
-        _uiState.update { currentState ->
-            currentState.copy(
-                currentTime = String.format("%1\$tM:%1\$tS", currentPosition.toLong()),
-            )
+        val song = musicPlayer.getCurrentSong()
+
+        if (song != null) {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    sliderPosition = (musicPlayer.getCurrentPosition().toFloat() / song.duration.toFloat()),
+                    currentTime = String.format("%1\$tM:%1\$tS", currentPosition.toLong()),
+                )
+            }
         }
     }
 
-    /**
-     * seekBarProgressTask
-     *
-     * @return TimerTask
-     */
     private fun seekBarProgressTask(): TimerTask {
         return object : TimerTask() {
             override fun run() {
@@ -101,17 +103,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    /**
-     * setSeekBarProgressTask
-     */
-    fun setSeekBarProgressTask() {
+    private fun setSeekBarProgressTask() {
         timer = Timer()
         timer?.schedule(seekBarProgressTask(), 0, 1000L)
     }
 
-    /**
-     * cancelSeekBarProgressTask
-     */
     private fun cancelSeekBarProgressTask() {
         if (timer == null) return
         timer!!.cancel()
@@ -126,8 +122,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     primaryText = song.name,
                     secondaryText = song.artistName,
                     imageUri = song.getImageUri(),
+                    sliderPosition = 0f,
                     currentTime = "00:00",
-                    durationTime = String.format("%1\$tM:%1\$tS", song.duration?.toLong()),
+                    durationTime = String.format("%1\$tM:%1\$tS", song.duration.toLong()),
                     isPlaying = musicPlayer.isPlaying()
                 )
             }

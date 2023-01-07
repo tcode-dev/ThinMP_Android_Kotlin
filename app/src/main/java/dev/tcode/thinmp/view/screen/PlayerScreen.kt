@@ -116,8 +116,7 @@ fun PlayerScreen(
                 }
             }
             Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
-                var sliderPosition by remember { mutableStateOf(0f) }
-                Slider(value = sliderPosition, onValueChange = { sliderPosition = it })
+                Slider(value = uiState.sliderPosition, onValueChange = { })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(uiState.currentTime)
                     Text(uiState.durationTime)
