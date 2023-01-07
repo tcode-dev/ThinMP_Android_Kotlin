@@ -33,22 +33,22 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                     .height(StyleConstant.ROW_HEIGHT.dp)
             ) {}
         }
-        if (visible) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .height(StyleConstant.ROW_HEIGHT.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { navController.popBackStack() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
-                    )
-                }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding()
+                .height(StyleConstant.ROW_HEIGHT.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { navController.popBackStack() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                )
+            }
+            if (visible) {
                 Text(
                     title,
                     textAlign = TextAlign.Center,
@@ -56,10 +56,10 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
                 )
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { }) {}
             }
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .size(StyleConstant.BUTTON_SIZE.dp)
+                .clickable { }) {}
         }
     }
 }
