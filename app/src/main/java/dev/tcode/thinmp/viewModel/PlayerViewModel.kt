@@ -13,13 +13,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.*
 
+const val TIME_FORMAT = "%1\$tM:%1\$tS"
+const val START_TIME = "00:00"
+
 data class PlayerUiState(
     var primaryText: String = "",
     var secondaryText: String = "",
     var imageUri: Uri = Uri.EMPTY,
     var sliderPosition: Float = 0f,
-    var currentTime: String = "00:00",
-    var durationTime: String = "00:00",
+    var currentTime: String = START_TIME,
+    var durationTime: String = START_TIME,
     var isPlaying: Boolean = false
 )
 
@@ -89,7 +92,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
             _uiState.update { currentState ->
                 currentState.copy(
                     sliderPosition = (musicPlayer.getCurrentPosition().toFloat() / song.duration.toFloat()),
-                    currentTime = String.format("%1\$tM:%1\$tS", currentPosition.toLong()),
+                    currentTime = String.format(TIME_FORMAT, currentPosition.toLong()),
                 )
             }
         }
@@ -109,8 +112,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun cancelSeekBarProgressTask() {
-        if (timer == null) return
-        timer!!.cancel()
+        timer?.cancel()
         timer = null
     }
 
@@ -123,8 +125,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     secondaryText = song.artistName,
                     imageUri = song.getImageUri(),
                     sliderPosition = 0f,
-                    currentTime = "00:00",
-                    durationTime = String.format("%1\$tM:%1\$tS", song.duration.toLong()),
+                    currentTime = START_TIME,
+                    durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
                     isPlaying = musicPlayer.isPlaying()
                 )
             }
