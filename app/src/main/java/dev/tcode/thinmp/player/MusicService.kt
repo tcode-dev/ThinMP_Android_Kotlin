@@ -17,7 +17,8 @@ class MusicService : Service() {
     private val binder = MusicBinder()
     private var mediaPlayer: MediaPlayer? = null
     private var listener: MusicServiceListener? = null
-    private var songs: ListIterator<SongModel> = listOf<SongModel>().listIterator()
+    private var originalSongs: List<SongModel> = emptyList()
+    private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
     var song: SongModel? = null
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -29,9 +30,10 @@ class MusicService : Service() {
     }
 
     fun start(songs: List<SongModel>, index: Int) {
-        this.songs = songs.listIterator(index)
+        originalSongs = songs
+        playingList = originalSongs.listIterator(index)
 
-        setMediaPlayer(this.songs.next())
+        setMediaPlayer(playingList.next())
         play()
     }
 
@@ -49,7 +51,7 @@ class MusicService : Service() {
         val isContinue = mediaPlayer?.isPlaying
 
         if (currentPosition() <= PREV_MS) {
-            setMediaPlayer(songs.previous())
+            setMediaPlayer(playingList.previous())
         } else {
             song?.let { setMediaPlayer(it) }
         }
@@ -64,7 +66,11 @@ class MusicService : Service() {
     fun next() {
         val isContinue = mediaPlayer?.isPlaying
 
-        setMediaPlayer(songs.next())
+        if (!playingList.hasNext()) {
+            playingList = originalSongs.listIterator(0)
+        }
+
+        setMediaPlayer(playingList.next())
 
         if (isContinue == true) {
             mediaPlayer?.start()
@@ -101,14 +107,15 @@ class MusicService : Service() {
 
     private fun createCompletionListener(): OnCompletionListener {
         return OnCompletionListener {
-            if (songs.hasNext()) {
-                setMediaPlayer(songs.next())
-
+            if (playingList.hasNext()) {
+                setMediaPlayer(playingList.next())
                 mediaPlayer?.start()
-                listener?.onChange()
             } else {
-                destroy()
+                playingList = originalSongs.listIterator(0)
+                setMediaPlayer(playingList.next())
             }
+
+            listener?.onChange()
         }
     }
 
