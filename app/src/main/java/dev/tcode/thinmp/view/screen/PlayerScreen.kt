@@ -89,32 +89,32 @@ fun PlayerScreen(
                 )
             }
         }
+        Column {
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    uiState.primaryText,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Row(
+                Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    uiState.secondaryText,
+                )
+            }
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(LocalConfiguration.current.screenWidthDp.dp), verticalArrangement = Arrangement.SpaceEvenly
         ) {
-            Column {
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        uiState.primaryText,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-                Row(
-                    Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Text(
-                        uiState.secondaryText,
-                    )
-                }
-            }
             Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
                 Slider(value = uiState.sliderPosition, onValueChange = { viewModel.seek(it) }, onValueChangeFinished = { viewModel.seekFinished() })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
