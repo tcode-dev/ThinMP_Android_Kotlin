@@ -5,16 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Slider
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -116,7 +114,10 @@ fun PlayerScreen(
                 .height(LocalConfiguration.current.screenWidthDp.dp), verticalArrangement = Arrangement.SpaceEvenly
         ) {
             Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
-                Slider(value = uiState.sliderPosition, onValueChange = { viewModel.seek(it) }, onValueChangeFinished = { viewModel.seekFinished() })
+                Slider(value = uiState.sliderPosition,
+                    colors = SliderDefaults.colors(activeTrackColor = Color.Black, thumbColor = Color.Black),
+                    onValueChange = { viewModel.seek(it) },
+                    onValueChangeFinished = { viewModel.seekFinished() })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                     Text(uiState.currentTime)
                     Text(uiState.durationTime)
