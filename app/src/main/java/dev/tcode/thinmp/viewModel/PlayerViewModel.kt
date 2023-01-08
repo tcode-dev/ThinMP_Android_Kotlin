@@ -55,11 +55,21 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         musicPlayer.next()
     }
 
-    fun seekTo(value: Float) {
+    fun seek(value: Float) {
+        cancelSeekBarProgressTask()
+
         val song = musicPlayer.getCurrentSong() ?: return
         val msec = (song.duration.toFloat() * value).toInt()
 
         musicPlayer?.seekTo(msec)
+
+        seekBarProgress()
+    }
+
+    fun seekFinished() {
+        if (musicPlayer.isPlaying()) {
+            setSeekBarProgressTask()
+        }
     }
 
     override fun onBind() {
