@@ -16,7 +16,7 @@
 
 ## Environments
 
-* Android Studio 2021.3.1
+* Android Studio Dolphin (2021.3.1)
 * Kotlin
 * Gradle
 * minSdkVersion 33
