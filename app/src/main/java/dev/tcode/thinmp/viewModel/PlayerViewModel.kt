@@ -55,6 +55,13 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         musicPlayer.next()
     }
 
+    fun seekTo(value: Float) {
+        val song = musicPlayer.getCurrentSong() ?: return
+        val msec = (song.duration.toFloat() * value).toInt()
+
+        musicPlayer?.seekTo(msec)
+    }
+
     override fun onBind() {
         update()
 

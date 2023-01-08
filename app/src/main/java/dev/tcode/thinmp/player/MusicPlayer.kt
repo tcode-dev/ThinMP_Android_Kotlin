@@ -46,6 +46,10 @@ class MusicPlayer(context: Context) {
         musicService?.next()
     }
 
+    fun seekTo(msec: Int) {
+        musicService?.seekTo(msec)
+    }
+
     fun isPlaying(): Boolean {
         return musicService?.isPlaying() ?: false
     }

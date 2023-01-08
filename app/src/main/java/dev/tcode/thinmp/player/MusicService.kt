@@ -83,6 +83,10 @@ class MusicService : Service() {
         listener?.onChange()
     }
 
+    fun seekTo(msec: Int) {
+        mediaPlayer?.seekTo(msec)
+    }
+
     fun isPlaying(): Boolean {
         return mediaPlayer?.isPlaying ?: false
     }
