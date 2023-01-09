@@ -4,13 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import dev.tcode.thinmp.config.Config
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.*
 
 const val TIME_FORMAT = "%1\$tM:%1\$tS"
@@ -23,7 +23,8 @@ data class PlayerUiState(
     var sliderPosition: Float = 0f,
     var currentTime: String = START_TIME,
     var durationTime: String = START_TIME,
-    var isPlaying: Boolean = false
+    var isPlaying: Boolean = false,
+    var repeat: Int = 0,
 )
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
@@ -31,10 +32,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     private var timer: Timer? = null
+    private val config: Config
 
     init {
         musicPlayer = MusicPlayer(application)
         musicPlayer.addEventListener(this)
+        config = Config(application)
     }
 
     fun play() {
@@ -69,6 +72,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     fun seekFinished() {
         if (musicPlayer.isPlaying()) {
             setSeekBarProgressTask()
+        }
+    }
+
+    fun repeat() {
+        viewModelScope.launch {
+            config.saveRepeat(1)
         }
     }
 
@@ -136,7 +145,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     sliderPosition = getSliderPosition(),
                     currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
                     durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
-                    isPlaying = musicPlayer.isPlaying()
+                    isPlaying = musicPlayer.isPlaying(),
+                    repeat = config.getRepeat()
                 )
             }
         } else {
