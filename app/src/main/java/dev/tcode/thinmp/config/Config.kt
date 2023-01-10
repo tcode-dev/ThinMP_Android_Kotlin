@@ -15,17 +15,20 @@ private const val PREFERENCES_REPEAT_KEY = "repeat"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
 class Config(private val context: Context) {
-    fun getRepeat(): Int = runBlocking {
+    fun getRepeat(): Int {
+        val preferences = runBlocking { context.dataStore.data.first() }
         val preferencesKey = intPreferencesKey(PREFERENCES_REPEAT_KEY)
-        val preferences = context.dataStore.data.first()
 
-        preferences[preferencesKey] ?: 0
+        return preferences[preferencesKey] ?: 0
     }
 
-    suspend fun saveRepeat(value: Int) {
+    fun saveRepeat(value: Int) {
         val preferencesKey = intPreferencesKey(PREFERENCES_REPEAT_KEY)
-        context.dataStore.edit { preferences ->
-            preferences[preferencesKey] = value
+
+        runBlocking {
+            context.dataStore.edit { preferences ->
+                preferences[preferencesKey] = value
+            }
         }
     }
 }

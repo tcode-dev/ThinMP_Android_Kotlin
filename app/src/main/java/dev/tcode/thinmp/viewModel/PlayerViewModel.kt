@@ -3,6 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.Config
@@ -76,9 +77,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     fun repeat() {
-        viewModelScope.launch {
-            config.saveRepeat(1)
-        }
+        config.saveRepeat(1)
     }
 
     override fun onBind() {
