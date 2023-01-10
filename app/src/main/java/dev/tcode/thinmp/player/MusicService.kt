@@ -6,7 +6,6 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
-import dev.tcode.thinmp.config.ConfigDataStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
@@ -21,7 +20,6 @@ class MusicService : Service() {
     private var listener: MusicServiceListener? = null
     private var originalSongs: List<SongModel> = emptyList()
     private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
-//    private val config = ConfigDataStore(baseContext)
     private var repeat: RepeatState = RepeatState.OFF
     var song: SongModel? = null
 
@@ -85,6 +83,10 @@ class MusicService : Service() {
         }
 
         listener?.onChange()
+    }
+
+    fun getRepeat(): RepeatState {
+        return repeat
     }
 
     fun setRepeat() {

@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
-import dev.tcode.thinmp.config.ConfigDataStore
+import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -22,7 +22,7 @@ data class PlayerUiState(
     var currentTime: String = START_TIME,
     var durationTime: String = START_TIME,
     var isPlaying: Boolean = false,
-    var repeat: Int = 0,
+    var repeat: RepeatState = RepeatState.OFF,
 )
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
@@ -30,12 +30,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     private var timer: Timer? = null
-    private val config: ConfigDataStore
 
     init {
         musicPlayer = MusicPlayer(application)
         musicPlayer.addEventListener(this)
-        config = ConfigDataStore(application)
     }
 
     fun play() {
@@ -142,7 +140,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
                     durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
                     isPlaying = musicPlayer.isPlaying(),
-                    repeat = config.getRepeat()
+                    repeat = musicPlayer.getRepeat()
                 )
             }
         } else {

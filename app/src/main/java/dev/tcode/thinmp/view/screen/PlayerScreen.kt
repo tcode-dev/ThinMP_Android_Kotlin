@@ -23,6 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -156,9 +157,22 @@ fun PlayerScreen(
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clickable { viewModel.setRepeat() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_repeat_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                    )
+                    when (uiState.repeat) {
+                        RepeatState.OFF -> {
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_repeat_24),
+                                contentDescription = null,
+                                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
+                                tint = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled)
+                            )
+                        }
+                        RepeatState.ALL -> {
+                            Icon(painter = painterResource(id = R.drawable.round_repeat_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                        }
+                        RepeatState.ONE -> {
+                            Icon(painter = painterResource(id = R.drawable.round_repeat_one_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                        }
+                    }
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)

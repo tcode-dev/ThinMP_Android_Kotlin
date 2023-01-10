@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicPlayerListener: MusicServiceListener {
@@ -48,6 +49,10 @@ class MusicPlayer(context: Context) {
 
     fun seekTo(msec: Int) {
         musicService?.seekTo(msec)
+    }
+
+    fun getRepeat(): RepeatState {
+        return musicService?.getRepeat() ?: RepeatState.OFF
     }
 
     fun setRepeat() {
