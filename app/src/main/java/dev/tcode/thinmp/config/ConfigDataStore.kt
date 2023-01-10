@@ -19,15 +19,30 @@ enum class RepeatState {
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
 class ConfigDataStore(private val context: Context) {
-    fun getRepeat(): Int {
-        val preferences = runBlocking { context.dataStore.data.first() }
-        val preferencesKey = intPreferencesKey(PREFERENCES_REPEAT_KEY)
+    fun getRepeat(): RepeatState {
+        val values = RepeatState.values()
+        val value = getInt(PREFERENCES_REPEAT_KEY)
 
-        return preferences[preferencesKey] ?: 0
+        return if (value != null) {
+            values[value!!]
+        } else {
+            RepeatState.OFF
+        }
     }
 
-    fun saveRepeat(value: Int) {
-        val preferencesKey = intPreferencesKey(PREFERENCES_REPEAT_KEY)
+    fun saveRepeat(value: RepeatState) {
+        saveInt(PREFERENCES_REPEAT_KEY, value.ordinal)
+    }
+
+    private fun getInt(key: String): Int? {
+        val preferences = runBlocking { context.dataStore.data.first() }
+        val preferencesKey = intPreferencesKey(key)
+
+        return preferences[preferencesKey]
+    }
+
+    private fun saveInt(key: String, value: Int) {
+        val preferencesKey = intPreferencesKey(key)
 
         runBlocking {
             context.dataStore.edit { preferences ->
