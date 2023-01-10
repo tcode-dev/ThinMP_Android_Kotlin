@@ -6,6 +6,8 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
+import dev.tcode.thinmp.config.ConfigDataStore
+import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicServiceListener {
@@ -19,6 +21,8 @@ class MusicService : Service() {
     private var listener: MusicServiceListener? = null
     private var originalSongs: List<SongModel> = emptyList()
     private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
+//    private val config = ConfigDataStore(baseContext)
+    private var repeat: RepeatState = RepeatState.OFF
     var song: SongModel? = null
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -83,6 +87,14 @@ class MusicService : Service() {
         listener?.onChange()
     }
 
+    fun setRepeat() {
+        repeat = when (repeat) {
+            RepeatState.OFF -> RepeatState.ALL
+            RepeatState.ONE -> RepeatState.OFF
+            RepeatState.ALL -> RepeatState.ONE
+        }
+    }
+
     fun seekTo(msec: Int) {
         mediaPlayer?.seekTo(msec)
     }
@@ -115,12 +127,20 @@ class MusicService : Service() {
 
     private fun createCompletionListener(): OnCompletionListener {
         return OnCompletionListener {
-            if (playingList.hasNext()) {
-                setMediaPlayer(playingList.next())
+            if (repeat == RepeatState.ONE) {
+                song?.let { setMediaPlayer(it) }
                 mediaPlayer?.start()
             } else {
-                playingList = originalSongs.listIterator(0)
-                setMediaPlayer(playingList.next())
+                if (playingList.hasNext()) {
+                    setMediaPlayer(playingList.next())
+                    mediaPlayer?.start()
+                } else {
+                    playingList = originalSongs.listIterator(0)
+                    setMediaPlayer(playingList.next())
+                    if (repeat == RepeatState.ALL) {
+                        mediaPlayer?.start()
+                    }
+                }
             }
 
             listener?.onChange()

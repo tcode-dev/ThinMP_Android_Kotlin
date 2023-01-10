@@ -50,6 +50,10 @@ class MusicPlayer(context: Context) {
         musicService?.seekTo(msec)
     }
 
+    fun setRepeat() {
+        musicService?.setRepeat()
+    }
+
     fun isPlaying(): Boolean {
         return musicService?.isPlaying() ?: false
     }

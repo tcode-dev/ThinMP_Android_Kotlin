@@ -3,15 +3,12 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.viewModelScope
-import dev.tcode.thinmp.config.Config
+import dev.tcode.thinmp.config.ConfigDataStore
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import java.util.*
 
 const val TIME_FORMAT = "%1\$tM:%1\$tS"
@@ -33,12 +30,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     private var timer: Timer? = null
-    private val config: Config
+    private val config: ConfigDataStore
 
     init {
         musicPlayer = MusicPlayer(application)
         musicPlayer.addEventListener(this)
-        config = Config(application)
+        config = ConfigDataStore(application)
     }
 
     fun play() {
@@ -76,8 +73,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    fun repeat() {
-        config.saveRepeat(1)
+    fun setRepeat() {
+        musicPlayer.setRepeat()
     }
 
     override fun onBind() {

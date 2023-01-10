@@ -155,7 +155,7 @@ fun PlayerScreen(
             ) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { viewModel.repeat() }) {
+                    .clickable { viewModel.setRepeat() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_repeat_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                     )
