@@ -24,7 +24,7 @@ class ConfigDataStore(private val context: Context) {
         val value = getInt(PREFERENCES_REPEAT_KEY)
 
         return if (value != null) {
-            values[value!!]
+            values[value]
         } else {
             RepeatState.OFF
         }
