@@ -6,6 +6,7 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
+import dev.tcode.thinmp.config.ConfigDataStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
@@ -20,8 +21,16 @@ class MusicService : Service() {
     private var listener: MusicServiceListener? = null
     private var originalSongs: List<SongModel> = emptyList()
     private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
-    private var repeat: RepeatState = RepeatState.OFF
+    private lateinit var config: ConfigDataStore
+    private lateinit var repeat: RepeatState
     var song: SongModel? = null
+
+    override fun onCreate() {
+        super.onCreate()
+
+        config = ConfigDataStore(baseContext)
+        repeat = config.getRepeat()
+    }
 
     fun addEventListener(listener: MusicServiceListener) {
         this.listener = listener
@@ -96,6 +105,7 @@ class MusicService : Service() {
             RepeatState.ALL -> RepeatState.ONE
         }
 
+        config.saveRepeat(repeat)
         listener?.onChange()
     }
 
