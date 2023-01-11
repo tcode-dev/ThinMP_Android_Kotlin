@@ -95,6 +95,8 @@ class MusicService : Service() {
             RepeatState.ONE -> RepeatState.OFF
             RepeatState.ALL -> RepeatState.ONE
         }
+
+        listener?.onChange()
     }
 
     fun seekTo(msec: Int) {
