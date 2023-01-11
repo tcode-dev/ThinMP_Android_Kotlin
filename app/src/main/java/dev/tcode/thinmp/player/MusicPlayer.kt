@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import dev.tcode.thinmp.config.RepeatState
+import dev.tcode.thinmp.config.ShuffleState
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicPlayerListener: MusicServiceListener {
@@ -57,6 +58,14 @@ class MusicPlayer(context: Context) {
 
     fun setRepeat() {
         musicService?.setRepeat()
+    }
+
+    fun getShuffle(): ShuffleState {
+        return musicService?.getShuffle() ?: ShuffleState.OFF
+    }
+
+    fun setShuffle() {
+        musicService?.setShuffle()
     }
 
     fun isPlaying(): Boolean {

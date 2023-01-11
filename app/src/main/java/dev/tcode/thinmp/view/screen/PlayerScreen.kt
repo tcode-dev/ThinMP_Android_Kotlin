@@ -24,6 +24,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.RepeatState
+import dev.tcode.thinmp.config.ShuffleState
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -176,10 +177,22 @@ fun PlayerScreen(
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_shuffle_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                    )
+                    .clickable { viewModel.setShuffle() }) {
+                    when (uiState.shuffle) {
+                        ShuffleState.OFF -> {
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_shuffle_24),
+                                contentDescription = null,
+                                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
+                                tint = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled)
+                            )
+                        }
+                        ShuffleState.ON -> {
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_shuffle_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                            )
+                        }
+                    }
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)

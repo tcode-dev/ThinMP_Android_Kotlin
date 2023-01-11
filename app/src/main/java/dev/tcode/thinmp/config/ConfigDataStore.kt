@@ -11,9 +11,14 @@ import kotlinx.coroutines.runBlocking
 
 private const val PREFERENCES_NAME = "thinmp_preferences"
 private const val PREFERENCES_REPEAT_KEY = "repeat"
+private const val PREFERENCES_SHUFFLE_KEY = "shuffle"
 
 enum class RepeatState {
     OFF, ONE, ALL
+}
+
+enum class ShuffleState {
+    OFF, ON
 }
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
@@ -32,6 +37,21 @@ class ConfigDataStore(private val context: Context) {
 
     fun saveRepeat(value: RepeatState) {
         saveInt(PREFERENCES_REPEAT_KEY, value.ordinal)
+    }
+
+    fun getShuffle(): ShuffleState {
+        val values = ShuffleState.values()
+        val value = getInt(PREFERENCES_SHUFFLE_KEY)
+
+        return if (value != null) {
+            values[value]
+        } else {
+            ShuffleState.OFF
+        }
+    }
+
+    fun saveShuffle(value: ShuffleState) {
+        saveInt(PREFERENCES_SHUFFLE_KEY, value.ordinal)
     }
 
     private fun getInt(key: String): Int? {
