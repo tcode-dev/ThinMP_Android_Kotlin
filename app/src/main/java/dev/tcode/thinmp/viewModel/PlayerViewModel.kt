@@ -38,14 +38,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         musicPlayer.addEventListener(this)
     }
 
-    fun play() {
-        musicPlayer.play()
-        setSeekBarProgressTask()
-    }
-
-    fun pause() {
-        cancelSeekBarProgressTask()
-        musicPlayer.pause()
+    fun toggle() {
+        if (musicPlayer.isPlaying()) {
+            musicPlayer.pause()
+        } else {
+            musicPlayer.play()
+        }
     }
 
     fun prev() {

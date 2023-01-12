@@ -127,18 +127,16 @@ fun PlayerScreen(
                         painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, modifier = Modifier.size(72.dp)
                     )
                 }
-                if (uiState.isPlaying) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.pause() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_pause_24), contentDescription = null, modifier = Modifier.size(88.dp)
-                        )
-                    }
-                } else {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.play() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_play_arrow_24), contentDescription = null, modifier = Modifier.size(88.dp)
-                        )
-                    }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.toggle() }) {
+                    Icon(
+                        painter = painterResource(
+                            id = if (uiState.isPlaying) {
+                                R.drawable.round_pause_24
+                            } else {
+                                R.drawable.round_play_arrow_24
+                            }
+                        ), contentDescription = null, modifier = Modifier.size(88.dp)
+                    )
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.next() }) {
                     Icon(
