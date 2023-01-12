@@ -131,7 +131,6 @@ class MusicService : Service() {
 
         if (shuffle == ShuffleState.ON) {
             shuffleOn()
-            playingList.next()
         } else {
             shuffleOff()
         }
@@ -159,6 +158,7 @@ class MusicService : Service() {
         this.song?.let { shuffledList.add(0, it) }
         this.shuffledList = shuffledList
         playingList = shuffledList.listIterator()
+        playingList.next()
     }
 
     private fun shuffleOff() {
