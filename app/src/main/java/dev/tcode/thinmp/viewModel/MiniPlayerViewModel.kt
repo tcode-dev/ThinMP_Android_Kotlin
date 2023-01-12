@@ -26,12 +26,12 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         musicPlayer.addEventListener(this)
     }
 
-    fun play() {
-        musicPlayer.play()
-    }
-
-    fun pause() {
-        musicPlayer.pause()
+    fun toggle() {
+        if (musicPlayer.isPlaying()) {
+            musicPlayer.pause()
+        } else {
+            musicPlayer.play()
+        }
     }
 
     fun next() {

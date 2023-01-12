@@ -55,22 +55,18 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
                 .padding(start = StyleConstant.PADDING_SMALL.dp)
                 .weight(1f)
         )
-        if (uiState.isPlaying) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clickable { viewModel.pause() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.round_pause_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                )
-            }
-        } else {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clickable { viewModel.play() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.round_play_arrow_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                )
-            }
+        Box(contentAlignment = Alignment.Center, modifier = Modifier
+            .size(StyleConstant.BUTTON_SIZE.dp)
+            .clickable { viewModel.toggle() }) {
+            Icon(
+                painter = painterResource(
+                    id = if (uiState.isPlaying) {
+                        R.drawable.round_pause_24
+                    } else {
+                        R.drawable.round_play_arrow_24
+                    }
+                ), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+            )
         }
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .size(StyleConstant.BUTTON_SIZE.dp)
