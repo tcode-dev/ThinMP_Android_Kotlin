@@ -29,11 +29,9 @@ fun PermissionView(content: @Composable BoxScope.() -> Unit) {
                     Column(
                         modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Column {
-                            Text("Denied")
-                            Button(onClick = { permissionState.launchPermissionRequest() }) {
-                                Text("Request permission")
-                            }
+                        Text("Denied")
+                        Button(onClick = { permissionState.launchPermissionRequest() }) {
+                            Text("Request permission")
                         }
                     }
                 }
