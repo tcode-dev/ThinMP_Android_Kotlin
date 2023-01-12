@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -100,6 +101,8 @@ fun PlayerScreen(
                 Text(
                     uiState.primaryText,
                     fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp,
+                    modifier = Modifier.height(32.dp)
                 )
             }
             Row(
@@ -109,6 +112,8 @@ fun PlayerScreen(
             ) {
                 Text(
                     uiState.secondaryText,
+                    fontSize = 16.sp,
+                    modifier = Modifier.height(32.dp)
                 )
             }
         }
