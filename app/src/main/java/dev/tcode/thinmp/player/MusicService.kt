@@ -20,7 +20,8 @@ class MusicService : Service() {
     private val binder = MusicBinder()
     private var mediaPlayer: MediaPlayer? = null
     private var listener: MusicServiceListener? = null
-    private var originalSongs: List<SongModel> = emptyList()
+    private var originalList: List<SongModel> = emptyList()
+    private var shuffledList: List<SongModel> = emptyList()
     private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
     private lateinit var config: ConfigDataStore
     private lateinit var repeat: RepeatState
@@ -44,8 +45,14 @@ class MusicService : Service() {
     }
 
     fun start(songs: List<SongModel>, index: Int) {
-        originalSongs = songs
-        playingList = originalSongs.listIterator(index)
+        originalList = songs
+        song = originalList[index]
+
+        if (shuffle == ShuffleState.ON) {
+            shuffleOn()
+        } else {
+            shuffleOff()
+        }
 
         setMediaPlayer(playingList.next())
         play()
@@ -66,7 +73,7 @@ class MusicService : Service() {
 
         if (getCurrentPosition() <= PREV_MS) {
             if (!playingList.hasPrevious()) {
-                playingList = originalSongs.listIterator(originalSongs.count())
+                playingList = originalList.listIterator(originalList.count())
             }
 
             setMediaPlayer(playingList.previous())
@@ -85,7 +92,7 @@ class MusicService : Service() {
         val isContinue = mediaPlayer?.isPlaying
 
         if (!playingList.hasNext()) {
-            playingList = originalSongs.listIterator(0)
+            playingList = originalList.listIterator(0)
         }
 
         setMediaPlayer(playingList.next())
@@ -122,6 +129,13 @@ class MusicService : Service() {
             ShuffleState.ON -> ShuffleState.OFF
         }
 
+        if (shuffle == ShuffleState.ON) {
+            shuffleOn()
+            playingList.next()
+        } else {
+            shuffleOff()
+        }
+
         config.saveShuffle(shuffle)
         listener?.onChange()
     }
@@ -136,6 +150,21 @@ class MusicService : Service() {
 
     fun getCurrentPosition(): Int {
         return mediaPlayer?.currentPosition ?: 0
+    }
+
+    private fun shuffleOn() {
+        val tempList = originalList.toMutableList()
+        tempList.remove(this.song)
+        val shuffledList = tempList.shuffled().toMutableList()
+        this.song?.let { shuffledList.add(0, it) }
+        this.shuffledList = shuffledList
+        playingList = shuffledList.listIterator()
+    }
+
+    private fun shuffleOff() {
+        playingList = originalList.listIterator(originalList.indexOf(this.song))
+        shuffledList = emptyList()
+        playingList.next()
     }
 
     private fun setMediaPlayer(song: SongModel) {
@@ -166,7 +195,11 @@ class MusicService : Service() {
                     setMediaPlayer(playingList.next())
                     mediaPlayer?.start()
                 } else {
-                    playingList = originalSongs.listIterator(0)
+                    playingList = if (shuffle == ShuffleState.ON) {
+                        shuffledList.listIterator(0)
+                    } else {
+                        originalList.listIterator(0)
+                    }
                     setMediaPlayer(playingList.next())
                     if (repeat == RepeatState.ALL) {
                         mediaPlayer?.start()
