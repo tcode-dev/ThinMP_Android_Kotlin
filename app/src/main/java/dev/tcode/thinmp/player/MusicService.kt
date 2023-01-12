@@ -54,7 +54,7 @@ class MusicService : Service() {
             shuffleOff()
         }
 
-        setMediaPlayer(playingList.next())
+        setMediaPlayer(song!!)
         play()
     }
 
