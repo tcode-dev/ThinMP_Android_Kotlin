@@ -44,16 +44,26 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     fun pause() {
-        musicPlayer.pause()
         cancelSeekBarProgressTask()
+        musicPlayer.pause()
     }
 
     fun prev() {
+        cancelSeekBarProgressTask()
         musicPlayer.prev()
+
+        if (musicPlayer.isPlaying()) {
+            setSeekBarProgressTask()
+        }
     }
 
     fun next() {
+        cancelSeekBarProgressTask()
         musicPlayer.next()
+
+        if (musicPlayer.isPlaying()) {
+            setSeekBarProgressTask()
+        }
     }
 
     fun seek(value: Float) {
