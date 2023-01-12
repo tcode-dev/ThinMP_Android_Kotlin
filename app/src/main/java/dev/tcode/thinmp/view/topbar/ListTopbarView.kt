@@ -40,7 +40,10 @@ fun ListTopbarView(navController: NavController, title: String, offset: Int) {
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween
+                .height(StyleConstant.ROW_HEIGHT.dp)
+                .padding(start = StyleConstant.PADDING_TINY.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .size(StyleConstant.BUTTON_SIZE.dp)

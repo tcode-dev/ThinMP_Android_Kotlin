@@ -80,10 +80,12 @@ fun PlayerScreen(
                         .clip(RoundedCornerShape(8.dp))
                 )
             }
-            Box(contentAlignment = Alignment.Center, modifier = Modifier
-                .statusBarsPadding()
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clickable { navController.popBackStack() }) {
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(start = StyleConstant.PADDING_TINY.dp)
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clickable { navController.popBackStack() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                 )

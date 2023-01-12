@@ -37,7 +37,8 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
             modifier = Modifier
                 .fillMaxWidth()
                 .statusBarsPadding()
-                .height(StyleConstant.ROW_HEIGHT.dp),
+                .height(StyleConstant.ROW_HEIGHT.dp)
+                .padding(start = StyleConstant.PADDING_TINY.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
