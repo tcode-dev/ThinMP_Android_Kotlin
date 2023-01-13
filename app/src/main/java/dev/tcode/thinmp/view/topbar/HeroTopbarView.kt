@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +39,7 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
-                .padding(start = StyleConstant.PADDING_TINY.dp),
+                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_TINY.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -56,11 +57,16 @@ fun HeroTopbarView(navController: NavController, title: String, visible: Boolean
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontWeight = FontWeight.Bold,
+                    modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - StyleConstant.BUTTON_SIZE.dp * 2 - StyleConstant.PADDING_TINY.dp * 2)
                 )
             }
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .size(StyleConstant.BUTTON_SIZE.dp)
-                .clickable { }) {}
+                .clickable { }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                )
+            }
         }
     }
 }

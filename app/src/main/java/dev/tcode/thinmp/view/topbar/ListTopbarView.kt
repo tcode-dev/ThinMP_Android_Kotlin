@@ -10,6 +10,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,9 +42,8 @@ fun ListTopbarView(navController: NavController, title: String, offset: Int) {
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
-                .padding(start = StyleConstant.PADDING_TINY.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.BUTTON_SIZE.dp + StyleConstant.PADDING_TINY.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .size(StyleConstant.BUTTON_SIZE.dp)
@@ -58,10 +58,8 @@ fun ListTopbarView(navController: NavController, title: String, offset: Int) {
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold,
+                modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - StyleConstant.BUTTON_SIZE.dp * 2 - StyleConstant.PADDING_TINY.dp * 2)
             )
-            Box(contentAlignment = Alignment.Center, modifier = Modifier
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clickable { }) {}
         }
     }
 }
