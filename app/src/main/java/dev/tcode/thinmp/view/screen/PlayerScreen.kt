@@ -87,10 +87,9 @@ fun PlayerScreen(
                     .statusBarsPadding()
                     .padding(start = StyleConstant.PADDING_TINY.dp)
                     .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { navController.popBackStack() }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
-                )
+                Icon(painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
             }
         }
         Column(
@@ -122,12 +121,14 @@ fun PlayerScreen(
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.prev() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, modifier = Modifier.size(72.dp)
-                    )
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { viewModel.prev() }) {
+                    Icon(painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, modifier = Modifier.size(72.dp))
                 }
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.toggle() }) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { viewModel.toggle() }) {
                     Icon(
                         painter = painterResource(
                             id = if (uiState.isPlaying) {
@@ -138,18 +139,20 @@ fun PlayerScreen(
                         ), contentDescription = null, modifier = Modifier.size(88.dp)
                     )
                 }
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.clickable { viewModel.next() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(72.dp)
-                    )
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { viewModel.next() }) {
+                    Icon(painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(72.dp))
                 }
             }
             Row(
                 modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { viewModel.setRepeat() }) {
+                Box(contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(StyleConstant.BUTTON_SIZE.dp)
+                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                        .clickable { viewModel.setRepeat() }) {
                     when (uiState.repeat) {
                         RepeatState.OFF -> {
                             Icon(
@@ -167,9 +170,11 @@ fun PlayerScreen(
                         }
                     }
                 }
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clickable { viewModel.setShuffle() }) {
+                Box(contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(StyleConstant.BUTTON_SIZE.dp)
+                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                        .clickable { viewModel.setShuffle() }) {
                     when (uiState.shuffle) {
                         ShuffleState.OFF -> {
                             Icon(
@@ -180,32 +185,27 @@ fun PlayerScreen(
                             )
                         }
                         ShuffleState.ON -> {
-                            Icon(
-                                painter = painterResource(id = R.drawable.round_shuffle_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                            )
+                            Icon(painter = painterResource(id = R.drawable.round_shuffle_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
                         }
                     }
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_person_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                    )
+                    Icon(painter = painterResource(id = R.drawable.round_person_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_favorite_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                    )
+                    Icon(painter = painterResource(id = R.drawable.round_favorite_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_playlist_add_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                    )
+                    Icon(painter = painterResource(id = R.drawable.round_playlist_add_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
                 }
             }
         }

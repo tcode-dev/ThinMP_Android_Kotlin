@@ -40,9 +40,7 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
             .background(color = MaterialTheme.colors.secondary)
             .fillMaxWidth()
             .navigationBarsPadding()
-            .padding(
-                start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_TINY.dp
-            )
+            .padding(start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_TINY.dp)
             .clickable { navController.navigate("player") }, verticalAlignment = Alignment.CenterVertically
     ) {
         ImageView(
@@ -57,6 +55,7 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
         )
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .size(StyleConstant.BUTTON_SIZE.dp)
+            .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
             .clickable { viewModel.toggle() }) {
             Icon(
                 painter = painterResource(
@@ -70,10 +69,9 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
         }
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .size(StyleConstant.BUTTON_SIZE.dp)
+            .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
             .clickable { viewModel.next() }) {
-            Icon(
-                painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-            )
+            Icon(painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
         }
     }
 }
