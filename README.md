@@ -31,4 +31,5 @@
 * Coil - https://github.com/coil-kt/coil
 * hilt - https://developer.android.com/training/dependency-injection/hilt-android
 * Jetpack Compose - https://developer.android.com/jetpack/compose
+* Material Icons - https://fonts.google.com/icons?selected=Material+Icons
 * Realm - https://realm.io
