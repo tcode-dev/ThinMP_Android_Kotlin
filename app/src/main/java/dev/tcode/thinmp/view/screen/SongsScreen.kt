@@ -1,7 +1,9 @@
 package dev.tcode.thinmp.view.screen
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -10,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -46,8 +49,11 @@ fun SongsScreen(
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.songs) { index, song ->
-                MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.clickable {
-                    viewModel.start(index)
+                MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
+                    detectTapGestures(
+                        onLongPress = { Log.d("onLongPress", "called") },
+                        onTap = { viewModel.start(index) }
+                    )
                 })
             }
             item {
