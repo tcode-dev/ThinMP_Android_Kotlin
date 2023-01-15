@@ -2,17 +2,21 @@ package dev.tcode.thinmp.view.screen
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.Text
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -33,7 +37,7 @@ fun SongsScreen(
     navController: NavController, viewModel: SongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
+    val menuItems = listOf("Add to favorites", "Add to a playlist")
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
@@ -49,20 +53,38 @@ fun SongsScreen(
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.songs) { index, song ->
-                MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
-                    detectTapGestures(
-                        onLongPress = { Log.d("onLongPress", "called") },
-                        onTap = { viewModel.start(index) }
-                    )
-                })
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.TopStart)) {
+                    val expanded = remember { mutableStateOf(false) }
+
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
+                        detectTapGestures(
+                            onLongPress = { expanded.value = true },
+                            onTap = { viewModel.start(index) }
+                        )
+                    })
+                    DropdownMenu(
+                        expanded = expanded.value,
+                        offset = DpOffset((-1).dp, 0.dp),
+                        onDismissRequest = { expanded.value = false }) {
+                        menuItems.forEach {
+                            DropdownMenuItem(onClick = {
+                                expanded.value = false
+                            }) {
+                                Text(text = it)
+                            }
+                        }
+                    }
+                }
             }
             item {
                 EmptyMiniPlayerView()
             }
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
-                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-            }) {
+            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+        }) {
             MiniPlayerView(navController)
         }
     }
