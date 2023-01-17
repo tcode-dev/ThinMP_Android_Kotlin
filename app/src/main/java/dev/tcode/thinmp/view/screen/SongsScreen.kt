@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -13,9 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -70,6 +67,7 @@ fun SongsScreen(
                         onDismissRequest = { expanded.value = false }) {
                         if (viewModel.existsFavorite(song.id)) {
                             DropdownMenuItem(onClick = {
+                                viewModel.deleteFavorite(song.id)
                                 expanded.value = false
                             }) {
                                 Text("Remove from favorites")

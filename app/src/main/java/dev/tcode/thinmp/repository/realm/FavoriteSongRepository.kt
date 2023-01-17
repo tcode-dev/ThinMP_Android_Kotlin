@@ -11,13 +11,12 @@ class FavoriteSongRepository {
 
     init {
         val config = RealmConfiguration.create(schema = setOf(FavoriteSongRealmModel::class))
+
         realm = Realm.open(config)
     }
 
     fun exists(songId: String): Boolean {
-        val song: RealmResults<FavoriteSongRealmModel> = realm.query<FavoriteSongRealmModel>("songId == $0", songId).find()
-
-        return song.isNotEmpty()
+        return find(songId).isNotEmpty()
     }
 
     fun add(_songId: String) {
@@ -26,5 +25,17 @@ class FavoriteSongRepository {
                 songId = _songId
             })
         }
+    }
+
+    fun delete(songId: String) {
+        realm.writeBlocking {
+            val song = find(songId).first()
+
+            findLatest(song)?.let { delete(it) }
+        }
+    }
+
+    private fun find(songId: String): RealmResults<FavoriteSongRealmModel> {
+        return realm.query<FavoriteSongRealmModel>("songId == $0", songId).find()
     }
 }

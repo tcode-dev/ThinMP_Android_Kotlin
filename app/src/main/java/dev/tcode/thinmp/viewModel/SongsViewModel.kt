@@ -44,6 +44,12 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         repository.add(songId)
     }
 
+    fun deleteFavorite(songId: String) {
+        val repository = FavoriteSongRepository()
+
+        repository.delete(songId)
+    }
+
     override fun onResume(context: Context) {
         if (initialized) {
             load(context)
