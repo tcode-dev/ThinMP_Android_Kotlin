@@ -32,6 +32,12 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
+    fun existsFavorite(songId: String): Boolean {
+        val repository = FavoriteSongRepository()
+
+        return repository.exists(songId)
+    }
+
     fun addFavorite(songId: String) {
         val repository = FavoriteSongRepository()
 
