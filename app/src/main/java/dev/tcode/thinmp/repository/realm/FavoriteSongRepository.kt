@@ -1,10 +1,10 @@
-package dev.tcode.thinmp.register
+package dev.tcode.thinmp.repository.realm
 
 import dev.tcode.thinmp.model.realm.FavoriteSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 
-class FavoriteSongRegister {
+class FavoriteSongRepository {
     private val realm: Realm
 
     init {

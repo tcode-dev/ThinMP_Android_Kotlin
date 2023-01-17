@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
+import dev.tcode.thinmp.repository.realm.FavoriteSongRepository
 import dev.tcode.thinmp.service.SongsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +30,12 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
 
     fun start(index: Int) {
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
+    }
+
+    fun addFavorite(songId: String) {
+        val repository = FavoriteSongRepository()
+
+        repository.add(songId)
     }
 
     override fun onResume(context: Context) {

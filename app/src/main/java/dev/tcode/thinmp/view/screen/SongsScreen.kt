@@ -37,7 +37,7 @@ fun SongsScreen(
     navController: NavController, viewModel: SongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val menuItems = listOf("Add to favorites", "Add to a playlist")
+
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
@@ -68,12 +68,16 @@ fun SongsScreen(
                         expanded = expanded.value,
                         offset = DpOffset((-1).dp, 0.dp),
                         onDismissRequest = { expanded.value = false }) {
-                        menuItems.forEach {
-                            DropdownMenuItem(onClick = {
-                                expanded.value = false
-                            }) {
-                                Text(text = it)
-                            }
+                        DropdownMenuItem(onClick = {
+                            viewModel.addFavorite(song.id)
+                            expanded.value = false
+                        }) {
+                            Text("Add to favorites")
+                        }
+                        DropdownMenuItem(onClick = {
+                            expanded.value = false
+                        }) {
+                            Text("Add to a playlist")
                         }
                     }
                 }
