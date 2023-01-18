@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.repository.realm.FavoriteSongRepository
 import dev.tcode.thinmp.service.SongsService
@@ -32,19 +33,19 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
-    fun existsFavorite(songId: String): Boolean {
+    fun existsFavorite(songId: SongId): Boolean {
         val repository = FavoriteSongRepository()
 
         return repository.exists(songId)
     }
 
-    fun addFavorite(songId: String) {
+    fun addFavorite(songId: SongId) {
         val repository = FavoriteSongRepository()
 
         repository.add(songId)
     }
 
-    fun deleteFavorite(songId: String) {
+    fun deleteFavorite(songId: SongId) {
         val repository = FavoriteSongRepository()
 
         repository.delete(songId)

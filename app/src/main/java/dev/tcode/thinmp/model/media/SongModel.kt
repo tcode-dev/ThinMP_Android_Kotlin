@@ -3,9 +3,10 @@ package dev.tcode.thinmp.model.media
 import android.net.Uri
 import android.provider.MediaStore
 import android.net.Uri.parse
+import dev.tcode.thinmp.model.media.valueObject.SongId
 
 class SongModel(
-    public override var id: String,
+    val songId: SongId,
     public override var name: String,
     val artistId: String,
     val artistName: String,
@@ -13,6 +14,9 @@ class SongModel(
     val albumName: String,
     val duration: Int
 ): Music() {
+    override var id: String = ""
+        get() = songId.id
+
     override fun getTrackList(): List<SongModel> {
         val trackList: MutableList<SongModel> = ArrayList()
 

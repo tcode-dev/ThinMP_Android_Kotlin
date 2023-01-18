@@ -65,16 +65,16 @@ fun SongsScreen(
                         expanded = expanded.value,
                         offset = DpOffset((-1).dp, 0.dp),
                         onDismissRequest = { expanded.value = false }) {
-                        if (viewModel.existsFavorite(song.id)) {
+                        if (viewModel.existsFavorite(song.songId)) {
                             DropdownMenuItem(onClick = {
-                                viewModel.deleteFavorite(song.id)
+                                viewModel.deleteFavorite(song.songId)
                                 expanded.value = false
                             }) {
                                 Text("Remove from favorites")
                             }
                         } else {
                             DropdownMenuItem(onClick = {
-                                viewModel.addFavorite(song.id)
+                                viewModel.addFavorite(song.songId)
                                 expanded.value = false
                             }) {
                                 Text("Add to favorites")

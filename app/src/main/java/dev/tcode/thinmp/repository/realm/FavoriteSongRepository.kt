@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.repository.realm
 
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.FavoriteSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -15,19 +16,19 @@ class FavoriteSongRepository {
         realm = Realm.open(config)
     }
 
-    fun exists(songId: String): Boolean {
+    fun exists(songId: SongId): Boolean {
         return find(songId).isNotEmpty()
     }
 
-    fun add(_songId: String) {
+    fun add(_songId: SongId) {
         realm.writeBlocking {
             copyToRealm(FavoriteSongRealmModel().apply {
-                songId = _songId
+                songId = _songId.id
             })
         }
     }
 
-    fun delete(songId: String) {
+    fun delete(songId: SongId) {
         realm.writeBlocking {
             val song = find(songId).first()
 
@@ -35,7 +36,7 @@ class FavoriteSongRepository {
         }
     }
 
-    private fun find(songId: String): RealmResults<FavoriteSongRealmModel> {
-        return realm.query<FavoriteSongRealmModel>("songId == $0", songId).find()
+    private fun find(songId: SongId): RealmResults<FavoriteSongRealmModel> {
+        return realm.query<FavoriteSongRealmModel>("songId == $0", songId.id).find()
     }
 }
