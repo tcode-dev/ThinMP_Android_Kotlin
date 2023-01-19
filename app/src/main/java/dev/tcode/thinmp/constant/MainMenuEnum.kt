@@ -4,4 +4,5 @@ enum class MainMenuEnum(val key: String, val label: String) {
     ARTISTS("artists", "Artists"),
     ALBUMS("albums", "Albums"),
     SONGS("songs", "Songs"),
+    FAVORITE_SONGS("favoriteSongs", "Favorite Songs"),
 }
