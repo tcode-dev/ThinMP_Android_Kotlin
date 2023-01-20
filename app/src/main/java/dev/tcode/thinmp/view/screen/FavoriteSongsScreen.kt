@@ -26,12 +26,12 @@ import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
-import dev.tcode.thinmp.viewModel.SongsViewModel
+import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun FavoriteSongsScreen(
-    navController: NavController, viewModel: SongsViewModel = viewModel()
+    navController: NavController, viewModel: FavoriteSongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
@@ -50,21 +50,17 @@ fun FavoriteSongsScreen(
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.songs) { index, song ->
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.TopStart)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
                     val expanded = remember { mutableStateOf(false) }
 
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = { expanded.value = true },
-                            onTap = { viewModel.start(index) }
-                        )
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
-                    DropdownMenu(
-                        expanded = expanded.value,
-                        offset = DpOffset((-1).dp, 0.dp),
-                        onDismissRequest = { expanded.value = false }) {
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                         DropdownMenuItem(onClick = {
                             viewModel.deleteFavorite(song.songId)
                             expanded.value = false
