@@ -20,6 +20,12 @@ class FavoriteSongRepository {
         return find(songId).isNotEmpty()
     }
 
+    fun findAll(): List<SongId> {
+        return realm.query<FavoriteSongRealmModel>().find().map {
+            SongId(it.songId)
+        }
+    }
+
     fun add(_songId: SongId) {
         realm.writeBlocking {
             copyToRealm(FavoriteSongRealmModel().apply {
