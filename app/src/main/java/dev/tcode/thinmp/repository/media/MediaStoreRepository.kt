@@ -23,7 +23,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
 
         if (!cursor?.moveToNext()!!) return null
 
-        val item: T? = fetch()
+        val item: T = fetch()
 
         destroy()
 
