@@ -13,7 +13,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     var sortOrder: String? = null
 
     private fun initialize() {
-        cursor = createCursor();
+        cursor = createCursor()
     }
 
     abstract fun fetch(): T
