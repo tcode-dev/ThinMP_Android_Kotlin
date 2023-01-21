@@ -29,6 +29,17 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
         load(application)
     }
 
+    fun load(context: Context) {
+        val repository = FavoriteSongsService(context)
+        val songs = repository.findAll()
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                songs = songs
+            )
+        }
+    }
+
     fun start(index: Int) {
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
@@ -44,17 +55,6 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
             load(context)
         } else {
             initialized = true
-        }
-    }
-
-    private fun load(context: Context) {
-        val repository = FavoriteSongsService(context)
-        val songs = repository.findAll()
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                songs = songs
-            )
         }
     }
 }
