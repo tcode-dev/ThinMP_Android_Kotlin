@@ -3,6 +3,7 @@ package dev.tcode.thinmp.repository.media
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Bundle
 import android.text.TextUtils
 import dev.tcode.thinmp.model.media.Music
 
@@ -11,6 +12,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     var selection: String? = null
     var selectionArgs: Array<String>? = null
     var sortOrder: String? = null
+    var bundle: Bundle? = null
 
     private fun initialize() {
         cursor = createCursor()
@@ -53,13 +55,22 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     }
 
     private fun createCursor(): Cursor? {
-        return context.contentResolver.query(
-            uri,
-            projection,
-            selection,
-            selectionArgs,
-            sortOrder
-        )
+        if (bundle != null) {
+            return context.contentResolver.query(
+                uri,
+                projection,
+                bundle,
+                null
+            )
+        } else {
+            return context.contentResolver.query(
+                uri,
+                projection,
+                selection,
+                selectionArgs,
+                sortOrder
+            )
+        }
     }
 
     private fun destroy() {
