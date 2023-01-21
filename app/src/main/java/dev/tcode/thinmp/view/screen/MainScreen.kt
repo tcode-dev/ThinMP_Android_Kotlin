@@ -2,6 +2,10 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -37,38 +41,42 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
         val (miniPlayer) = createRefs()
         val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
-        Column {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(start = StyleConstant.PADDING_LARGE.dp)
-            ) {
-                Row(
+        LazyVerticalGrid(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT)) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = StyleConstant.PADDING_MEDIUM.dp)
-                        .height(StyleConstant.ROW_HEIGHT.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .statusBarsPadding()
+                        .padding(start = StyleConstant.PADDING_LARGE.dp)
                 ) {
-                    Text(
-                        "Library", textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
-                    )
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
-                        .size(StyleConstant.BUTTON_SIZE.dp)
-                        .clickable { }) {
-                        Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = StyleConstant.PADDING_MEDIUM.dp)
+                            .height(StyleConstant.ROW_HEIGHT.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            "Library", textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
+                        )
+                        Box(contentAlignment = Alignment.Center, modifier = Modifier
+                            .size(StyleConstant.BUTTON_SIZE.dp)
+                            .clickable { }) {
+                            Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+                        }
                     }
+                    DividerView()
                 }
-                DividerView()
             }
-            uiState.menuList.forEach { menu ->
-                PlainRowView(menu.label, modifier = Modifier.clickable {
-                    navController.navigate(menu.key)
+            items(items = uiState.menuList, span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { item ->
+                PlainRowView(item.label, modifier = Modifier.clickable {
+                    navController.navigate(item.key)
                 })
             }
-            EmptyMiniPlayerView()
+            item {
+                EmptyMiniPlayerView()
+            }
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
