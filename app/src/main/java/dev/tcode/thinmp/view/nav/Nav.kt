@@ -19,6 +19,7 @@ fun Nav() {
         composable("artists") { ArtistsScreen(navController) }
         composable("albums") { AlbumsScreen(navController) }
         composable("songs") { SongsScreen(navController) }
+        composable("favoriteArtists") { FavoriteArtistsScreen(navController) }
         composable("favoriteSongs") { FavoriteSongsScreen(navController) }
         composable(
             "albumDetail/{id}",

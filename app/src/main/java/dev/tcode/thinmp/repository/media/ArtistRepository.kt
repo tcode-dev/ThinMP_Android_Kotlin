@@ -2,7 +2,6 @@ package dev.tcode.thinmp.repository.media
 
 import android.content.Context
 import android.provider.MediaStore
-import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 
@@ -28,6 +27,16 @@ class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
         sortOrder = null
 
         return get()
+    }
+
+    fun findByIds(artistIds: List<ArtistId>): List<ArtistModel> {
+        val ids = artistIds.map { it.id }
+
+        selection = MediaStore.Audio.Media._ID + " IN (" + makePlaceholders(ids.size) + ")"
+        selectionArgs = toStringArray(ids)
+        sortOrder = null
+
+        return getList()
     }
 
     private fun getId(): ArtistId {
