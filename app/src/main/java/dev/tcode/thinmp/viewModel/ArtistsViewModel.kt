@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
+import dev.tcode.thinmp.repository.realm.FavoriteArtistRepository
 import dev.tcode.thinmp.service.ArtistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +24,24 @@ class ArtistsViewModel(application: Application) : AndroidViewModel(application)
 
     init {
         load(application)
+    }
+
+    fun existsFavorite(artistId: ArtistId): Boolean {
+        val repository = FavoriteArtistRepository()
+
+        return repository.exists(artistId)
+    }
+
+    fun addFavorite(artistId: ArtistId) {
+        val repository = FavoriteArtistRepository()
+
+        repository.add(artistId)
+    }
+
+    fun deleteFavorite(artistId: ArtistId) {
+        val repository = FavoriteArtistRepository()
+
+        repository.delete(artistId)
     }
 
     override fun onResume(context: Context) {
