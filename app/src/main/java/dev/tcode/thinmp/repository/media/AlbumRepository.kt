@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.AlbumModel
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 
 class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Albums.ARTIST)
@@ -45,8 +46,10 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         return getList()
     }
 
-    private fun getId(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Albums._ID)?.let { cursor?.getString(it) } ?: ""
+    private fun getId(): AlbumId {
+        val id = cursor?.getColumnIndex(MediaStore.Audio.Albums._ID)?.let { cursor?.getString(it) } ?: ""
+
+        return AlbumId(id)
     }
 
     private fun getArtistId(): String {
