@@ -41,7 +41,7 @@ fun SongsScreen(
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val lazyListState = rememberLazyListState()
-        val (miniPlayer, playlistPopup) = createRefs()
+        val (miniPlayer) = createRefs()
         val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
         val visiblePopup = remember { mutableStateOf(false) }
 
@@ -97,9 +97,7 @@ fun SongsScreen(
                 EmptyMiniPlayerView()
             }
         }
-        if (visiblePopup.value) {
-            PlaylistPopupView()
-        }
+        PlaylistPopupView(visiblePopup)
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
         }) {
