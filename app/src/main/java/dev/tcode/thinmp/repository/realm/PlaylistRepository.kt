@@ -1,6 +1,6 @@
 package dev.tcode.thinmp.repository.realm
 
-import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
 import io.realm.kotlin.Realm
@@ -15,16 +15,15 @@ class PlaylistRepository {
         realm = Realm.open(config)
     }
 
-    fun add(_name: String, _songs: List<SongModel>) {
-        val song = PlaylistSongRealmModel().apply {
-            playlistId = ""
-            songId = ""
-        }
-        val playlist = PlaylistRealmModel().apply {
-            name = _name
-            order = 1
-            songs.addAll(listOf(song))
-        }
+    fun create(songId: SongId, name: String) {
+        val playlist = PlaylistRealmModel()
+        val song = PlaylistSongRealmModel()
+
+        song.playlistId = playlist.id.toString()
+        song.songId = songId.id
+
+        playlist.name = name
+        playlist.songs.addAll(listOf(song))
 
         realm.writeBlocking {
             copyToRealm(playlist)
