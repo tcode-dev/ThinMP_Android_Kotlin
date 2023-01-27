@@ -10,7 +10,7 @@ class PlaylistRepository {
     private val realm: Realm
 
     init {
-        val config = RealmConfiguration.create(schema = setOf(PlaylistRealmModel::class))
+        val config = RealmConfiguration.create(schema = setOf(PlaylistRealmModel::class, PlaylistSongRealmModel::class))
 
         realm = Realm.open(config)
     }
@@ -23,7 +23,7 @@ class PlaylistRepository {
         song.songId = songId.id
 
         playlist.name = name
-        playlist.songs.addAll(listOf(song))
+        playlist.songs.add(song)
 
         realm.writeBlocking {
             copyToRealm(playlist)

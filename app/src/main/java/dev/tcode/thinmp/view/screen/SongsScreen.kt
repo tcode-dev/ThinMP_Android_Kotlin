@@ -15,12 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Popup
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.popup.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -36,6 +36,7 @@ fun SongsScreen(
     navController: NavController, viewModel: SongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -85,8 +86,9 @@ fun SongsScreen(
 
                         }
                         DropdownMenuItem(onClick = {
-                            expanded.value = false
+                            playlistRegisterSongId = song.songId
                             visiblePopup.value = true
+                            expanded.value = false
                         }) {
                             Text("Add to a playlist")
                         }
@@ -97,7 +99,7 @@ fun SongsScreen(
                 EmptyMiniPlayerView()
             }
         }
-        PlaylistPopupView(visiblePopup)
+        PlaylistPopupView(playlistRegisterSongId, visiblePopup)
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
         }) {
