@@ -1,15 +1,14 @@
 package dev.tcode.thinmp.view.popup
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.realm.PlaylistRepository
@@ -22,15 +21,20 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>) {
         return
     }
 
-    Popup(alignment = Alignment.Center) {
-        Column(modifier = Modifier
-            .background(color = MaterialTheme.colors.secondary)
-            .padding(StyleConstant.PADDING_LARGE.dp)) {
+    Popup(
+        alignment = Alignment.Center,
+        onDismissRequest = { visiblePopup.value = false },
+        properties = PopupProperties(focusable = true)
+    ) {
+        Column(
+            modifier = Modifier
+                .background(color = MaterialTheme.colors.secondary)
+                .padding(StyleConstant.PADDING_LARGE.dp)
+        ) {
             Text("playlist")
             OutlinedTextField(
                 value = text,
-                onValueChange = { text = it },
-                modifier = Modifier.padding(StyleConstant.PADDING_LARGE.dp)
+                onValueChange = { text = it }
             )
             Row {
                 OutlinedButton(
