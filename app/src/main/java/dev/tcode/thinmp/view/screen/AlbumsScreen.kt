@@ -32,16 +32,14 @@ fun AlbumsScreen(
     viewModel: AlbumsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
+    val lazyGridState = rememberLazyGridState()
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val lazyGridState = rememberLazyGridState()
-        val itemSize: Dp =
-            LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight =
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Albums", lazyGridState.firstVisibleItemScrollOffset)

@@ -36,13 +36,13 @@ fun FavoriteSongsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
+    val lazyListState = rememberLazyListState()
+    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val lazyListState = rememberLazyListState()
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Favorite Songs", lazyListState.firstVisibleItemScrollOffset)

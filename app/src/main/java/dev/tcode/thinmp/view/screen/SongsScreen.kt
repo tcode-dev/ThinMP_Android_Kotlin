@@ -37,14 +37,14 @@ fun SongsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var playlistRegisterSongId = SongId("")
+    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val visiblePopup = remember { mutableStateOf(false) }
+    val lazyListState = rememberLazyListState()
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val lazyListState = rememberLazyListState()
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
-        val visiblePopup = remember { mutableStateOf(false) }
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Songs", lazyListState.firstVisibleItemScrollOffset)

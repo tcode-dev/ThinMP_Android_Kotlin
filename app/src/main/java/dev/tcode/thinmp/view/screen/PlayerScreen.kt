@@ -38,13 +38,12 @@ fun PlayerScreen(
     navController: NavController, viewModel: PlayerViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 64
+    val imageBottomPosition: Dp = LocalConfiguration.current.screenWidthDp.dp - imageSize - WindowInsets.systemBars.asPaddingValues().calculateTopPadding() - StyleConstant.ROW_HEIGHT.dp
 
     CustomLifecycleEventObserver(viewModel)
 
     Column(Modifier.fillMaxSize()) {
-        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 64
-        val imageBottomPosition: Dp = LocalConfiguration.current.screenWidthDp.dp - imageSize - WindowInsets.systemBars.asPaddingValues().calculateTopPadding() - StyleConstant.ROW_HEIGHT.dp
-
         ConstraintLayout(
             Modifier
                 .fillMaxWidth()

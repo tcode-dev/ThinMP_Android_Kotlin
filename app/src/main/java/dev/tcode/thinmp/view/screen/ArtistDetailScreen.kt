@@ -45,17 +45,17 @@ fun ArtistDetailScreen(
     navController: NavController, id: String, viewModel: ArtistDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lazyGridState = rememberLazyGridState()
+    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
+    val visibleHeroTopbarView =
+        lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
+            .calculateTopPadding().value + 90))
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val lazyGridState = rememberLazyGridState()
-        val visibleHeroTopbarView =
-            lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
-                .calculateTopPadding().value + 90))
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
-        val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
 
         Box(Modifier.zIndex(1F)) {
             HeroTopbarView(
@@ -146,8 +146,8 @@ fun ArtistDetailScreen(
 
                 GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                     AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.clickable {
-                            navController.navigate("albumDetail/${album.id}")
-                        })
+                        navController.navigate("albumDetail/${album.id}")
+                    })
                 }
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
@@ -167,8 +167,8 @@ fun ArtistDetailScreen(
             }
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
-                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-            }) {
+            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+        }) {
             MiniPlayerView(navController)
         }
     }

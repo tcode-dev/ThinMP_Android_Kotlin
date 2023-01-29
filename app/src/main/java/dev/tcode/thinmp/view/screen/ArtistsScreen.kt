@@ -34,13 +34,13 @@ fun ArtistsScreen(
     navController: NavController, viewModel: ArtistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lazyListState = rememberLazyListState()
+    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val lazyListState = rememberLazyListState()
         val (miniPlayer) = createRefs()
-        val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
 
         Box(Modifier.zIndex(3F)) {
             ListTopbarView(navController, "Artists", lazyListState.firstVisibleItemScrollOffset)
