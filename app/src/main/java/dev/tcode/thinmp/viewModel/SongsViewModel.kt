@@ -4,11 +4,9 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.register.PlaylistRegister
-import dev.tcode.thinmp.repository.realm.FavoriteSongRepository
 import dev.tcode.thinmp.service.SongsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
