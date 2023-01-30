@@ -11,10 +11,10 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.repository.realm.PlaylistRepository
+import dev.tcode.thinmp.register.PlaylistRegister
 
 @Composable
-fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>) {
+fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, listener: PlaylistRegister) {
     var text by remember { mutableStateOf("") }
 
     if (!visiblePopup.value) {
@@ -39,9 +39,8 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>) {
             Row {
                 OutlinedButton(
                     onClick = {
-                        val repository = PlaylistRepository()
+                        listener.createPlaylist(songId, text)
 
-                        repository.create(songId, text)
                         visiblePopup.value = false
                     },
                 ) {
