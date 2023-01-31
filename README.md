@@ -33,3 +33,13 @@
 * Jetpack Compose - https://developer.android.com/jetpack/compose
 * Material Icons - https://fonts.google.com/icons?selected=Material+Icons
 * Realm - https://realm.io
+
+## Architecture
+
+### View
+
+`View` → `ViewModel` → `Service` → `Repository` → `Model`
+
+### Register
+
+`View` → `ViewModel` → `Register` → `Repository`
