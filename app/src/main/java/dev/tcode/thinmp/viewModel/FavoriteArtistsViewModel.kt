@@ -4,9 +4,8 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
-import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.repository.realm.FavoriteArtistRepository
+import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.service.FavoriteArtistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +17,7 @@ data class FavoriteArtistsUiState(
     var artists: List<ArtistModel> = emptyList()
 )
 
-class FavoriteArtistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+class FavoriteArtistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister {
     private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(FavoriteArtistsUiState())
@@ -38,12 +37,6 @@ class FavoriteArtistsViewModel(application: Application) : AndroidViewModel(appl
                 artists = artists
             )
         }
-    }
-
-    fun deleteFavorite(artistId: ArtistId) {
-        val repository = FavoriteArtistRepository()
-
-        repository.delete(artistId)
     }
 
     override fun onResume(context: Context) {
