@@ -22,7 +22,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
-import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
