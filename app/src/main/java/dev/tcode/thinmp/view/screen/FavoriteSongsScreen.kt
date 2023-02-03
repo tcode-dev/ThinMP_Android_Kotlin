@@ -21,7 +21,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.player.MiniPlayerView
+import dev.tcode.thinmp.view.popup.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -38,6 +40,8 @@ fun FavoriteSongsScreen(
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
     val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val visiblePopup = remember { mutableStateOf(false) }
+    var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -71,6 +75,8 @@ fun FavoriteSongsScreen(
                             Text("Remove from favorites")
                         }
                         DropdownMenuItem(onClick = {
+                            playlistRegisterSongId = song.songId
+                            visiblePopup.value = true
                             expanded.value = false
                         }) {
                             Text("Add to a playlist")
@@ -82,6 +88,7 @@ fun FavoriteSongsScreen(
                 EmptyMiniPlayerView()
             }
         }
+        PlaylistPopupView(playlistRegisterSongId, visiblePopup, viewModel)
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
         }) {
