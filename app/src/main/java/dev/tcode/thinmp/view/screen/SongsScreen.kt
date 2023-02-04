@@ -36,9 +36,9 @@ fun SongsScreen(
     navController: NavController, viewModel: SongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
+    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
     var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
