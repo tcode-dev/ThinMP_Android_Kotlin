@@ -32,9 +32,9 @@ fun AlbumsScreen(
     viewModel: AlbumsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val lazyGridState = rememberLazyGridState()
     val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
     val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
-    val lazyGridState = rememberLazyGridState()
 
     CustomLifecycleEventObserver(viewModel)
 
