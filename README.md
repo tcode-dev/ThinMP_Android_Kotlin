@@ -16,7 +16,7 @@
 
 ## Environments
 
-* Android Studio Dolphin (2021.3.1)
+* Android Studio Electric Eel | 2022.1.1
 * Kotlin
 * Gradle
 * minSdkVersion 33
