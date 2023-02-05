@@ -9,7 +9,7 @@ import org.mongodb.kbson.BsonObjectId
 class PlaylistRealmModel: RealmObject {
     @PrimaryKey
     var id: BsonObjectId = BsonObjectId()
-    var name: String? = null
+    var name: String = ""
     var order = 0
     var songs: RealmList<PlaylistSongRealmModel> = realmListOf()
 }
