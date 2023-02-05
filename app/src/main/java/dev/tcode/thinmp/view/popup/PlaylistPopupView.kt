@@ -17,10 +17,6 @@ import dev.tcode.thinmp.register.PlaylistRegister
 fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, listener: PlaylistRegister) {
     var text by remember { mutableStateOf("") }
 
-    if (!visiblePopup.value) {
-        return
-    }
-
     Popup(
         alignment = Alignment.Center,
         onDismissRequest = { visiblePopup.value = false },

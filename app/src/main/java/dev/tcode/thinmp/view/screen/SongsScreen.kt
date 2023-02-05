@@ -99,7 +99,9 @@ fun SongsScreen(
                 EmptyMiniPlayerView()
             }
         }
-        PlaylistPopupView(playlistRegisterSongId, visiblePopup, viewModel)
+        if (visiblePopup.value) {
+            PlaylistPopupView(playlistRegisterSongId, visiblePopup, viewModel)
+        }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
         }) {
