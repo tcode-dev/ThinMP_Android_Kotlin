@@ -5,6 +5,7 @@ import dev.tcode.thinmp.model.realm.PlaylistRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
+import io.realm.kotlin.ext.query
 
 class PlaylistRepository {
     private val realm: Realm
@@ -28,5 +29,9 @@ class PlaylistRepository {
         realm.writeBlocking {
             copyToRealm(playlist)
         }
+    }
+
+    fun findAll(): List<PlaylistRealmModel> {
+        return realm.query<PlaylistRealmModel>().find()
     }
 }
