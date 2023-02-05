@@ -14,12 +14,15 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @Composable
 fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, listener: PlaylistRegister, viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var text by remember { mutableStateOf("") }
+
+    CustomLifecycleEventObserver(viewModel)
 
     Popup(
         alignment = Alignment.Center,
