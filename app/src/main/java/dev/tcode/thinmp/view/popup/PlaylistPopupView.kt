@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.view.popup
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -20,7 +21,8 @@ import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 @Composable
 fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, listener: PlaylistRegister, viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    var text by remember { mutableStateOf("") }
+    var isCreate by remember { mutableStateOf(false) }
+    var name by remember { mutableStateOf("") }
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -34,32 +36,42 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, liste
                 .background(color = MaterialTheme.colors.secondary)
                 .padding(StyleConstant.PADDING_LARGE.dp)
         ) {
-            Text("playlist")
-            OutlinedTextField(
-                value = text,
-                onValueChange = { text = it }
-            )
-            Row {
-                OutlinedButton(
-                    onClick = {
-                        listener.createPlaylist(songId, text)
-
+            if (uiState.playlists.isNotEmpty() && !isCreate) {
+                Row() {
+                    Text("new playlist", Modifier.clickable {
+                        isCreate = true
+                    })
+                    Text("cancel", Modifier.clickable {
                         visiblePopup.value = false
-                    },
-                ) {
-                    Text("ok")
+                    })
                 }
-                OutlinedButton(
-                    onClick = {
-                        visiblePopup.value = false
-                    },
-                ) {
-                    Text("cancel")
+                Column {
+                    uiState.playlists.forEach { playlist ->
+                        PlainRowView(playlist.name)
+                    }
                 }
-            }
-            Column {
-                uiState.playlists.forEach { playlist ->
-                    PlainRowView(playlist.name)
+            } else {
+                Text("playlist name")
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it }
+                )
+                Row {
+                    OutlinedButton(
+                        onClick = {
+                            listener.createPlaylist(songId, name)
+                            visiblePopup.value = false
+                        },
+                    ) {
+                        Text("ok")
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            isCreate = false
+                        },
+                    ) {
+                        Text("cancel")
+                    }
                 }
             }
         }
