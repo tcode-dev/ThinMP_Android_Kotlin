@@ -163,7 +163,7 @@ fun AlbumDetailScreen(
             }
         }
         if (visiblePopup.value) {
-            PlaylistPopupView(playlistRegisterSongId, visiblePopup, viewModel)
+            PlaylistPopupView(playlistRegisterSongId, visiblePopup)
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)

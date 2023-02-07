@@ -6,6 +6,7 @@ import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
+import org.mongodb.kbson.BsonObjectId
 
 class PlaylistRepository {
     private val realm: Realm
@@ -29,6 +30,10 @@ class PlaylistRepository {
         realm.writeBlocking {
             copyToRealm(playlist)
         }
+    }
+
+    fun add(playlistId: BsonObjectId, songId: SongId) {
+
     }
 
     fun findAll(): List<PlaylistRealmModel> {

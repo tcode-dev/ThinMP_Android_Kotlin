@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
+import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ data class PlaylistsUiState(
     var playlists: List<PlaylistRealmModel> = emptyList()
 )
 
-class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(PlaylistsUiState())
     val uiState: StateFlow<PlaylistsUiState> = _uiState.asStateFlow()

@@ -13,13 +13,12 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @Composable
-fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, listener: PlaylistRegister, viewModel: PlaylistsViewModel = viewModel()) {
+fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var isCreate by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
@@ -47,7 +46,10 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, liste
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
-                        PlainRowView(playlist.name)
+                        PlainRowView(playlist.name, Modifier.clickable {
+                            viewModel.addPlaylist(playlist.id, songId)
+                            visiblePopup.value = false
+                        })
                     }
                 }
             } else {
@@ -59,7 +61,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, liste
                 Row {
                     OutlinedButton(
                         onClick = {
-                            listener.createPlaylist(songId, name)
+                            viewModel.createPlaylist(songId, name)
                             visiblePopup.value = false
                         },
                     ) {
