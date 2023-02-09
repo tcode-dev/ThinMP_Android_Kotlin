@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -26,17 +27,21 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
     CustomLifecycleEventObserver(viewModel)
 
     Popup(
-        alignment = Alignment.Center,
-        onDismissRequest = { visiblePopup.value = false },
-        properties = PopupProperties(focusable = true)
+        alignment = Alignment.Center, onDismissRequest = { visiblePopup.value = false }, properties = PopupProperties(focusable = true)
     ) {
         Column(
             modifier = Modifier
+                .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp)
+                .fillMaxWidth()
                 .background(color = MaterialTheme.colors.secondary)
-                .padding(StyleConstant.PADDING_LARGE.dp)
+                .padding(top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
         ) {
             if (uiState.playlists.isNotEmpty() && !isCreate) {
-                Row() {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = StyleConstant.PADDING_SMALL.dp), horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     Text("new playlist", Modifier.clickable {
                         isCreate = true
                     })
@@ -46,19 +51,29 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
-                        PlainRowView(playlist.name, Modifier.clickable {
-                            viewModel.addPlaylist(playlist.id, songId)
-                            visiblePopup.value = false
-                        })
+                        PlainRowView(playlist.name,
+                            Modifier
+                                .padding(end = StyleConstant.PADDING_LARGE.dp)
+                                .clickable {
+                                    viewModel.addPlaylist(playlist.id, songId)
+                                    visiblePopup.value = false
+                                })
                     }
                 }
             } else {
-                Text("playlist name")
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it }
+                Text(
+                    text = "playlist name", textAlign = TextAlign.Center, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = StyleConstant.PADDING_LARGE.dp)
                 )
-                Row {
+                OutlinedTextField(value = name, modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp), onValueChange = { name = it })
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = StyleConstant.PADDING_LARGE.dp), horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     OutlinedButton(
                         onClick = {
                             viewModel.createPlaylist(songId, name)
