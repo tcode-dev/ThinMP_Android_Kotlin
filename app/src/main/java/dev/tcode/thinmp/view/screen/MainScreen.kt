@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,7 +60,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
                         Text(
-                            "Library", textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
+                            stringResource(R.string.library), textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
                         )
                         Box(contentAlignment = Alignment.Center, modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)
@@ -77,7 +78,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    "Recently Added", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                    stringResource(R.string.recently_added), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                         start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
                     )
                 )
