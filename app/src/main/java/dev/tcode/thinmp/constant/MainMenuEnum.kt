@@ -1,9 +1,11 @@
 package dev.tcode.thinmp.constant
 
-enum class MainMenuEnum(val key: String, val label: String) {
-    ARTISTS("artists", "Artists"),
-    ALBUMS("albums", "Albums"),
-    SONGS("songs", "Songs"),
-    FAVORITE_ARTISTS("favoriteArtists", "Favorite Artists"),
-    FAVORITE_SONGS("favoriteSongs", "Favorite Songs"),
+import dev.tcode.thinmp.R
+
+enum class MainMenuEnum(val key: String, val id: Int) {
+    ARTISTS("artists", R.string.artists),
+    ALBUMS("albums", R.string.albums),
+    SONGS("songs", R.string.songs),
+    FAVORITE_ARTISTS("favoriteArtists", R.string.favorite_artists),
+    FAVORITE_SONGS("favoriteSongs", R.string.favorite_songs);
 }
