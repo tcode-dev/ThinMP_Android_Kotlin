@@ -14,12 +14,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.player.MiniPlayerView
@@ -49,7 +51,7 @@ fun FavoriteSongsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            ListTopbarView(navController, "Favorite Songs", lazyListState.firstVisibleItemScrollOffset)
+            ListTopbarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(state = lazyListState) {
             item {
@@ -72,14 +74,14 @@ fun FavoriteSongsScreen(
                             viewModel.load(context)
                             expanded.value = false
                         }) {
-                            Text("Remove from favorites")
+                            Text(stringResource(R.string.remove_favorite))
                         }
                         DropdownMenuItem(onClick = {
                             playlistRegisterSongId = song.songId
                             visiblePopup.value = true
                             expanded.value = false
                         }) {
-                            Text("Add to a playlist")
+                            Text(stringResource(R.string.add_playlist))
                         }
                     }
                 }
