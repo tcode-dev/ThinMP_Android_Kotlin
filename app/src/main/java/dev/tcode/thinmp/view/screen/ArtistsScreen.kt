@@ -13,12 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -43,7 +45,7 @@ fun ArtistsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            ListTopbarView(navController, "Artists", lazyListState.firstVisibleItemScrollOffset)
+            ListTopbarView(navController, stringResource(R.string.artists), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(state = lazyListState) {
             item {
@@ -64,14 +66,14 @@ fun ArtistsScreen(
                                 viewModel.deleteFavorite(artist.artistId)
                                 expanded.value = false
                             }) {
-                                Text("Remove from favorites")
+                                Text(stringResource(R.string.remove_favorite))
                             }
                         } else {
                             DropdownMenuItem(onClick = {
                                 viewModel.addFavorite(artist.artistId)
                                 expanded.value = false
                             }) {
-                                Text("Add to favorites")
+                                Text(stringResource(R.string.add_favorite))
                             }
                         }
                     }
