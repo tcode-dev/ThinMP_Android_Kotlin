@@ -9,12 +9,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
@@ -42,7 +44,7 @@ fun AlbumsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            ListTopbarView(navController, "Albums", lazyGridState.firstVisibleItemScrollOffset)
+            ListTopbarView(navController, stringResource(R.string.albums), lazyGridState.firstVisibleItemScrollOffset)
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
