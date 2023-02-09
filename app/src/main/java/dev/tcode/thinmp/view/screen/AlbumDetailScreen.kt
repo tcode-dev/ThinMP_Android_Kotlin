@@ -19,6 +19,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -26,6 +27,7 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.image.ImageView
@@ -137,14 +139,14 @@ fun AlbumDetailScreen(
                                 viewModel.deleteFavorite(song.songId)
                                 expanded.value = false
                             }) {
-                                Text("Remove from favorites")
+                                Text(stringResource(R.string.remove_favorite))
                             }
                         } else {
                             DropdownMenuItem(onClick = {
                                 viewModel.addFavorite(song.songId)
                                 expanded.value = false
                             }) {
-                                Text("Add to favorites")
+                                Text(stringResource(R.string.add_favorite))
                             }
 
                         }
@@ -153,7 +155,7 @@ fun AlbumDetailScreen(
                             visiblePopup.value = true
                             expanded.value = false
                         }) {
-                            Text("Add to a playlist")
+                            Text(stringResource(R.string.add_playlist))
                         }
                     }
                 }

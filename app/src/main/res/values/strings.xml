@@ -16,7 +16,7 @@
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
     <string name="add_favorite">Add to favorites</string>
-    <string name="del_favorite">Remove from favorites</string>
+    <string name="remove_favorite">Remove from favorites</string>
     <string name="add_playlist">Add to a playlist</string>
     <string name="create_playlist">New playlist</string>
     <string name="playlist_name">Playlist name</string>
