@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">ThinMP</string>
+
+    <string name="library">Library</string>
+    <string name="artists">Artists</string>
+    <string name="albums">Albums</string>
+    <string name="songs">Songs</string>
+    <string name="favorite_artists">Favorite Artists</string>
+    <string name="favorite_songs">Favorite Songs</string>
+    <string name="playlists">Playlists</string>
+    <string name="playlist">Playlist</string>
+    <string name="recently_added">Recently Added</string>
+    <string name="shortcut">Shortcut</string>
+
+    <string name="edit">Edit</string>
+    <string name="done">Done</string>
+    <string name="cancel">Cancel</string>
+    <string name="add_favorite">Add to favorites</string>
+    <string name="del_favorite">Remove from favorites</string>
+    <string name="add_playlist">Add to a playlist</string>
+    <string name="create_playlist">New playlist</string>
+    <string name="playlist_name">Playlist name</string>
+    <string name="add_shortcut">Add to a shortcut</string>
+    <string name="remove_shortcut">Remove from shortcut</string>
 </resources>
