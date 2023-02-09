@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -27,6 +28,7 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.view.cell.AlbumCellView
@@ -136,7 +138,7 @@ fun ArtistDetailScreen(
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    "Albums", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                    stringResource(R.string.albums), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                         start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
                     )
                 )
@@ -152,7 +154,7 @@ fun ArtistDetailScreen(
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    "Songs", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                    stringResource(R.string.songs), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                         start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
                     )
                 )
