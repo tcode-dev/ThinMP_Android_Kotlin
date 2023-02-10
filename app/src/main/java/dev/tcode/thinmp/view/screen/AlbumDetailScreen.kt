@@ -148,7 +148,6 @@ fun AlbumDetailScreen(
                             }) {
                                 Text(stringResource(R.string.add_favorite))
                             }
-
                         }
                         DropdownMenuItem(onClick = {
                             playlistRegisterSongId = song.songId
