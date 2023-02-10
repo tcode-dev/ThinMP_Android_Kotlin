@@ -7,6 +7,6 @@ import org.mongodb.kbson.BsonObjectId
 class PlaylistSongRealmModel: RealmObject {
     @PrimaryKey
     var id: BsonObjectId = BsonObjectId()
-    var playlistId: String = ""
+    var playlistId: BsonObjectId = BsonObjectId()
     var songId: String = ""
 }

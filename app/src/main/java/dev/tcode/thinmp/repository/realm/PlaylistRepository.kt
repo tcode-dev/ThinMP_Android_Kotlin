@@ -21,7 +21,7 @@ class PlaylistRepository {
         val playlist = PlaylistRealmModel()
         val song = PlaylistSongRealmModel()
 
-        song.playlistId = playlist.id.toString()
+        song.playlistId = playlist.id
         song.songId = songId.id
 
         playlist.name = name
@@ -33,7 +33,21 @@ class PlaylistRepository {
     }
 
     fun add(playlistId: BsonObjectId, songId: SongId) {
-
+//        val playlist = realm.query<PlaylistRealmModel>("id == $0", playlistId).first().find()
+//        val song = PlaylistSongRealmModel()
+//
+//        if (playlist == null) {
+//            return
+//        }
+//
+//        song.playlistId = playlistId
+//        song.songId = songId.id
+//
+//        playlist.songs.add(song)
+//
+//        realm.writeBlocking {
+//            copyToRealm(playlist)
+//        }
     }
 
     fun findAll(): List<PlaylistRealmModel> {
