@@ -7,11 +7,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -42,10 +44,10 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                         .fillMaxWidth()
                         .padding(bottom = StyleConstant.PADDING_SMALL.dp), horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text("new playlist", Modifier.clickable {
+                    Text(stringResource(R.string.create_playlist), Modifier.clickable {
                         isCreate = true
                     })
-                    Text("cancel", Modifier.clickable {
+                    Text(stringResource(R.string.cancel), Modifier.clickable {
                         visiblePopup.value = false
                     })
                 }
@@ -62,7 +64,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                 }
             } else {
                 Text(
-                    text = "playlist name", textAlign = TextAlign.Center, modifier = Modifier
+                    text = stringResource(R.string.playlist_name), textAlign = TextAlign.Center, modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = StyleConstant.PADDING_LARGE.dp)
                 )
@@ -80,14 +82,14 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                             visiblePopup.value = false
                         },
                     ) {
-                        Text("ok")
+                        Text(stringResource(R.string.done))
                     }
                     OutlinedButton(
                         onClick = {
                             isCreate = false
                         },
                     ) {
-                        Text("cancel")
+                        Text(stringResource(R.string.cancel))
                     }
                 }
             }
