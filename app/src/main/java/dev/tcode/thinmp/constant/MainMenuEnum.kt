@@ -7,5 +7,6 @@ enum class MainMenuEnum(val key: String, val id: Int) {
     ALBUMS(NavConstant.ALBUMS, R.string.albums),
     SONGS(NavConstant.SONGS, R.string.songs),
     FAVORITE_ARTISTS(NavConstant.FAVORITE_ARTISTS, R.string.favorite_artists),
-    FAVORITE_SONGS(NavConstant.FAVORITE_SONGS, R.string.favorite_songs);
+    FAVORITE_SONGS(NavConstant.FAVORITE_SONGS, R.string.favorite_songs),
+    PLAYLISTS(NavConstant.PLAYLISTS, R.string.playlists);
 }
