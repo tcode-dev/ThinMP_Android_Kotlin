@@ -17,9 +17,10 @@
     <string name="cancel">キャンセル</string>
     <string name="add_favorite">お気に入りに追加</string>
     <string name="remove_favorite">お気に入りから削除</string>
+    <string name="playlist_name">プレイリスト名を入力</string>
     <string name="add_playlist">プレイリストに追加</string>
     <string name="create_playlist">プレイリストを作成</string>
-    <string name="playlist_name">プレイリスト名を入力</string>
+    <string name="remove_playlist">プレイリストを削除</string>
     <string name="add_shortcut">ショートカットに追加</string>
     <string name="remove_shortcut">ショートカットから削除</string>
 </resources>

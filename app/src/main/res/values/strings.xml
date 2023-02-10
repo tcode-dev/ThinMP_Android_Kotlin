@@ -17,9 +17,10 @@
     <string name="cancel">Cancel</string>
     <string name="add_favorite">Add to favorites</string>
     <string name="remove_favorite">Remove from favorites</string>
+    <string name="playlist_name">Playlist name</string>
     <string name="add_playlist">Add to a playlist</string>
     <string name="create_playlist">New playlist</string>
-    <string name="playlist_name">Playlist name</string>
+    <string name="remove_playlist">Remove playlist</string>
     <string name="add_shortcut">Add to a shortcut</string>
     <string name="remove_shortcut">Remove from shortcut</string>
 </resources>

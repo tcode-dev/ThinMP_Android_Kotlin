@@ -22,28 +22,25 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.player.MiniPlayerView
-import dev.tcode.thinmp.view.popup.PlaylistPopupView
-import dev.tcode.thinmp.view.row.MediaRowView
+import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topbar.ListTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
-import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
+import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun PlaylistsScreen(
-    navController: NavController, viewModel: FavoriteSongsViewModel = viewModel()
+    navController: NavController, viewModel: PlaylistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
-    val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
-    var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -57,7 +54,7 @@ fun PlaylistsScreen(
             item {
                 EmptyTopbarView()
             }
-            itemsIndexed(uiState.songs) { index, song ->
+            itemsIndexed(uiState.playlists) { index, playlist ->
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -65,23 +62,20 @@ fun PlaylistsScreen(
                 ) {
                     val expanded = remember { mutableStateOf(false) }
 
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
+                    PlainRowView(playlist.name, Modifier.pointerInput(Unit) {
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                         DropdownMenuItem(onClick = {
-                            viewModel.deleteFavorite(song.songId)
-                            viewModel.load(context)
+//                            viewModel.load(context)
                             expanded.value = false
                         }) {
-                            Text(stringResource(R.string.remove_favorite))
+                            Text(stringResource(R.string.remove_playlist))
                         }
                         DropdownMenuItem(onClick = {
-                            playlistRegisterSongId = song.songId
-                            visiblePopup.value = true
                             expanded.value = false
                         }) {
-                            Text(stringResource(R.string.add_playlist))
+                            Text(stringResource(R.string.add_shortcut))
                         }
                     }
                 }
@@ -89,9 +83,6 @@ fun PlaylistsScreen(
             item {
                 EmptyMiniPlayerView()
             }
-        }
-        if (visiblePopup.value) {
-            PlaylistPopupView(playlistRegisterSongId, visiblePopup)
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
