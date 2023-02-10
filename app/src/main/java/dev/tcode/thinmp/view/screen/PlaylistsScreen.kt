@@ -67,7 +67,7 @@ fun PlaylistsScreen(
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                         DropdownMenuItem(onClick = {
-//                            viewModel.load(context)
+                            viewModel.load(context)
                             expanded.value = false
                         }) {
                             Text(stringResource(R.string.remove_playlist))

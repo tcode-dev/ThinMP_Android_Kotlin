@@ -33,7 +33,7 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun load(context: Context) {
+    fun load(context: Context) {
         val repository = PlaylistsService(context)
         val playlists = repository.findAll()
 
