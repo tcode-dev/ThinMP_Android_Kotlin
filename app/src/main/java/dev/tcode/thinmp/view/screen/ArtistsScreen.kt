@@ -21,6 +21,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -58,7 +59,7 @@ fun ArtistsScreen(
                     val expanded = remember { mutableStateOf(false) }
 
                     PlainRowView(artist.name, Modifier.pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("artistDetail/${artist.id}") })
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                         if (viewModel.existsFavorite(artist.artistId)) {

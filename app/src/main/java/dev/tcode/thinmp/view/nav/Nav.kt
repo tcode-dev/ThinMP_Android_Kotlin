@@ -7,6 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.view.screen.*
 
 @ExperimentalFoundationApi
@@ -14,27 +15,27 @@ import dev.tcode.thinmp.view.screen.*
 fun Nav() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "main") {
-        composable("main") { MainScreen(navController) }
-        composable("artists") { ArtistsScreen(navController) }
-        composable("albums") { AlbumsScreen(navController) }
-        composable("songs") { SongsScreen(navController) }
-        composable("favoriteArtists") { FavoriteArtistsScreen(navController) }
-        composable("favoriteSongs") { FavoriteSongsScreen(navController) }
+    NavHost(navController = navController, startDestination = NavConstant.MAIN) {
+        composable(NavConstant.MAIN) { MainScreen(navController) }
+        composable(NavConstant.ARTISTS) { ArtistsScreen(navController) }
+        composable(NavConstant.ALBUMS) { AlbumsScreen(navController) }
+        composable(NavConstant.SONGS) { SongsScreen(navController) }
+        composable(NavConstant.FAVORITE_ARTISTS) { FavoriteArtistsScreen(navController) }
+        composable(NavConstant.FAVORITE_SONGS) { FavoriteSongsScreen(navController) }
         composable(
-            "albumDetail/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
+            "${NavConstant.ALBUM_DETAIL}/{${NavConstant.ID}}",
+            arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
         )
         { backStackEntry ->
-            AlbumDetailScreen(navController, backStackEntry.arguments?.getString("id").let(::requireNotNull))
+            AlbumDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
         }
         composable(
-            "artistDetail/{id}",
-            arguments = listOf(navArgument("id") { type = NavType.StringType })
+            "${NavConstant.ARTIST_DETAIL}/{${NavConstant.ID}}",
+            arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
         )
         { backStackEntry ->
-            ArtistDetailScreen(navController, backStackEntry.arguments?.getString("id").let(::requireNotNull))
+            ArtistDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
         }
-        composable("player") { PlayerScreen(navController) }
+        composable(NavConstant.PLAYER) { PlayerScreen(navController) }
     }
 }

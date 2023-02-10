@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -41,7 +42,7 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_TINY.dp)
-            .clickable { navController.navigate("player") }, verticalAlignment = Alignment.CenterVertically
+            .clickable { navController.navigate(NavConstant.PLAYER) }, verticalAlignment = Alignment.CenterVertically
     ) {
         ImageView(
             uri = uiState.imageUri, modifier = Modifier
