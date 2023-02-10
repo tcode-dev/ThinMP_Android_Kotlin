@@ -37,6 +37,13 @@ fun Nav() {
         { backStackEntry ->
             ArtistDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
         }
+        composable(
+            "${NavConstant.PLAYLIST_DETAIL}/{${NavConstant.ID}}",
+            arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
+        )
+        { backStackEntry ->
+            PlaylistDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+        }
         composable(NavConstant.PLAYER) { PlayerScreen(navController) }
     }
 }
