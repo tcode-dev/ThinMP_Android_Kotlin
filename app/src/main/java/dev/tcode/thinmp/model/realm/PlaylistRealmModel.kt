@@ -4,11 +4,11 @@ import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
-import org.mongodb.kbson.BsonObjectId
+import java.util.*
 
 class PlaylistRealmModel: RealmObject {
     @PrimaryKey
-    var id: BsonObjectId = BsonObjectId()
+    var id: String = UUID.randomUUID().toString()
     var name: String = ""
     var order = 0
     var songs: RealmList<PlaylistSongRealmModel> = realmListOf()

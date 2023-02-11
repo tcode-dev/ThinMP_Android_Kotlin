@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
@@ -38,11 +39,12 @@ import dev.tcode.thinmp.view.topbar.HeroTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
+import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun PlaylistDetailScreen(
-    navController: NavController, id: String, viewModel: AlbumDetailViewModel = viewModel()
+    navController: NavController, id: String, viewModel: PlaylistDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()

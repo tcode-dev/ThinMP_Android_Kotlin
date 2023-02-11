@@ -1,12 +1,12 @@
 package dev.tcode.thinmp.repository.realm
 
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
-import org.mongodb.kbson.BsonObjectId
 
 class PlaylistRepository {
     private val realm: Realm
@@ -32,8 +32,8 @@ class PlaylistRepository {
         }
     }
 
-    fun add(playlistId: BsonObjectId, songId: SongId) {
-//        val playlist = realm.query<PlaylistRealmModel>("id == $0", playlistId).first().find()
+    fun add(id: PlaylistId, songId: SongId) {
+//        val playlist = realm.query<PlaylistRealmModel>("id == $0", id).first().find()
 //        val song = PlaylistSongRealmModel()
 //
 //        if (playlist == null) {
@@ -52,5 +52,9 @@ class PlaylistRepository {
 
     fun findAll(): List<PlaylistRealmModel> {
         return realm.query<PlaylistRealmModel>().find()
+    }
+
+    fun findById(playlistId: PlaylistId): PlaylistRealmModel? {
+        return realm.query<PlaylistRealmModel>("id == $0", playlistId.id).first().find()
     }
 }
