@@ -24,7 +24,7 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.player.MiniPlayerView
-import dev.tcode.thinmp.view.popup.PlaylistPopupView
+import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topbar.PlainTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver

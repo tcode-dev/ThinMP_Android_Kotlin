@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.view.popup
+package dev.tcode.thinmp.view.playlist
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
