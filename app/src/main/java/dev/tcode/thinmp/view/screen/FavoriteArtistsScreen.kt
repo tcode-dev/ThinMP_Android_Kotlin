@@ -26,7 +26,7 @@ import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
-import dev.tcode.thinmp.view.topbar.ListTopbarView
+import dev.tcode.thinmp.view.topbar.PlainTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
@@ -48,7 +48,7 @@ fun FavoriteArtistsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            ListTopbarView(navController, stringResource(R.string.favorite_artists), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopbarView(navController, stringResource(R.string.favorite_artists), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(state = lazyListState) {
             item {

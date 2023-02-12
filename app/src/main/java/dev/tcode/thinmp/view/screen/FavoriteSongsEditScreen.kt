@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -8,6 +9,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -15,7 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topbar.ListTopbarView
+import dev.tcode.thinmp.view.topbar.PlainTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
@@ -27,14 +29,36 @@ fun FavoriteSongsEditScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
-
+//    val dragDropListState = rememberLazyListState(onMove = onMove)
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         Box(Modifier.zIndex(3F)) {
-            ListTopbarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopbarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
         }
-        LazyColumn(state = lazyListState) {
+        LazyColumn(
+                modifier = Modifier
+                    .pointerInput(Unit) {
+                        detectDragGesturesAfterLongPress(
+                            onDrag = { change, offset ->
+                                change.consume()
+//                                dragDropListState.onDrag(offset)
+
+//                                if (overscrollJob?.isActive == true)
+//                                    return@detectDragGesturesAfterLongPress
+
+//                                dragDropListState.checkForOverScroll()
+//                                    .takeIf { it != 0f }
+//                                    ?.let { overscrollJob = scope.launch { dragDropListState.lazyListState.scrollBy(it) } }
+//                                    ?: run { overscrollJob?.cancel() }
+                            },
+                            onDragStart = { offset -> },
+                            onDragEnd = {  },
+                            onDragCancel = {  }
+                        )
+                    },
+            state = lazyListState
+        ) {
             item {
                 EmptyTopbarView()
             }
