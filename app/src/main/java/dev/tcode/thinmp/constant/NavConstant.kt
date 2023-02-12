@@ -8,6 +8,7 @@ class NavConstant {
         const val SONGS = "songs"
         const val FAVORITE_ARTISTS = "favoriteArtists"
         const val FAVORITE_SONGS = "favoriteSongs"
+        const val FAVORITE_SONGS_EDIT = "favoriteSongsEdit"
         const val ALBUM_DETAIL = "albumDetail"
         const val ARTIST_DETAIL = "artistDetail"
         const val PLAYLISTS = "playlists"

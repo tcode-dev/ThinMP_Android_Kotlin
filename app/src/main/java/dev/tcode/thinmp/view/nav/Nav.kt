@@ -22,6 +22,7 @@ fun Nav() {
         composable(NavConstant.SONGS) { SongsScreen(navController) }
         composable(NavConstant.FAVORITE_ARTISTS) { FavoriteArtistsScreen(navController) }
         composable(NavConstant.FAVORITE_SONGS) { FavoriteSongsScreen(navController) }
+        composable(NavConstant.FAVORITE_SONGS_EDIT) { FavoriteSongsEditScreen(navController) }
         composable(NavConstant.PLAYLISTS) { PlaylistsScreen(navController) }
         composable(
             "${NavConstant.ALBUM_DETAIL}/{${NavConstant.ID}}",
