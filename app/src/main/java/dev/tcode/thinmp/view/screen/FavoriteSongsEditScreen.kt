@@ -17,7 +17,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topAppBar.PlainTopbarView
+import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
@@ -34,7 +34,7 @@ fun FavoriteSongsEditScreen(
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         Box(Modifier.zIndex(3F)) {
-            PlainTopbarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopAppBarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(
                 modifier = Modifier

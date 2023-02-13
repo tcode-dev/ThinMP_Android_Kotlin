@@ -23,7 +23,7 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
-fun PlainTopbarView(navController: NavController, title: String, offset: Int) {
+fun PlainTopAppBarView(navController: NavController, title: String, offset: Int) {
     Box {
         AnimatedVisibility(
             visible = offset > 1, enter = fadeIn(), exit = fadeOut()

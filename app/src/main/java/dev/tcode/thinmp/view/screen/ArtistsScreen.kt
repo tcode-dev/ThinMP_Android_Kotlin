@@ -25,7 +25,7 @@ import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
-import dev.tcode.thinmp.view.topAppBar.PlainTopbarView
+import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
@@ -46,7 +46,7 @@ fun ArtistsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            PlainTopbarView(navController, stringResource(R.string.artists), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopAppBarView(navController, stringResource(R.string.artists), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(state = lazyListState) {
             item {

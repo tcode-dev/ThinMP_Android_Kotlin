@@ -23,7 +23,7 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
-fun HeroTopbarView(navController: NavController, title: String, visible: Boolean) {
+fun HeroTopAppBarView(navController: NavController, title: String, visible: Boolean) {
     Box {
         AnimatedVisibility(
             visible = visible, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)

@@ -27,7 +27,7 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topAppBar.PlainTopbarView
+import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
@@ -51,7 +51,7 @@ fun FavoriteSongsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            PlainTopbarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopAppBarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(state = lazyListState) {
             item {
