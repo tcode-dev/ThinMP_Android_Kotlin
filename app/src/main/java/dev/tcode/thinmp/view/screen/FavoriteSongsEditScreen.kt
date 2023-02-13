@@ -34,7 +34,7 @@ fun FavoriteSongsEditScreen(
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         Box(Modifier.zIndex(3F)) {
-            PlainTopAppBarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopAppBarView(navController, stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(
                 modifier = Modifier
