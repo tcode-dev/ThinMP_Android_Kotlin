@@ -22,7 +22,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.player.MiniPlayerView
-import dev.tcode.thinmp.view.topbar.PlainTopbarView
+import dev.tcode.thinmp.view.topAppBar.PlainTopbarView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView

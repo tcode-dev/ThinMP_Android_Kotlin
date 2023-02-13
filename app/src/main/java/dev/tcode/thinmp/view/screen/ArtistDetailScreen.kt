@@ -37,7 +37,7 @@ import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topbar.HeroTopbarView
+import dev.tcode.thinmp.view.topAppBar.HeroTopbarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel

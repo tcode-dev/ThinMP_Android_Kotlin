@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.view.topbar
+package dev.tcode.thinmp.view.topAppBar
 
 import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
