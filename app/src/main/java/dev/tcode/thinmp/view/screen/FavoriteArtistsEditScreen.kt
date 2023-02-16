@@ -31,8 +31,8 @@ import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.topAppBar.MenuTopAppBarView
-import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
@@ -40,7 +40,7 @@ import dev.tcode.thinmp.viewModel.FavoriteArtistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun FavoriteArtistsScreen(
+fun FavoriteArtistsEditScreen(
     navController: NavController, viewModel: FavoriteArtistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -54,22 +54,11 @@ fun FavoriteArtistsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            MenuTopAppBarView(navController, stringResource(R.string.favorite_artists), lazyListState.firstVisibleItemScrollOffset) {
-                val expanded = remember { mutableStateOf(false) }
-
+            EditTopAppBarView(navController, stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { expanded.value = !expanded.value }) {
-                    Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        DropdownMenuItem(onClick = {
-                            navController.navigate(NavConstant.FAVORITE_ARTISTS_EDIT)
-                            expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.edit))
-                        }
-                    }
+                    .clickable { }) {
+                    Text(stringResource(R.string.done))
                 }
             }
         }
