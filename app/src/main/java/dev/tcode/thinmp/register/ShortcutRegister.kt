@@ -12,13 +12,13 @@ interface ShortcutRegister {
         repository.addArtist(artistId)
     }
 
-    fun addShortcutArtist(albumId: AlbumId) {
+    fun addShortcutAlbum(albumId: AlbumId) {
         val repository = ShortcutRepository()
 
         repository.addAlbum(albumId)
     }
 
-    fun addShortcutArtist(playlistId: PlaylistId) {
+    fun addShortcutPlaylist(playlistId: PlaylistId) {
         val repository = ShortcutRepository()
 
         repository.addPlaylist(playlistId)

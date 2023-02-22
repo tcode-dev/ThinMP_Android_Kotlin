@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.register.FavoriteArtistRegister
+import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.ArtistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,7 @@ data class ArtistsUiState(
     var artists: List<ArtistModel> = emptyList()
 )
 
-class ArtistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister {
+class ArtistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister, ShortcutRegister {
     private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(ArtistsUiState())
     val uiState: StateFlow<ArtistsUiState> = _uiState.asStateFlow()
