@@ -41,4 +41,22 @@ interface ShortcutRegister {
 
         repository.addPlaylist(playlistId)
     }
+
+    fun deleteShortcutArtist(artistId: ArtistId) {
+        val repository = ShortcutRepository()
+
+        repository.deleteArtist(artistId)
+    }
+
+    fun deleteShortcutAlbum(albumId: AlbumId) {
+        val repository = ShortcutRepository()
+
+        repository.deleteAlbum(albumId)
+    }
+
+    fun deleteShortcutPlaylist(playlistId: PlaylistId) {
+        val repository = ShortcutRepository()
+
+        repository.deletePlaylist(playlistId)
+    }
 }

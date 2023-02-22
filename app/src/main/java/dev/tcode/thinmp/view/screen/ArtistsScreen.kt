@@ -79,7 +79,7 @@ fun ArtistsScreen(
                         }
                         if (viewModel.existsShortcutArtist(artist.artistId)) {
                             DropdownMenuItem(onClick = {
-
+                                viewModel.deleteShortcutArtist(artist.artistId)
                                 expanded.value = false
                             }) {
                                 Text(stringResource(R.string.remove_shortcut))
