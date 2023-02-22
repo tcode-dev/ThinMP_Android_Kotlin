@@ -77,11 +77,20 @@ fun ArtistsScreen(
                                 Text(stringResource(R.string.add_favorite))
                             }
                         }
-                        DropdownMenuItem(onClick = {
-                            viewModel.addShortcutArtist(artist.artistId)
-                            expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.add_shortcut))
+                        if (viewModel.existsShortcutArtist(artist.artistId)) {
+                            DropdownMenuItem(onClick = {
+
+                                expanded.value = false
+                            }) {
+                                Text(stringResource(R.string.remove_shortcut))
+                            }
+                        } else {
+                            DropdownMenuItem(onClick = {
+                                viewModel.addShortcutArtist(artist.artistId)
+                                expanded.value = false
+                            }) {
+                                Text(stringResource(R.string.add_shortcut))
+                            }
                         }
                     }
                 }

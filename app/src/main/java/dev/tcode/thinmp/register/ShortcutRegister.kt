@@ -6,6 +6,24 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.repository.realm.ShortcutRepository
 
 interface ShortcutRegister {
+    fun existsShortcutArtist(artistId: ArtistId): Boolean {
+        val repository = ShortcutRepository()
+
+        return repository.existsArtist(artistId)
+    }
+
+    fun existsShortcutAlbum(albumId: AlbumId): Boolean {
+        val repository = ShortcutRepository()
+
+        return repository.existsAlbum(albumId)
+    }
+
+    fun existsShortcutPlaylist(playlistId: PlaylistId): Boolean {
+        val repository = ShortcutRepository()
+
+        return repository.existsPlaylist(playlistId)
+    }
+
     fun addShortcutArtist(artistId: ArtistId) {
         val repository = ShortcutRepository()
 
