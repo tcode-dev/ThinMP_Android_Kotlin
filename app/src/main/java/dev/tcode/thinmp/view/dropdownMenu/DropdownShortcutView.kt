@@ -9,20 +9,20 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.viewModel.ShortcutViewModel
 
 @Composable
-fun DropdownShortcutView(id: ArtistId, addText: Int, removeText: Int, close: () -> Unit, viewModel: ShortcutViewModel = viewModel()) {
+fun <T> DropdownShortcutView(id: T, addTextResource: Int, removeTextResource: Int, close: () -> Unit, viewModel: ShortcutViewModel = viewModel()) where T : ArtistId {
     if (viewModel.existsShortcut(id)) {
         DropdownMenuItem(onClick = {
             viewModel.deleteShortcut(id)
             close()
         }) {
-            Text(stringResource(removeText))
+            Text(stringResource(removeTextResource))
         }
     } else {
         DropdownMenuItem(onClick = {
             viewModel.addShortcut(id)
             close()
         }) {
-            Text(stringResource(addText))
+            Text(stringResource(addTextResource))
         }
     }
 }
