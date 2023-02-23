@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.dropdownMenu.DropdownShortcutView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
@@ -57,6 +58,7 @@ fun ArtistsScreen(
                     .fillMaxSize()
                     .wrapContentSize(Alignment.TopStart)) {
                     val expanded = remember { mutableStateOf(false) }
+                    val close = { expanded.value = false }
 
                     PlainRowView(artist.name, Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
@@ -77,21 +79,7 @@ fun ArtistsScreen(
                                 Text(stringResource(R.string.add_favorite))
                             }
                         }
-                        if (viewModel.existsShortcutArtist(artist.artistId)) {
-                            DropdownMenuItem(onClick = {
-                                viewModel.deleteShortcutArtist(artist.artistId)
-                                expanded.value = false
-                            }) {
-                                Text(stringResource(R.string.remove_shortcut))
-                            }
-                        } else {
-                            DropdownMenuItem(onClick = {
-                                viewModel.addShortcutArtist(artist.artistId)
-                                expanded.value = false
-                            }) {
-                                Text(stringResource(R.string.add_shortcut))
-                            }
-                        }
+                        DropdownShortcutView(artist.artistId, R.string.add_shortcut, R.string.remove_shortcut, close)
                     }
                 }
             }

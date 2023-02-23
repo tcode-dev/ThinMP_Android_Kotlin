@@ -6,55 +6,55 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.repository.realm.ShortcutRepository
 
 interface ShortcutRegister {
-    fun existsShortcutArtist(artistId: ArtistId): Boolean {
+    fun existsShortcut(artistId: ArtistId): Boolean {
         val repository = ShortcutRepository()
 
         return repository.existsArtist(artistId)
     }
 
-    fun existsShortcutAlbum(albumId: AlbumId): Boolean {
+    fun existsShortcut(albumId: AlbumId): Boolean {
         val repository = ShortcutRepository()
 
         return repository.existsAlbum(albumId)
     }
 
-    fun existsShortcutPlaylist(playlistId: PlaylistId): Boolean {
+    fun existsShortcut(playlistId: PlaylistId): Boolean {
         val repository = ShortcutRepository()
 
         return repository.existsPlaylist(playlistId)
     }
 
-    fun addShortcutArtist(artistId: ArtistId) {
+    fun addShortcut(artistId: ArtistId) {
         val repository = ShortcutRepository()
 
         repository.addArtist(artistId)
     }
 
-    fun addShortcutAlbum(albumId: AlbumId) {
+    fun addShortcut(albumId: AlbumId) {
         val repository = ShortcutRepository()
 
         repository.addAlbum(albumId)
     }
 
-    fun addShortcutPlaylist(playlistId: PlaylistId) {
+    fun addShortcut(playlistId: PlaylistId) {
         val repository = ShortcutRepository()
 
         repository.addPlaylist(playlistId)
     }
 
-    fun deleteShortcutArtist(artistId: ArtistId) {
+    fun deleteShortcut(artistId: ArtistId) {
         val repository = ShortcutRepository()
 
         repository.deleteArtist(artistId)
     }
 
-    fun deleteShortcutAlbum(albumId: AlbumId) {
+    fun deleteShortcut(albumId: AlbumId) {
         val repository = ShortcutRepository()
 
         repository.deleteAlbum(albumId)
     }
 
-    fun deleteShortcutPlaylist(playlistId: PlaylistId) {
+    fun deleteShortcut(playlistId: PlaylistId) {
         val repository = ShortcutRepository()
 
         repository.deletePlaylist(playlistId)
