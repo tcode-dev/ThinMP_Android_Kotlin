@@ -3,7 +3,7 @@ package dev.tcode.thinmp.repository.realm
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
-import dev.tcode.thinmp.model.realm.FavoriteArtistRealmModel
+import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
@@ -23,40 +23,31 @@ class ShortcutRepository {
         realm = Realm.open(config)
     }
 
-    fun existsArtist(artistId: ArtistId): Boolean {
-        return exists(artistId.id, ItemType.ARTIST)
+    fun exists(shortcutItemId: ShortcutItemId): Boolean {
+        return when (shortcutItemId) {
+            is ArtistId -> exists(shortcutItemId.id, ItemType.ARTIST)
+            is AlbumId -> exists(shortcutItemId.id, ItemType.ALBUM)
+            is PlaylistId -> exists(shortcutItemId.id, ItemType.PLAYLIST)
+            else -> throw IllegalArgumentException("Unknown expression")
+        }
     }
 
-    fun existsAlbum(albumId: AlbumId): Boolean {
-        return exists(albumId.id, ItemType.ALBUM)
+    fun add(shortcutItemId: ShortcutItemId) {
+        when (shortcutItemId) {
+            is ArtistId -> add(shortcutItemId.id, ItemType.ARTIST)
+            is AlbumId -> add(shortcutItemId.id, ItemType.ALBUM)
+            is PlaylistId -> add(shortcutItemId.id, ItemType.PLAYLIST)
+            else -> throw IllegalArgumentException("Unknown expression")
+        }
     }
 
-    fun existsPlaylist(playlistId: PlaylistId): Boolean {
-        return exists(playlistId.id, ItemType.PLAYLIST)
-    }
-
-    fun addArtist(artistId: ArtistId) {
-        add(artistId.id, ItemType.ARTIST)
-    }
-
-    fun addAlbum(albumId: AlbumId) {
-        add(albumId.id, ItemType.ALBUM)
-    }
-
-    fun addPlaylist(playlistId: PlaylistId) {
-        add(playlistId.id, ItemType.PLAYLIST)
-    }
-
-    fun deleteArtist(artistId: ArtistId) {
-        delete(artistId.id, ItemType.ARTIST)
-    }
-
-    fun deleteAlbum(albumId: AlbumId) {
-        delete(albumId.id, ItemType.ALBUM)
-    }
-
-    fun deletePlaylist(playlistId: PlaylistId) {
-        delete(playlistId.id, ItemType.PLAYLIST)
+    fun delete(shortcutItemId: ShortcutItemId) {
+        when (shortcutItemId) {
+            is ArtistId -> delete(shortcutItemId.id, ItemType.ARTIST)
+            is AlbumId -> delete(shortcutItemId.id, ItemType.ALBUM)
+            is PlaylistId -> delete(shortcutItemId.id, ItemType.PLAYLIST)
+            else -> throw IllegalArgumentException("Unknown expression")
+        }
     }
 
     private fun exists(itemId: String, itemType: ItemType): Boolean {

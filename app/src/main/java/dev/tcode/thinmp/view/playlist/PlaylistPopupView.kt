@@ -15,7 +15,6 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -54,11 +53,11 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
-                        PlainRowView(playlist.name,
+                        PlainRowView(playlist.primaryText,
                             Modifier
                                 .padding(end = StyleConstant.PADDING_LARGE.dp)
                                 .clickable {
-                                    viewModel.addPlaylist(PlaylistId(playlist.id), songId)
+                                    viewModel.addPlaylist(playlist.id, songId)
                                     visiblePopup.value = false
                                 })
                     }

@@ -5,21 +5,21 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.tcode.thinmp.model.media.valueObject.ArtistId
+import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.viewModel.ShortcutViewModel
 
 @Composable
-fun <T> DropdownShortcutView(id: T, addTextResource: Int, removeTextResource: Int, close: () -> Unit, viewModel: ShortcutViewModel = viewModel()) where T : ArtistId {
-    if (viewModel.existsShortcut(id)) {
+fun DropdownShortcutView(id: ShortcutItemId, addTextResource: Int, removeTextResource: Int, close: () -> Unit, viewModel: ShortcutViewModel = viewModel()) {
+    if (viewModel.exists(id)) {
         DropdownMenuItem(onClick = {
-            viewModel.deleteShortcut(id)
+            viewModel.delete(id)
             close()
         }) {
             Text(stringResource(removeTextResource))
         }
     } else {
         DropdownMenuItem(onClick = {
-            viewModel.addShortcut(id)
+            viewModel.add(id)
             close()
         }) {
             Text(stringResource(addTextResource))

@@ -24,6 +24,7 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.dropdownMenu.DropdownShortcutView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
@@ -61,6 +62,7 @@ fun PlaylistsScreen(
                         .wrapContentSize(Alignment.TopStart)
                 ) {
                     val expanded = remember { mutableStateOf(false) }
+                    val close = { expanded.value = false }
 
                     PlainRowView(playlist.primaryText, Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.PLAYLIST_DETAIL}/${playlist.id}") })
@@ -72,11 +74,7 @@ fun PlaylistsScreen(
                         }) {
                             Text(stringResource(R.string.remove_playlist))
                         }
-                        DropdownMenuItem(onClick = {
-                            expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.add_shortcut))
-                        }
+                        DropdownShortcutView(playlist.id, R.string.add_shortcut, R.string.remove_shortcut, close)
                     }
                 }
             }
