@@ -3,7 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
-import dev.tcode.thinmp.model.realm.PlaylistRealmModel
+import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class PlaylistsUiState(
-    var playlists: List<PlaylistRealmModel> = emptyList()
+    var playlists: List<PlaylistModel> = emptyList()
 )
 
 class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
