@@ -150,7 +150,7 @@ fun ArtistDetailScreen(
             itemsIndexed(items = uiState.albums) { index, album ->
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
+                        .width(itemSize)
                         .wrapContentSize(Alignment.TopStart)
                 ) {
                     val expanded = remember { mutableStateOf(false) }
@@ -161,7 +161,7 @@ fun ArtistDetailScreen(
                             detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${dev.tcode.thinmp.constant.NavConstant.ALBUM_DETAIL}/${album.id}") })
                         })
                     }
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
                         DropdownShortcutView(album.albumId, close)
                     }
                 }
