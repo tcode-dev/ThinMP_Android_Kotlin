@@ -1,15 +1,16 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.material.DropdownMenu
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -17,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -27,6 +29,7 @@ import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
+import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -38,6 +41,7 @@ import dev.tcode.thinmp.viewModel.MainViewModel
 fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -85,12 +89,22 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 )
             }
             itemsIndexed(items = uiState.albums) { index, album ->
-                val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
+                Box(
+                    modifier = Modifier
+                        .width(itemSize)
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
+                    val expanded = remember { mutableStateOf(false) }
+                    val close = { expanded.value = false }
 
-                GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                    AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.clickable {
-                        navController.navigate("${NavConstant.ALBUM_DETAIL}/${album.id}")
-                    })
+                    GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${dev.tcode.thinmp.constant.NavConstant.ALBUM_DETAIL}/${album.id}") })
+                        })
+                    }
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
+                        ShortcutDropdownMenuItemView(album.albumId, close)
+                    }
                 }
             }
             item {
