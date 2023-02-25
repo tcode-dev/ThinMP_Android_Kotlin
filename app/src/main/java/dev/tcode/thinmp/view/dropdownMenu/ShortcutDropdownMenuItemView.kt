@@ -10,7 +10,7 @@ import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.viewModel.ShortcutViewModel
 
 @Composable
-fun DropdownShortcutView(id: ShortcutItemId, close: () -> Unit, viewModel: ShortcutViewModel = viewModel()) {
+fun ShortcutDropdownMenuItemView(id: ShortcutItemId, close: () -> Unit, viewModel: ShortcutViewModel = viewModel()) {
     if (viewModel.exists(id)) {
         DropdownMenuItem(onClick = {
             viewModel.delete(id)

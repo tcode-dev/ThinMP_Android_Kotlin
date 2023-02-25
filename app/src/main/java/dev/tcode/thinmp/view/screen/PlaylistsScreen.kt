@@ -24,7 +24,7 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.view.dropdownMenu.DropdownShortcutView
+import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
@@ -74,7 +74,7 @@ fun PlaylistsScreen(
                         }) {
                             Text(stringResource(R.string.remove_playlist))
                         }
-                        DropdownShortcutView(playlist.id, close)
+                        ShortcutDropdownMenuItemView(playlist.id, close)
                     }
                 }
             }

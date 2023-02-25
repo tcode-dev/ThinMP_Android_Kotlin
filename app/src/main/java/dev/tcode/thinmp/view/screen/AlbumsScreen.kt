@@ -19,11 +19,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
-import dev.tcode.thinmp.view.dropdownMenu.DropdownShortcutView
+import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
@@ -72,7 +71,7 @@ fun AlbumsScreen(
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
-                        DropdownShortcutView(album.albumId, close)
+                        ShortcutDropdownMenuItemView(album.albumId, close)
                     }
                 }
             }

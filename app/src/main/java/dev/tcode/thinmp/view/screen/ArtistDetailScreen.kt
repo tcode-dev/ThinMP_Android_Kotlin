@@ -35,7 +35,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
-import dev.tcode.thinmp.view.dropdownMenu.DropdownShortcutView
+import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -162,7 +162,7 @@ fun ArtistDetailScreen(
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
-                        DropdownShortcutView(album.albumId, close)
+                        ShortcutDropdownMenuItemView(album.albumId, close)
                     }
                 }
             }
