@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalConfiguration
@@ -57,21 +58,22 @@ fun AlbumsScreen(
                 EmptyTopbarView()
             }
             itemsIndexed(uiState.albums) { index, album ->
-                val expanded = remember { mutableStateOf(false) }
-                val close = { expanded.value = false }
+                Box(
+                    modifier = Modifier
+                        .width(itemSize)
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
+                    val expanded = remember { mutableStateOf(false) }
+                    val close = { expanded.value = false }
 
-                GridCellView(index, 2, itemSize) {
-                    AlbumCellView(
-                        album.name,
-                        album.artistName,
-                        album.getImageUri(),
-                        Modifier.pointerInput(Unit) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ALBUM_DETAIL}/${album.id}") })
-                        }
-                    )
-                }
-                DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                    DropdownShortcutView(album.albumId, close)
+                    GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${dev.tcode.thinmp.constant.NavConstant.ALBUM_DETAIL}/${album.id}") })
+                        })
+                    }
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
+                        DropdownShortcutView(album.albumId, close)
+                    }
                 }
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
