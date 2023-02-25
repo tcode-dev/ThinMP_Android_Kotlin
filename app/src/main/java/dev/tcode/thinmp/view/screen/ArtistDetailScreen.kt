@@ -162,7 +162,7 @@ fun ArtistDetailScreen(
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        DropdownShortcutView(album.albumId, R.string.add_shortcut, R.string.remove_shortcut, close)
+                        DropdownShortcutView(album.albumId, close)
                     }
                 }
             }

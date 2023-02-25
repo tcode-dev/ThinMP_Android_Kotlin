@@ -79,7 +79,7 @@ fun ArtistsScreen(
                                 Text(stringResource(R.string.add_favorite))
                             }
                         }
-                        DropdownShortcutView(artist.artistId, R.string.add_shortcut, R.string.remove_shortcut, close)
+                        DropdownShortcutView(artist.artistId, close)
                     }
                 }
             }

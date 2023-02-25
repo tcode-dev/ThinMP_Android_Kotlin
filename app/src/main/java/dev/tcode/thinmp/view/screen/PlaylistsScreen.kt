@@ -74,7 +74,7 @@ fun PlaylistsScreen(
                         }) {
                             Text(stringResource(R.string.remove_playlist))
                         }
-                        DropdownShortcutView(playlist.id, R.string.add_shortcut, R.string.remove_shortcut, close)
+                        DropdownShortcutView(playlist.id, close)
                     }
                 }
             }
