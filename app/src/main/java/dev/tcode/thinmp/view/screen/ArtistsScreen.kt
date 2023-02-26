@@ -54,9 +54,11 @@ fun ArtistsScreen(
                 EmptyTopbarView()
             }
             items(uiState.artists) { artist ->
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .wrapContentSize(Alignment.TopStart)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
 
@@ -88,8 +90,8 @@ fun ArtistsScreen(
             }
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
-                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-            }) {
+            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+        }) {
             MiniPlayerView(navController)
         }
     }

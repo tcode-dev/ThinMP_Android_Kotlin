@@ -125,15 +125,9 @@ fun PlaylistDetailScreen(
                     val expanded = remember { mutableStateOf(false) }
 
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
-                        detectTapGestures(
-                            onLongPress = { expanded.value = true },
-                            onTap = { viewModel.start(index) }
-                        )
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
-                    DropdownMenu(
-                        expanded = expanded.value,
-                        offset = DpOffset((-1).dp, 0.dp),
-                        onDismissRequest = { expanded.value = false }) {
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                         if (viewModel.existsFavorite(song.songId)) {
                             DropdownMenuItem(onClick = {
                                 viewModel.deleteFavorite(song.songId)

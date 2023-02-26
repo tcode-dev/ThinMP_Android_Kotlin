@@ -49,11 +49,9 @@ fun FavoriteSongsEditScreen(
             }
         }
         LazyColumn(
-                modifier = Modifier
-                    .pointerInput(Unit) {
-                        detectDragGesturesAfterLongPress(
-                            onDrag = { change, offset ->
-                                change.consume()
+            modifier = Modifier.pointerInput(Unit) {
+                    detectDragGesturesAfterLongPress(onDrag = { change, offset ->
+                        change.consume()
 //                                dragDropListState.onDrag(offset)
 
 //                                if (overscrollJob?.isActive == true)
@@ -63,13 +61,8 @@ fun FavoriteSongsEditScreen(
 //                                    .takeIf { it != 0f }
 //                                    ?.let { overscrollJob = scope.launch { dragDropListState.lazyListState.scrollBy(it) } }
 //                                    ?: run { overscrollJob?.cancel() }
-                            },
-                            onDragStart = { offset -> },
-                            onDragEnd = {  },
-                            onDragCancel = {  }
-                        )
-                    },
-            state = lazyListState
+                    }, onDragStart = { offset -> }, onDragEnd = { }, onDragCancel = { })
+                }, state = lazyListState
         ) {
             item {
                 EmptyTopbarView()

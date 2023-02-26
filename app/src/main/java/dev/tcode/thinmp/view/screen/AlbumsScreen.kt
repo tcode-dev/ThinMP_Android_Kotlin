@@ -33,8 +33,7 @@ import dev.tcode.thinmp.viewModel.AlbumsViewModel
 @ExperimentalFoundationApi
 @Composable
 fun AlbumsScreen(
-    navController: NavController,
-    viewModel: AlbumsViewModel = viewModel()
+    navController: NavController, viewModel: AlbumsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyGridState()
@@ -50,8 +49,7 @@ fun AlbumsScreen(
             PlainTopAppBarView(navController, stringResource(R.string.albums), lazyGridState.firstVisibleItemScrollOffset)
         }
         LazyVerticalGrid(
-            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
-            state = lazyGridState
+            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState
         ) {
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 EmptyTopbarView()
@@ -79,8 +77,7 @@ fun AlbumsScreen(
                 EmptyMiniPlayerView()
             }
         }
-        Box(modifier = Modifier
-            .constrainAs(miniPlayer) {
+        Box(modifier = Modifier.constrainAs(miniPlayer) {
                 top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
             }) {
             MiniPlayerView(navController)

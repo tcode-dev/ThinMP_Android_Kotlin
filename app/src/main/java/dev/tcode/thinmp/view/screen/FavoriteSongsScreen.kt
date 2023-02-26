@@ -60,10 +60,11 @@ fun FavoriteSongsScreen(
             MenuTopAppBarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset) {
                 val expanded = remember { mutableStateOf(false) }
 
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .size(StyleConstant.BUTTON_SIZE.dp)
-                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { expanded.value = !expanded.value }) {
+                Box(contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(StyleConstant.BUTTON_SIZE.dp)
+                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                        .clickable { expanded.value = !expanded.value }) {
                     Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                         DropdownMenuItem(onClick = {
