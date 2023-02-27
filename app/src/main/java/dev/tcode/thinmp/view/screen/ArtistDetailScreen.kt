@@ -2,7 +2,6 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
@@ -46,6 +45,7 @@ import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.spanSize
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @ExperimentalFoundationApi
@@ -61,7 +61,7 @@ fun ArtistDetailScreen(
     val visibleHeroTopbarView =
         lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
             .calculateTopPadding().value + 90))
-    val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
+    val itemSize: Dp = spanSize()
     var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
