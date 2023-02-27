@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
@@ -123,26 +124,13 @@ fun AlbumDetailScreen(
             itemsIndexed(uiState.songs) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
+                    val close = { expanded.value = false }
 
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        if (viewModel.existsFavorite(song.songId)) {
-                            DropdownMenuItem(onClick = {
-                                viewModel.deleteFavorite(song.songId)
-                                expanded.value = false
-                            }) {
-                                Text(stringResource(R.string.remove_favorite))
-                            }
-                        } else {
-                            DropdownMenuItem(onClick = {
-                                viewModel.addFavorite(song.songId)
-                                expanded.value = false
-                            }) {
-                                Text(stringResource(R.string.add_favorite))
-                            }
-                        }
+                        FavoriteSongDropdownMenuItemView(song.songId, close)
                         DropdownMenuItem(onClick = {
                             playlistRegisterSongId = song.songId
                             visiblePopup.value = true
