@@ -33,11 +33,15 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
+import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
+import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
+import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -51,12 +55,14 @@ fun ArtistDetailScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyGridState()
+    val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
     val visibleHeroTopbarView =
         lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
             .calculateTopPadding().value + 90))
     val itemSize: Dp = LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
+    var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -174,13 +180,30 @@ fun ArtistDetailScreen(
                 )
             }
             itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
-                MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.clickable {
-                    viewModel.start(index)
-                })
+                Box {
+                    val expanded = remember { mutableStateOf(false) }
+                    val closeFavorite = { expanded.value = false }
+                    val closePlaylist = {
+                        playlistRegisterSongId = song.songId
+                        visiblePopup.value = true
+                        expanded.value = false
+                    }
+
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
+                    })
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
+                        FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
+                        PlaylistDropdownMenuItemView(song.songId, closePlaylist)
+                    }
+                }
             }
             item {
                 EmptyMiniPlayerView()
             }
+        }
+        if (visiblePopup.value) {
+            PlaylistPopupView(playlistRegisterSongId, visiblePopup)
         }
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)

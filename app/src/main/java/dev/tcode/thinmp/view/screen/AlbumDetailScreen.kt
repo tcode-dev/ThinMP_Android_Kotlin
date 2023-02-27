@@ -31,6 +31,7 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
+import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
@@ -124,20 +125,19 @@ fun AlbumDetailScreen(
             itemsIndexed(uiState.songs) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
-                    val close = { expanded.value = false }
+                    val closeFavorite = { expanded.value = false }
+                    val closePlaylist = {
+                        playlistRegisterSongId = song.songId
+                        visiblePopup.value = true
+                        expanded.value = false
+                    }
 
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        FavoriteSongDropdownMenuItemView(song.songId, close)
-                        DropdownMenuItem(onClick = {
-                            playlistRegisterSongId = song.songId
-                            visiblePopup.value = true
-                            expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.add_playlist))
-                        }
+                        FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
+                        PlaylistDropdownMenuItemView(song.songId, closePlaylist)
                     }
                 }
             }
