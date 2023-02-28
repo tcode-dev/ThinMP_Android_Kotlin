@@ -8,7 +8,6 @@ import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.service.AlbumDetailService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.*
@@ -25,7 +24,7 @@ data class AlbumDetailUiState(
 class AlbumDetailViewModel @Inject constructor(
     application: Application,
     savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteSongRegister {
+) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
