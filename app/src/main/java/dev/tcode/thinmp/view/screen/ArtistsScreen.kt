@@ -23,6 +23,7 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -66,21 +67,7 @@ fun ArtistsScreen(
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        if (viewModel.existsFavorite(artist.artistId)) {
-                            DropdownMenuItem(onClick = {
-                                viewModel.deleteFavorite(artist.artistId)
-                                expanded.value = false
-                            }) {
-                                Text(stringResource(R.string.remove_favorite))
-                            }
-                        } else {
-                            DropdownMenuItem(onClick = {
-                                viewModel.addFavorite(artist.artistId)
-                                expanded.value = false
-                            }) {
-                                Text(stringResource(R.string.add_favorite))
-                            }
-                        }
+                        FavoriteArtistDropdownMenuItemView(artist.artistId, close)
                         ShortcutDropdownMenuItemView(artist.artistId, close)
                     }
                 }

@@ -4,19 +4,19 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.repository.realm.FavoriteArtistRepository
 
 interface FavoriteArtistRegister {
-    fun existsFavorite(artistId: ArtistId): Boolean {
+    fun exists(artistId: ArtistId): Boolean {
         val repository = FavoriteArtistRepository()
 
         return repository.exists(artistId)
     }
 
-    fun addFavorite(artistId: ArtistId) {
+    fun add(artistId: ArtistId) {
         val repository = FavoriteArtistRepository()
 
         repository.add(artistId)
     }
 
-    fun deleteFavorite(artistId: ArtistId) {
+    fun delete(artistId: ArtistId) {
         val repository = FavoriteArtistRepository()
 
         repository.delete(artistId)

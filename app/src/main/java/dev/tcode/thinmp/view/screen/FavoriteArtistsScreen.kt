@@ -29,10 +29,10 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.MenuTopAppBarView
-import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
@@ -85,18 +85,16 @@ fun FavoriteArtistsScreen(
                         .wrapContentSize(Alignment.TopStart)
                 ) {
                     val expanded = remember { mutableStateOf(false) }
+                    val close = {
+                        expanded.value = false
+                        viewModel.load(context)
+                    }
 
                     PlainRowView(artist.name, Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        DropdownMenuItem(onClick = {
-                            viewModel.deleteFavorite(artist.artistId)
-                            viewModel.load(context)
-                            expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.remove_favorite))
-                        }
+                        FavoriteArtistDropdownMenuItemView(artist.artistId, close)
                     }
                 }
             }
