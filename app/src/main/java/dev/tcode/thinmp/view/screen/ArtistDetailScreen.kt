@@ -81,7 +81,7 @@ fun ArtistDetailScreen(
                 visible = visibleHeroTopbarView,
                 toggle
             )
-            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
+            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = toggle) {
                 FavoriteArtistDropdownMenuItemView(ArtistId(id), toggle)
                 ShortcutDropdownMenuItemView(ArtistId(id), toggle)
             }
