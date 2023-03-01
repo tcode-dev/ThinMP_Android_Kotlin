@@ -29,9 +29,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
+import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
@@ -69,6 +71,9 @@ fun AlbumDetailScreen(
                 visible = visibleHeroTopbarView,
                 toggle
             )
+            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = toggle) {
+                ShortcutDropdownMenuItemView(AlbumId(id), toggle)
+            }
         }
         LazyColumn(state = lazyListState) {
             item {
