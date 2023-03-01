@@ -60,10 +60,14 @@ fun PlaylistDetailScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(1F)) {
+            val expanded = remember { mutableStateOf(false) }
+            val toggle = { expanded.value = !expanded.value }
+
             HeroTopAppBarView(
                 navController,
                 uiState.primaryText,
                 visible = visibleHeroTopbarView,
+                toggle
             )
         }
         LazyColumn(state = lazyListState) {

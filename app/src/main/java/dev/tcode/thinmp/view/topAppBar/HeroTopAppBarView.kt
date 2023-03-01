@@ -23,7 +23,7 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
-fun HeroTopAppBarView(navController: NavController, title: String, visible: Boolean) {
+fun HeroTopAppBarView(navController: NavController, title: String, visible: Boolean, toggle: () -> Unit) {
     Box {
         AnimatedVisibility(
             visible = visible, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
@@ -64,7 +64,7 @@ fun HeroTopAppBarView(navController: NavController, title: String, visible: Bool
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .size(StyleConstant.BUTTON_SIZE.dp)
                 .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                .clickable { }) {
+                .clickable { toggle() }) {
                 Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
             }
         }

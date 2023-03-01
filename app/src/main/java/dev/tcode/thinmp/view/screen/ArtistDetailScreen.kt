@@ -32,9 +32,11 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
+import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
@@ -70,11 +72,19 @@ fun ArtistDetailScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(1F)) {
+            val expanded = remember { mutableStateOf(false) }
+            val toggle = { expanded.value = !expanded.value }
+
             HeroTopAppBarView(
                 navController,
                 uiState.primaryText,
                 visible = visibleHeroTopbarView,
+                toggle
             )
+            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
+                FavoriteArtistDropdownMenuItemView(ArtistId(id), toggle)
+                ShortcutDropdownMenuItemView(ArtistId(id), toggle)
+            }
         }
         LazyVerticalGrid(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState) {
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
