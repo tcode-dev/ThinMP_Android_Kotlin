@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -19,7 +18,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -27,7 +25,6 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
@@ -128,18 +125,18 @@ fun PlaylistDetailScreen(
             itemsIndexed(uiState.songs) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
-                    val closeFavorite = { expanded.value = false }
+                    val close = { expanded.value = false }
                     val closePlaylist = {
                         playlistRegisterSongId = song.songId
                         visiblePopup.value = true
-                        expanded.value = false
+                        close()
                     }
 
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = close) {
+                        FavoriteSongDropdownMenuItemView(song.songId, close)
                         PlaylistDropdownMenuItemView(song.songId, closePlaylist)
                     }
                 }

@@ -90,18 +90,18 @@ fun FavoriteSongsScreen(
                         .wrapContentSize(Alignment.TopStart)
                 ) {
                     val expanded = remember { mutableStateOf(false) }
-                    val closeFavorite = { expanded.value = false }
+                    val close = { expanded.value = false }
                     val closePlaylist = {
                         playlistRegisterSongId = song.songId
                         visiblePopup.value = true
-                        expanded.value = false
+                        close()
                     }
 
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
-                        FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = close) {
+                        FavoriteSongDropdownMenuItemView(song.songId, close)
                         PlaylistDropdownMenuItemView(song.songId, closePlaylist)
                     }
                 }
