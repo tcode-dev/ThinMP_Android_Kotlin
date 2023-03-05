@@ -82,6 +82,32 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
+                    stringResource(R.string.shortcut), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                        start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
+                    )
+                )
+            }
+            itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
+                Box(
+                    modifier = Modifier
+                        .width(itemSize)
+                        .wrapContentSize(Alignment.TopStart)
+                ) {
+                    val expanded = remember { mutableStateOf(false) }
+                    val close = { expanded.value = false }
+
+                    GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                        AlbumCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, Modifier.pointerInput(Unit) {
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${dev.tcode.thinmp.constant.NavConstant.ARTIST_DETAIL}/${shortcut.itemId}") })
+                        })
+                    }
+                    DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
+                        ShortcutDropdownMenuItemView(shortcut.itemId, close)
+                    }
+                }
+            }
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                Text(
                     stringResource(R.string.recently_added), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                         start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
                     )
