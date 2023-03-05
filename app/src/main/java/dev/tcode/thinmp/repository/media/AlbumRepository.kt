@@ -5,7 +5,9 @@ import android.content.Context
 import android.os.Bundle
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.AlbumModel
+import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
 
 class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Albums.ARTIST)
@@ -24,6 +26,16 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         sortOrder = null
 
         return get()
+    }
+
+    fun findByIds(albumIds: List<AlbumId>): List<AlbumModel> {
+        val ids = albumIds.map { it.id }
+
+        selection = MediaStore.Audio.Albums._ID + " IN (" + makePlaceholders(ids.size) + ")"
+        selectionArgs = toStringArray(ids)
+        sortOrder = null
+
+        return getList()
     }
 
     fun findByArtistId(artistId: String): List<AlbumModel> {

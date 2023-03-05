@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.constant.MainMenuEnum
 import dev.tcode.thinmp.model.media.AlbumModel
+import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.service.MainService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,8 @@ import kotlinx.coroutines.flow.update
 
 data class MainUiState(
     var menu: List<MainMenuEnum> = emptyList(),
-    var albums: List<AlbumModel> = emptyList()
+    var albums: List<AlbumModel> = emptyList(),
+    var shortcuts:List<ShortcutModel> = emptyList()
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
@@ -38,11 +40,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
         val service = MainService(context)
         val menu = service.getMenu()
         val albums = service.getRecentlyAlbums()
+        val shortcuts = service.getShortcuts()
 
         _uiState.update { currentState ->
             currentState.copy(
                 menu = menu,
-                albums = albums
+                albums = albums,
+                shortcuts = shortcuts
             )
         }
     }

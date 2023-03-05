@@ -50,6 +50,10 @@ class ShortcutRepository {
         }
     }
 
+    fun findAll(): List<ShortcutRealmModel> {
+        return realm.query<ShortcutRealmModel>().find()
+    }
+
     private fun exists(itemId: String, itemType: ItemType): Boolean {
         return find(itemId, itemType).isNotEmpty()
     }
