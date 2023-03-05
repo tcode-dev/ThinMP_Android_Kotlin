@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.repository.realm
 
+import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
@@ -52,5 +53,11 @@ class PlaylistRepository {
 
     fun findById(playlistId: PlaylistId): PlaylistRealmModel? {
         return realm.query<PlaylistRealmModel>("id == $0", playlistId.id).first().find()
+    }
+
+    fun findByIds(playlistIds: List<PlaylistId>): List<PlaylistRealmModel> {
+        val values = TextUtils.join(",", playlistIds.map {it.id})
+
+        return realm.query<PlaylistRealmModel>("id in {$0}", values).find()
     }
 }
