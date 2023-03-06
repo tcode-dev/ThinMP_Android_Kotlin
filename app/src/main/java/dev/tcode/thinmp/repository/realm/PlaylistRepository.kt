@@ -56,8 +56,8 @@ class PlaylistRepository {
     }
 
     fun findByIds(playlistIds: List<PlaylistId>): List<PlaylistRealmModel> {
-        val values = TextUtils.join(",", playlistIds.map {it.id})
+        val values = TextUtils.join(", ", playlistIds.map {"'${it.id}'"})
 
-        return realm.query<PlaylistRealmModel>("id in {$0}", values).find()
+        return realm.query<PlaylistRealmModel>("id in { $values }").find()
     }
 }
