@@ -18,6 +18,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
@@ -65,7 +66,7 @@ fun AlbumsScreen(
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                         AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${dev.tcode.thinmp.constant.NavConstant.ALBUM_DETAIL}/${album.id}") })
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ALBUM_DETAIL}/${album.id}") })
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
