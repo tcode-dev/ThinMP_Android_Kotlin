@@ -62,7 +62,7 @@ fun ArtistsScreen(
                     val close = { expanded.value = false }
 
                     PlainRowView(artist.name, Modifier.pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(artist.url) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = close) {
                         FavoriteArtistDropdownMenuItemView(artist.artistId, close)

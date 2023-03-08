@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.model.media
 
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 
 class ArtistModel(
@@ -18,4 +19,7 @@ class ArtistModel(
 
         return trackList
     }
+
+    val url: String
+        get() =  "${NavConstant.ARTIST_DETAIL}/${this.id}"
 }
