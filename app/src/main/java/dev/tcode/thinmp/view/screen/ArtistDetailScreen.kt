@@ -175,7 +175,7 @@ fun ArtistDetailScreen(
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                         AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ALBUM_DETAIL}/${album.id}") })
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(album.url) })
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
