@@ -65,7 +65,7 @@ fun PlaylistsScreen(
                     val close = { expanded.value = false }
 
                     PlainRowView(playlist.primaryText, Modifier.pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.PLAYLIST_DETAIL}/${playlist.id}") })
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(playlist.url) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = close) {
                         DropdownMenuItem(onClick = {
