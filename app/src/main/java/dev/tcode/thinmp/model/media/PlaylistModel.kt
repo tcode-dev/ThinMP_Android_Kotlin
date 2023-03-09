@@ -8,5 +8,5 @@ data class PlaylistModel(
     var primaryText: String,
 ) {
     val url: String
-        get() =  "${NavConstant.PLAYLIST_DETAIL}/${this.id}"
+        get() = "${NavConstant.PLAYLIST_DETAIL}/${this.id.id}"
 }
