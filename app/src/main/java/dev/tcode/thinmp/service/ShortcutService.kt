@@ -33,7 +33,7 @@ class ShortcutService(val context: Context) {
                 val albums = albumRepository.findByArtistId(it.id)
 
                 ShortcutModel(it.artistId, it.name, "artist", albums.first().getImageUri(), ItemType.ARTIST)
-            }!!
+            }
         }
 
         if (group.containsKey(ItemType.ALBUM.ordinal)) {
@@ -42,7 +42,7 @@ class ShortcutService(val context: Context) {
 
             shortcutAlbums = albums.map {
                 ShortcutModel(it.albumId, it.name, "album", it.getImageUri(), ItemType.ALBUM)
-            }!!
+            }
         }
 
         if (group.containsKey(ItemType.PLAYLIST.ordinal)) {
