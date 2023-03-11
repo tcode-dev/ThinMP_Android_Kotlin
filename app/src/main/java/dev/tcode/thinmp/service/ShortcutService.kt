@@ -32,7 +32,7 @@ class ShortcutService(val context: Context) {
             shortcutArtists = artists.map {
                 val albums = albumRepository.findByArtistId(it.id)
 
-                ShortcutModel(it.artistId, it.name, "artist", albums.first().getImageUri())
+                ShortcutModel(it.artistId, it.name, "artist", albums.first().getImageUri(), ItemType.ARTIST)
             }!!
         }
 
@@ -41,7 +41,7 @@ class ShortcutService(val context: Context) {
             val albums = albumRepository.findByIds(albumIds)
 
             shortcutAlbums = albums.map {
-                ShortcutModel(it.albumId, it.name, "album", it.getImageUri())
+                ShortcutModel(it.albumId, it.name, "album", it.getImageUri(), ItemType.ALBUM)
             }!!
         }
 
@@ -52,7 +52,7 @@ class ShortcutService(val context: Context) {
             shortcutPlaylists = playlists.map {
                 val song = songRepository.findById(it.songs.first().songId)
 
-                ShortcutModel(PlaylistId(it.id), it.name, "playlist", song!!.getImageUri())
+                ShortcutModel(PlaylistId(it.id), it.name, "playlist", song!!.getImageUri(), ItemType.PLAYLIST)
             }
         }
 

@@ -27,6 +27,7 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
+import dev.tcode.thinmp.view.cell.ShortcutCellView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -97,7 +98,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     val close = { expanded.value = false }
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                        AlbumCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, Modifier.pointerInput(Unit) {
+                        ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
                             detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
                         })
                     }
