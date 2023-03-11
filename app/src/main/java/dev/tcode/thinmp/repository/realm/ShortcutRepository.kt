@@ -67,6 +67,7 @@ class ShortcutRepository {
             copyToRealm(ShortcutRealmModel().apply {
                 itemId = _itemId
                 type = itemType.ordinal
+                order = increment()
             })
         }
     }
@@ -77,5 +78,9 @@ class ShortcutRepository {
 
             findLatest(shortcut)?.let { delete(it) }
         }
+    }
+
+    private fun increment(): Int {
+        return realm.query<ShortcutRealmModel>().find().count() + 1
     }
 }

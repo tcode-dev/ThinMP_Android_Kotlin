@@ -58,7 +58,7 @@ class ShortcutService(val context: Context) {
             }
         }
 
-        return shortcuts.mapNotNull { shortcut ->
+        return shortcuts.sortedByDescending { it.order }.mapNotNull { shortcut ->
             when (shortcut.type) {
                 ItemType.ARTIST.ordinal -> shortcutArtists.first { artist -> artist.itemId == ArtistId(shortcut.itemId) }
                 ItemType.ALBUM.ordinal -> shortcutAlbums.find { album -> album.itemId == AlbumId(shortcut.itemId) }
