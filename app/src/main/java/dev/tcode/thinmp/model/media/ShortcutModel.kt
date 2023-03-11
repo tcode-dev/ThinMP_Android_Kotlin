@@ -13,11 +13,10 @@ data class ShortcutModel(
 ) {
     val url: String
         get() {
-            return when (this.itemId) {
-                is ArtistId -> "${NavConstant.ARTIST_DETAIL}/${(this.itemId as ArtistId).id}"
-                is AlbumId -> "${NavConstant.ALBUM_DETAIL}/${(this.itemId as AlbumId).id}"
-                is PlaylistId -> "${NavConstant.PLAYLIST_DETAIL}/${(this.itemId as PlaylistId).id}"
-                else -> throw IllegalArgumentException("Unknown expression")
+            return when (this.type) {
+                ItemType.ARTIST -> "${NavConstant.ARTIST_DETAIL}/${(this.itemId as ArtistId).id}"
+                ItemType.ALBUM -> "${NavConstant.ALBUM_DETAIL}/${(this.itemId as AlbumId).id}"
+                ItemType.PLAYLIST -> "${NavConstant.PLAYLIST_DETAIL}/${(this.itemId as PlaylistId).id}"
             }
         }
 }
