@@ -11,6 +11,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -40,6 +41,7 @@ import dev.tcode.thinmp.viewModel.MainViewModel
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
     val itemSize: Dp = spanSize()
 
@@ -96,6 +98,10 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 ) {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
+                    val callback = {
+                        viewModel.load(context)
+                        close()
+                    }
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                         ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
@@ -103,7 +109,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
-                        ShortcutDropdownMenuItemView(shortcut.itemId, close)
+                        ShortcutDropdownMenuItemView(shortcut.itemId, callback)
                     }
                 }
             }
@@ -122,6 +128,10 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 ) {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
+                    val callback = {
+                        viewModel.load(context)
+                        close()
+                    }
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                         AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
@@ -129,7 +139,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
-                        ShortcutDropdownMenuItemView(album.albumId, close)
+                        ShortcutDropdownMenuItemView(album.albumId, callback)
                     }
                 }
             }

@@ -36,7 +36,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
         }
     }
 
-    private fun load(context: Context) {
+    fun load(context: Context) {
         val service = MainService(context)
         val menu = service.getMenu()
         val albums = service.getRecentlyAlbums()
