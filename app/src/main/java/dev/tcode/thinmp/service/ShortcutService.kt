@@ -58,6 +58,15 @@ class ShortcutService(val context: Context) {
             }
         }
 
-        return listOf(shortcutArtists, shortcutAlbums, shortcutPlaylists).flatten()
+        return shortcuts.mapNotNull { shortcut ->
+            when (shortcut.type) {
+                ItemType.ARTIST.ordinal -> shortcutArtists.first { artist -> artist.itemId == ArtistId(shortcut.itemId) }
+                ItemType.ALBUM.ordinal -> shortcutAlbums.find { album -> album.itemId == AlbumId(shortcut.itemId) }
+                ItemType.PLAYLIST.ordinal -> shortcutPlaylists.find { playlist -> playlist.itemId == PlaylistId(shortcut.itemId) }
+                else -> {
+                    throw IllegalArgumentException("Unknown expression")
+                }
+            }
+        }
     }
 }
