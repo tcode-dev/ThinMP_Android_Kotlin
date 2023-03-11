@@ -2,7 +2,9 @@
     <string name="app_name">ThinMP</string>
 
     <string name="library">ライブラリ</string>
+    <string name="artist">アーティスト</string>
     <string name="artists">アーティスト</string>
+    <string name="album">アルバム</string>
     <string name="albums">アルバム</string>
     <string name="songs">曲</string>
     <string name="favorite_artists">お気に入りアーティスト</string>

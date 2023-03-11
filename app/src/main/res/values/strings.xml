@@ -2,7 +2,9 @@
     <string name="app_name">ThinMP</string>
 
     <string name="library">Library</string>
+    <string name="artist">Artist</string>
     <string name="artists">Artists</string>
+    <string name="album">Album</string>
     <string name="albums">Albums</string>
     <string name="songs">Songs</string>
     <string name="favorite_artists">Favorite Artists</string>

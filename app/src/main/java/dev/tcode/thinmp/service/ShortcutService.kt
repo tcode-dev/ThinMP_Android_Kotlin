@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.service
 
 import android.content.Context
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -14,6 +15,7 @@ import dev.tcode.thinmp.repository.realm.ShortcutRepository
 
 class ShortcutService(val context: Context) {
     fun findAll(): List<ShortcutModel> {
+        val resources = context.resources
         val shortcutRepository = ShortcutRepository()
         val artistRepository = ArtistRepository(context)
         val albumRepository = AlbumRepository(context)
@@ -32,7 +34,7 @@ class ShortcutService(val context: Context) {
             shortcutArtists = artists.map {
                 val albums = albumRepository.findByArtistId(it.id)
 
-                ShortcutModel(it.artistId, it.name, "artist", albums.first().getImageUri(), ItemType.ARTIST)
+                ShortcutModel(it.artistId, it.name, resources.getString(R.string.artist), albums.first().getImageUri(), ItemType.ARTIST)
             }
         }
 
@@ -41,7 +43,7 @@ class ShortcutService(val context: Context) {
             val albums = albumRepository.findByIds(albumIds)
 
             shortcutAlbums = albums.map {
-                ShortcutModel(it.albumId, it.name, "album", it.getImageUri(), ItemType.ALBUM)
+                ShortcutModel(it.albumId, it.name, resources.getString(R.string.album), it.getImageUri(), ItemType.ALBUM)
             }
         }
 
@@ -52,7 +54,7 @@ class ShortcutService(val context: Context) {
             shortcutPlaylists = playlists.map {
                 val song = songRepository.findById(it.songs.first().songId)
 
-                ShortcutModel(PlaylistId(it.id), it.name, "playlist", song!!.getImageUri(), ItemType.PLAYLIST)
+                ShortcutModel(PlaylistId(it.id), it.name, resources.getString(R.string.playlist), song!!.getImageUri(), ItemType.PLAYLIST)
             }
         }
 
