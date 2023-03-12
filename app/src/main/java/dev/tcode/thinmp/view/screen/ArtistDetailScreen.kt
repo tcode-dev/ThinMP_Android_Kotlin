@@ -76,10 +76,7 @@ fun ArtistDetailScreen(
             val toggle = { expanded.value = !expanded.value }
 
             HeroTopAppBarView(
-                navController,
-                uiState.primaryText,
-                visible = visibleHeroTopbarView,
-                toggle
+                navController, uiState.primaryText, visible = visibleHeroTopbarView, toggle
             )
             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = toggle) {
                 FavoriteArtistDropdownMenuItemView(ArtistId(id), toggle)

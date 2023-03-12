@@ -11,7 +11,7 @@ class PlaylistDetailService(val context: Context) {
     fun findById(playlistId: PlaylistId): PlaylistDetailModel? {
         val playlistRepository = PlaylistRepository()
         val playlist = playlistRepository.findById(playlistId) ?: return null
-        val songIds = playlist.songs.map{ SongId(it.songId) }
+        val songIds = playlist.songs.map { SongId(it.songId) }
         val songRepository = SongRepository(context)
         val songs = songRepository.findByIds(songIds)
 
