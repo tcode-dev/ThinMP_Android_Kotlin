@@ -18,15 +18,12 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class ArtistDetailUiState(
-    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY,
-    var albums: List<AlbumModel> = emptyList(),
-    var songs: List<SongModel> = emptyList()
+    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY, var albums: List<AlbumModel> = emptyList(), var songs: List<SongModel> = emptyList()
 )
 
 @HiltViewModel
 class ArtistDetailViewModel @Inject constructor(
-    application: Application,
-    savedStateHandle: SavedStateHandle
+    application: Application, savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer
@@ -60,11 +57,7 @@ class ArtistDetailViewModel @Inject constructor(
         if (artist != null) {
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = artist.primaryText,
-                    secondaryText = artist.secondaryText,
-                    imageUri = artist.imageUri,
-                    albums = artist.albums,
-                    songs = artist.songs
+                    primaryText = artist.primaryText, secondaryText = artist.secondaryText, imageUri = artist.imageUri, albums = artist.albums, songs = artist.songs
                 )
             }
         }

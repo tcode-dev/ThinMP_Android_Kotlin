@@ -15,16 +15,12 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 data class PlaylistDetailUiState(
-    var primaryText: String = "",
-    var secondaryText: String = "",
-    var imageUri: Uri = Uri.EMPTY,
-    var songs: List<SongModel> = emptyList()
+    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY, var songs: List<SongModel> = emptyList()
 )
 
 @HiltViewModel
 class PlaylistDetailViewModel @Inject constructor(
-    application: Application,
-    savedStateHandle: SavedStateHandle
+    application: Application, savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer
@@ -58,10 +54,7 @@ class PlaylistDetailViewModel @Inject constructor(
         if (playlist != null) {
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = playlist.primaryText,
-                    secondaryText = playlist.secondaryText,
-                    imageUri = playlist.imageUri,
-                    songs = playlist.songs
+                    primaryText = playlist.primaryText, secondaryText = playlist.secondaryText, imageUri = playlist.imageUri, songs = playlist.songs
                 )
             }
         }
