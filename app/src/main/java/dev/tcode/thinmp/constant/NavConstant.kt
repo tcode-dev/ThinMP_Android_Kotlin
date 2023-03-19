@@ -3,6 +3,7 @@ package dev.tcode.thinmp.constant
 class NavConstant {
     companion object {
         const val MAIN = "main"
+        const val MAIN_EDIT = "mainEdit"
         const val ARTISTS = "artists"
         const val ALBUMS = "albums"
         const val SONGS = "songs"

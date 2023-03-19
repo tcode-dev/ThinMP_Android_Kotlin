@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -25,6 +26,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
@@ -66,13 +68,23 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween
                     ) {
+                        val expanded = remember { mutableStateOf(false) }
+
                         Text(
                             stringResource(R.string.library), textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
                         )
                         Box(contentAlignment = Alignment.Center, modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)
-                            .clickable { }) {
+                            .clickable { expanded.value = !expanded.value }) {
                             Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+                            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
+                                DropdownMenuItem(onClick = {
+                                    navController.navigate(NavConstant.MAIN_EDIT)
+                                    expanded.value = false
+                                }) {
+                                    Text(stringResource(R.string.edit))
+                                }
+                            }
                         }
                     }
                     DividerView()

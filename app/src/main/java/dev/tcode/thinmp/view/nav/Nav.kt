@@ -17,6 +17,7 @@ fun Nav() {
 
     NavHost(navController = navController, startDestination = NavConstant.MAIN) {
         composable(NavConstant.MAIN) { MainScreen(navController) }
+        composable(NavConstant.MAIN_EDIT) { MainEditScreen(navController) }
         composable(NavConstant.ARTISTS) { ArtistsScreen(navController) }
         composable(NavConstant.ALBUMS) { AlbumsScreen(navController) }
         composable(NavConstant.SONGS) { SongsScreen(navController) }
