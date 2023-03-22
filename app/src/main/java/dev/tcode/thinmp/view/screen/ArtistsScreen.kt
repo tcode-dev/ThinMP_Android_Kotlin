@@ -37,7 +37,7 @@ fun ArtistsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
 
     CustomLifecycleEventObserver(viewModel)
 

@@ -30,6 +30,7 @@ import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
+import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
@@ -40,7 +41,7 @@ fun SongsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)

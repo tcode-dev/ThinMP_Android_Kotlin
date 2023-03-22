@@ -40,7 +40,7 @@ fun PlaylistsScreen(
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
 
     CustomLifecycleEventObserver(viewModel)
 

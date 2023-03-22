@@ -47,6 +47,7 @@ import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.view.util.spanSize
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
@@ -58,7 +59,7 @@ fun ArtistDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyGridState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
     val visibleHeroTopbarView =
         lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()

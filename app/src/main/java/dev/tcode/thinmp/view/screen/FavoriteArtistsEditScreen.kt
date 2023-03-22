@@ -33,6 +33,7 @@ import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
+import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.FavoriteArtistsViewModel
 
 @ExperimentalFoundationApi
@@ -41,9 +42,8 @@ fun FavoriteArtistsEditScreen(
     navController: NavController, viewModel: FavoriteArtistsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val lazyListState = rememberLazyListState()
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
 
     CustomLifecycleEventObserver(viewModel)
 

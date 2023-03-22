@@ -50,7 +50,7 @@ fun FavoriteSongsScreen(
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)

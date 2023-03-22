@@ -34,17 +34,14 @@ import dev.tcode.thinmp.view.cell.ShortcutCellView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.DividerView
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.spanSize
+import dev.tcode.thinmp.view.util.*
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
 fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
     val itemSize: Dp = spanSize()
 
     CustomLifecycleEventObserver(viewModel)

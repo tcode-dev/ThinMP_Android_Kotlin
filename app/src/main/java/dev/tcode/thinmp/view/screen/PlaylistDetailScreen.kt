@@ -49,7 +49,7 @@ fun PlaylistDetailScreen(
     val visiblePopup = remember { mutableStateOf(false) }
     val visibleHeroTopbarView = lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
         .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues().calculateTopPadding().value + 90))
-    val miniPlayerHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding().value + StyleConstant.ROW_HEIGHT
+    val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
