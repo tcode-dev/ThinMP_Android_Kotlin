@@ -37,6 +37,7 @@ import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 
 @ExperimentalFoundationApi
