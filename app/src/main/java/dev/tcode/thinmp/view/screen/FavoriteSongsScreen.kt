@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
@@ -48,7 +47,6 @@ fun FavoriteSongsScreen(
     navController: NavController, viewModel: FavoriteSongsViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()

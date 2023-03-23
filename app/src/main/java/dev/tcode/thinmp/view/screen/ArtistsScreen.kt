@@ -19,7 +19,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
