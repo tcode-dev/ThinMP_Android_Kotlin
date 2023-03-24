@@ -7,12 +7,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Checkbox
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,8 +53,8 @@ fun MainEditScreen(
                 EmptyTopbarView()
             }
             items(uiState.menu) { item ->
-                val checked = remember { mutableStateOf(false) }
-                val onCheckedChange = { checked.value = !checked.value }
+                var checked by remember { mutableStateOf(false) }
+                val onCheckedChange = { checked = !checked }
 
                 Column(modifier = Modifier
                     .height(StyleConstant.ROW_HEIGHT.dp)
@@ -62,7 +63,15 @@ fun MainEditScreen(
                     Row(
                         modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Checkbox(checked = checked.value, onCheckedChange = { onCheckedChange() })
+                        Icon(
+                            painter = painterResource(
+                                id = if (checked) {
+                                    R.drawable.check_box
+                                } else {
+                                    R.drawable.check_box_outline_blank
+                                }
+                            ), contentDescription = null, modifier = Modifier.size(88.dp)
+                        )
                         Text(stringResource(item.id), maxLines = 1, overflow = TextOverflow.Ellipsis)
                     }
                     DividerView()
