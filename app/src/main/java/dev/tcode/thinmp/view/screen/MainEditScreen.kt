@@ -27,15 +27,16 @@ import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.DividerView
 import dev.tcode.thinmp.view.util.EmptyTopbarView
-import dev.tcode.thinmp.viewModel.MainViewModel
+import dev.tcode.thinmp.viewModel.MainEditViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun MainEditScreen(
-    navController: NavController, viewModel: MainViewModel = viewModel()
+    navController: NavController, viewModel: MainEditViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
+
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
@@ -53,19 +54,16 @@ fun MainEditScreen(
                 EmptyTopbarView()
             }
             items(uiState.menu) { item ->
-                var checked by remember { mutableStateOf(false) }
-                val onCheckedChange = { checked = !checked }
-
                 Column(modifier = Modifier
                     .height(StyleConstant.ROW_HEIGHT.dp)
                     .padding(start = StyleConstant.PADDING_LARGE.dp)
-                    .clickable { onCheckedChange() }) {
+                    .clickable { viewModel.setMainMenuVisibility(item.key) }) {
                     Row(
                         modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             painter = painterResource(
-                                id = if (checked) {
+                                id = if (item.visibility) {
                                     R.drawable.check_box
                                 } else {
                                     R.drawable.check_box_outline_blank
