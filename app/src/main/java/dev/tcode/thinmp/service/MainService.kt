@@ -8,7 +8,7 @@ import dev.tcode.thinmp.repository.media.AlbumRepository
 
 class MainService(val context: Context) {
     fun getMenu(): List<MainMenuEnum> {
-        return MainMenuEnum.values().toList()
+        return MainMenuEnum.getList(context)
     }
 
     fun getRecentlyAlbums(): List<AlbumModel> {

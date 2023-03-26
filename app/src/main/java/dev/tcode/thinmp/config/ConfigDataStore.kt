@@ -21,6 +21,10 @@ enum class ShuffleState {
     OFF, ON
 }
 
+enum class MainMenuVisibilityState {
+    INVISIBLE, VISIBLE
+}
+
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
 class ConfigDataStore(private val context: Context) {
@@ -52,6 +56,21 @@ class ConfigDataStore(private val context: Context) {
 
     fun saveShuffle(value: ShuffleState) {
         saveInt(PREFERENCES_SHUFFLE_KEY, value.ordinal)
+    }
+
+    fun saveMainMenuVisibility(key: String, value: MainMenuVisibilityState) {
+        saveInt(key, value.ordinal)
+    }
+
+    fun getMainMenuVisibility(key: String): Boolean {
+        val values = MainMenuVisibilityState.values()
+        val value = getInt(key)
+
+        return if (value != null) {
+            values[value] == MainMenuVisibilityState.VISIBLE
+        } else {
+            true
+        }
     }
 
     private fun getInt(key: String): Int? {
