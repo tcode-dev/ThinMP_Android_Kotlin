@@ -88,9 +88,11 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 }
             }
             items(items = uiState.menu, span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { item ->
-                PlainRowView(stringResource(item.id), modifier = Modifier.clickable {
-                    navController.navigate(item.key)
-                })
+                if (item.visibility) {
+                    PlainRowView(stringResource(item.id), modifier = Modifier.clickable {
+                        navController.navigate(item.key)
+                    })
+                }
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
