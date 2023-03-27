@@ -6,7 +6,7 @@ import android.media.MediaPlayer
 import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
-import dev.tcode.thinmp.config.ConfigDataStore
+import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.config.ShuffleState
 import dev.tcode.thinmp.model.media.SongModel
@@ -23,7 +23,7 @@ class MusicService : Service() {
     private var originalList: List<SongModel> = emptyList()
     private var shuffledList: List<SongModel> = emptyList()
     private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
-    private lateinit var config: ConfigDataStore
+    private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
     private lateinit var shuffle: ShuffleState
     var song: SongModel? = null
@@ -31,7 +31,7 @@ class MusicService : Service() {
     override fun onCreate() {
         super.onCreate()
 
-        config = ConfigDataStore(baseContext)
+        config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
     }

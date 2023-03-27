@@ -2,7 +2,7 @@ package dev.tcode.thinmp.constant
 
 import android.content.Context
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.config.ConfigDataStore
+import dev.tcode.thinmp.config.ConfigStore
 
 enum class MainMenuEnum(val key: String, val id: Int) {
     ARTISTS(NavConstant.ARTISTS, R.string.artists),
@@ -16,7 +16,7 @@ enum class MainMenuEnum(val key: String, val id: Int) {
 
     companion object {
         fun getList(context: Context): List<MainMenuEnum> {
-            val config = ConfigDataStore(context)
+            val config = ConfigStore(context)
 
             return MainMenuEnum.values().toList().map {
                 it.visibility = config.getMainMenuVisibility(it.key)

@@ -27,7 +27,7 @@ enum class MainMenuVisibilityState {
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
-class ConfigDataStore(private val context: Context) {
+class ConfigStore(private val context: Context) {
     fun getRepeat(): RepeatState {
         val values = RepeatState.values()
         val value = getInt(PREFERENCES_REPEAT_KEY)
