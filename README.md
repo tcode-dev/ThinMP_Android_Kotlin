@@ -34,6 +34,10 @@
 * Material Icons - https://fonts.google.com/icons?selected=Material+Icons
 * Realm - https://realm.io
 
+## Permission
+
+Manifest.permission.READ_MEDIA_AUDIO
+
 ## Architecture
 
 ### View
