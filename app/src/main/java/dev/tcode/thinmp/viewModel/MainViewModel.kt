@@ -20,7 +20,7 @@ data class MainUiState(
 class MainViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(MainUiState())
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<MainUiState> = _uiState
 
     init {
         load(application)
