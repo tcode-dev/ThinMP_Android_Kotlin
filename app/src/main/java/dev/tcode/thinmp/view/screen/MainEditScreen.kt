@@ -22,6 +22,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.config.MainMenuVisibilityState
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -44,7 +45,10 @@ fun MainEditScreen(
             EditTopAppBarView(navController, stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { }) {
+                    .clickable {
+                        viewModel.save()
+                        navController.popBackStack()
+                    }) {
                     Text(stringResource(R.string.done))
                 }
             }
@@ -63,7 +67,7 @@ fun MainEditScreen(
                     ) {
                         Icon(
                             painter = painterResource(
-                                id = if (item.visibility) {
+                                id = if (item.visibility == MainMenuVisibilityState.VISIBLE) {
                                     R.drawable.check_box
                                 } else {
                                     R.drawable.check_box_outline_blank

@@ -3,6 +3,7 @@ package dev.tcode.thinmp.constant
 import android.content.Context
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.ConfigStore
+import dev.tcode.thinmp.config.MainMenuVisibilityState
 
 enum class MainMenuEnum(val key: String, val id: Int) {
     ARTISTS(NavConstant.ARTISTS, R.string.artists),
@@ -12,7 +13,7 @@ enum class MainMenuEnum(val key: String, val id: Int) {
     FAVORITE_SONGS(NavConstant.FAVORITE_SONGS, R.string.favorite_songs),
     PLAYLISTS(NavConstant.PLAYLISTS, R.string.playlists);
 
-    var visibility = true
+    lateinit var visibility: MainMenuVisibilityState
 
     companion object {
         fun getList(context: Context): List<MainMenuEnum> {

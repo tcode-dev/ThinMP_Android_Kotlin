@@ -3,6 +3,7 @@ package dev.tcode.thinmp.config
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
@@ -62,14 +63,14 @@ class ConfigStore(private val context: Context) {
         saveInt(key, value.ordinal)
     }
 
-    fun getMainMenuVisibility(key: String): Boolean {
+    fun getMainMenuVisibility(key: String): MainMenuVisibilityState {
         val values = MainMenuVisibilityState.values()
         val value = getInt(key)
 
         return if (value != null) {
-            values[value] == MainMenuVisibilityState.VISIBLE
+            values[value]
         } else {
-            true
+            MainMenuVisibilityState.VISIBLE
         }
     }
 
