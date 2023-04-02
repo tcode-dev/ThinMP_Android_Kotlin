@@ -36,7 +36,7 @@ import dev.tcode.thinmp.viewModel.MainEditViewModel
 fun MainEditScreen(
     navController: NavController, viewModel: MainEditViewModel = viewModel()
 ) {
-    val uiState by viewModel.uiState.collectAsState()
+//    val uiState by viewModel.list
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
 
@@ -59,7 +59,7 @@ fun MainEditScreen(
             item {
                 EmptyTopbarView()
             }
-            items(uiState.menu) { item ->
+            items(viewModel.itemsList.value) { item ->
                 Column(modifier = Modifier
                     .height(StyleConstant.ROW_HEIGHT.dp)
                     .padding(start = StyleConstant.PADDING_LARGE.dp)
