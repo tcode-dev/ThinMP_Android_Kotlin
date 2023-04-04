@@ -26,7 +26,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.config.MainMenuVisibilityState
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
@@ -89,7 +88,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 }
             }
             items(items = uiState.menu, span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { item ->
-                if (item.visibility == MainMenuVisibilityState.VISIBLE) {
+                if (item.visibility) {
                     PlainRowView(stringResource(item.id), modifier = Modifier.clickable {
                         navController.navigate(item.key)
                     })

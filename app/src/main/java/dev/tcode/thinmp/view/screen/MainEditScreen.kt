@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,7 +22,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.config.MainMenuVisibilityState
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -36,8 +34,7 @@ import dev.tcode.thinmp.viewModel.MainEditViewModel
 fun MainEditScreen(
     navController: NavController, viewModel: MainEditViewModel = viewModel()
 ) {
-//    val uiState by viewModel.list
-    val context = LocalContext.current
+    val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
 
     CustomLifecycleEventObserver(viewModel)
@@ -59,17 +56,17 @@ fun MainEditScreen(
             item {
                 EmptyTopbarView()
             }
-            items(viewModel.itemsList.value) { item ->
+            items(uiState.menu) { item ->
                 Column(modifier = Modifier
                     .height(StyleConstant.ROW_HEIGHT.dp)
                     .padding(start = StyleConstant.PADDING_LARGE.dp)
-                    .clickable { viewModel.setMainMenuVisibility(item.key, context) }) {
+                    .clickable { viewModel.setMainMenuVisibility(item.key) }) {
                     Row(
                         modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically
                     ) {
                         Icon(
                             painter = painterResource(
-                                id = if (item.visibility == MainMenuVisibilityState.VISIBLE) {
+                                id = if (item.visibility) {
                                     R.drawable.check_box
                                 } else {
                                     R.drawable.check_box_outline_blank

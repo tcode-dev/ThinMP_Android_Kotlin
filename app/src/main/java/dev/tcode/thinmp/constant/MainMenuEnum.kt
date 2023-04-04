@@ -4,6 +4,14 @@ import android.content.Context
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.MainMenuVisibilityState
+import androidx.compose.runtime.Immutable
+
+@Immutable
+data class MainMenuItem(
+    val id: Int,
+    val key: String,
+    val visibility: Boolean
+)
 
 enum class MainMenuEnum(val key: String, val id: Int) {
     ARTISTS(NavConstant.ARTISTS, R.string.artists),
@@ -13,15 +21,12 @@ enum class MainMenuEnum(val key: String, val id: Int) {
     FAVORITE_SONGS(NavConstant.FAVORITE_SONGS, R.string.favorite_songs),
     PLAYLISTS(NavConstant.PLAYLISTS, R.string.playlists);
 
-    lateinit var visibility: MainMenuVisibilityState
-
     companion object {
-        fun getList(context: Context): List<MainMenuEnum> {
+        fun getList(context: Context): List<MainMenuItem> {
             val config = ConfigStore(context)
 
             return MainMenuEnum.values().toList().map {
-                it.visibility = config.getMainMenuVisibility(it.key)
-                it
+                MainMenuItem(it.id, it.key, config.getMainMenuVisibility(it.key) == MainMenuVisibilityState.VISIBLE)
             }
         }
     }
