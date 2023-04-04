@@ -13,7 +13,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class MainEditUiState(
-    var menu: List<MainMenuItem> = emptyList()
+    var menu: List<MainMenuItem> = emptyList(),
+    var shortcutVisibility: Boolean = true
 )
 
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
@@ -27,10 +28,12 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
     fun load(context: Context) {
         val service = MainService(context)
         val menu = service.getMenu()
+        val shortcutVisibility = service.getShortcutVisibility()
 
         _uiState.update { currentState ->
             currentState.copy(
-                menu = menu
+                menu = menu,
+                shortcutVisibility = shortcutVisibility
             )
         }
     }
@@ -50,11 +53,21 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun setShortcutVisibility() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                shortcutVisibility = !currentState.shortcutVisibility
+            )
+        }
+    }
+
     fun save(context: Context) {
         val config = ConfigStore(context)
 
         uiState.value.menu.forEach {
             config.saveMainMenuVisibility(it.key, it.visibility)
         }
+
+        config.saveShortcutVisibility(uiState.value.shortcutVisibility)
     }
 }

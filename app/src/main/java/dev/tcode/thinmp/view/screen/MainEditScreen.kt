@@ -80,6 +80,28 @@ fun MainEditScreen(
                     DividerView()
                 }
             }
+            item {
+                Column(modifier = Modifier
+                    .height(StyleConstant.ROW_HEIGHT.dp)
+                    .padding(start = StyleConstant.PADDING_LARGE.dp)
+                    .clickable { viewModel.setShortcutVisibility() }) {
+                    Row(
+                        modifier = Modifier.height(StyleConstant.ROW_HEIGHT.dp), verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (uiState.shortcutVisibility) {
+                                    R.drawable.check_box
+                                } else {
+                                    R.drawable.check_box_outline_blank
+                                }
+                            ), contentDescription = null, modifier = Modifier.size(88.dp)
+                        )
+                        Text(stringResource(R.string.shortcut), maxLines = 1, overflow = TextOverflow.Ellipsis)
+                    }
+                    DividerView()
+                }
+            }
         }
     }
 }

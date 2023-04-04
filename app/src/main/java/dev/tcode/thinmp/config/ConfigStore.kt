@@ -13,6 +13,7 @@ import kotlinx.coroutines.runBlocking
 private const val PREFERENCES_NAME = "thinmp_preferences"
 private const val PREFERENCES_REPEAT_KEY = "repeat"
 private const val PREFERENCES_SHUFFLE_KEY = "shuffle"
+private const val PREFERENCES_SHORTCUT_KEY = "shortcut"
 
 enum class RepeatState {
     OFF, ONE, ALL
@@ -44,12 +45,20 @@ class ConfigStore(private val context: Context) {
         saveBoolean(PREFERENCES_SHUFFLE_KEY, value)
     }
 
+    fun getMainMenuVisibility(key: String): Boolean {
+        return getBoolean(key) ?: true
+    }
+
     fun saveMainMenuVisibility(key: String, value: Boolean) {
         saveBoolean(key, value)
     }
 
-    fun getMainMenuVisibility(key: String): Boolean {
-        return getBoolean(key) ?: true
+    fun getShortcutVisibility(): Boolean {
+        return getBoolean(PREFERENCES_SHORTCUT_KEY) ?: true
+    }
+
+    fun saveShortcutVisibility(value: Boolean) {
+        saveBoolean(PREFERENCES_SHORTCUT_KEY, value)
     }
 
     private fun getInt(key: String): Int? {
