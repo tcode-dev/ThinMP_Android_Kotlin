@@ -3,7 +3,6 @@ package dev.tcode.thinmp.constant
 import android.content.Context
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.ConfigStore
-import dev.tcode.thinmp.config.MainMenuVisibilityState
 import androidx.compose.runtime.Immutable
 
 @Immutable
@@ -26,7 +25,7 @@ enum class MainMenuEnum(val key: String, val id: Int) {
             val config = ConfigStore(context)
 
             return MainMenuEnum.values().toList().map {
-                MainMenuItem(it.id, it.key, config.getMainMenuVisibility(it.key) == MainMenuVisibilityState.VISIBLE)
+                MainMenuItem(it.id, it.key, config.getMainMenuVisibility(it.key))
             }
         }
     }
