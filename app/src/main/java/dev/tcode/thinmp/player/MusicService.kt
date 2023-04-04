@@ -8,7 +8,6 @@ import android.os.Binder
 import android.os.IBinder
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
-import dev.tcode.thinmp.config.ShuffleState
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicServiceListener {
@@ -25,7 +24,7 @@ class MusicService : Service() {
     private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
-    private lateinit var shuffle: ShuffleState
+    private var shuffle = false
     var song: SongModel? = null
 
     override fun onCreate() {
@@ -48,7 +47,7 @@ class MusicService : Service() {
         originalList = songs
         song = originalList[index]
 
-        if (shuffle == ShuffleState.ON) {
+        if (shuffle) {
             shuffleOn()
         } else {
             shuffleOff()
@@ -119,17 +118,14 @@ class MusicService : Service() {
         listener?.onChange()
     }
 
-    fun getShuffle(): ShuffleState {
+    fun getShuffle(): Boolean {
         return shuffle
     }
 
     fun setShuffle() {
-        shuffle = when (shuffle) {
-            ShuffleState.OFF -> ShuffleState.ON
-            ShuffleState.ON -> ShuffleState.OFF
-        }
+        shuffle = !shuffle
 
-        if (shuffle == ShuffleState.ON) {
+        if (shuffle) {
             shuffleOn()
         } else {
             shuffleOff()
@@ -195,7 +191,7 @@ class MusicService : Service() {
                     setMediaPlayer(playingList.next())
                     mediaPlayer?.start()
                 } else {
-                    playingList = if (shuffle == ShuffleState.ON) {
+                    playingList = if (shuffle) {
                         shuffledList.listIterator(0)
                     } else {
                         originalList.listIterator(0)

@@ -5,7 +5,6 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.RepeatState
-import dev.tcode.thinmp.config.ShuffleState
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -24,7 +23,7 @@ data class PlayerUiState(
     var durationTime: String = START_TIME,
     var isPlaying: Boolean = false,
     var repeat: RepeatState = RepeatState.OFF,
-    var shuffle: ShuffleState = ShuffleState.OFF,
+    var shuffle: Boolean = false,
 )
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {

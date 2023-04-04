@@ -18,10 +18,6 @@ enum class RepeatState {
     OFF, ONE, ALL
 }
 
-enum class ShuffleState {
-    OFF, ON
-}
-
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
 class ConfigStore(private val context: Context) {
@@ -40,19 +36,12 @@ class ConfigStore(private val context: Context) {
         saveInt(PREFERENCES_REPEAT_KEY, value.ordinal)
     }
 
-    fun getShuffle(): ShuffleState {
-        val values = ShuffleState.values()
-        val value = getInt(PREFERENCES_SHUFFLE_KEY)
-
-        return if (value != null) {
-            values[value]
-        } else {
-            ShuffleState.OFF
-        }
+    fun getShuffle(): Boolean {
+        return getBoolean(PREFERENCES_SHUFFLE_KEY) ?: false
     }
 
-    fun saveShuffle(value: ShuffleState) {
-        saveInt(PREFERENCES_SHUFFLE_KEY, value.ordinal)
+    fun saveShuffle(value: Boolean) {
+        saveBoolean(PREFERENCES_SHUFFLE_KEY, value)
     }
 
     fun saveMainMenuVisibility(key: String, value: Boolean) {
