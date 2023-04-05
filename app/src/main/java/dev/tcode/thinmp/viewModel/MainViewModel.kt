@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class MainUiState(
-    var menu: List<MainMenuItem> = emptyList(), var albums: List<AlbumModel> = emptyList(), var shortcuts: List<ShortcutModel> = emptyList()
+    var menu: List<MainMenuItem> = emptyList(), var albums: List<AlbumModel> = emptyList(), var shortcutVisibility: Boolean = true, var shortcuts: List<ShortcutModel> = emptyList()
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
@@ -38,11 +38,12 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
         val service = MainService(context)
         val menu = service.getMenu()
         val albums = service.getRecentlyAlbums()
-        val shortcuts = service.getShortcuts()
+        val shortcutVisibility = service.getShortcutVisibility()
+        val shortcuts = if (shortcutVisibility) service.getShortcuts() else emptyList()
 
         _uiState.update { currentState ->
             currentState.copy(
-                menu = menu, albums = albums, shortcuts = shortcuts
+                menu = menu, albums = albums, shortcutVisibility = shortcutVisibility, shortcuts = shortcuts
             )
         }
     }

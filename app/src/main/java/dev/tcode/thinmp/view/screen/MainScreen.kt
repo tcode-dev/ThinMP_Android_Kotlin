@@ -94,33 +94,35 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     })
                 }
             }
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                Text(
-                    stringResource(R.string.shortcut), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                        start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
+            if (uiState.shortcutVisibility && uiState.shortcuts.isNotEmpty()) {
+                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                    Text(
+                        stringResource(R.string.shortcut), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                            start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
+                        )
                     )
-                )
-            }
-            itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
-                Box(
-                    modifier = Modifier
-                        .width(itemSize)
-                        .wrapContentSize(Alignment.TopStart)
-                ) {
-                    val expanded = remember { mutableStateOf(false) }
-                    val close = { expanded.value = false }
-                    val callback = {
-                        viewModel.load(context)
-                        close()
-                    }
+                }
+                itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
+                    Box(
+                        modifier = Modifier
+                            .width(itemSize)
+                            .wrapContentSize(Alignment.TopStart)
+                    ) {
+                        val expanded = remember { mutableStateOf(false) }
+                        val close = { expanded.value = false }
+                        val callback = {
+                            viewModel.load(context)
+                            close()
+                        }
 
-                    GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                        ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
-                        })
-                    }
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
-                        ShortcutDropdownMenuItemView(shortcut.itemId, callback)
+                        GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                            ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
+                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
+                            })
+                        }
+                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
+                            ShortcutDropdownMenuItemView(shortcut.itemId, callback)
+                        }
                     }
                 }
             }
