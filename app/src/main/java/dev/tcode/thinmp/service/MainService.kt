@@ -13,6 +13,12 @@ class MainService(val context: Context) {
         return MainMenuEnum.getList(context)
     }
 
+    fun getRecentlyAlbumsVisibility(): Boolean {
+        val config = ConfigStore(context)
+
+        return config.getRecentlyAlbumsVisibility()
+    }
+
     fun getRecentlyAlbums(): List<AlbumModel> {
         val repository = AlbumRepository(context)
 

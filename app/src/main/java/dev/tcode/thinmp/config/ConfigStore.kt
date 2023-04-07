@@ -14,6 +14,7 @@ private const val PREFERENCES_NAME = "thinmp_preferences"
 private const val PREFERENCES_REPEAT_KEY = "repeat"
 private const val PREFERENCES_SHUFFLE_KEY = "shuffle"
 private const val PREFERENCES_SHORTCUT_KEY = "shortcut"
+private const val PREFERENCES_RECENTLY_ALBUMS_KEY = "recentlyAlbums"
 
 enum class RepeatState {
     OFF, ONE, ALL
@@ -59,6 +60,14 @@ class ConfigStore(private val context: Context) {
 
     fun saveShortcutVisibility(value: Boolean) {
         saveBoolean(PREFERENCES_SHORTCUT_KEY, value)
+    }
+
+    fun getRecentlyAlbumsVisibility(): Boolean {
+        return getBoolean(PREFERENCES_RECENTLY_ALBUMS_KEY) ?: true
+    }
+
+    fun saveRecentlyAlbumsVisibility(value: Boolean) {
+        saveBoolean(PREFERENCES_RECENTLY_ALBUMS_KEY, value)
     }
 
     private fun getInt(key: String): Int? {

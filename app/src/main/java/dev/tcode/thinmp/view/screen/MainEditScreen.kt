@@ -61,6 +61,9 @@ fun MainEditScreen(
             item {
                 EditRowView(stringResource(R.string.shortcut), uiState.shortcutVisibility, Modifier.clickable { viewModel.setShortcutVisibility() })
             }
+            item {
+                EditRowView(stringResource(R.string.recently_added), uiState.recentlyAlbumsVisibility, Modifier.clickable { viewModel.setRecentlyAlbumsVisibility() })
+            }
         }
     }
 }

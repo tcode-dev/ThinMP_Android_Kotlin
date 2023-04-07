@@ -13,8 +13,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class MainEditUiState(
-    var menu: List<MainMenuItem> = emptyList(),
-    var shortcutVisibility: Boolean = true
+    var menu: List<MainMenuItem> = emptyList(), var recentlyAlbumsVisibility: Boolean = true, var shortcutVisibility: Boolean = true
 )
 
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
@@ -29,11 +28,11 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         val service = MainService(context)
         val menu = service.getMenu()
         val shortcutVisibility = service.getShortcutVisibility()
+        val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
 
         _uiState.update { currentState ->
             currentState.copy(
-                menu = menu,
-                shortcutVisibility = shortcutVisibility
+                menu = menu, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
             )
         }
     }
@@ -53,6 +52,14 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun setRecentlyAlbumsVisibility() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                recentlyAlbumsVisibility = !currentState.recentlyAlbumsVisibility
+            )
+        }
+    }
+
     fun setShortcutVisibility() {
         _uiState.update { currentState ->
             currentState.copy(
@@ -68,6 +75,7 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
             config.saveMainMenuVisibility(it.key, it.visibility)
         }
 
-        config.saveShortcutVisibility(uiState.value.shortcutVisibility)
+        config.saveShortcutVisibility(uiState.value.recentlyAlbumsVisibility)
+        config.saveRecentlyAlbumsVisibility(uiState.value.shortcutVisibility)
     }
 }
