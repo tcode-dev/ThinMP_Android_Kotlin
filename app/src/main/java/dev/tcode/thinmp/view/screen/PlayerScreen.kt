@@ -5,14 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ContentAlpha
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -64,8 +64,8 @@ fun PlayerScreen(
                     }
                     .background(
                         brush = Brush.verticalGradient(
-                            0.0f to MaterialTheme.colors.surface.copy(alpha = 0F),
-                            1.0F to MaterialTheme.colors.surface,
+                            0.0f to MaterialTheme.colorScheme.surface.copy(alpha = 0F),
+                            1.0F to MaterialTheme.colorScheme.surface,
                         )
                     ),
             ) {}
@@ -108,7 +108,7 @@ fun PlayerScreen(
         ) {
             Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
                 Slider(value = uiState.sliderPosition,
-                    colors = SliderDefaults.colors(activeTrackColor = Color.Black, thumbColor = Color.Black),
+                    colors = SliderDefaults.colors(activeTrackColor = MaterialTheme.colorScheme.tertiary, thumbColor = MaterialTheme.colorScheme.tertiary),
                     onValueChange = { viewModel.seek(it) },
                     onValueChangeFinished = { viewModel.seekFinished() })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -157,7 +157,7 @@ fun PlayerScreen(
                                 painter = painterResource(id = R.drawable.round_repeat_24),
                                 contentDescription = null,
                                 modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
-                                tint = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled)
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled)
                             )
                         }
                         RepeatState.ALL -> {
@@ -178,7 +178,7 @@ fun PlayerScreen(
                             painter = painterResource(id = R.drawable.round_shuffle_24),
                             contentDescription = null,
                             modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
-                            tint = MaterialTheme.colors.primary.copy(alpha = ContentAlpha.disabled)
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled)
                         )
                     } else {
                         Icon(painter = painterResource(id = R.drawable.round_shuffle_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
