@@ -3,7 +3,10 @@ package dev.tcode.thinmp.view.playlist
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +38,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
             modifier = Modifier
                 .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp)
                 .fillMaxWidth()
-                .background(color = MaterialTheme.colors.secondary)
+                .background(color = MaterialTheme.colorScheme.secondary)
                 .padding(top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
         ) {
             if (uiState.playlists.isNotEmpty() && !isCreate) {

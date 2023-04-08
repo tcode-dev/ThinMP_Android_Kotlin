@@ -6,9 +6,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -107,8 +107,8 @@ fun ArtistDetailScreen(
                             }
                             .background(
                                 brush = Brush.verticalGradient(
-                                    0.0f to MaterialTheme.colors.surface.copy(alpha = 0F),
-                                    1.0F to MaterialTheme.colors.surface,
+                                    0.0f to MaterialTheme.colorScheme.surface.copy(alpha = 0F),
+                                    1.0F to MaterialTheme.colorScheme.surface,
                                 )
                             ),
                     ) {}

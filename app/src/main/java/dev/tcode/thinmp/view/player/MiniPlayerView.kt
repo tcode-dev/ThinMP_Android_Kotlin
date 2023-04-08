@@ -4,9 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,7 +38,7 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
 
     Row(
         modifier = Modifier
-            .background(color = MaterialTheme.colors.secondary)
+            .background(color = MaterialTheme.colorScheme.secondary)
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_TINY.dp)

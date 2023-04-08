@@ -4,10 +4,10 @@ import androidx.compose.animation.*
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,7 +29,7 @@ fun PlainTopAppBarView(navController: NavController, title: String, offset: Int)
             visible = offset > 1, enter = fadeIn(), exit = fadeOut()
         ) {
             Surface(
-                color = MaterialTheme.colors.secondary, modifier = Modifier.fillMaxWidth()
+                color = MaterialTheme.colorScheme.secondary, modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier
