@@ -121,8 +121,7 @@ fun AlbumDetailScreen(
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            uiState.secondaryText,
-                            color = MaterialTheme.colorScheme.secondary
+                            uiState.secondaryText, color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }

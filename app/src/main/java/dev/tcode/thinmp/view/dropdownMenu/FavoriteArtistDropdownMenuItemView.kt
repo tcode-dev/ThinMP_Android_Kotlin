@@ -2,6 +2,7 @@ package dev.tcode.thinmp.view.dropdownMenu
 
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -16,14 +17,14 @@ fun FavoriteArtistDropdownMenuItemView(id: ArtistId, close: () -> Unit, viewMode
             viewModel.delete(id)
             close()
         }) {
-            Text(stringResource(R.string.remove_favorite))
+            Text(stringResource(R.string.remove_favorite), color = MaterialTheme.colorScheme.primary)
         }
     } else {
         DropdownMenuItem(onClick = {
             viewModel.add(id)
             close()
         }) {
-            Text(stringResource(R.string.add_favorite))
+            Text(stringResource(R.string.add_favorite), color = MaterialTheme.colorScheme.primary)
         }
     }
 }
