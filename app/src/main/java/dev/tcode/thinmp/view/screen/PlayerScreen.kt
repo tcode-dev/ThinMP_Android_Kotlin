@@ -108,7 +108,7 @@ fun PlayerScreen(
         ) {
             Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
                 Slider(value = uiState.sliderPosition,
-                    colors = SliderDefaults.colors(activeTrackColor = MaterialTheme.colorScheme.tertiary, thumbColor = MaterialTheme.colorScheme.tertiary),
+                    colors = SliderDefaults.colors(activeTrackColor = MaterialTheme.colorScheme.primary, thumbColor = MaterialTheme.colorScheme.primary),
                     onValueChange = { viewModel.seek(it) },
                     onValueChangeFinished = { viewModel.seekFinished() })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
