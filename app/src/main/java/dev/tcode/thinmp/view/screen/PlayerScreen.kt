@@ -87,7 +87,12 @@ fun PlayerScreen(
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { navController.popBackStack() }) {
-                Icon(painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                )
             }
         }
         Column(
@@ -98,8 +103,8 @@ fun PlayerScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(uiState.primaryText, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            Text(uiState.secondaryText, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(uiState.primaryText, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(uiState.secondaryText, color = MaterialTheme.colorScheme.secondary, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
         Column(
             modifier = Modifier
@@ -112,8 +117,8 @@ fun PlayerScreen(
                     onValueChange = { viewModel.seek(it) },
                     onValueChangeFinished = { viewModel.seekFinished() })
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-                    Text(uiState.currentTime)
-                    Text(uiState.durationTime)
+                    Text(uiState.currentTime, color = MaterialTheme.colorScheme.secondary)
+                    Text(uiState.durationTime, color = MaterialTheme.colorScheme.secondary)
                 }
             }
             Row(
@@ -122,7 +127,7 @@ fun PlayerScreen(
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { viewModel.prev() }) {
-                    Icon(painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, modifier = Modifier.size(72.dp))
+                    Icon(painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
@@ -134,13 +139,13 @@ fun PlayerScreen(
                             } else {
                                 R.drawable.round_play_arrow_24
                             }
-                        ), contentDescription = null, modifier = Modifier.size(88.dp)
+                        ), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(88.dp)
                     )
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { viewModel.next() }) {
-                    Icon(painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(72.dp))
+                    Icon(painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
                 }
             }
             Row(
@@ -161,10 +166,20 @@ fun PlayerScreen(
                             )
                         }
                         RepeatState.ALL -> {
-                            Icon(painter = painterResource(id = R.drawable.round_repeat_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_repeat_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                            )
                         }
                         RepeatState.ONE -> {
-                            Icon(painter = painterResource(id = R.drawable.round_repeat_one_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_repeat_one_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                            )
                         }
                     }
                 }
@@ -181,26 +196,46 @@ fun PlayerScreen(
                             tint = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled)
                         )
                     } else {
-                        Icon(painter = painterResource(id = R.drawable.round_shuffle_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.round_shuffle_24),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                        )
                     }
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
-                    Icon(painter = painterResource(id = R.drawable.round_person_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_person_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
-                    Icon(painter = painterResource(id = R.drawable.round_favorite_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_favorite_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
                 }
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
-                    Icon(painter = painterResource(id = R.drawable.round_playlist_add_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_playlist_add_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
                 }
             }
         }
