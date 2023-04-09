@@ -13,14 +13,14 @@ private val DarkColorPalette = darkColorScheme(
     primary = LightGray,
     secondary = LightGray2,
     background = Color.Black,
-    onBackground = DarkGray2
+    onBackground = DarkGray
 )
 
 private val LightColorPalette = lightColorScheme(
     primary = DarkGray,
     secondary = DarkGray2,
     background = Color.White,
-    onBackground = LightGray2
+    onBackground = LightGray
 )
 
 @Composable

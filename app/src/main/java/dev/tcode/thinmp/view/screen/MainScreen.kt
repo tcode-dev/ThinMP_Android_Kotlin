@@ -8,6 +8,7 @@ import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -68,7 +69,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         val expanded = remember { mutableStateOf(false) }
 
                         Text(
-                            stringResource(R.string.library), textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
+                            stringResource(R.string.library), color = MaterialTheme.colorScheme.primary, textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
                         )
                         Box(contentAlignment = Alignment.Center, modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)
@@ -97,7 +98,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             if (uiState.shortcutVisibility && uiState.shortcuts.isNotEmpty()) {
                 item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                     Text(
-                        stringResource(R.string.shortcut), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                        stringResource(R.string.shortcut), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                             start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
                         )
                     )
@@ -129,7 +130,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             if (uiState.recentlyAlbumsVisibility && uiState.albums.isNotEmpty()) {
                 item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                     Text(
-                        stringResource(R.string.recently_added), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                        stringResource(R.string.recently_added), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                             start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
                         )
                     )
