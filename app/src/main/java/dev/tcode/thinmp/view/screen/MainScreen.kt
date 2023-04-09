@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.view.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -86,12 +87,12 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                                 tint = MaterialTheme.colorScheme.primary,
                                 modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                             )
-                            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
+                            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = { expanded.value = false }) {
                                 DropdownMenuItem(onClick = {
                                     navController.navigate(NavConstant.MAIN_EDIT)
                                     expanded.value = false
                                 }) {
-                                    Text(stringResource(R.string.edit))
+                                    Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary)
                                 }
                             }
                         }
@@ -132,7 +133,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
                             })
                         }
-                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
+                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
                             ShortcutDropdownMenuItemView(shortcut.itemId, callback)
                         }
                     }
@@ -164,7 +165,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(album.url) })
                             })
                         }
-                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), onDismissRequest = close) {
+                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
                             ShortcutDropdownMenuItemView(album.albumId, callback)
                         }
                     }
