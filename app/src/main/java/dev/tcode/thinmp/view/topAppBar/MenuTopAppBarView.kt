@@ -53,6 +53,7 @@ fun MenuTopAppBarView(navController: NavController, title: String, offset: Int, 
             }
             Text(
                 title,
+                color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Center,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

@@ -54,6 +54,7 @@ fun HeroTopAppBarView(navController: NavController, title: String, visible: Bool
             if (visible) {
                 Text(
                     title,
+                    color = MaterialTheme.colorScheme.primary,
                     textAlign = TextAlign.Center,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,

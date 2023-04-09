@@ -49,7 +49,13 @@ fun EditTopAppBarView(navController: NavController, title: String, offset: Int, 
                 Text(stringResource(R.string.cancel))
             }
             Text(
-                title, textAlign = TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, modifier = Modifier.align(alignment = Alignment.Center)
+                title,
+                color = MaterialTheme.colorScheme.primary,
+                textAlign = TextAlign.Center,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.align(alignment = Alignment.Center)
             )
             Box(content = content, modifier = Modifier.align(alignment = Alignment.CenterEnd))
         }

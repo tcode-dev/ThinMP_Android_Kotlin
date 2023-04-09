@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,9 +39,10 @@ fun MediaRowView(
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
             )
             Column(modifier = Modifier.padding(start = StyleConstant.PADDING_SMALL.dp)) {
-                Text(primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Text(primaryText, color = MaterialTheme.colorScheme.primary, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
                 Text(
                     secondaryText,
+                    color = MaterialTheme.colorScheme.secondary,
                     fontSize = 12.sp,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis

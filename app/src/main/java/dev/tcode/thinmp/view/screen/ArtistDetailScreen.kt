@@ -134,6 +134,7 @@ fun ArtistDetailScreen(
                         if (!visibleHeroTopbarView) {
                             Text(
                                 uiState.primaryText,
+                                color = MaterialTheme.colorScheme.primary,
                                 fontWeight = FontWeight.Bold,
                             )
                         }
@@ -149,14 +150,14 @@ fun ArtistDetailScreen(
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
-                            uiState.secondaryText,
+                            uiState.secondaryText, color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    stringResource(R.string.albums), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                    stringResource(R.string.albums), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                         start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
                     )
                 )
@@ -182,7 +183,7 @@ fun ArtistDetailScreen(
             }
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 Text(
-                    stringResource(R.string.songs), fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                    stringResource(R.string.songs), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
                         start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
                     )
                 )
