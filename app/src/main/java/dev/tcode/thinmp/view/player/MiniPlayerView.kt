@@ -50,7 +50,12 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
                 .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
         )
         Text(
-            uiState.primaryText, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier
+            uiState.primaryText,
+            color = MaterialTheme.colorScheme.primary,
+            fontSize = 14.sp,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
                 .padding(start = StyleConstant.PADDING_SMALL.dp)
                 .weight(1f)
         )
