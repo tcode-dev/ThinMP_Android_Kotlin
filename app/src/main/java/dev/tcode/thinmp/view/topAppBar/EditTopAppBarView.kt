@@ -46,7 +46,7 @@ fun EditTopAppBarView(navController: NavController, title: String, offset: Int, 
                     .align(alignment = Alignment.CenterStart)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { navController.popBackStack() }) {
-                Text(stringResource(R.string.cancel))
+                Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
             Text(
                 title,
