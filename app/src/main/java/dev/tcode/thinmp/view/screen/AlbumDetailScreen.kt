@@ -106,6 +106,7 @@ fun AlbumDetailScreen(
                     ) {
                         Text(
                             uiState.primaryText,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                         )
                     }
@@ -121,6 +122,7 @@ fun AlbumDetailScreen(
                     ) {
                         Text(
                             uiState.secondaryText,
+                            color = MaterialTheme.colorScheme.secondary
                         )
                     }
                 }
