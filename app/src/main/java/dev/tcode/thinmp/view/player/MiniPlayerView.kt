@@ -38,7 +38,7 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
 
     Row(
         modifier = Modifier
-            .background(color = MaterialTheme.colorScheme.secondary)
+            .background(color = MaterialTheme.colorScheme.onBackground)
             .fillMaxWidth()
             .navigationBarsPadding()
             .padding(start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_TINY.dp)
