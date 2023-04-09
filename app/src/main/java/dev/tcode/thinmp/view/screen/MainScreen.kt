@@ -69,12 +69,23 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         val expanded = remember { mutableStateOf(false) }
 
                         Text(
-                            stringResource(R.string.library), color = MaterialTheme.colorScheme.primary, textAlign = TextAlign.Left, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.Bold, fontSize = 30.sp
+                            stringResource(R.string.library),
+                            color = MaterialTheme.colorScheme.primary,
+                            textAlign = TextAlign.Left,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp
                         )
                         Box(contentAlignment = Alignment.Center, modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)
                             .clickable { expanded.value = !expanded.value }) {
-                            Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+                            Icon(
+                                painter = painterResource(id = R.drawable.round_more_vert_24),
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                            )
                             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), onDismissRequest = { expanded.value = false }) {
                                 DropdownMenuItem(onClick = {
                                     navController.navigate(NavConstant.MAIN_EDIT)
