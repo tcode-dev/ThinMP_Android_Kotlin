@@ -7,9 +7,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -69,12 +69,10 @@ fun PlaylistsScreen(
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(playlist.url) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                        DropdownMenuItem(onClick = {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.remove_playlist)) }, onClick = {
                             viewModel.load(context)
                             expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.remove_playlist))
-                        }
+                        })
                         ShortcutDropdownMenuItemView(playlist.id, close)
                     }
                 }

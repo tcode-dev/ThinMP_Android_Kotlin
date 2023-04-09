@@ -9,10 +9,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -69,13 +69,14 @@ fun FavoriteSongsScreen(
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                         .clickable { expanded.value = !expanded.value }) {
                     Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = { expanded.value = false }) {
-                        DropdownMenuItem(onClick = {
+                    DropdownMenu(expanded = expanded.value,
+                        offset = DpOffset((-1).dp, 0.dp),
+                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
+                        onDismissRequest = { expanded.value = false }) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = {
                             navController.navigate(NavConstant.FAVORITE_SONGS_EDIT)
                             expanded.value = false
-                        }) {
-                            Text(stringResource(R.string.edit))
-                        }
+                        })
                     }
                 }
             }

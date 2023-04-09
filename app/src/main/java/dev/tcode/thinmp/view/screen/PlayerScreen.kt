@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ContentAlpha
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -162,7 +161,7 @@ fun PlayerScreen(
                                 painter = painterResource(id = R.drawable.round_repeat_24),
                                 contentDescription = null,
                                 modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
-                                tint = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled)
+                                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f)
                             )
                         }
                         RepeatState.ALL -> {
@@ -193,7 +192,7 @@ fun PlayerScreen(
                             painter = painterResource(id = R.drawable.round_shuffle_24),
                             contentDescription = null,
                             modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = ContentAlpha.disabled)
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f)
                         )
                     } else {
                         Icon(
