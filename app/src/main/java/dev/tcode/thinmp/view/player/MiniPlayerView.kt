@@ -70,14 +70,19 @@ fun MiniPlayerView(navController: NavController, viewModel: MiniPlayerViewModel 
                     } else {
                         R.drawable.round_play_arrow_24
                     }
-                ), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                ), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
             )
         }
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .size(StyleConstant.BUTTON_SIZE.dp)
             .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
             .clickable { viewModel.next() }) {
-            Icon(painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.round_skip_next_24),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+            )
         }
     }
 }

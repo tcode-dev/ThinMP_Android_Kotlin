@@ -44,14 +44,19 @@ fun PlainTopAppBarView(navController: NavController, title: String, offset: Int)
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
-                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.BUTTON_SIZE.dp + StyleConstant.PADDING_TINY.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.BUTTON_SIZE.dp + StyleConstant.PADDING_TINY.dp), verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                .clickable { navController.popBackStack() }) {
-                Icon(painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { navController.popBackStack() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                )
             }
             Text(
                 title,

@@ -45,11 +45,17 @@ fun HeroTopAppBarView(navController: NavController, title: String, visible: Bool
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(contentAlignment = Alignment.Center, modifier = Modifier
-                .size(StyleConstant.BUTTON_SIZE.dp)
-                .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                .clickable { navController.popBackStack() }) {
-                Icon(painter = painterResource(id = R.drawable.round_arrow_back_ios_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { navController.popBackStack() }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                )
             }
             if (visible) {
                 Text(
@@ -66,7 +72,12 @@ fun HeroTopAppBarView(navController: NavController, title: String, visible: Bool
                 .size(StyleConstant.BUTTON_SIZE.dp)
                 .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                 .clickable { toggle() }) {
-                Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+                Icon(
+                    painter = painterResource(id = R.drawable.round_more_vert_24),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
+                )
             }
         }
     }

@@ -11,14 +11,18 @@ import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColorScheme(
     primary = LightGray,
+    onPrimary = DarkGray,
     secondary = LightGray2,
+    onSecondary = DarkGray2,
     background = Color.Black,
     onBackground = DarkGray
 )
 
 private val LightColorPalette = lightColorScheme(
     primary = DarkGray,
+    onPrimary = LightGray,
     secondary = DarkGray2,
+    onSecondary = LightGray2,
     background = Color.White,
     onBackground = LightGray
 )
