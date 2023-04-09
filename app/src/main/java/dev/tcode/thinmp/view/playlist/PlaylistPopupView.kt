@@ -36,7 +36,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
             modifier = Modifier
                 .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp)
                 .fillMaxWidth()
-                .background(color = MaterialTheme.colorScheme.secondary)
+                .background(color = MaterialTheme.colorScheme.onBackground)
                 .padding(top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
         ) {
             if (uiState.playlists.isNotEmpty() && !isCreate) {
