@@ -103,6 +103,7 @@ fun PlaylistDetailScreen(
                     ) {
                         Text(
                             uiState.primaryText,
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold,
                         )
                     }
@@ -118,6 +119,7 @@ fun PlaylistDetailScreen(
                     ) {
                         Text(
                             uiState.secondaryText,
+                            color = MaterialTheme.colorScheme.secondary,
                         )
                     }
                 }
