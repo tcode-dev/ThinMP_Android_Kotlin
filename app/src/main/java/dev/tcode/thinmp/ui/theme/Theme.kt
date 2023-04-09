@@ -7,15 +7,20 @@ import androidx.compose.material3.MaterialTheme.typography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColorScheme(
     primary = LightGray,
-    secondary = LightGray2
+    secondary = LightGray2,
+    background = Color.Black,
+    onBackground = DarkGray2
 )
 
 private val LightColorPalette = lightColorScheme(
     primary = DarkGray,
-    secondary = DarkGray2
+    secondary = DarkGray2,
+    background = Color.White,
+    onBackground = LightGray2
 )
 
 @Composable

@@ -29,7 +29,7 @@ fun PlainTopAppBarView(navController: NavController, title: String, offset: Int)
             visible = offset > 1, enter = fadeIn(), exit = fadeOut()
         ) {
             Surface(
-                color = MaterialTheme.colorScheme.secondary, modifier = Modifier.fillMaxWidth()
+                color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.fillMaxWidth()
             ) {
                 Box(
                     modifier = Modifier

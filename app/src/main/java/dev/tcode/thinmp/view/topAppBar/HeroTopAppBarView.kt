@@ -30,7 +30,7 @@ fun HeroTopAppBarView(navController: NavController, title: String, visible: Bool
         ) {
             Box(
                 modifier = Modifier
-                    .background(color = MaterialTheme.colorScheme.secondary)
+                    .background(color = MaterialTheme.colorScheme.onBackground)
                     .fillMaxWidth()
                     .statusBarsPadding()
                     .height(StyleConstant.ROW_HEIGHT.dp)
