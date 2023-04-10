@@ -139,7 +139,10 @@ fun AlbumDetailScreen(
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = { expanded.value = false }) {
+                    DropdownMenu(expanded = expanded.value,
+                        offset = DpOffset((-1).dp, 0.dp),
+                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
+                        onDismissRequest = { expanded.value = false }) {
                         FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
                         PlaylistDropdownMenuItemView(song.songId, closePlaylist)
                     }
