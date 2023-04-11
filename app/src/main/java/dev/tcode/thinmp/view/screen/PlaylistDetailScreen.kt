@@ -86,8 +86,8 @@ fun PlaylistDetailScreen(
                             }
                             .background(
                                 brush = Brush.verticalGradient(
-                                    0.0f to MaterialTheme.colorScheme.surface.copy(alpha = 0F),
-                                    1.0F to MaterialTheme.colorScheme.surface,
+                                    0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
+                                    1.0F to MaterialTheme.colorScheme.background,
                                 )
                             ),
                     ) {}
