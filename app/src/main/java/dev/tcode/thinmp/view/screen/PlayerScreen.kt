@@ -191,14 +191,14 @@ fun PlayerScreen(
                         Icon(
                             painter = painterResource(id = R.drawable.round_shuffle_24),
                             contentDescription = null,
-                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
-                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f)
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                         )
                     } else {
                         Icon(
                             painter = painterResource(id = R.drawable.round_shuffle_24),
                             contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
+                            tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
                             modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                         )
                     }
