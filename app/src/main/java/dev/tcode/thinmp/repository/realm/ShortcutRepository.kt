@@ -51,7 +51,7 @@ class ShortcutRepository {
     }
 
     fun findAll(): List<ShortcutRealmModel> {
-        return realm.query<ShortcutRealmModel>().find()
+        return realm.query<ShortcutRealmModel>().find().sortedByDescending(ShortcutRealmModel::order)
     }
 
     private fun exists(itemId: String, itemType: ItemType): Boolean {
