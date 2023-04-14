@@ -73,7 +73,7 @@ fun FavoriteArtistsEditScreen(
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
 
-                    PlainRowView(artist.name, Modifier.pointerInput(Unit) {
+                    PlainRowView(artist.name, Modifier.pointerInput(artist.id) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {

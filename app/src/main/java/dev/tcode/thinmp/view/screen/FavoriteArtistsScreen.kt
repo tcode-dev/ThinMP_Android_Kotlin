@@ -94,7 +94,7 @@ fun FavoriteArtistsScreen(
                         viewModel.load(context)
                     }
 
-                    PlainRowView(artist.name, Modifier.pointerInput(Unit) {
+                    PlainRowView(artist.name, Modifier.pointerInput(artist.url) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(artist.url) })
                     })
                     DropdownMenu(expanded = expanded.value,

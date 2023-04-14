@@ -136,7 +136,7 @@ fun AlbumDetailScreen(
                         expanded.value = false
                     }
 
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
                     DropdownMenu(expanded = expanded.value,

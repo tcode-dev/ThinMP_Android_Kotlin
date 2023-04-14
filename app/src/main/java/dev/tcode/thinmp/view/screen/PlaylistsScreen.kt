@@ -65,7 +65,7 @@ fun PlaylistsScreen(
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
 
-                    PlainRowView(playlist.primaryText, Modifier.pointerInput(Unit) {
+                    PlainRowView(playlist.primaryText, Modifier.pointerInput(playlist.url) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(playlist.url) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {

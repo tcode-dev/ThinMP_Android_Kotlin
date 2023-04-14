@@ -162,7 +162,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         }
 
                         GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
+                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(album.url) })
                             })
                         }

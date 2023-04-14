@@ -170,7 +170,7 @@ fun ArtistDetailScreen(
                     val close = { expanded.value = false }
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
+                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
                             detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(album.url) })
                         })
                     }
@@ -196,7 +196,7 @@ fun ArtistDetailScreen(
                         expanded.value = false
                     }
 
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
                     })
                     DropdownMenu(expanded = expanded.value,
