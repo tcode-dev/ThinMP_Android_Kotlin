@@ -81,6 +81,10 @@ class ShortcutRepository {
     }
 
     private fun increment(): Int {
-        return realm.query<ShortcutRealmModel>().find().count() + 1
+        val result = realm.query<ShortcutRealmModel>().find()
+
+        if (result.isEmpty()) return 1
+
+        return result.maxOf(ShortcutRealmModel::order) + 1
     }
 }
