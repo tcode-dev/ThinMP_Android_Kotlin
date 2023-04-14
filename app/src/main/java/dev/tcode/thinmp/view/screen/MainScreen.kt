@@ -130,7 +130,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         }
 
                         GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                            ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
+                            ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(shortcut.url) {
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
                             })
                         }
