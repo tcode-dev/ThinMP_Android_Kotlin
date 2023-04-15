@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.repository.realm
 
+import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
@@ -52,6 +53,19 @@ class ShortcutRepository {
 
     fun findAll(): List<ShortcutRealmModel> {
         return realm.query<ShortcutRealmModel>().find().sortedByDescending(ShortcutRealmModel::order)
+    }
+
+    fun update(ids: List<String>) {
+        realm.writeBlocking {
+            val values = TextUtils.join(", ", ids.map {"'${it}'"})
+            val shortcuts = realm.query<ShortcutRealmModel>("id in { $values }").find()
+
+            // 一度にまとめて削除できない
+            // @see https://github.com/realm/realm-kotlin#delete
+            shortcuts.forEach { shortcut ->
+                findLatest(shortcut)?.let { delete(it) }
+            }
+        }
     }
 
     private fun exists(itemId: String, itemType: ItemType): Boolean {
