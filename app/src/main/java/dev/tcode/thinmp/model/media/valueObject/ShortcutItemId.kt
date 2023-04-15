@@ -1,3 +1,13 @@
 package dev.tcode.thinmp.model.media.valueObject
 
-interface ShortcutItemId
+import dev.tcode.thinmp.repository.realm.ItemType
+
+interface ShortcutItemId {
+    fun toId(type: ItemType): String {
+        return when (type) {
+            ItemType.ARTIST -> (this as ArtistId).id
+            ItemType.ALBUM -> (this as AlbumId).id
+            ItemType.PLAYLIST -> (this as PlaylistId).id
+        }
+    }
+}

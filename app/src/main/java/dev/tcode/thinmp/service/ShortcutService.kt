@@ -64,9 +64,9 @@ class ShortcutService(
 
         val shortcutModels = shortcutRealmModels.mapNotNull { shortcut ->
             when (shortcut.type) {
-                ItemType.ARTIST.ordinal -> shortcutArtists.firstOrNull { artist -> artist.itemId == ArtistId(shortcut.itemId) }
-                ItemType.ALBUM.ordinal -> shortcutAlbums.firstOrNull { album -> album.itemId == AlbumId(shortcut.itemId) }
-                ItemType.PLAYLIST.ordinal -> shortcutPlaylists.firstOrNull { playlist -> playlist.itemId == PlaylistId(shortcut.itemId) }
+                ItemType.ARTIST.ordinal -> shortcutArtists.firstOrNull { artist -> artist.itemId.toId(artist.type) == shortcut.itemId }
+                ItemType.ALBUM.ordinal -> shortcutAlbums.firstOrNull { album -> album.itemId.toId(album.type) == shortcut.itemId }
+                ItemType.PLAYLIST.ordinal -> shortcutPlaylists.firstOrNull { playlist -> playlist.itemId.toId(playlist.type) == shortcut.itemId }
                 else -> {
                     throw IllegalArgumentException("Unknown expression")
                 }
@@ -88,14 +88,7 @@ class ShortcutService(
 
     private fun fix(shortcutRealmModels: List<ShortcutRealmModel>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutRealmModels.filter { shortcutRealmModel ->
-            shortcutModels.none {
-                val id = when (it.type) {
-                    ItemType.ARTIST -> (it.itemId as ArtistId).id
-                    ItemType.ALBUM -> (it.itemId as AlbumId).id
-                    ItemType.PLAYLIST -> (it.itemId as PlaylistId).id
-                }
-                id == shortcutRealmModel.itemId
-            }
+            shortcutModels.none { it.itemId.toId(it.type) == shortcutRealmModel.itemId }
         }.map { it.id }
 
         shortcutRepository.update(deleteShortcutIds)
