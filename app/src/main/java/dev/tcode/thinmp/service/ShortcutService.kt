@@ -6,6 +6,7 @@ import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
+import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import dev.tcode.thinmp.repository.media.AlbumRepository
 import dev.tcode.thinmp.repository.media.ArtistRepository
 import dev.tcode.thinmp.repository.media.SongRepository
@@ -21,8 +22,8 @@ class ShortcutService(val context: Context) {
         val albumRepository = AlbumRepository(context)
         val playlistRepository = PlaylistRepository()
         val songRepository = SongRepository(context)
-        val shortcuts = shortcutRepository.findAll()
-        val group = shortcuts.groupBy { it.type }
+        val shortcutRealmModels = shortcutRepository.findAll()
+        val group = shortcutRealmModels.groupBy { it.type }
         var shortcutArtists: List<ShortcutModel> = emptyList()
         var shortcutAlbums: List<ShortcutModel> = emptyList()
         var shortcutPlaylists: List<ShortcutModel> = emptyList()
@@ -58,15 +59,21 @@ class ShortcutService(val context: Context) {
             }
         }
 
-        return shortcuts.mapNotNull { shortcut ->
+        val shortcutModels = shortcutRealmModels.mapNotNull { shortcut ->
             when (shortcut.type) {
-                ItemType.ARTIST.ordinal -> shortcutArtists.first { artist -> artist.itemId == ArtistId(shortcut.itemId) }
-                ItemType.ALBUM.ordinal -> shortcutAlbums.find { album -> album.itemId == AlbumId(shortcut.itemId) }
-                ItemType.PLAYLIST.ordinal -> shortcutPlaylists.find { playlist -> playlist.itemId == PlaylistId(shortcut.itemId) }
+                ItemType.ARTIST.ordinal -> shortcutArtists.firstOrNull { artist -> artist.itemId == ArtistId(shortcut.itemId) }
+                ItemType.ALBUM.ordinal -> shortcutAlbums.firstOrNull { album -> album.itemId == AlbumId(shortcut.itemId) }
+                ItemType.PLAYLIST.ordinal -> shortcutPlaylists.firstOrNull { playlist -> playlist.itemId == PlaylistId(shortcut.itemId) }
                 else -> {
                     throw IllegalArgumentException("Unknown expression")
                 }
             }
         }
+
+        return shortcutModels
+    }
+
+    private fun validation(shortcutRealmModels: List<ShortcutRealmModel>, shortcutModels: List<ShortcutModel>): Boolean {
+        return shortcutRealmModels.count() == shortcutModels.count()
     }
 }
