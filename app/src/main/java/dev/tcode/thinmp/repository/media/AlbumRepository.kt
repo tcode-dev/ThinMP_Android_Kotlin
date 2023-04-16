@@ -5,9 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.AlbumModel
-import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
-import dev.tcode.thinmp.model.media.valueObject.ArtistId
 
 class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Albums.ARTIST)
