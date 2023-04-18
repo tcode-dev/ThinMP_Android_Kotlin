@@ -34,10 +34,7 @@ class PlaylistRepository {
     }
 
     fun add(playlistId: PlaylistId, songId: SongId) {
-        realm.query<PlaylistRealmModel>("id == $0", playlistId.id)
-            .first()
-            .find()
-            ?.also { playlist ->
+        realm.query<PlaylistRealmModel>("id == $0", playlistId.id).first().find()?.also { playlist ->
                 realm.writeBlocking {
                     val song = PlaylistSongRealmModel()
                     song.playlistId = playlistId.id
@@ -56,12 +53,16 @@ class PlaylistRepository {
     }
 
     fun findByIds(playlistIds: List<PlaylistId>): List<PlaylistRealmModel> {
-        val values = TextUtils.join(", ", playlistIds.map {"'${it.id}'"})
+        val values = TextUtils.join(", ", playlistIds.map { "'${it.id}'" })
 
         return realm.query<PlaylistRealmModel>("id in { $values }").find()
     }
 
     fun delete(playlistId: PlaylistId) {
+        realm.writeBlocking {
+            val playlist = realm.query<PlaylistRealmModel>("id == $0", playlistId.id).find().first()
 
+            findLatest(playlist)?.let { delete(it) }
+        }
     }
 }

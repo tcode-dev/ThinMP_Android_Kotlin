@@ -69,15 +69,12 @@ fun PlaylistsScreen(
                         detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(playlist.url) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                        DropdownMenuItem(text = { Text(stringResource(R.string.remove_playlist)) }, onClick = {
-                            viewModel.load(context)
-                            expanded.value = false
-                        })
-                        ShortcutDropdownMenuItemView(playlist.id, close)
                         DropdownMenuItem(text = { Text(stringResource(R.string.remove_playlist), color = MaterialTheme.colorScheme.primary) }, onClick = {
                             viewModel.deletePlaylist(playlist.id)
+                            viewModel.load(context)
                             close()
                         })
+                        ShortcutDropdownMenuItemView(playlist.id, close)
                     }
                 }
             }
