@@ -74,6 +74,10 @@ fun PlaylistsScreen(
                             expanded.value = false
                         })
                         ShortcutDropdownMenuItemView(playlist.id, close)
+                        DropdownMenuItem(text = { Text(stringResource(R.string.remove_playlist), color = MaterialTheme.colorScheme.primary) }, onClick = {
+                            viewModel.deletePlaylist(playlist.id)
+                            close()
+                        })
                     }
                 }
             }

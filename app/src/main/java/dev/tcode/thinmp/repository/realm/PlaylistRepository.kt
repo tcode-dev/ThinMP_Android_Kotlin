@@ -60,4 +60,8 @@ class PlaylistRepository {
 
         return realm.query<PlaylistRealmModel>("id in { $values }").find()
     }
+
+    fun delete(playlistId: PlaylistId) {
+
+    }
 }

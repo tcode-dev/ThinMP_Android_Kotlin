@@ -16,4 +16,10 @@ interface PlaylistRegister {
 
         repository.add(playlistId, songId)
     }
+
+    fun deletePlaylist(playlistId: PlaylistId) {
+        val repository = PlaylistRepository()
+
+        repository.delete(playlistId)
+    }
 }
