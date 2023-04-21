@@ -57,7 +57,7 @@ class ShortcutRepository {
 
     fun update(ids: List<String>) {
         realm.writeBlocking {
-            val values = TextUtils.join(", ", ids.map {"'${it}'"})
+            val values = TextUtils.join(", ", ids.map { "'${it}'" })
             val shortcuts = realm.query<ShortcutRealmModel>("id in { $values }").find()
 
             // 一度にまとめて削除できない
