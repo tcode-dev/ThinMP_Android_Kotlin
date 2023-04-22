@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
@@ -45,12 +46,16 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                         .fillMaxWidth()
                         .padding(bottom = StyleConstant.PADDING_SMALL.dp), horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Text(stringResource(R.string.create_playlist), Modifier.clickable {
-                        isCreate = true
-                    })
-                    Text(stringResource(R.string.cancel), Modifier.clickable {
-                        visiblePopup.value = false
-                    })
+                    Text(stringResource(R.string.create_playlist),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { isCreate = true })
+                    Text(stringResource(R.string.cancel),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.clickable { visiblePopup.value = false })
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
@@ -65,7 +70,10 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                 }
             } else {
                 Text(
-                    text = stringResource(R.string.playlist_name), textAlign = TextAlign.Center, modifier = Modifier
+                    text = stringResource(R.string.playlist_name),
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = StyleConstant.PADDING_LARGE.dp)
                 )
