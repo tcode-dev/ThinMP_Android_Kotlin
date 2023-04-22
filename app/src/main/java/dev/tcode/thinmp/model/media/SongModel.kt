@@ -3,6 +3,7 @@ package dev.tcode.thinmp.model.media
 import android.net.Uri
 import android.provider.MediaStore
 import android.net.Uri.parse
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 
@@ -11,7 +12,7 @@ class SongModel(
     public override var name: String,
     val artistId: ArtistId,
     val artistName: String,
-    val albumId: String,
+    val albumId: AlbumId,
     val albumName: String,
     val duration: Int
 ): Music() {
