@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.RepeatState
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.register.FavoriteArtistRegister
@@ -17,6 +18,7 @@ const val TIME_FORMAT = "%1\$tM:%1\$tS"
 const val START_TIME = "00:00"
 
 data class PlayerUiState(
+    var songId: SongId = SongId(""),
     var primaryText: String = "",
     var secondaryText: String = "",
     var imageUri: Uri = Uri.EMPTY,
@@ -174,6 +176,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         if (song != null) {
             _uiState.update { currentState ->
                 currentState.copy(
+                    songId = song.songId,
                     primaryText = song.name,
                     secondaryText = song.artistName,
                     imageUri = song.getImageUri(),
