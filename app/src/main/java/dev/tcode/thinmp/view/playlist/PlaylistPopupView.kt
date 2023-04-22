@@ -77,9 +77,13 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                         .fillMaxWidth()
                         .padding(bottom = StyleConstant.PADDING_LARGE.dp)
                 )
-                OutlinedTextField(value = name, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp), onValueChange = { name = it })
+                OutlinedTextField(
+                    value = name,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp),
+                    onValueChange = { name = it })
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
