@@ -175,12 +175,12 @@ fun PlayerScreen(
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable {
-                        viewModel.favoriteSong()
+                        viewModel.favoriteArtist()
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_person_24),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = if (uiState.isFavoriteArtist) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
                         modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                     )
                 }

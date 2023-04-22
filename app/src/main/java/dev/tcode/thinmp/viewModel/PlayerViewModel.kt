@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
+import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.*
@@ -25,10 +26,11 @@ data class PlayerUiState(
     var isPlaying: Boolean = false,
     var repeat: RepeatState = RepeatState.OFF,
     var shuffle: Boolean = false,
+    var isFavoriteArtist: Boolean = false,
     var isFavoriteSong: Boolean = false,
 )
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteSongRegister {
+class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteArtistRegister, FavoriteSongRegister {
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
@@ -88,6 +90,18 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     fun setShuffle() {
         musicPlayer.setShuffle()
+    }
+
+    fun favoriteArtist() {
+        val song = musicPlayer.getCurrentSong() ?: return
+
+        if (exists(song.artistId)) {
+            delete(song.artistId)
+        } else {
+            add(song.artistId)
+        }
+
+        update()
     }
 
     fun favoriteSong() {
@@ -169,6 +183,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     isPlaying = musicPlayer.isPlaying(),
                     repeat = musicPlayer.getRepeat(),
                     shuffle = musicPlayer.getShuffle(),
+                    isFavoriteArtist = exists(song.artistId),
                     isFavoriteSong = exists(song.songId)
                 )
             }

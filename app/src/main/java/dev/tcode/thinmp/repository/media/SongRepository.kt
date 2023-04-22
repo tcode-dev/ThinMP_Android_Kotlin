@@ -3,6 +3,7 @@ package dev.tcode.thinmp.repository.media
 import android.content.Context
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 
 class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
@@ -66,8 +67,10 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return cursor?.getColumnIndex(MediaStore.Audio.Media.TITLE)?.let { cursor?.getString(it) } ?: ""
     }
 
-    private fun getArtistId(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)?.let { cursor?.getString(it) } ?: ""
+    private fun getArtistId(): ArtistId {
+        val id = cursor?.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)?.let { cursor?.getString(it) } ?: ""
+
+        return ArtistId(id)
     }
 
     private fun getArtistName(): String {
