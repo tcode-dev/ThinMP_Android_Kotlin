@@ -206,7 +206,9 @@ fun PlayerScreen(
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { }) {
+                    .clickable {
+                        viewModel.favoriteSong()
+                    }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_person_24),
                         contentDescription = null,
@@ -217,11 +219,21 @@ fun PlayerScreen(
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { }) {
+                    .clickable {
+                        viewModel.favoriteSong()
+                    }) {
+                    if (uiState.isFavoriteSong) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.round_favorite_24),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                        )
+                    }
                     Icon(
                         painter = painterResource(id = R.drawable.round_favorite_24),
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
+                        tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
                         modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
                     )
                 }

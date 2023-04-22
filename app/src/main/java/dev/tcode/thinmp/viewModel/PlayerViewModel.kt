@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
+import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.*
 import java.util.*
@@ -24,9 +25,10 @@ data class PlayerUiState(
     var isPlaying: Boolean = false,
     var repeat: RepeatState = RepeatState.OFF,
     var shuffle: Boolean = false,
+    var isFavoriteSong: Boolean = false,
 )
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
+class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteSongRegister {
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
@@ -86,6 +88,18 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     fun setShuffle() {
         musicPlayer.setShuffle()
+    }
+
+    fun favoriteSong() {
+        val song = musicPlayer.getCurrentSong() ?: return
+
+        if (exists(song.songId)) {
+            delete(song.songId)
+        } else {
+            add(song.songId)
+        }
+
+        update()
     }
 
     override fun onBind() {
@@ -154,7 +168,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
                     isPlaying = musicPlayer.isPlaying(),
                     repeat = musicPlayer.getRepeat(),
-                    shuffle = musicPlayer.getShuffle()
+                    shuffle = musicPlayer.getShuffle(),
+                    isFavoriteSong = exists(song.songId)
                 )
             }
         } else {
