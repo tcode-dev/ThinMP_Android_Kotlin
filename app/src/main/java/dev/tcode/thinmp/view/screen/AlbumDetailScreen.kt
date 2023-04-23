@@ -4,9 +4,10 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,7 +18,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -25,8 +25,12 @@ import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.view.collapsingTopAppBar.CollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.visibleTopAppBar
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
@@ -46,11 +50,9 @@ fun AlbumDetailScreen(
     navController: NavController, id: String, viewModel: AlbumDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val lazyListState = rememberLazyListState()
+    val lazyGridState = rememberLazyGridState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val visibleHeroTopAppBar =
-        lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
-            .calculateTopPadding().value + 90))
+    val visibleHeroTopAppBar = visibleTopAppBar(StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION, lazyGridState)
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
@@ -68,8 +70,8 @@ fun AlbumDetailScreen(
                 ShortcutDropdownMenuItemView(AlbumId(id), toggle)
             }
         }
-        LazyColumn(state = lazyListState) {
-            item {
+        CollapsingTopAppBarView(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
@@ -125,7 +127,7 @@ fun AlbumDetailScreen(
                     }
                 }
             }
-            itemsIndexed(uiState.songs) { index, song ->
+            itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
                     val closeFavorite = { expanded.value = false }

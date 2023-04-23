@@ -18,7 +18,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -36,6 +35,8 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
+import dev.tcode.thinmp.view.collapsingTopAppBar.CollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.visibleTopAppBar
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
@@ -59,12 +60,10 @@ fun ArtistDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val lazyGridState = rememberLazyGridState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val miniPlayerHeight = miniPlayerHeight()
-    val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
-    val visibleHeroTopAppBar =
-        lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
-            .calculateTopPadding().value + 90))
+    val visibleHeroTopAppBar = visibleTopAppBar(StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION, lazyGridState)
     val itemSize: Dp = spanSize()
+    val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
+    val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
@@ -82,7 +81,7 @@ fun ArtistDetailScreen(
                 ShortcutDropdownMenuItemView(ArtistId(id), toggle)
             }
         }
-        LazyVerticalGrid(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState) {
+        CollapsingTopAppBarView(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState) {
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 ConstraintLayout(
                     Modifier

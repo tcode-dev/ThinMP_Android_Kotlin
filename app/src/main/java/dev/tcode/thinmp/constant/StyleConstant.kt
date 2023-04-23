@@ -13,5 +13,6 @@ class StyleConstant {
         const val PADDING_TINY = 5
         const val ROW_HEIGHT = 50
         const val GRID_MAX_SPAN_COUNT = 2
+        const val COLLAPSING_TOP_APP_BAR_TITLE_POSITION = 90
     }
 }
