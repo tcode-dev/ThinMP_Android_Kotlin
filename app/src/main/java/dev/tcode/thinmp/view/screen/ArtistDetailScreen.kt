@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -36,7 +35,6 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.collapsingTopAppBar.CollapsingTopAppBarView
-import dev.tcode.thinmp.view.collapsingTopAppBar.visibleTopAppBar
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
@@ -45,7 +43,6 @@ import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.miniPlayerHeight
@@ -58,9 +55,7 @@ fun ArtistDetailScreen(
     navController: NavController, id: String, viewModel: ArtistDetailViewModel = viewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    val lazyGridState = rememberLazyGridState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val visibleHeroTopAppBar = visibleTopAppBar(StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION, lazyGridState)
     val itemSize: Dp = spanSize()
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
     val miniPlayerHeight = miniPlayerHeight()
@@ -71,17 +66,14 @@ fun ArtistDetailScreen(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box(Modifier.zIndex(1F)) {
-            val expanded = remember { mutableStateOf(false) }
-            val toggle = { expanded.value = !expanded.value }
-
-            HeroTopAppBarView(navController, uiState.primaryText, visible = visibleHeroTopAppBar, toggle)
-            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = toggle) {
-                FavoriteArtistDropdownMenuItemView(ArtistId(id), toggle)
-                ShortcutDropdownMenuItemView(ArtistId(id), toggle)
-            }
-        }
-        CollapsingTopAppBarView(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState) {
+        CollapsingTopAppBarView(navController = navController,
+            title = uiState.primaryText,
+            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
+            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
+            dropdownMenus = { callback ->
+                FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
+                ShortcutDropdownMenuItemView(ArtistId(id), callback)
+            }) {
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 ConstraintLayout(
                     Modifier
@@ -126,13 +118,7 @@ fun ArtistDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                     ) {
-                        if (!visibleHeroTopAppBar) {
-                            Text(
-                                uiState.primaryText,
-                                color = MaterialTheme.colorScheme.primary,
-                                fontWeight = FontWeight.Bold,
-                            )
-                        }
+                        Text(uiState.primaryText, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                     }
                     Row(
                         Modifier
@@ -144,9 +130,7 @@ fun ArtistDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                     ) {
-                        Text(
-                            uiState.secondaryText, color = MaterialTheme.colorScheme.secondary
-                        )
+                        Text(uiState.secondaryText, color = MaterialTheme.colorScheme.secondary)
                     }
                 }
             }
