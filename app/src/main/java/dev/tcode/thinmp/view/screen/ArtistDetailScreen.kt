@@ -121,7 +121,7 @@ fun ArtistDetailScreen(
                             .fillMaxWidth()
                             .height(50.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = (-90).dp)
+                                top.linkTo(parent.bottom, margin = (-StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION).dp)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
