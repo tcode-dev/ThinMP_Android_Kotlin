@@ -81,7 +81,7 @@ fun AlbumsScreen(
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
         }) {
-            MiniPlayerView(navController)
+            MiniPlayerView()
         }
     }
 }

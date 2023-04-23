@@ -11,4 +11,8 @@ class ThinMPNavigator(private val navController: NavController) : Navigator {
     override fun albumDetail(id: String) {
         navController.navigate("${NavConstant.ALBUM_DETAIL}/${id}")
     }
+
+    override fun player() {
+        navController.navigate(NavConstant.PLAYER)
+    }
 }
