@@ -63,9 +63,7 @@ fun AlbumDetailScreen(
             val expanded = remember { mutableStateOf(false) }
             val toggle = { expanded.value = !expanded.value }
 
-            HeroTopAppBarView(
-                navController, uiState.primaryText, visible = visibleHeroTopAppBar, toggle
-            )
+            HeroTopAppBarView(navController, uiState.primaryText, visible = visibleHeroTopAppBar, toggle)
             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = toggle) {
                 ShortcutDropdownMenuItemView(AlbumId(id), toggle)
             }
