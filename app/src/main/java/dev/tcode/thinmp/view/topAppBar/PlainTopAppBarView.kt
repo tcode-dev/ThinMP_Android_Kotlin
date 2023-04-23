@@ -18,12 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.nav.LocalNavigator
 
 @Composable
-fun PlainTopAppBarView(navController: NavController, title: String, offset: Int) {
+fun PlainTopAppBarView(title: String, offset: Int) {
+    val navigator = LocalNavigator.current
+
     Box {
         AnimatedVisibility(
             visible = offset > 1, enter = fadeIn(), exit = fadeOut()
@@ -50,7 +52,7 @@ fun PlainTopAppBarView(navController: NavController, title: String, offset: Int)
                 modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { navController.popBackStack() }) {
+                    .clickable { navigator.back() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
                     contentDescription = null,

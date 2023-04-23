@@ -50,7 +50,7 @@ fun PlaylistsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            PlainTopAppBarView(navController, stringResource(R.string.playlists), lazyListState.firstVisibleItemScrollOffset)
+            PlainTopAppBarView(stringResource(R.string.playlists), lazyListState.firstVisibleItemScrollOffset)
         }
         LazyColumn(state = lazyListState) {
             item {
