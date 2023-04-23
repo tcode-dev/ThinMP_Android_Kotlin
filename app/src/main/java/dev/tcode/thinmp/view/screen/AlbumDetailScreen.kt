@@ -48,8 +48,9 @@ fun AlbumDetailScreen(
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val visibleHeroTopbarView = lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
-        .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues().calculateTopPadding().value + 90))
+    val visibleHeroTopAppBar =
+        lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
+            .calculateTopPadding().value + 90))
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
@@ -63,7 +64,7 @@ fun AlbumDetailScreen(
             val toggle = { expanded.value = !expanded.value }
 
             HeroTopAppBarView(
-                navController, uiState.primaryText, visible = visibleHeroTopbarView, toggle
+                navController, uiState.primaryText, visible = visibleHeroTopAppBar, toggle
             )
             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = toggle) {
                 ShortcutDropdownMenuItemView(AlbumId(id), toggle)

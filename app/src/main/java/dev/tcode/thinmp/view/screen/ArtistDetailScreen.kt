@@ -61,7 +61,7 @@ fun ArtistDetailScreen(
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
-    val visibleHeroTopbarView =
+    val visibleHeroTopAppBar =
         lazyGridState.firstVisibleItemIndex > 0 || (lazyGridState.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues()
             .calculateTopPadding().value + 90))
     val itemSize: Dp = spanSize()
@@ -77,7 +77,7 @@ fun ArtistDetailScreen(
             val toggle = { expanded.value = !expanded.value }
 
             HeroTopAppBarView(
-                navController, uiState.primaryText, visible = visibleHeroTopbarView, toggle
+                navController, uiState.primaryText, visible = visibleHeroTopAppBar, toggle
             )
             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = toggle) {
                 FavoriteArtistDropdownMenuItemView(ArtistId(id), toggle)
@@ -129,7 +129,7 @@ fun ArtistDetailScreen(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
                     ) {
-                        if (!visibleHeroTopbarView) {
+                        if (!visibleHeroTopAppBar) {
                             Text(
                                 uiState.primaryText,
                                 color = MaterialTheme.colorScheme.primary,
