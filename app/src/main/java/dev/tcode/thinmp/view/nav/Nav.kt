@@ -16,7 +16,7 @@ import dev.tcode.thinmp.view.screen.*
 fun Nav() {
     val navController = rememberNavController()
 
-    CompositionLocalProvider(LocalNavigator provides ThinMPNavigator(navController)) {
+    CompositionLocalProvider(LocalNavigator provides Navigator(navController)) {
         NavHost(navController = navController, startDestination = NavConstant.MAIN) {
             composable(NavConstant.MAIN) { MainScreen(navController) }
             composable(NavConstant.MAIN_EDIT) { MainEditScreen(navController) }
