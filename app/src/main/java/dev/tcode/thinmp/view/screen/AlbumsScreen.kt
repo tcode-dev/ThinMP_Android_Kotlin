@@ -32,9 +32,7 @@ import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun AlbumsScreen(
-    navController: NavController, viewModel: AlbumsViewModel = viewModel()
-) {
+fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val lazyGridState = rememberLazyGridState()

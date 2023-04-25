@@ -21,7 +21,7 @@ fun Nav() {
             composable(NavConstant.MAIN) { MainScreen(navController) }
             composable(NavConstant.MAIN_EDIT) { MainEditScreen(navController) }
             composable(NavConstant.ARTISTS) { ArtistsScreen(navController) }
-            composable(NavConstant.ALBUMS) { AlbumsScreen(navController) }
+            composable(NavConstant.ALBUMS) { AlbumsScreen() }
             composable(NavConstant.SONGS) { SongsScreen(navController) }
             composable(NavConstant.FAVORITE_ARTISTS) { FavoriteArtistsScreen(navController) }
             composable(NavConstant.FAVORITE_ARTISTS_EDIT) { FavoriteArtistsEditScreen(navController) }
