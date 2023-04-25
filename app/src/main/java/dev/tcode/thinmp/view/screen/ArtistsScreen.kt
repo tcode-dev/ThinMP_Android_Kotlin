@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
@@ -34,12 +34,11 @@ import dev.tcode.thinmp.viewModel.ArtistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun ArtistsScreen(
-    navController: NavController, viewModel: ArtistsViewModel = viewModel()
-) {
+fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val miniPlayerHeight = miniPlayerHeight()
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -63,7 +62,7 @@ fun ArtistsScreen(
                     val close = { expanded.value = false }
 
                     PlainRowView(artist.name, Modifier.pointerInput(artist.url) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(artist.url) })
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.artistDetail(artist.id) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
                         FavoriteArtistDropdownMenuItemView(artist.artistId, close)

@@ -18,12 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.nav.LocalNavigator
 
 @Composable
-fun HeroTopAppBarView(navController: NavController, title: String, visible: Boolean, toggle: () -> Unit) {
+fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
+    val navigator = LocalNavigator.current
+
     Box {
         AnimatedVisibility(
             visible = visible, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
@@ -45,11 +47,12 @@ fun HeroTopAppBarView(navController: NavController, title: String, visible: Bool
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(contentAlignment = Alignment.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { navController.popBackStack() }) {
+                    .clickable { navigator.back() }) {
                 Icon(
                     painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
                     contentDescription = null,

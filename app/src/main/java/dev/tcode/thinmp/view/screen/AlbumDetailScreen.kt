@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
@@ -42,9 +41,7 @@ import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun AlbumDetailScreen(
-    navController: NavController, id: String, viewModel: AlbumDetailViewModel = viewModel()
-) {
+fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
@@ -55,8 +52,7 @@ fun AlbumDetailScreen(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        CollapsingTopAppBarView(navController = navController,
-            title = uiState.primaryText,
+        CollapsingTopAppBarView(title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
             dropdownMenus = { callback ->

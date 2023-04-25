@@ -16,12 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.nav.LocalNavigator
 
 @Composable
-fun EditTopAppBarView(navController: NavController, title: String, offset: Int, content: @Composable BoxScope.() -> Unit) {
+fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.() -> Unit) {
+    val navigator = LocalNavigator.current
+
     Box {
         AnimatedVisibility(
             visible = offset > 1, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
@@ -45,7 +47,7 @@ fun EditTopAppBarView(navController: NavController, title: String, offset: Int, 
                 modifier = Modifier
                     .align(alignment = Alignment.CenterStart)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { navController.popBackStack() }) {
+                    .clickable { navigator.back() }) {
                 Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
             Text(

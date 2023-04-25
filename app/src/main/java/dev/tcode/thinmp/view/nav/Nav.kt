@@ -19,31 +19,31 @@ fun Nav() {
     CompositionLocalProvider(LocalNavigator provides Navigator(navController)) {
         NavHost(navController = navController, startDestination = NavConstant.MAIN) {
             composable(NavConstant.MAIN) { MainScreen(navController) }
-            composable(NavConstant.MAIN_EDIT) { MainEditScreen(navController) }
-            composable(NavConstant.ARTISTS) { ArtistsScreen(navController) }
+            composable(NavConstant.MAIN_EDIT) { MainEditScreen() }
+            composable(NavConstant.ARTISTS) { ArtistsScreen() }
             composable(NavConstant.ALBUMS) { AlbumsScreen() }
-            composable(NavConstant.SONGS) { SongsScreen(navController) }
-            composable(NavConstant.FAVORITE_ARTISTS) { FavoriteArtistsScreen(navController) }
-            composable(NavConstant.FAVORITE_ARTISTS_EDIT) { FavoriteArtistsEditScreen(navController) }
-            composable(NavConstant.FAVORITE_SONGS) { FavoriteSongsScreen(navController) }
-            composable(NavConstant.FAVORITE_SONGS_EDIT) { FavoriteSongsEditScreen(navController) }
-            composable(NavConstant.PLAYLISTS) { PlaylistsScreen(navController) }
+            composable(NavConstant.SONGS) { SongsScreen() }
+            composable(NavConstant.FAVORITE_ARTISTS) { FavoriteArtistsScreen() }
+            composable(NavConstant.FAVORITE_ARTISTS_EDIT) { FavoriteArtistsEditScreen() }
+            composable(NavConstant.FAVORITE_SONGS) { FavoriteSongsScreen() }
+            composable(NavConstant.FAVORITE_SONGS_EDIT) { FavoriteSongsEditScreen() }
+            composable(NavConstant.PLAYLISTS) { PlaylistsScreen() }
             composable(
                 "${NavConstant.ALBUM_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                AlbumDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                AlbumDetailScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
             }
             composable(
                 "${NavConstant.ARTIST_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                ArtistDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                ArtistDetailScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
             }
             composable(
                 "${NavConstant.PLAYLIST_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                PlaylistDetailScreen(navController, backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                PlaylistDetailScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
             }
-            composable(NavConstant.PLAYER) { PlayerScreen(navController) }
+            composable(NavConstant.PLAYER) { PlayerScreen() }
         }
     }
 }

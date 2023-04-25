@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
@@ -41,9 +40,7 @@ import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun PlaylistDetailScreen(
-    navController: NavController, id: String, viewModel: PlaylistDetailViewModel = viewModel()
-) {
+fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
@@ -61,7 +58,7 @@ fun PlaylistDetailScreen(
             val expanded = remember { mutableStateOf(false) }
             val toggle = { expanded.value = !expanded.value }
 
-            HeroTopAppBarView(navController, uiState.primaryText, visible = visibleHeroTopbarView, toggle)
+            HeroTopAppBarView(uiState.primaryText, visible = visibleHeroTopbarView, toggle)
             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = toggle) {
                 ShortcutDropdownMenuItemView(viewModel.id, toggle)
             }

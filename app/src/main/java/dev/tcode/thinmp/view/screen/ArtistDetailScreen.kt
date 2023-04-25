@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
@@ -40,6 +39,7 @@ import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -51,23 +51,21 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun ArtistDetailScreen(
-    navController: NavController, id: String, viewModel: ArtistDetailViewModel = viewModel()
-) {
+fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
     val itemSize: Dp = spanSize()
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        CollapsingTopAppBarView(navController = navController,
-            title = uiState.primaryText,
+        CollapsingTopAppBarView(title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
             dropdownMenus = { callback ->
@@ -152,7 +150,7 @@ fun ArtistDetailScreen(
 
                     GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                         AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(album.url) })
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
                         })
                     }
                     DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {

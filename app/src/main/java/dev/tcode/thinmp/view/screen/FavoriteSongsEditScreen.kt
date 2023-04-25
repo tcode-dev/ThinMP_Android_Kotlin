@@ -30,9 +30,7 @@ import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun FavoriteSongsEditScreen(
-    navController: NavController, viewModel: FavoriteSongsViewModel = viewModel()
-) {
+fun FavoriteSongsEditScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
 //    val dragDropListState = rememberLazyListState(onMove = onMove)
@@ -40,7 +38,7 @@ fun FavoriteSongsEditScreen(
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         Box(Modifier.zIndex(3F)) {
-            EditTopAppBarView(navController, stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
+            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {

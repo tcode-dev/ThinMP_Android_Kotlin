@@ -22,25 +22,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlayerViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun PlayerScreen(
-    navController: NavController, viewModel: PlayerViewModel = viewModel()
-) {
+fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 64
     val imageBottomPosition: Dp = LocalConfiguration.current.screenWidthDp.dp - imageSize - WindowInsets.systemBars.asPaddingValues().calculateTopPadding() - StyleConstant.ROW_HEIGHT.dp
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -89,7 +87,7 @@ fun PlayerScreen(
                         .padding(start = StyleConstant.PADDING_TINY.dp)
                         .size(StyleConstant.BUTTON_SIZE.dp)
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable { navController.popBackStack() }) {
+                        .clickable { navigator.back() }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
                         contentDescription = null,

@@ -22,9 +22,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
@@ -36,13 +36,12 @@ import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun PlaylistsScreen(
-    navController: NavController, viewModel: PlaylistsViewModel = viewModel()
-) {
+fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
     val miniPlayerHeight = miniPlayerHeight()
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -66,7 +65,7 @@ fun PlaylistsScreen(
                     val close = { expanded.value = false }
 
                     PlainRowView(playlist.primaryText, Modifier.pointerInput(playlist.url) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(playlist.url) })
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.playlistDetail(playlist.id.id) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
                         DropdownMenuItem(text = { Text(stringResource(R.string.remove_playlist), color = MaterialTheme.colorScheme.primary) }, onClick = {

@@ -28,12 +28,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.cell.ShortcutCellView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.*
@@ -45,6 +45,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
     val context = LocalContext.current
     val miniPlayerHeight = miniPlayerHeight()
     val itemSize: Dp = spanSize()
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -92,7 +93,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                                 modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
                                 onDismissRequest = { expanded.value = false }) {
                                 DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = {
-                                    navController.navigate(NavConstant.MAIN_EDIT)
+                                    navigator.mainEdit()
                                     expanded.value = false
                                 })
                             }
@@ -163,7 +164,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
 
                         GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
-                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(album.url) })
+                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
                             })
                         }
                         DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {

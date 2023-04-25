@@ -23,11 +23,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
@@ -39,12 +38,11 @@ import dev.tcode.thinmp.viewModel.FavoriteArtistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun FavoriteArtistsEditScreen(
-    navController: NavController, viewModel: FavoriteArtistsViewModel = viewModel()
-) {
+fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val miniPlayerHeight = miniPlayerHeight()
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -52,7 +50,7 @@ fun FavoriteArtistsEditScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            EditTopAppBarView(navController, stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
+            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable { }) {
@@ -74,7 +72,7 @@ fun FavoriteArtistsEditScreen(
                     val close = { expanded.value = false }
 
                     PlainRowView(artist.name, Modifier.pointerInput(artist.id) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate("${NavConstant.ARTIST_DETAIL}/${artist.id}") })
+                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.artistDetail(artist.id) })
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
                         FavoriteArtistDropdownMenuItemView(artist.artistId, close)

@@ -18,16 +18,14 @@ import androidx.navigation.NavController
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 
 @Composable
-fun CollapsingTopAppBarView(
-    navController: NavController, title: String, position: Int, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content2: LazyGridScope.() -> Unit
-) {
+fun CollapsingTopAppBarView(title: String, position: Int, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content2: LazyGridScope.() -> Unit) {
     val lazyGridState = rememberLazyGridState()
 
     Box(Modifier.zIndex(1F)) {
         val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        HeroTopAppBarView(navController, title, visible = visibleTopAppBar(position, lazyGridState), callback)
+        HeroTopAppBarView(title, visible = visibleTopAppBar(position, lazyGridState), callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
             dropdownMenus(callback = callback)
         }

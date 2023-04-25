@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.EditRowView
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -30,23 +30,22 @@ import dev.tcode.thinmp.viewModel.MainEditViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun MainEditScreen(
-    navController: NavController, viewModel: MainEditViewModel = viewModel()
-) {
+fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val lazyListState = rememberLazyListState()
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         Box(Modifier.zIndex(3F)) {
-            EditTopAppBarView(navController, stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
+            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable {
                         viewModel.save(context)
-                        navController.popBackStack()
+                        navigator.back()
                     }) {
                     Text(stringResource(R.string.done), color = MaterialTheme.colorScheme.primary)
                 }

@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
@@ -36,9 +35,7 @@ import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun SongsScreen(
-    navController: NavController, viewModel: SongsViewModel = viewModel()
-) {
+fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }

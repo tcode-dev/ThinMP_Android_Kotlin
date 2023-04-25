@@ -26,13 +26,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -45,14 +44,13 @@ import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 
 @ExperimentalFoundationApi
 @Composable
-fun FavoriteSongsScreen(
-    navController: NavController, viewModel: FavoriteSongsViewModel = viewModel()
-) {
+fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -60,7 +58,7 @@ fun FavoriteSongsScreen(
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            MenuTopAppBarView(navController, stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset) {
+            MenuTopAppBarView(stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset) {
                 val expanded = remember { mutableStateOf(false) }
 
                 Box(contentAlignment = Alignment.Center,
@@ -74,7 +72,7 @@ fun FavoriteSongsScreen(
                         modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
                         onDismissRequest = { expanded.value = false }) {
                         DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = {
-                            navController.navigate(NavConstant.FAVORITE_SONGS_EDIT)
+                            navigator.favoriteSongsEdit()
                             expanded.value = false
                         })
                     }

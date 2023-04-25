@@ -8,8 +8,28 @@ class Navigator(private val navController: NavController) : INavigator {
         navController.popBackStack()
     }
 
+    override fun mainEdit() {
+        navController.navigate(NavConstant.MAIN_EDIT)
+    }
+
+    override fun artistDetail(id: String) {
+        navController.navigate("${NavConstant.ARTIST_DETAIL}/${id}")
+    }
+
     override fun albumDetail(id: String) {
         navController.navigate("${NavConstant.ALBUM_DETAIL}/${id}")
+    }
+
+    override fun favoriteArtistsEdit() {
+        navController.navigate(NavConstant.FAVORITE_ARTISTS_EDIT)
+    }
+
+    override fun favoriteSongsEdit() {
+        navController.navigate(NavConstant.FAVORITE_SONGS_EDIT)
+    }
+
+    override fun playlistDetail(id: String) {
+        navController.navigate("${NavConstant.PLAYLIST_DETAIL}/${id}")
     }
 
     override fun player() {
