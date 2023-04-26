@@ -165,7 +165,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     )
                 )
             }
-            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
+            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
                     val closeFavorite = { expanded.value = false }
