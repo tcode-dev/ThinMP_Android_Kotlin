@@ -4,9 +4,9 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -17,14 +17,16 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.view.collapsingTopAppBar.CollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
@@ -32,7 +34,6 @@ import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.miniPlayerHeight
@@ -42,10 +43,7 @@ import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 @Composable
 fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val visibleHeroTopbarView = lazyListState.firstVisibleItemIndex > 0 || (lazyListState.firstVisibleItemScrollOffset / LocalContext.current.getResources()
-        .getDisplayMetrics().density) > (LocalConfiguration.current.screenWidthDp - (WindowInsets.systemBars.asPaddingValues().calculateTopPadding().value + 90))
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
 
@@ -54,17 +52,13 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box(Modifier.zIndex(1F)) {
-            val expanded = remember { mutableStateOf(false) }
-            val toggle = { expanded.value = !expanded.value }
-
-            HeroTopAppBarView(uiState.primaryText, visible = visibleHeroTopbarView, toggle)
-            DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = toggle) {
-                ShortcutDropdownMenuItemView(viewModel.id, toggle)
-            }
-        }
-        LazyColumn(state = lazyListState) {
-            item {
+        CollapsingTopAppBarView(title = uiState.primaryText,
+            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
+            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
+            dropdownMenus = { callback ->
+                ShortcutDropdownMenuItemView(AlbumId(id), callback)
+            }) {
+            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
@@ -121,7 +115,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     }
                 }
             }
-            itemsIndexed(uiState.songs) { index, song ->
+            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
