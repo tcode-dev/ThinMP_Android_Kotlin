@@ -94,7 +94,6 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                                 onDismissRequest = { expanded.value = false }) {
                                 DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = {
                                     navigator.mainEdit()
-                                    expanded.value = false
                                 })
                             }
                         }

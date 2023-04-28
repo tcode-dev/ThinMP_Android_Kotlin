@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.navigation.NavController
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 
 @Composable

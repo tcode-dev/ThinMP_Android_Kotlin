@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
