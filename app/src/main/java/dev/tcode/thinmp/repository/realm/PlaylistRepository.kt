@@ -3,6 +3,7 @@ package dev.tcode.thinmp.repository.realm
 import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.model.realm.FavoriteSongRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
 import io.realm.kotlin.Realm
@@ -40,6 +41,18 @@ class PlaylistRepository {
                 song.playlistId = playlistId.id
                 song.songId = songId.id
                 findLatest(playlist)?.songs?.add(song)
+            }
+        }
+    }
+
+    fun update(playlistId: PlaylistId, songIds: List<SongId>) {
+        realm.writeBlocking {
+            val playlist = findById(playlistId)
+
+            playlist?.songs?.filter { song ->
+                songIds.any { it.id == song.songId }
+            }?.forEach { song ->
+                findLatest(song)?.let { delete(it) }
             }
         }
     }
