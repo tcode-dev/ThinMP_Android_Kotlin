@@ -1,7 +1,10 @@
 package dev.tcode.thinmp.repository.realm
 
+import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.FavoriteArtistRealmModel
+import dev.tcode.thinmp.model.realm.FavoriteSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
@@ -39,6 +42,19 @@ class FavoriteArtistRepository {
             val artist = find(artistId).first()
 
             findLatest(artist)?.let { delete(it) }
+        }
+    }
+
+    fun update(ids: List<ArtistId>) {
+        println("update")
+        println(ids)
+        realm.writeBlocking {
+            val values = TextUtils.join(", ", ids.map { "'${it.id}'" })
+            val models = realm.query<FavoriteArtistRealmModel>("artistId in { $values }").find()
+
+            models.forEach { model ->
+                findLatest(model)?.let { delete(it) }
+            }
         }
     }
 
