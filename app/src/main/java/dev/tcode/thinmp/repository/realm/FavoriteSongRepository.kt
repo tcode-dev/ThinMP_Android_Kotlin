@@ -47,7 +47,7 @@ class FavoriteSongRepository {
     fun update(ids: List<SongId>) {
         realm.writeBlocking {
             val values = TextUtils.join(", ", ids.map { "'${it.id}'" })
-            val models = realm.query<FavoriteSongRealmModel>("id in { $values }").find()
+            val models = realm.query<FavoriteSongRealmModel>("songId in { $values }").find()
 
             models.forEach { shortcut ->
                 findLatest(shortcut)?.let { delete(it) }
