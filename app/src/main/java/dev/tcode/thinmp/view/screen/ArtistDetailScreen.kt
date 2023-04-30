@@ -132,58 +132,62 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     }
                 }
             }
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                Text(
-                    stringResource(R.string.albums), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                        start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
+            if (uiState.albums.isNotEmpty()) {
+                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                    Text(
+                        stringResource(R.string.albums), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                            start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
+                        )
                     )
-                )
-            }
-            itemsIndexed(items = uiState.albums) { index, album ->
-                Box(
-                    modifier = Modifier
-                        .width(itemSize)
-                        .wrapContentSize(Alignment.TopStart)
-                ) {
-                    val expanded = remember { mutableStateOf(false) }
-                    val close = { expanded.value = false }
+                }
+                itemsIndexed(items = uiState.albums) { index, album ->
+                    Box(
+                        modifier = Modifier
+                            .width(itemSize)
+                            .wrapContentSize(Alignment.TopStart)
+                    ) {
+                        val expanded = remember { mutableStateOf(false) }
+                        val close = { expanded.value = false }
 
-                    GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
-                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
-                        })
-                    }
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                        ShortcutDropdownMenuItemView(album.albumId, close)
+                        GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
+                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
+                            })
+                        }
+                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
+                            ShortcutDropdownMenuItemView(album.albumId, close)
+                        }
                     }
                 }
             }
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                Text(
-                    stringResource(R.string.songs), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                        start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
+            if (uiState.songs.isNotEmpty()) {
+                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                    Text(
+                        stringResource(R.string.songs), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
+                            start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
+                        )
                     )
-                )
-            }
-            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
-                Box {
-                    val expanded = remember { mutableStateOf(false) }
-                    val closeFavorite = { expanded.value = false }
-                    val closePlaylist = {
-                        playlistRegisterSongId = song.songId
-                        visiblePopup.value = true
-                        expanded.value = false
-                    }
+                }
+                itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
+                    Box {
+                        val expanded = remember { mutableStateOf(false) }
+                        val closeFavorite = { expanded.value = false }
+                        val closePlaylist = {
+                            playlistRegisterSongId = song.songId
+                            visiblePopup.value = true
+                            expanded.value = false
+                        }
 
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
-                    })
-                    DropdownMenu(expanded = expanded.value,
-                        offset = DpOffset((-1).dp, 0.dp),
-                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
-                        onDismissRequest = { expanded.value = false }) {
-                        FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
-                        PlaylistDropdownMenuItemView(song.songId, closePlaylist)
+                        MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
+                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
+                        })
+                        DropdownMenu(expanded = expanded.value,
+                            offset = DpOffset((-1).dp, 0.dp),
+                            modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
+                            onDismissRequest = { expanded.value = false }) {
+                            FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
+                            PlaylistDropdownMenuItemView(song.songId, closePlaylist)
+                        }
                     }
                 }
             }
