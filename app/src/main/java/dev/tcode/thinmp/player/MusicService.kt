@@ -55,6 +55,7 @@ class MusicService : Service() {
 
         setMediaPlayer(song!!)
         play()
+        listener?.onChange()
     }
 
     fun play() {
@@ -63,8 +64,6 @@ class MusicService : Service() {
         } catch (e: IllegalStateException) {
             fix()
         }
-
-        listener?.onChange()
     }
 
     fun pause() {
@@ -86,7 +85,7 @@ class MusicService : Service() {
         }
 
         if (isContinue == true) {
-            mediaPlayer?.start()
+            play()
         }
 
         listener?.onChange()
@@ -102,7 +101,7 @@ class MusicService : Service() {
         setMediaPlayer(playingList.next())
 
         if (isContinue == true) {
-            mediaPlayer?.start()
+            play()
         }
 
         listener?.onChange()
@@ -190,11 +189,11 @@ class MusicService : Service() {
         return OnCompletionListener {
             if (repeat == RepeatState.ONE) {
                 song?.let { setMediaPlayer(it) }
-                mediaPlayer?.start()
+                play()
             } else {
                 if (playingList.hasNext()) {
                     setMediaPlayer(playingList.next())
-                    mediaPlayer?.start()
+                    play()
                 } else {
                     playingList = if (shuffle) {
                         shuffledList.listIterator(0)
@@ -203,7 +202,7 @@ class MusicService : Service() {
                     }
                     setMediaPlayer(playingList.next())
                     if (repeat == RepeatState.ALL) {
-                        mediaPlayer?.start()
+                        play()
                     }
                 }
             }
@@ -216,6 +215,7 @@ class MusicService : Service() {
         if (playingList.hasNext()) {
             setMediaPlayer(playingList.next())
             play()
+            listener?.onChange()
         }
     }
 
