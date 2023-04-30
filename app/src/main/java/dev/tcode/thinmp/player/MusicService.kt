@@ -58,7 +58,12 @@ class MusicService : Service() {
     }
 
     fun play() {
-        mediaPlayer?.start()
+        try {
+            mediaPlayer?.start()
+        } catch (e: IllegalStateException) {
+            fix()
+        }
+
         listener?.onChange()
     }
 
@@ -204,6 +209,13 @@ class MusicService : Service() {
             }
 
             listener?.onChange()
+        }
+    }
+
+    private fun fix() {
+        if (playingList.hasNext()) {
+            setMediaPlayer(playingList.next())
+            play()
         }
     }
 
