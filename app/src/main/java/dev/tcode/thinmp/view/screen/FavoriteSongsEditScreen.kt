@@ -24,7 +24,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyTopbarView
+import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 
 @ExperimentalFoundationApi
@@ -62,7 +62,7 @@ fun FavoriteSongsEditScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
             }, state = lazyListState
         ) {
             item {
-                EmptyTopbarView()
+                EmptyTopAppBarView()
             }
             itemsIndexed(uiState.songs) { index, song ->
                 Box(

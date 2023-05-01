@@ -50,7 +50,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState
         ) {
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                EmptyTopbarView()
+                EmptyTopAppBarView()
             }
             itemsIndexed(uiState.albums) { index, album ->
                 Box(

@@ -25,7 +25,7 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.EditRowView
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyTopbarView
+import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.MainEditViewModel
 
 @ExperimentalFoundationApi
@@ -53,7 +53,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
         }
         LazyColumn(state = lazyListState) {
             item {
-                EmptyTopbarView()
+                EmptyTopAppBarView()
             }
             items(uiState.menu) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })

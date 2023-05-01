@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
-fun EmptyTopbarView() {
+fun EmptyTopAppBarView() {
     Spacer(
         Modifier
             .statusBarsPadding()
