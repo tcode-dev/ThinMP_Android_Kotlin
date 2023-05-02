@@ -18,7 +18,9 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
             return findAll()
         }
 
-        return artists
+        return artistIds.mapNotNull { id ->
+            artists.find { it.artistId == id }
+        }
     }
 
     private fun validation(artistIds: List<ArtistId>, artists: List<ArtistModel>): Boolean {
