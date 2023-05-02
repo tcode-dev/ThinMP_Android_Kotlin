@@ -23,7 +23,11 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
             return findById(playlistId)
         }
 
-        return PlaylistDetailModel(playlistId, playlist.name, resources.getString(R.string.playlist), songs.first().getImageUri(), songs)
+        val sortedSongs = songIds.mapNotNull { id ->
+            songs.find { it.songId == id }
+        }
+
+        return PlaylistDetailModel(playlistId, playlist.name, resources.getString(R.string.playlist), songs.first().getImageUri(), sortedSongs)
     }
 
     private fun validation(songIds: List<SongId>, songs: List<SongModel>): Boolean {
