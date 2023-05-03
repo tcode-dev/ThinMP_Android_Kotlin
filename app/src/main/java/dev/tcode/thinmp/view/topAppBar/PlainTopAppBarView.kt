@@ -46,9 +46,11 @@ fun PlainTopAppBarView(title: String, offset: Int) {
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
-                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.BUTTON_SIZE.dp + StyleConstant.PADDING_TINY.dp), verticalAlignment = Alignment.CenterVertically
+                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.BUTTON_SIZE.dp + StyleConstant.PADDING_TINY.dp)
+                .clickable {}, verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(contentAlignment = Alignment.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))

@@ -43,11 +43,13 @@ fun MenuTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
-                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_TINY.dp),
+                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_TINY.dp)
+                .clickable {},
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Box(contentAlignment = Alignment.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))

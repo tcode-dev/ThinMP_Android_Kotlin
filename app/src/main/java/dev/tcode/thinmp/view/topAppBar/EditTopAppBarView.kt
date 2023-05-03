@@ -42,6 +42,7 @@ fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
                 .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp)
+                .clickable {},
         ) {
             Box(contentAlignment = Alignment.Center,
                 modifier = Modifier

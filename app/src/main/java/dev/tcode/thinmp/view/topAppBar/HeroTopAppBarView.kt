@@ -43,9 +43,9 @@ fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
                 .fillMaxWidth()
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
-                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_TINY.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+                .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_TINY.dp)
+                // クリック時に下の要素が反応しないように空のclickableを設定
+                .clickable {}, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Box(
                 contentAlignment = Alignment.Center,
