@@ -4,9 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
@@ -19,15 +17,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.view.collapsingTopAppBar.MenuCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
-import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopAppBarView
@@ -39,7 +36,6 @@ import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val lazyListState = rememberLazyListState()
     val miniPlayerHeight = miniPlayerHeight()
     val navigator = LocalNavigator.current
 
@@ -48,10 +44,9 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box(Modifier.zIndex(3F)) {
-//            PlainTopAppBarView(stringResource(R.string.playlists), lazyListState.firstVisibleItemScrollOffset)
-        }
-        LazyColumn(state = lazyListState) {
+        MenuCollapsingTopAppBarView(title = stringResource(R.string.playlists), dropdownMenus = {
+            DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { })
+        }) {
             item {
                 EmptyTopAppBarView()
             }
