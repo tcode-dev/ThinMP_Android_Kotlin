@@ -45,9 +45,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
         val (miniPlayer) = createRefs()
 
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_artists), dropdownMenus = {
-            DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = {
-                navigator.favoriteArtistsEdit()
-            })
+            DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteArtistsEdit() })
         }) {
             item {
                 EmptyTopAppBarView()
