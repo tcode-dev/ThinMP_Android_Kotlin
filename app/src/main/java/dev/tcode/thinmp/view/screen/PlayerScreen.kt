@@ -15,11 +15,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -28,6 +25,8 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
+import dev.tcode.thinmp.view.title.PrimaryTitleView
+import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlayerViewModel
 
@@ -90,8 +89,8 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(uiState.primaryText, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(uiState.secondaryText, color = MaterialTheme.colorScheme.secondary, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                PrimaryTitleView(uiState.primaryText)
+                SecondaryTitleView(uiState.secondaryText)
             }
             Column(
                 modifier = Modifier
