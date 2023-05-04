@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.title.TopAppBarTitleView
 
 @Composable
 fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
@@ -61,15 +62,7 @@ fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
                 )
             }
             if (visible) {
-                Text(
-                    title,
-                    color = MaterialTheme.colorScheme.primary,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - StyleConstant.BUTTON_SIZE.dp * 2 - StyleConstant.PADDING_TINY.dp * 2)
-                )
+                TopAppBarTitleView(title)
             }
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .size(StyleConstant.BUTTON_SIZE.dp)

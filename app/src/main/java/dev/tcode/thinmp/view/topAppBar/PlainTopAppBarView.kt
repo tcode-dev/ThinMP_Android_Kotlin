@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.title.TopAppBarTitleView
 
 @Composable
 fun PlainTopAppBarView(title: String, offset: Int) {
@@ -62,15 +63,7 @@ fun PlainTopAppBarView(title: String, offset: Int) {
                     modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
                 )
             }
-            Text(
-                title,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - StyleConstant.BUTTON_SIZE.dp * 2 - StyleConstant.PADDING_TINY.dp * 2)
-            )
+            TopAppBarTitleView(title)
         }
     }
 }

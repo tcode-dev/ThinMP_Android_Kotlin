@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.title.TopAppBarTitleView
 
 @Composable
 fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.() -> Unit) {
@@ -51,15 +52,7 @@ fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
                     .clickable { navigator.back() }) {
                 Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
-            Text(
-                title,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.align(alignment = Alignment.Center)
-            )
+            TopAppBarTitleView(title)
             Box(content = content, modifier = Modifier.align(alignment = Alignment.CenterEnd))
         }
     }
