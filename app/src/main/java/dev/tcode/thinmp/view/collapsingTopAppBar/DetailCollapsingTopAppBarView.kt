@@ -17,7 +17,7 @@ import androidx.compose.ui.zIndex
 import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
 
 @Composable
-fun CollapsingTopAppBarView(title: String, position: Int, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content2: LazyGridScope.() -> Unit) {
+fun DetailCollapsingTopAppBarView(title: String, position: Int, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content2: LazyGridScope.() -> Unit) {
     val lazyGridState = rememberLazyGridState()
 
     Box(Modifier.zIndex(1F)) {

@@ -24,7 +24,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.view.collapsingTopAppBar.CollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
@@ -52,7 +52,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        CollapsingTopAppBarView(title = uiState.primaryText,
+        DetailCollapsingTopAppBarView(title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
             dropdownMenus = { callback ->

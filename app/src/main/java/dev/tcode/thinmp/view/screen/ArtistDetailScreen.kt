@@ -30,7 +30,7 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
-import dev.tcode.thinmp.view.collapsingTopAppBar.CollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
@@ -65,7 +65,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        CollapsingTopAppBarView(
+        DetailCollapsingTopAppBarView(
             title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
