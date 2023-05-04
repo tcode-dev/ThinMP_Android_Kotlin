@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -43,6 +42,7 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
+import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.miniPlayerHeight
@@ -65,7 +65,8 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        CollapsingTopAppBarView(title = uiState.primaryText,
+        CollapsingTopAppBarView(
+            title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
             dropdownMenus = { callback ->
@@ -134,11 +135,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
             }
             if (uiState.albums.isNotEmpty()) {
                 item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                    Text(
-                        stringResource(R.string.albums), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                            start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
-                        )
-                    )
+                    SectionTitleView(stringResource(R.string.albums))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
                     Box(
@@ -162,11 +159,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
             }
             if (uiState.songs.isNotEmpty()) {
                 item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                    Text(
-                        stringResource(R.string.songs), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                            start = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_MEDIUM.dp
-                        )
-                    )
+                    SectionTitleView(stringResource(R.string.songs))
                 }
                 itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
                     Box {

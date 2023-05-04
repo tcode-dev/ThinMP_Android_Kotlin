@@ -36,6 +36,7 @@ import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.*
 import dev.tcode.thinmp.viewModel.MainViewModel
 
@@ -110,11 +111,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             }
             if (uiState.shortcutVisibility && uiState.shortcuts.isNotEmpty()) {
                 item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                    Text(
-                        stringResource(R.string.shortcut), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                            start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
-                        )
-                    )
+                    SectionTitleView(stringResource(R.string.shortcut))
                 }
                 itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
                     Box(
@@ -142,11 +139,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             }
             if (uiState.recentlyAlbumsVisibility && uiState.albums.isNotEmpty()) {
                 item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
-                    Text(
-                        stringResource(R.string.recently_added), color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(
-                            start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp
-                        )
-                    )
+                    SectionTitleView(stringResource(R.string.recently_added))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
                     Box(
