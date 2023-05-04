@@ -14,7 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import dev.tcode.thinmp.view.topAppBar.HeroTopAppBarView
+import dev.tcode.thinmp.view.topAppBar.DetailTopAppBarView
 
 @Composable
 fun DetailCollapsingTopAppBarView(title: String, position: Int, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyGridScope.() -> Unit) {
@@ -24,7 +24,7 @@ fun DetailCollapsingTopAppBarView(title: String, position: Int, columns: GridCel
         val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        HeroTopAppBarView(title, visible = visibleTopAppBar(position, lazyGridState), callback)
+        DetailTopAppBarView(title, visible = visibleTopAppBar(position, lazyGridState), callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
             dropdownMenus(callback = callback)
         }

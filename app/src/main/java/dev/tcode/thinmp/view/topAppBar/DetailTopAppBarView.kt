@@ -19,7 +19,7 @@ import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
-fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
+fun DetailTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
     Box {
         AnimatedVisibility(
             visible = visible, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
