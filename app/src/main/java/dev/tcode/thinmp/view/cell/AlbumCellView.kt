@@ -6,6 +6,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
@@ -15,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.text.PrimaryTextView
 
 @Composable
 fun AlbumCellView(
@@ -24,7 +26,7 @@ fun AlbumCellView(
         val size = with(LocalDensity.current) { constraints.maxWidth.toDp() }
 
         Column(modifier = modifier) {
-            Box {
+            Box(contentAlignment = Alignment.Center) {
                 ImageView(
                     uri = uri, modifier = Modifier
                         .width(size)
@@ -32,17 +34,13 @@ fun AlbumCellView(
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                 )
             }
-            Text(
-                primaryText,
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 14.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
+            Box(
+                contentAlignment = Alignment.Center, modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = StyleConstant.PADDING_TINY.dp)
-            )
+            ) {
+                PrimaryTextView(primaryText)
+            }
             Text(
                 secondaryText,
                 color = MaterialTheme.colorScheme.secondary,

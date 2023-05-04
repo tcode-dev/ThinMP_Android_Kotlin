@@ -7,6 +7,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -18,6 +19,7 @@ import androidx.compose.ui.unit.sp
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.repository.realm.ItemType
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.text.PrimaryTextView
 
 @Composable
 fun ShortcutCellView(
@@ -43,17 +45,13 @@ fun ShortcutCellView(
                     )
                 }
             }
-            Text(
-                primaryText,
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 14.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
+            Box(
+                contentAlignment = Alignment.Center, modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = StyleConstant.PADDING_TINY.dp)
-            )
+            ) {
+                PrimaryTextView(primaryText)
+            }
             Text(
                 secondaryText,
                 color = MaterialTheme.colorScheme.secondary,

@@ -17,36 +17,22 @@ import androidx.compose.ui.unit.sp
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.util.DividerView
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.text.PrimaryTextView
 
 @Composable
-fun MediaRowView(
-    primaryText: String,
-    secondaryText: String,
-    uri: Uri,
-    modifier: Modifier = Modifier
-) {
+fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(start = StyleConstant.PADDING_LARGE.dp)) {
         Row(
-            modifier = Modifier.padding(
-                top = StyleConstant.PADDING_TINY.dp,
-                bottom = StyleConstant.PADDING_TINY.dp
-            )
+            modifier = Modifier.padding(top = StyleConstant.PADDING_TINY.dp, bottom = StyleConstant.PADDING_TINY.dp)
         ) {
             ImageView(
-                uri = uri,
-                modifier = Modifier
+                uri = uri, modifier = Modifier
                     .size(StyleConstant.IMAGE_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
             )
             Column(modifier = Modifier.padding(start = StyleConstant.PADDING_SMALL.dp)) {
-                Text(primaryText, color = MaterialTheme.colorScheme.primary, fontSize = 14.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
-                Text(
-                    secondaryText,
-                    color = MaterialTheme.colorScheme.secondary,
-                    fontSize = 12.sp,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
+                PrimaryTextView(primaryText)
+                Text(secondaryText, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
         }
         DividerView()
