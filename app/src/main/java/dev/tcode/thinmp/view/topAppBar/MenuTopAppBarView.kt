@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.button.BackButtonView
-import dev.tcode.thinmp.view.title.TopAppBarTitleView
+import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
 fun MenuTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.() -> Unit) {
@@ -38,7 +38,7 @@ fun MenuTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             BackButtonView()
-            TopAppBarTitleView(title)
+            PrimaryTitleView(title)
             Box(content = content)
         }
     }

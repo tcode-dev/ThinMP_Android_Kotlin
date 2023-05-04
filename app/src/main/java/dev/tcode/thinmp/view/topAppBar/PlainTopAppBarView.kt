@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.button.BackButtonView
-import dev.tcode.thinmp.view.title.TopAppBarTitleView
+import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
 fun PlainTopAppBarView(title: String, offset: Int) {
@@ -39,7 +39,7 @@ fun PlainTopAppBarView(title: String, offset: Int) {
                 .clickable {}, verticalAlignment = Alignment.CenterVertically
         ) {
             BackButtonView()
-            TopAppBarTitleView(title)
+            PrimaryTitleView(title)
         }
     }
 }

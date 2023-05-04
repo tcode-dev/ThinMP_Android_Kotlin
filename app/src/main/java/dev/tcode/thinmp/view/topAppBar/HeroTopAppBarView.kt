@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.button.BackButtonView
-import dev.tcode.thinmp.view.title.TopAppBarTitleView
+import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
 fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
@@ -43,7 +43,7 @@ fun HeroTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
         ) {
             BackButtonView()
             if (visible) {
-                TopAppBarTitleView(title)
+                PrimaryTitleView(title)
             }
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .size(StyleConstant.BUTTON_SIZE.dp)

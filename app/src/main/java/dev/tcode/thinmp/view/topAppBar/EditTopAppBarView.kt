@@ -12,14 +12,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.title.TopAppBarTitleView
+import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
 fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.() -> Unit) {
@@ -52,7 +49,7 @@ fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
                     .clickable { navigator.back() }) {
                 Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
-            TopAppBarTitleView(title)
+            PrimaryTitleView(title)
             Box(content = content, modifier = Modifier.align(alignment = Alignment.CenterEnd))
         }
     }
