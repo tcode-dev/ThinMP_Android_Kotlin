@@ -57,28 +57,28 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box(Modifier.zIndex(3F)) {
-            MenuTopAppBarView(stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset) {
-                val expanded = remember { mutableStateOf(false) }
-
-                Box(contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .size(StyleConstant.BUTTON_SIZE.dp)
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable { expanded.value = !expanded.value }) {
-                    Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
-                    DropdownMenu(expanded = expanded.value,
-                        offset = DpOffset((-1).dp, 0.dp),
-                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
-                        onDismissRequest = { expanded.value = false }) {
-                        DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = {
-                            navigator.favoriteSongsEdit()
-                            expanded.value = false
-                        })
-                    }
-                }
-            }
-        }
+//        Box(Modifier.zIndex(3F)) {
+//            MenuTopAppBarView(stringResource(R.string.favorite_songs), lazyListState.firstVisibleItemScrollOffset) {
+//                val expanded = remember { mutableStateOf(false) }
+//
+//                Box(contentAlignment = Alignment.Center,
+//                    modifier = Modifier
+//                        .size(StyleConstant.BUTTON_SIZE.dp)
+//                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+//                        .clickable { expanded.value = !expanded.value }) {
+//                    Icon(painter = painterResource(id = R.drawable.round_more_vert_24), contentDescription = null, modifier = Modifier.size(StyleConstant.ICON_SIZE.dp))
+//                    DropdownMenu(expanded = expanded.value,
+//                        offset = DpOffset((-1).dp, 0.dp),
+//                        modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
+//                        onDismissRequest = { expanded.value = false }) {
+//                        DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = {
+//                            navigator.favoriteSongsEdit()
+//                            expanded.value = false
+//                        })
+//                    }
+//                }
+//            }
+//        }
         LazyColumn(state = lazyListState) {
             item {
                 EmptyTopAppBarView()
