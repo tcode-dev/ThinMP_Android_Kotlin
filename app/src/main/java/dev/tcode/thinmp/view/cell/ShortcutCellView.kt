@@ -20,6 +20,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.repository.realm.ItemType
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.text.PrimaryTextView
+import dev.tcode.thinmp.view.text.SecondaryTextView
 
 @Composable
 fun ShortcutCellView(
@@ -52,15 +53,11 @@ fun ShortcutCellView(
             ) {
                 PrimaryTextView(primaryText)
             }
-            Text(
-                secondaryText,
-                color = MaterialTheme.colorScheme.secondary,
-                fontSize = 12.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Box(
+                contentAlignment = Alignment.Center, modifier = Modifier.fillMaxWidth()
+            ) {
+                SecondaryTextView(secondaryText)
+            }
         }
     }
 }

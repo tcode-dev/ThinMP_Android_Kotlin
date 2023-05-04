@@ -18,6 +18,7 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.util.DividerView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.text.PrimaryTextView
+import dev.tcode.thinmp.view.text.SecondaryTextView
 
 @Composable
 fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri, modifier: Modifier = Modifier) {
@@ -32,7 +33,7 @@ fun MediaRowView(primaryText: String, secondaryText: String, uri: Uri, modifier:
             )
             Column(modifier = Modifier.padding(start = StyleConstant.PADDING_SMALL.dp)) {
                 PrimaryTextView(primaryText)
-                Text(secondaryText, color = MaterialTheme.colorScheme.secondary, fontSize = 12.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                SecondaryTextView(secondaryText)
             }
         }
         DividerView()
