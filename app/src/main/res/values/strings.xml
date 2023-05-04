@@ -25,4 +25,7 @@
     <string name="remove_playlist">Remove playlist</string>
     <string name="add_shortcut">Add to a shortcut</string>
     <string name="remove_shortcut">Remove from shortcut</string>
+
+    <string name="permission_denied">Access to audio files is not allowed.</string>
+    <string name="permission_request">Allow access to audio files</string>
 </resources>
