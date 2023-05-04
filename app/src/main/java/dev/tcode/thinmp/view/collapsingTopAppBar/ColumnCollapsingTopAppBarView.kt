@@ -11,7 +11,7 @@ import androidx.compose.ui.zIndex
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 
 @Composable
-fun PlainCollapsingTopAppBarView(title: String, content: LazyListScope.() -> Unit) {
+fun ColumnCollapsingTopAppBarView(title: String, content: LazyListScope.() -> Unit) {
     val lazyListState = rememberLazyListState()
 
     Box(Modifier.zIndex(1F)) {

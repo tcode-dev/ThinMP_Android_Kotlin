@@ -18,7 +18,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.view.collapsingTopAppBar.PlainCollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.ColumnCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
@@ -43,7 +43,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        PlainCollapsingTopAppBarView(stringResource(R.string.songs)) {
+        ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             item {
                 EmptyTopAppBarView()
             }

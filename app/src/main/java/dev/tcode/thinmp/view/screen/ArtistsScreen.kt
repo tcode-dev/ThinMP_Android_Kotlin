@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.view.collapsingTopAppBar.PlainCollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.ColumnCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.nav.LocalNavigator
@@ -41,7 +41,7 @@ fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        PlainCollapsingTopAppBarView(stringResource(R.string.artists)) {
+        ColumnCollapsingTopAppBarView(stringResource(R.string.artists)) {
             item {
                 EmptyTopAppBarView()
             }
