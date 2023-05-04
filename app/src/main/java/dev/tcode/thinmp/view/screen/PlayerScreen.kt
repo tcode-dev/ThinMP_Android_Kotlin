@@ -25,8 +25,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.image.ImageView
-import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlayerViewModel
@@ -38,7 +38,6 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val visiblePopup = remember { mutableStateOf(false) }
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 64
     val imageBottomPosition: Dp = LocalConfiguration.current.screenWidthDp.dp - imageSize - WindowInsets.systemBars.asPaddingValues().calculateTopPadding() - StyleConstant.ROW_HEIGHT.dp
-    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -81,20 +80,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                             .clip(RoundedCornerShape(8.dp))
                     )
                 }
-                Box(contentAlignment = Alignment.Center,
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(start = StyleConstant.PADDING_TINY.dp)
-                        .size(StyleConstant.BUTTON_SIZE.dp)
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable { navigator.back() }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.round_arrow_back_ios_24),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.size(StyleConstant.ICON_SIZE.dp)
-                    )
-                }
+                BackButtonView(modifier = Modifier.statusBarsPadding())
             }
             Column(
                 Modifier
