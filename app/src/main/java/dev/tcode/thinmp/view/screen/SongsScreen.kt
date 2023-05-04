@@ -4,9 +4,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
@@ -16,17 +14,16 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.view.collapsingTopAppBar.PlainCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
-import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopAppBarView
@@ -37,7 +34,6 @@ import dev.tcode.thinmp.viewModel.SongsViewModel
 @Composable
 fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val lazyListState = rememberLazyListState()
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
@@ -47,10 +43,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box(Modifier.zIndex(3F)) {
-            PlainTopAppBarView(stringResource(R.string.songs), lazyListState.firstVisibleItemScrollOffset)
-        }
-        LazyColumn(state = lazyListState) {
+        PlainCollapsingTopAppBarView(stringResource(R.string.songs)) {
             item {
                 EmptyTopAppBarView()
             }

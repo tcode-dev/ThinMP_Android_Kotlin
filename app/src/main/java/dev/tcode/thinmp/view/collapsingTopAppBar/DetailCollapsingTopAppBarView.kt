@@ -33,7 +33,7 @@ fun DetailCollapsingTopAppBarView(title: String, position: Int, columns: GridCel
 }
 
 @Composable
-fun visibleTopAppBar(position: Int, state: LazyGridState): Boolean {
+private fun visibleTopAppBar(position: Int, state: LazyGridState): Boolean {
     if (state.firstVisibleItemIndex > 0) return true
 
     val density = LocalContext.current.resources.displayMetrics.density

@@ -44,7 +44,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
         val (miniPlayer) = createRefs()
 
         Box(Modifier.zIndex(3F)) {
-            PlainTopAppBarView(stringResource(R.string.albums), lazyGridState.firstVisibleItemScrollOffset)
+//            PlainTopAppBarView(stringResource(R.string.albums), lazyGridState.firstVisibleItemScrollOffset)
         }
         LazyVerticalGrid(
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT), state = lazyGridState

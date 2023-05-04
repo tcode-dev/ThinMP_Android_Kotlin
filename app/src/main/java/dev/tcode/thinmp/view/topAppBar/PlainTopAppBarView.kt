@@ -14,10 +14,10 @@ import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
-fun PlainTopAppBarView(title: String, offset: Int) {
+fun PlainTopAppBarView(title: String, visible: Boolean) {
     Box {
         AnimatedVisibility(
-            visible = offset > 1, enter = fadeIn(), exit = fadeOut()
+            visible = visible, enter = fadeIn(), exit = fadeOut()
         ) {
             Surface(
                 color = MaterialTheme.colorScheme.onBackground, modifier = Modifier.fillMaxWidth()
