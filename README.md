@@ -18,7 +18,7 @@
 
 ## Environments
 
-* Android Studio Electric Eel | 2022.1.1
+* Android Studio Flamingo | 2022.2.1 Patch 1
 * Kotlin
 * Gradle
 * minSdkVersion 33
