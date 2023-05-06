@@ -19,14 +19,6 @@ class SongModel(
     override var id: String = ""
         get() = songId.id
 
-    override fun getTrackList(): List<SongModel> {
-        val trackList: MutableList<SongModel> = ArrayList()
-
-        trackList.add(this)
-
-        return trackList
-    }
-
     fun getImageUri(): Uri {
         return Uri.parse("content://media/external/audio/albumart/${albumId.id}")
     }

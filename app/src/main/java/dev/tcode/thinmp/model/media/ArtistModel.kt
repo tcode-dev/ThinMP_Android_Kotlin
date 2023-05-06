@@ -12,14 +12,6 @@ class ArtistModel(
     override var id: String = ""
         get() = artistId.id
 
-    override fun getTrackList(): List<SongModel> {
-        val trackList: MutableList<SongModel> = ArrayList()
-
-//        trackList.add(this)
-
-        return trackList
-    }
-
     val url: String
         get() =  "${NavConstant.ARTIST_DETAIL}/${this.id}"
 }
