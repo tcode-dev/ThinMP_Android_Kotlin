@@ -140,10 +140,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         cancelSeekBarProgressTask()
     }
 
-    override fun onDestroy(context: Context) {
-        musicPlayer.unbindService(context)
-    }
-
     private fun seekBarProgress() {
         _uiState.update { currentState ->
             currentState.copy(

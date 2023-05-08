@@ -55,10 +55,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         musicPlayer.removeEventListener()
     }
 
-    override fun onDestroy(context: Context) {
-        musicPlayer.unbindService(context)
-    }
-
     private fun update() {
         val song = musicPlayer.getCurrentSong()
         if (song != null) {

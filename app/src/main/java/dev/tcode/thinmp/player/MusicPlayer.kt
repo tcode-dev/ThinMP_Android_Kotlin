@@ -17,8 +17,6 @@ class MusicPlayer(context: Context) {
     private lateinit var connection: ServiceConnection
     private var listener: MusicPlayerListener? = null
 
-    var bound: Boolean = false
-
     init {
         bindService(context)
     }
@@ -85,10 +83,6 @@ class MusicPlayer(context: Context) {
         musicService?.removeEventListener()
     }
 
-    fun unbindService(context: Context) {
-        context.unbindService(connection)
-    }
-
     fun getCurrentPosition(): Int {
         return musicService?.getCurrentPosition() ?: 0
     }
@@ -109,12 +103,9 @@ class MusicPlayer(context: Context) {
                 musicService = binder.getService()
                 listener?.let { musicService!!.addEventListener(it) }
                 listener?.onBind()
-                bound = true
             }
 
-            override fun onServiceDisconnected(name: ComponentName) {
-                bound = false;
-            }
+            override fun onServiceDisconnected(name: ComponentName) {}
         }
     }
 }
