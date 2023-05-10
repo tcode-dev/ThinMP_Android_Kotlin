@@ -3,7 +3,6 @@ package dev.tcode.thinmp.repository.realm
 import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.FavoriteSongRealmModel
-import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
