@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.model.media
 
 import android.net.Uri
+import dev.tcode.thinmp.constant.MediaConstant
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 
@@ -17,6 +18,6 @@ class AlbumModel(
         get() =  "${NavConstant.ALBUM_DETAIL}/${this.id}"
 
     fun getImageUri(): Uri {
-        return Uri.parse("content://media/external/audio/albumart/${id}")
+        return Uri.parse("${MediaConstant.ALBUM_ART}/${id}")
     }
 }
