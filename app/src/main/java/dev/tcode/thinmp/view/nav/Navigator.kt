@@ -32,6 +32,10 @@ class Navigator(private val navController: NavController) : INavigator {
         navController.navigate("${NavConstant.PLAYLIST_DETAIL}/${id}")
     }
 
+    override fun playlistDetailEdit(id: String) {
+        navController.navigate("${NavConstant.PLAYLIST_DETAIL_EDIT}/${id}")
+    }
+
     override fun player() {
         navController.navigate(NavConstant.PLAYER)
     }

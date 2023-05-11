@@ -22,4 +22,10 @@ interface PlaylistRegister {
 
         repository.delete(playlistId)
     }
+
+    fun updateName(playlistId: PlaylistId, name: String) {
+        val repository = PlaylistRepository()
+
+        repository.updateName(playlistId, name)
+    }
 }

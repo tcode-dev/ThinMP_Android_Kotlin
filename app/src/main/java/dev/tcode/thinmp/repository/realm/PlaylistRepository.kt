@@ -56,6 +56,14 @@ class PlaylistRepository {
         }
     }
 
+    fun updateName(playlistId: PlaylistId, name: String) {
+        findById(playlistId)?.also { playlist ->
+            realm.writeBlocking {
+                findLatest(playlist)?.name = name
+            }
+        }
+    }
+
     fun findAll(): List<PlaylistRealmModel> {
         return realm.query<PlaylistRealmModel>().find()
     }

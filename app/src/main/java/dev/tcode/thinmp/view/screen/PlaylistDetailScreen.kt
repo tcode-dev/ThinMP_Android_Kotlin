@@ -8,7 +8,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -16,10 +18,12 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
@@ -29,6 +33,7 @@ import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -46,16 +51,19 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
+    val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        DetailCollapsingTopAppBarView(title = uiState.primaryText,
+        DetailCollapsingTopAppBarView(
+            title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
             dropdownMenus = { callback ->
+                DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })
                 ShortcutDropdownMenuItemView(AlbumId(id), callback)
             }) {
             item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {

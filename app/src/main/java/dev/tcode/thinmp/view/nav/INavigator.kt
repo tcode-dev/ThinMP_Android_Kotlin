@@ -8,5 +8,6 @@ interface INavigator {
     fun favoriteArtistsEdit()
     fun favoriteSongsEdit()
     fun playlistDetail(id: String)
+    fun playlistDetailEdit(id: String)
     fun player()
 }
