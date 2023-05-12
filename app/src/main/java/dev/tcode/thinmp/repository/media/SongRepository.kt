@@ -15,7 +15,8 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         MediaStore.Audio.Media.ARTIST,
         MediaStore.Audio.Media.ALBUM_ID,
         MediaStore.Audio.Media.ALBUM,
-        MediaStore.Audio.Media.DURATION
+        MediaStore.Audio.Media.DURATION,
+        MediaStore.Audio.Media.CD_TRACK_NUMBER
     )
 ) {
     fun findById(songId: String): SongModel? {
@@ -46,7 +47,6 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
     fun findByAlbumId(albumId: String): List<SongModel> {
         selection = MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = arrayOf(albumId)
-        sortOrder = MediaStore.Audio.Media._ID + " ASC"
 
         return getList()
     }
@@ -92,9 +92,13 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return cursor?.getColumnIndex(MediaStore.Audio.Media.DURATION)?.let { cursor?.getInt(it) } ?: 0
     }
 
+    private fun getTrackNumber(): String {
+        return cursor?.getColumnIndex(MediaStore.Audio.Media.CD_TRACK_NUMBER)?.let { cursor?.getString(it) } ?: ""
+    }
+
     private fun getSong(): SongModel {
         return SongModel(
-            getId(), getTitle(), getArtistId(), getArtistName(), getAlbumId(), getAlbumName(), getDuration()
+            getId(), getTitle(), getArtistId(), getArtistName(), getAlbumId(), getAlbumName(), getDuration(), getTrackNumber()
         )
     }
 

@@ -14,7 +14,8 @@ class SongModel(
     val artistName: String,
     val albumId: AlbumId,
     val albumName: String,
-    val duration: Int
+    val duration: Int,
+    val trackNumber: String
 ): Music() {
     override var id: String = ""
         get() = songId.id
@@ -25,5 +26,12 @@ class SongModel(
 
     fun getMediaUri(): Uri {
         return Uri.parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${id}")
+    }
+
+    fun getTrackNumber(): Int {
+        val regex = Regex("""\d{1,}""")
+        val match = regex.find(trackNumber) ?: return 0
+
+        return match.value.toInt()
     }
 }
