@@ -13,7 +13,9 @@ class ArtistDetailService(val context: Context) {
         val songRepository = SongRepository(context)
         val artist = artistRepository.findById(id)
         val albums = albumRepository.findByArtistId(id)
+        val sortedAlbums = albums.sortedBy { it.name }
         val songs = songRepository.findByArtistId(id)
+        val sortedSongs = songs.sortedWith(compareBy({ it.albumName }, { it.getTrackNumber() }))
         val secondaryText = "${albums.count()} albums, ${songs.count()} songs"
         val imageUri = if (albums.isNotEmpty()) {
             albums.first().getImageUri()
@@ -22,7 +24,7 @@ class ArtistDetailService(val context: Context) {
         }
 
         return if (artist != null) {
-            ArtistDetailModel(id, artist.name, secondaryText, imageUri, albums, songs)
+            ArtistDetailModel(id, artist.name, secondaryText, imageUri, sortedAlbums, sortedSongs)
         } else {
             null
         }
