@@ -61,6 +61,7 @@ class MusicService : Service() {
     fun play() {
         try {
             mediaPlayer?.start()
+            listener?.onChange()
         } catch (e: IllegalStateException) {
             fix()
         }
