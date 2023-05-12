@@ -7,7 +7,8 @@ import dev.tcode.thinmp.repository.media.SongRepository
 class SongsService(val context: Context) {
     fun findAll(): List<SongModel> {
         val repository = SongRepository(context)
+        val songs = repository.findAll()
 
-        return repository.findAll()
+        return songs.sortedBy { it.name }
     }
 }
