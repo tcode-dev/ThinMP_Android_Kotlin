@@ -49,8 +49,10 @@ fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
                     .clickable { navigator.back() }) {
                 Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
-            PrimaryTitleView(title)
-            Box(content = content, modifier = Modifier.align(alignment = Alignment.CenterEnd))
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.align(alignment = Alignment.Center)) {
+                PrimaryTitleView(title)
+            }
+            Box(content = content, contentAlignment = Alignment.Center, modifier = Modifier.align(alignment = Alignment.CenterEnd))
         }
     }
 }
