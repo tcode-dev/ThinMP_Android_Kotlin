@@ -5,8 +5,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
+import dev.tcode.thinmp.constant.StyleConstant
 
 @Composable
 fun PlainTextView(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.primary, fontSize = 16.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
+    Text(text, color = MaterialTheme.colorScheme.primary, fontSize = StyleConstant.FONT_MEDIUM.sp, maxLines = 1, overflow = TextOverflow.Ellipsis)
 }

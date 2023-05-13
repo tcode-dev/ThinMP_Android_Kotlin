@@ -16,7 +16,7 @@ fun SectionTitleView(text: String) {
         text = text,
         color = MaterialTheme.colorScheme.primary,
         fontWeight = FontWeight.Bold,
-        fontSize = 24.sp,
+        fontSize = StyleConstant.FONT_LARGE.sp,
         modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, top = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
     )
 }

@@ -3,7 +3,14 @@ package dev.tcode.thinmp.constant
 class StyleConstant {
     companion object {
         const val BUTTON_SIZE = 50
+        const val COLLAPSING_TOP_APP_BAR_TITLE_POSITION = 90
         const val DIVIDER_HEIGHT = 0.5
+        const val FONT_HUGE = 30
+        const val FONT_LARGE = 24
+        const val FONT_MEDIUM = 16
+        const val FONT_SMALL = 14
+        const val FONT_TINY = 12
+        const val GRID_MAX_SPAN_COUNT = 2
         const val ICON_SIZE = 24
         const val IMAGE_CORNER_SIZE = 4
         const val IMAGE_SIZE = 40
@@ -12,7 +19,5 @@ class StyleConstant {
         const val PADDING_SMALL = 10
         const val PADDING_TINY = 5
         const val ROW_HEIGHT = 50
-        const val GRID_MAX_SPAN_COUNT = 2
-        const val COLLAPSING_TOP_APP_BAR_TITLE_POSITION = 90
     }
 }

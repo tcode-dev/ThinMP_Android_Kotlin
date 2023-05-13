@@ -21,7 +21,7 @@ fun PrimaryTitleView(text: String) {
         textAlign = TextAlign.Center,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        fontSize = 16.sp,
+        fontSize = StyleConstant.FONT_MEDIUM.sp,
         fontWeight = FontWeight.Bold,
         modifier = Modifier.width(LocalConfiguration.current.screenWidthDp.dp - StyleConstant.BUTTON_SIZE.dp * 2 - StyleConstant.PADDING_TINY.dp * 2)
     )

@@ -78,7 +78,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 30.sp
+                            fontSize = StyleConstant.FONT_HUGE.sp
                         )
                         Box(contentAlignment = Alignment.Center, modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)

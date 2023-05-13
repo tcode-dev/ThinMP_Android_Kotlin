@@ -52,7 +52,7 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
         Text(
             uiState.primaryText,
             color = MaterialTheme.colorScheme.primary,
-            fontSize = 14.sp,
+            fontSize = StyleConstant.FONT_SMALL.sp,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
