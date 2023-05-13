@@ -44,6 +44,8 @@ fun PermissionView(content: @Composable BoxScope.() -> Unit) {
                     }
                 }
                 else -> SideEffect {
+                    // 何度も拒否している場合はダイアログが表示されないことがある
+                    // この動作はAndroidレベルのAPIによって異なる
                     permissionState.launchPermissionRequest()
                 }
             }
