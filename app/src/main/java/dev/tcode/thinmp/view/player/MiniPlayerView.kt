@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -14,14 +13,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.text.PrimaryTextView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
@@ -49,28 +47,22 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
                 .size(StyleConstant.IMAGE_SIZE.dp)
                 .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
         )
-        Text(
-            uiState.primaryText,
-            color = MaterialTheme.colorScheme.primary,
-            fontSize = StyleConstant.FONT_SMALL.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
+        Box(
             modifier = Modifier
                 .padding(start = StyleConstant.PADDING_SMALL.dp)
                 .weight(1f)
-        )
+        ) {
+            PrimaryTextView(text = uiState.primaryText)
+        }
         Box(contentAlignment = Alignment.Center, modifier = Modifier
             .size(StyleConstant.BUTTON_SIZE.dp)
             .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
             .clickable { viewModel.toggle() }) {
             Icon(
-                painter = painterResource(
-                    id = if (uiState.isPlaying) {
-                        R.drawable.round_pause_24
-                    } else {
-                        R.drawable.round_play_arrow_24
-                    }
-                ), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                painter = painterResource(id = if (uiState.isPlaying) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
             )
         }
         Box(contentAlignment = Alignment.Center, modifier = Modifier
