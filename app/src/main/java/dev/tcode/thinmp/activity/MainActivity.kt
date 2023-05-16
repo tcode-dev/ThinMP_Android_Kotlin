@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
-import dev.tcode.thinmp.notification.createNotificationChannel
 import dev.tcode.thinmp.ui.theme.ThinMPTheme
 import dev.tcode.thinmp.view.nav.Nav
 import dev.tcode.thinmp.view.permission.PermissionView
@@ -39,7 +38,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-
-        createNotificationChannel(this)
     }
 }
