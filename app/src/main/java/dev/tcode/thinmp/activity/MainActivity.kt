@@ -13,7 +13,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.tcode.thinmp.ui.theme.ThinMPTheme
-import dev.tcode.thinmp.view.nav.Nav
+import dev.tcode.thinmp.view.nav.ThinMPNavHost
 import dev.tcode.thinmp.view.permission.PermissionView
 
 @AndroidEntryPoint
@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
             ThinMPTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     PermissionView {
-                        Nav()
+                        ThinMPNavHost()
                     }
                 }
             }

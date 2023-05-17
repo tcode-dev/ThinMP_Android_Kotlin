@@ -13,7 +13,7 @@ import dev.tcode.thinmp.view.screen.*
 
 @ExperimentalFoundationApi
 @Composable
-fun Nav() {
+fun ThinMPNavHost() {
     val navController = rememberNavController()
 
     CompositionLocalProvider(LocalNavigator provides Navigator(navController)) {

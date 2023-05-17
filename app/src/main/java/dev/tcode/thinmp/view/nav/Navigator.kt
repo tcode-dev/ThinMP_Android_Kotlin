@@ -3,6 +3,18 @@ package dev.tcode.thinmp.view.nav
 import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.NavConstant
 
+interface INavigator {
+    fun back()
+    fun mainEdit()
+    fun artistDetail(id: String)
+    fun albumDetail(id: String)
+    fun favoriteArtistsEdit()
+    fun favoriteSongsEdit()
+    fun playlistDetail(id: String)
+    fun playlistDetailEdit(id: String)
+    fun player()
+}
+
 class Navigator(private val navController: NavController) : INavigator {
     override fun back() {
         navController.popBackStack()
