@@ -45,8 +45,8 @@ class MusicPlayer(context: Context) {
         musicService?.next()
     }
 
-    fun seekTo(msec: Int) {
-        musicService?.seekTo(msec)
+    fun seekTo(ms: Long) {
+        musicService?.seekTo(ms)
     }
 
     fun getRepeat(): RepeatState {
@@ -83,7 +83,7 @@ class MusicPlayer(context: Context) {
         musicService?.removeEventListener()
     }
 
-    fun getCurrentPosition(): Int {
+    fun getCurrentPosition(): Long {
         return musicService?.getCurrentPosition() ?: 0
     }
 

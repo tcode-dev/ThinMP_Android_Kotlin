@@ -73,9 +73,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         cancelSeekBarProgressTask()
 
         val song = musicPlayer.getCurrentSong() ?: return
-        val msec = (song.duration.toFloat() * value).toInt()
+        val ms = (song.duration.toFloat() * value).toLong()
 
-        musicPlayer.seekTo(msec)
+        musicPlayer.seekTo(ms)
 
         seekBarProgress()
     }

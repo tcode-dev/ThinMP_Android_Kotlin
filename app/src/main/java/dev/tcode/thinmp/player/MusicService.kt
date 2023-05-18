@@ -1,11 +1,15 @@
 package dev.tcode.thinmp.player
 
+//import android.media.MediaPlayer
+//import android.media.MediaPlayer.OnCompletionListener
+
 import android.app.Service
 import android.content.Intent
-import android.media.MediaPlayer
-import android.media.MediaPlayer.OnCompletionListener
 import android.os.Binder
 import android.os.IBinder
+import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
+import androidx.media3.exoplayer.ExoPlayer
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
@@ -17,11 +21,13 @@ interface MusicServiceListener {
 class MusicService : Service() {
     private val PREV_MS = 3000
     private val binder = MusicBinder()
-    private var mediaPlayer: MediaPlayer? = null
+//    private var mediaPlayer: MediaPlayer? = null
+    private var exoPlayer: ExoPlayer? = null
     private var listener: MusicServiceListener? = null
     private var originalList: List<SongModel> = emptyList()
     private var shuffledList: List<SongModel> = emptyList()
-    private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
+//    private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
+    private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
     private var shuffle = false
@@ -53,14 +59,14 @@ class MusicService : Service() {
             shuffleOff()
         }
 
-        setMediaPlayer(song!!)
+        setExoPlayer(song!!)
         play()
         listener?.onChange()
     }
 
     fun play() {
         try {
-            mediaPlayer?.start()
+            exoPlayer?.play()
             listener?.onChange()
         } catch (e: IllegalStateException) {
             fix()
@@ -68,38 +74,38 @@ class MusicService : Service() {
     }
 
     fun pause() {
-        mediaPlayer?.pause()
+        exoPlayer?.pause()
         listener?.onChange()
     }
 
     fun prev() {
-        val isContinue = mediaPlayer?.isPlaying
-
-        if (getCurrentPosition() <= PREV_MS) {
-            if (!playingList.hasPrevious()) {
-                playingList = originalList.listIterator(originalList.count())
-            }
-
-            setMediaPlayer(playingList.previous())
-        } else {
-            song?.let { setMediaPlayer(it) }
-        }
-
-        if (isContinue == true) {
-            play()
-        }
-
-        listener?.onChange()
+//        val isContinue = exoPlayer?.isPlaying
+//
+//        if (getCurrentPosition() <= PREV_MS) {
+//            if (!playingList.hasPrevious()) {
+//                playingList = originalList.listIterator(originalList.count())
+//            }
+//
+//            setExoPlayer(playingList.previous())
+//        } else {
+//            song?.let { setExoPlayer(it) }
+//        }
+//
+//        if (isContinue == true) {
+//            play()
+//        }
+//
+//        listener?.onChange()
     }
 
     fun next() {
-        val isContinue = mediaPlayer?.isPlaying
+        val isContinue = exoPlayer?.isPlaying
 
-        if (!playingList.hasNext()) {
-            playingList = originalList.listIterator(0)
-        }
+//        if (!playingList.hasNext()) {
+//            playingList = originalList.listIterator(0)
+//        }
 
-        setMediaPlayer(playingList.next())
+//        setExoPlayer(playingList.next())
 
         if (isContinue == true) {
             play()
@@ -140,16 +146,16 @@ class MusicService : Service() {
         listener?.onChange()
     }
 
-    fun seekTo(msec: Int) {
-        mediaPlayer?.seekTo(msec)
+    fun seekTo(ms: Long) {
+        exoPlayer?.seekTo(ms)
     }
 
     fun isPlaying(): Boolean {
-        return mediaPlayer?.isPlaying ?: false
+        return exoPlayer?.isPlaying ?: false
     }
 
-    fun getCurrentPosition(): Int {
-        return mediaPlayer?.currentPosition ?: 0
+    fun getCurrentPosition(): Long {
+        return exoPlayer?.currentPosition ?: 0
     }
 
     private fun shuffleOn() {
@@ -158,66 +164,89 @@ class MusicService : Service() {
         val shuffledList = tempList.shuffled().toMutableList()
         this.song?.let { shuffledList.add(0, it) }
         this.shuffledList = shuffledList
-        playingList = shuffledList.listIterator()
-        playingList.next()
+//        playingList = shuffledList.listIterator()
+        playingList = shuffledList
+//        playingList.next()
     }
 
     private fun shuffleOff() {
-        playingList = originalList.listIterator(originalList.indexOf(this.song))
+//        playingList = originalList.listIterator(originalList.indexOf(this.song))
+        playingList = originalList
         shuffledList = emptyList()
-        playingList.next()
+//        playingList.next()
     }
 
-    private fun setMediaPlayer(song: SongModel) {
+    private fun setExoPlayer(song: SongModel) {
         destroy()
 
         this.song = song
-        mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
-        mediaPlayer?.setOnCompletionListener(createCompletionListener())
+//        mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
+//        mediaPlayer?.setOnCompletionListener(createCompletionListener())
+        try {
+            exoPlayer = ExoPlayer.Builder(baseContext).build()
+            val mediaItems = playingList.map {
+                MediaItem.fromUri(it.getMediaUri())
+            }
+            exoPlayer?.setMediaItems(mediaItems)
+            exoPlayer?.prepare()
+        } catch (e: IllegalStateException) {
+            println(e)
+        }
     }
 
+    private fun addListener() {
+        exoPlayer!!.addListener(object : Player.Listener {
+            override fun onEvents(player: Player, events: Player.Events) {
+
+            }
+
+            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+
+            }
+        })
+    }
     private fun destroy() {
-        if (mediaPlayer?.isPlaying == true) {
-            mediaPlayer?.stop()
+        if (exoPlayer?.isPlaying == true) {
+            exoPlayer?.stop()
         }
 
-        mediaPlayer?.release()
-        mediaPlayer = null
+        exoPlayer?.release()
+        exoPlayer = null
         song = null
     }
 
-    private fun createCompletionListener(): OnCompletionListener {
-        return OnCompletionListener {
-            if (repeat == RepeatState.ONE) {
-                song?.let { setMediaPlayer(it) }
-                play()
-            } else {
-                if (playingList.hasNext()) {
-                    setMediaPlayer(playingList.next())
-                    play()
-                } else {
-                    playingList = if (shuffle) {
-                        shuffledList.listIterator(0)
-                    } else {
-                        originalList.listIterator(0)
-                    }
-                    setMediaPlayer(playingList.next())
-                    if (repeat == RepeatState.ALL) {
-                        play()
-                    }
-                }
-            }
-
-            listener?.onChange()
-        }
-    }
+//    private fun createCompletionListener(): OnCompletionListener {
+//        return OnCompletionListener {
+//            if (repeat == RepeatState.ONE) {
+//                song?.let { setExoPlayer(it) }
+//                play()
+//            } else {
+//                if (playingList.hasNext()) {
+//                    setExoPlayer(playingList.next())
+//                    play()
+//                } else {
+//                    playingList = if (shuffle) {
+//                        shuffledList.listIterator(0)
+//                    } else {
+//                        originalList.listIterator(0)
+//                    }
+//                    setExoPlayer(playingList.next())
+//                    if (repeat == RepeatState.ALL) {
+//                        play()
+//                    }
+//                }
+//            }
+//
+//            listener?.onChange()
+//        }
+//    }
 
     private fun fix() {
-        if (playingList.hasNext()) {
-            setMediaPlayer(playingList.next())
-            play()
-            listener?.onChange()
-        }
+//        if (playingList.hasNext()) {
+//            setExoPlayer(playingList.next())
+//            play()
+//            listener?.onChange()
+//        }
     }
 
     override fun onBind(intent: Intent): IBinder {
