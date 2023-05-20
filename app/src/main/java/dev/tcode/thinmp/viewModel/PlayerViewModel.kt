@@ -86,12 +86,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    fun setRepeat() {
-        musicPlayer.setRepeat()
+    fun changeRepeat() {
+        musicPlayer.changeRepeat()
     }
 
-    fun setShuffle() {
-        musicPlayer.setShuffle()
+    fun changeShuffle() {
+        musicPlayer.changeShuffle()
     }
 
     fun favoriteArtist() {

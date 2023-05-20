@@ -26,7 +26,7 @@ class MusicPlayer(context: Context) {
             return
         }
 
-        musicService?.start(songs, index)
+        musicService?.start(songs, index.toLong())
     }
 
     fun play() {
@@ -53,16 +53,16 @@ class MusicPlayer(context: Context) {
         return musicService?.getRepeat() ?: RepeatState.OFF
     }
 
-    fun setRepeat() {
-        musicService?.setRepeat()
+    fun changeRepeat() {
+        musicService?.changeRepeat()
     }
 
     fun getShuffle(): Boolean {
         return musicService?.getShuffle() ?: false
     }
 
-    fun setShuffle() {
-        musicService?.setShuffle()
+    fun changeShuffle() {
+        musicService?.changeShuffle()
     }
 
     fun isPlaying(): Boolean {
@@ -70,7 +70,7 @@ class MusicPlayer(context: Context) {
     }
 
     fun getCurrentSong(): SongModel? {
-        return musicService?.song
+        return musicService?.getCurrentSong()
     }
 
     fun addEventListener(listener: MusicPlayerListener) {

@@ -138,7 +138,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                         modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)
                             .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                            .clickable { viewModel.setRepeat() }) {
+                            .clickable { viewModel.changeRepeat() }) {
                         Icon(
                             painter = painterResource(id = if (uiState.repeat == RepeatState.ONE) R.drawable.round_repeat_24 else R.drawable.round_repeat_one_24),
                             contentDescription = null,
@@ -150,7 +150,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                         modifier = Modifier
                             .size(StyleConstant.BUTTON_SIZE.dp)
                             .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                            .clickable { viewModel.setShuffle() }) {
+                            .clickable { viewModel.changeShuffle() }) {
                         Icon(
                             painter = painterResource(id = R.drawable.round_shuffle_24),
                             contentDescription = null,
