@@ -220,15 +220,19 @@ class MusicService : Service() {
 
 
             override fun onEvents(player: Player, events: Player.Events) {
-                println("exoPlayer onEvents")
-            }
-
-            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                println("exoPlayer onTimelineChanged")
+                println("exoPlayer onEvents start")
+                for (index in 0 until events.size()) {
+                    println("exoPlayer onEvents $index:${index + 1}=${events[index]}")
+                }
+                println("exoPlayer onEvents end")
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
                 println("exoPlayer onMediaItemTransition")
+            }
+
+            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                println("exoPlayer onTimelineChanged")
             }
 
             override fun onTracksChanged(tracks: Tracks) {
