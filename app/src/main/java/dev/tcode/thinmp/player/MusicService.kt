@@ -65,7 +65,11 @@ class MusicService : Service() {
     }
 
     fun getCurrentSong(): SongModel? {
-        return exoPlayer?.currentPosition?.let { playingList[it.toInt()] }
+        println("getCurrentSong ${exoPlayer?.currentPosition}")
+        exoPlayer?.currentMediaItem
+        if (exoPlayer?.currentMediaItem == null) return null
+
+        return playingList.first{MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem}
     }
 
     fun start(songs: List<SongModel>, index: Long) {
@@ -76,13 +80,13 @@ class MusicService : Service() {
         setExoPlayer()
         exoPlayer?.seekTo(index)
         play()
-        listener?.onChange()
+//        listener?.onChange()
     }
 
     fun play() {
         try {
             exoPlayer?.play()
-            listener?.onChange()
+//            listener?.onChange()
         } catch (e: IllegalStateException) {
             fix()
         }
@@ -90,7 +94,7 @@ class MusicService : Service() {
 
     fun pause() {
         exoPlayer?.pause()
-        listener?.onChange()
+//        listener?.onChange()
     }
 
     fun prev() {
@@ -106,7 +110,7 @@ class MusicService : Service() {
             play()
         }
 
-        listener?.onChange()
+//        listener?.onChange()
     }
 
     fun next() {
@@ -118,7 +122,7 @@ class MusicService : Service() {
             play()
         }
 
-        listener?.onChange()
+//        listener?.onChange()
     }
 
     fun getRepeat(): RepeatState {
@@ -133,7 +137,7 @@ class MusicService : Service() {
         }
 
         config.saveRepeat(repeat)
-        listener?.onChange()
+//        listener?.onChange()
     }
 
     fun getShuffle(): Boolean {
@@ -144,7 +148,7 @@ class MusicService : Service() {
         shuffle = !shuffle
         setShuffle()
         config.saveShuffle(shuffle)
-        listener?.onChange()
+//        listener?.onChange()
     }
 
     fun seekTo(ms: Long) {
@@ -226,6 +230,7 @@ class MusicService : Service() {
                     println("exoPlayer onEvents $index:${index + 1}=${events[index]}")
                 }
                 println("exoPlayer onEvents end")
+                listener?.onChange()
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
