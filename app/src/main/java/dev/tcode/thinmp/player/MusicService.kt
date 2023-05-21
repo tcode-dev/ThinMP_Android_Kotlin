@@ -221,6 +221,7 @@ class MusicService : Service() {
 
             override fun onEvents(player: Player, events: Player.Events) {
                 println("exoPlayer onEvents start")
+
                 for (index in 0 until events.size()) {
                     println("exoPlayer onEvents $index:${index + 1}=${events[index]}")
                 }
@@ -245,6 +246,10 @@ class MusicService : Service() {
 
             override  fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
                 println("exoPlayer onPlaylistMetadataChanged")
+            }
+
+            override fun onIsLoadingChanged(isLoading: Boolean) {
+                println("exoPlayer onIsLoadingChanged")
             }
 
             override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
