@@ -230,7 +230,6 @@ class MusicService : Service() {
                     println("exoPlayer onEvents $index:${index + 1}=${events[index]}")
                 }
                 println("exoPlayer onEvents end")
-                listener?.onChange()
             }
 
             override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -243,6 +242,7 @@ class MusicService : Service() {
 
             override fun onTracksChanged(tracks: Tracks) {
                 println("exoPlayer onTracksChanged")
+                listener?.onChange()
             }
 
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -279,6 +279,7 @@ class MusicService : Service() {
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
                 println("exoPlayer onIsPlayingChanged")
+                listener?.onChange()
             }
 
             override fun onRepeatModeChanged(repeatMode: Int) {
