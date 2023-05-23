@@ -23,6 +23,7 @@ import androidx.media3.common.VideoSize
 import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaSession
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
@@ -37,6 +38,7 @@ class MusicService : Service() {
 
     //    private var mediaPlayer: MediaPlayer? = null
     private var exoPlayer: ExoPlayer? = null
+    private lateinit var mediaSession: MediaSession
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
 
@@ -66,7 +68,7 @@ class MusicService : Service() {
 
     fun getCurrentSong(): SongModel? {
         println("getCurrentSong ${exoPlayer?.currentPosition}")
-        exoPlayer?.currentMediaItem
+
         if (exoPlayer?.currentMediaItem == null) return null
 
         return playingList.first{MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem}
@@ -101,7 +103,7 @@ class MusicService : Service() {
         val isContinue = exoPlayer?.isPlaying
 
         if (getCurrentPosition() <= PREV_MS) {
-            exoPlayer!!.seekToPrevious()
+            exoPlayer?.seekToPrevious()
         } else {
             exoPlayer?.seekTo(0)
         }
@@ -206,6 +208,8 @@ class MusicService : Service() {
             }
             exoPlayer?.setMediaItems(mediaItems)
             exoPlayer?.prepare()
+//            mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
+
             addListener()
         } catch (e: IllegalStateException) {
             println(e)
@@ -213,7 +217,7 @@ class MusicService : Service() {
     }
 
     private fun addListener() {
-        exoPlayer!!.addListener(object : Player.Listener {
+        exoPlayer?.addListener(object : Player.Listener {
 //            override fun onEvents(player: Player, events: Player.Events) {
 //
 //            }
@@ -372,7 +376,6 @@ class MusicService : Service() {
         }
 
         exoPlayer?.release()
-        exoPlayer = null
     }
 
 //    private fun createCompletionListener(): OnCompletionListener {
