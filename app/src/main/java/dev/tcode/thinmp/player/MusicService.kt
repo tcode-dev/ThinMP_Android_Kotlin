@@ -208,7 +208,7 @@ class MusicService : Service() {
             }
             exoPlayer?.setMediaItems(mediaItems)
             exoPlayer?.prepare()
-//            mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
+            mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
 
             addListener()
         } catch (e: IllegalStateException) {
