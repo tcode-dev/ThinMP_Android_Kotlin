@@ -79,7 +79,11 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                             .clip(RoundedCornerShape(8.dp))
                     )
                 }
-                BackButtonView(modifier = Modifier.statusBarsPadding())
+                BackButtonView(
+                    modifier = Modifier
+                        .statusBarsPadding()
+                        .padding(start = StyleConstant.PADDING_TINY.dp)
+                )
             }
             Column(
                 Modifier
