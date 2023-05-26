@@ -26,7 +26,7 @@ class MusicPlayer(context: Context) {
             return
         }
 
-        musicService?.start(songs, index.toLong())
+        musicService?.start(songs, index)
     }
 
     fun play() {

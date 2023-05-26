@@ -74,13 +74,13 @@ class MusicService : Service() {
         return playingList.first{MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem}
     }
 
-    fun start(songs: List<SongModel>, index: Long) {
+    fun start(songs: List<SongModel>, index: Int) {
         playingList = songs
 //        song = originalList[index]
         setRepeat()
         setShuffle()
         setExoPlayer()
-        exoPlayer?.seekTo(index)
+        exoPlayer?.seekTo(index, 0)
         play()
 //        listener?.onChange()
     }
