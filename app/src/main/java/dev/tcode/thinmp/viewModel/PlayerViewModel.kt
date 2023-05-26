@@ -158,8 +158,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun setSeekBarProgressTask() {
-        timer = Timer()
-        timer?.schedule(seekBarProgressTask(), 0, 1000L)
+//        timer = Timer()
+//        timer?.schedule(seekBarProgressTask(), 0, 1000L)
     }
 
     private fun cancelSeekBarProgressTask() {

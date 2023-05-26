@@ -6,7 +6,9 @@ package dev.tcode.thinmp.player
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
@@ -32,9 +34,11 @@ interface MusicServiceListener {
     fun onChange() {}
 }
 
-class MusicService : Service() {
+@UnstableApi class MusicService : Service() {
     private val PREV_MS = 3000
+    private val INTERVAL_MS = 1000L
     private val binder = MusicBinder()
+    private val handler = Handler(Looper.getMainLooper())
 
     //    private var mediaPlayer: MediaPlayer? = null
     private var exoPlayer: ExoPlayer? = null
@@ -82,6 +86,7 @@ class MusicService : Service() {
         setExoPlayer()
         exoPlayer?.seekTo(index, 0)
         play()
+        handler.post(runnable)
 //        listener?.onChange()
     }
 
@@ -202,7 +207,7 @@ class MusicService : Service() {
 //        mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
 //        mediaPlayer?.setOnCompletionListener(createCompletionListener())
         try {
-            exoPlayer = ExoPlayer.Builder(baseContext).build()
+            exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
             val mediaItems = playingList.map {
                 MediaItem.fromUri(it.getMediaUri())
             }
@@ -410,6 +415,12 @@ class MusicService : Service() {
 //            play()
 //            listener?.onChange()
 //        }
+    }
+    private val runnable = object: Runnable {
+        override fun run(){
+            println("runnable!")
+            handler.postDelayed(this, INTERVAL_MS) // intervalに設定したミリ秒後にコールバックを呼び出す
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
