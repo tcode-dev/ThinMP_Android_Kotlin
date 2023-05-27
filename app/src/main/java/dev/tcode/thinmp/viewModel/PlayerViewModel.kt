@@ -3,6 +3,8 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import android.content.Context
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.valueObject.SongId
@@ -12,7 +14,6 @@ import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.*
-import java.util.*
 
 const val TIME_FORMAT = "%1\$tM:%1\$tS"
 const val START_TIME = "00:00"
@@ -33,10 +34,17 @@ data class PlayerUiState(
 )
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteArtistRegister, FavoriteSongRegister {
+    private val INTERVAL_MS = 1000L
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
-    private var timer: Timer? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private val runnable = object : Runnable {
+        override fun run() {
+            seekBarProgress()
+            handler.postDelayed(this, INTERVAL_MS)
+        }
+    }
 
     init {
         musicPlayer = MusicPlayer(application)
@@ -144,27 +152,18 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         _uiState.update { currentState ->
             currentState.copy(
                 sliderPosition = getSliderPosition(),
-                currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
+                currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition()),
             )
         }
     }
 
-    private fun seekBarProgressTask(): TimerTask {
-        return object : TimerTask() {
-            override fun run() {
-                seekBarProgress()
-            }
-        }
-    }
-
     private fun setSeekBarProgressTask() {
-//        timer = Timer()
-//        timer?.schedule(seekBarProgressTask(), 0, 1000L)
+        cancelSeekBarProgressTask()
+        handler.post(runnable)
     }
 
     private fun cancelSeekBarProgressTask() {
-        timer?.cancel()
-        timer = null
+        handler.removeCallbacks(runnable)
     }
 
     private fun update() {

@@ -3,6 +3,7 @@ package dev.tcode.thinmp.player
 //import android.media.MediaPlayer
 //import android.media.MediaPlayer.OnCompletionListener
 
+import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
@@ -34,11 +35,9 @@ interface MusicServiceListener {
     fun onChange() {}
 }
 
-@UnstableApi class MusicService : Service() {
+class MusicService : Service() {
     private val PREV_MS = 3000
-    private val INTERVAL_MS = 1000L
     private val binder = MusicBinder()
-    private val handler = Handler(Looper.getMainLooper())
 
     //    private var mediaPlayer: MediaPlayer? = null
     private var exoPlayer: ExoPlayer? = null
@@ -52,7 +51,9 @@ interface MusicServiceListener {
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
     private var shuffle = false
-//    var song: SongModel? = null
+
+    //    var song: SongModel? = null
+
 
     override fun onCreate() {
         super.onCreate()
@@ -75,7 +76,7 @@ interface MusicServiceListener {
 
         if (exoPlayer?.currentMediaItem == null) return null
 
-        return playingList.first{MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem}
+        return playingList.first { MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
@@ -86,7 +87,6 @@ interface MusicServiceListener {
         setExoPlayer()
         exoPlayer?.seekTo(index, 0)
         play()
-        handler.post(runnable)
 //        listener?.onChange()
     }
 
@@ -200,6 +200,7 @@ interface MusicServiceListener {
 //        playingList.next()
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun setExoPlayer() {
         destroy()
 
@@ -258,7 +259,7 @@ interface MusicServiceListener {
                 println("exoPlayer onMediaMetadataChanged")
             }
 
-            override  fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
+            override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
                 println("exoPlayer onPlaylistMetadataChanged")
             }
 
@@ -415,12 +416,6 @@ interface MusicServiceListener {
 //            play()
 //            listener?.onChange()
 //        }
-    }
-    private val runnable = object: Runnable {
-        override fun run(){
-            println("runnable!")
-            handler.postDelayed(this, INTERVAL_MS) // intervalに設定したミリ秒後にコールバックを呼び出す
-        }
     }
 
     override fun onBind(intent: Intent): IBinder {
