@@ -38,6 +38,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+    private var isSeeking = false
+    private var isPlayingWhenSeeking = false
     private val handler = Handler(Looper.getMainLooper())
     private val runnable = object : Runnable {
         override fun run() {
@@ -78,6 +80,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     fun seek(value: Float) {
+        isSeeking = true
+
         cancelSeekBarProgressTask()
 
         val song = musicPlayer.getCurrentSong() ?: return
@@ -92,6 +96,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         if (musicPlayer.isPlaying()) {
             setSeekBarProgressTask()
         }
+        isSeeking = false
     }
 
     fun changeRepeat() {
@@ -134,7 +139,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    override fun onChange() {
+    override fun onChange(isPlaying: Boolean) {
+        println("onChange: $isPlaying")
+        // seekbar操作中にexoPlayer.isPlayingがfalseになるので、seekbar操作中はeventが発火しても画面を更新しない
+        if (isSeeking) return
+
         update()
     }
 

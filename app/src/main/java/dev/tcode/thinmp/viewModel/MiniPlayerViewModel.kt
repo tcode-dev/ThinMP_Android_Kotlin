@@ -42,7 +42,7 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         update()
     }
 
-    override fun onChange() {
+    override fun onChange(isPlaying: Boolean) {
         update()
     }
 

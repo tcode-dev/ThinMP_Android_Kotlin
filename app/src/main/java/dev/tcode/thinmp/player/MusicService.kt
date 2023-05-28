@@ -32,7 +32,7 @@ import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicServiceListener {
-    fun onChange() {}
+    fun onChange(isPlaying: Boolean) {}
 }
 
 class MusicService : Service() {
@@ -234,10 +234,20 @@ class MusicService : Service() {
 
 
             override fun onEvents(player: Player, events: Player.Events) {
+                Player.EVENT_PLAYBACK_STATE_CHANGED
                 println("exoPlayer onEvents start")
 
-                for (index in 0 until events.size()) {
+
+
+                val size = events.size()
+
+                for (index in 0 until size) {
                     println("exoPlayer onEvents $index:${index + 1}=${events[index]}")
+                }
+                if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
+
+                if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                    listener?.onChange(player.isPlaying)
                 }
                 println("exoPlayer onEvents end")
             }
@@ -252,7 +262,7 @@ class MusicService : Service() {
 
             override fun onTracksChanged(tracks: Tracks) {
                 println("exoPlayer onTracksChanged")
-                listener?.onChange()
+//                listener?.onChange(exoPlayer!!.isPlaying)
             }
 
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -288,8 +298,8 @@ class MusicService : Service() {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                println("exoPlayer onIsPlayingChanged")
-                listener?.onChange()
+                println("exoPlayer onIsPlayingChanged: $isPlaying")
+//                listener?.onChange(isPlaying)
             }
 
             override fun onRepeatModeChanged(repeatMode: Int) {
