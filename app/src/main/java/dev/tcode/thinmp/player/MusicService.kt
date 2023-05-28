@@ -32,7 +32,7 @@ import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicServiceListener {
-    fun onChange(isPlaying: Boolean) {}
+    fun onChange() {}
 }
 
 class MusicService : Service() {
@@ -51,6 +51,8 @@ class MusicService : Service() {
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
     private var shuffle = false
+    // player.isPlayingはseekbarを操作中falseになる
+    private var isPlaying = false
 
     //    var song: SongModel? = null
 
@@ -87,6 +89,7 @@ class MusicService : Service() {
         setExoPlayer()
         exoPlayer?.seekTo(index, 0)
         play()
+        isPlaying = true
 //        listener?.onChange()
     }
 
@@ -111,13 +114,12 @@ class MusicService : Service() {
             exoPlayer?.seekToPrevious()
         } else {
             exoPlayer?.seekTo(0)
+            listener?.onChange()
         }
 
         if (isContinue == true) {
             play()
         }
-
-//        listener?.onChange()
     }
 
     fun next() {
@@ -163,7 +165,7 @@ class MusicService : Service() {
     }
 
     fun isPlaying(): Boolean {
-        return exoPlayer?.isPlaying ?: false
+        return isPlaying
     }
 
     fun getCurrentPosition(): Long {
@@ -247,7 +249,8 @@ class MusicService : Service() {
                 if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
                 if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
-                    listener?.onChange(player.isPlaying)
+                    isPlaying = player.isPlaying
+                    listener?.onChange()
                 }
                 println("exoPlayer onEvents end")
             }
