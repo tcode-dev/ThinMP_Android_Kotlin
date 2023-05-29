@@ -7,7 +7,6 @@ import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Intent
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import androidx.media3.common.AudioAttributes
@@ -27,6 +26,7 @@ import androidx.media3.common.text.CueGroup
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
+import androidx.media3.session.MediaStyleNotificationHelper
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
@@ -40,8 +40,9 @@ class MusicService : Service() {
     private val binder = MusicBinder()
 
     //    private var mediaPlayer: MediaPlayer? = null
-    private var exoPlayer: ExoPlayer? = null
+    private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaSession
+    private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
 
@@ -56,13 +57,18 @@ class MusicService : Service() {
 
     //    var song: SongModel? = null
 
-
+    @SuppressLint("UnsafeOptInUsageError")
     override fun onCreate() {
         super.onCreate()
 
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
+        exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
+        mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
+        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+        mediaStyle.setShowActionsInCompactView(0,1,2);
+//        mediaControls()
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -202,7 +208,7 @@ class MusicService : Service() {
 //        playingList.next()
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
+
     private fun setExoPlayer() {
         destroy()
 
@@ -210,18 +216,24 @@ class MusicService : Service() {
 //        mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
 //        mediaPlayer?.setOnCompletionListener(createCompletionListener())
         try {
-            exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
+
             val mediaItems = playingList.map {
                 MediaItem.fromUri(it.getMediaUri())
             }
             exoPlayer?.setMediaItems(mediaItems)
             exoPlayer?.prepare()
-            mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
+
 
             addListener()
         } catch (e: IllegalStateException) {
             println(e)
         }
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun mediaControls() {
+        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+        mediaStyle!!.setShowActionsInCompactView(0,1,2);
     }
 
     private fun addListener() {
