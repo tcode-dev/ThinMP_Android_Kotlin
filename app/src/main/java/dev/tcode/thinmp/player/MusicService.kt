@@ -4,8 +4,10 @@ package dev.tcode.thinmp.player
 //import android.media.MediaPlayer.OnCompletionListener
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
@@ -43,6 +45,8 @@ class MusicService : Service() {
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
+    private lateinit var playbackState: PlaybackState.Builder
+    private val notificationManager: NotificationManager? = null
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
 
@@ -66,8 +70,9 @@ class MusicService : Service() {
         shuffle = config.getShuffle()
         exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
         mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
-        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
-        mediaStyle.setShowActionsInCompactView(0,1,2);
+        playbackState = PlaybackState.Builder()
+//        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+//        mediaStyle.setShowActionsInCompactView(0,1,2);
 //        mediaControls()
     }
 
