@@ -73,7 +73,6 @@ class MusicService : Service() {
         playbackState = PlaybackState.Builder()
 //        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
 //        mediaStyle.setShowActionsInCompactView(0,1,2);
-//        mediaControls()
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -233,12 +232,6 @@ class MusicService : Service() {
         } catch (e: IllegalStateException) {
             println(e)
         }
-    }
-
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun mediaControls() {
-        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
-        mediaStyle!!.setShowActionsInCompactView(0,1,2);
     }
 
     private fun addListener() {
