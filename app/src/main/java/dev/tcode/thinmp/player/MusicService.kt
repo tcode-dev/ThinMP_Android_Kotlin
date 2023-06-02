@@ -1,8 +1,5 @@
 package dev.tcode.thinmp.player
 
-//import android.media.MediaPlayer
-//import android.media.MediaPlayer.OnCompletionListener
-
 import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
@@ -40,8 +37,6 @@ interface MusicServiceListener {
 class MusicService : Service() {
     private val PREV_MS = 3000
     private val binder = MusicBinder()
-
-    //    private var mediaPlayer: MediaPlayer? = null
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
@@ -49,17 +44,11 @@ class MusicService : Service() {
     private val notificationManager: NotificationManager? = null
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
-
-    //    private var shuffledList: List<SongModel> = emptyList()
-//    private var playingList: ListIterator<SongModel> = listOf<SongModel>().listIterator()
-//    private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
     private var shuffle = false
     // player.isPlayingはseekbarを操作中falseになる
     private var isPlaying = false
-
-    //    var song: SongModel? = null
 
     @SuppressLint("UnsafeOptInUsageError")
     override fun onCreate() {
@@ -93,20 +82,17 @@ class MusicService : Service() {
 
     fun start(songs: List<SongModel>, index: Int) {
         playingList = songs
-//        song = originalList[index]
         setRepeat()
         setShuffle()
         setExoPlayer()
         exoPlayer?.seekTo(index, 0)
         play()
         isPlaying = true
-//        listener?.onChange()
     }
 
     fun play() {
         try {
             exoPlayer?.play()
-//            listener?.onChange()
         } catch (e: IllegalStateException) {
             fix()
         }
@@ -114,7 +100,6 @@ class MusicService : Service() {
 
     fun pause() {
         exoPlayer?.pause()
-//        listener?.onChange()
     }
 
     fun prev() {
@@ -140,8 +125,6 @@ class MusicService : Service() {
         if (isContinue == true) {
             play()
         }
-
-//        listener?.onChange()
     }
 
     fun getRepeat(): RepeatState {
@@ -156,7 +139,6 @@ class MusicService : Service() {
         }
 
         config.saveRepeat(repeat)
-//        listener?.onChange()
     }
 
     fun getShuffle(): Boolean {
@@ -167,7 +149,6 @@ class MusicService : Service() {
         shuffle = !shuffle
         setShuffle()
         config.saveShuffle(shuffle)
-//        listener?.onChange()
     }
 
     fun seekTo(ms: Long) {
@@ -194,31 +175,9 @@ class MusicService : Service() {
         exoPlayer?.shuffleModeEnabled = shuffle
     }
 
-    private fun shuffleOn() {
-//        val tempList = originalList.toMutableList()
-//        tempList.remove(this.song)
-//        val shuffledList = tempList.shuffled().toMutableList()
-//        this.song?.let { shuffledList.add(0, it) }
-//        this.shuffledList = shuffledList
-//        playingList = shuffledList.listIterator()
-//        playingList = shuffledList
-//        playingList.next()
-    }
-
-    private fun shuffleOff() {
-//        playingList = originalList.listIterator(originalList.indexOf(this.song))
-//        playingList = originalList
-//        shuffledList = emptyList()
-//        playingList.next()
-    }
-
-
     private fun setExoPlayer() {
         destroy()
 
-//        this.song = song
-//        mediaPlayer = MediaPlayer.create(baseContext, song.getMediaUri())
-//        mediaPlayer?.setOnCompletionListener(createCompletionListener())
         try {
 
             val mediaItems = playingList.map {
