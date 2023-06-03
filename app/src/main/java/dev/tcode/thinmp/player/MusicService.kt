@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.media.session.PlaybackState
@@ -41,7 +40,6 @@ class MusicService : Service() {
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
     private lateinit var playbackState: PlaybackState.Builder
-    private val notificationManager: NotificationManager? = null
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
