@@ -1,12 +1,21 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
+import android.content.ContentValues.TAG
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.media.VolumeShaper.Operation.PLAY
 import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
+import androidx.core.app.NotificationCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
@@ -25,9 +34,11 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
+
 
 interface MusicServiceListener {
     fun onChange() {}
@@ -36,9 +47,11 @@ interface MusicServiceListener {
 class MusicService : Service() {
     private val PREV_MS = 3000
     private val binder = MusicBinder()
-    private lateinit var exoPlayer: ExoPlayer
+    private lateinit var notificationManager: NotificationManager
+    private var exoPlayer: ExoPlayer? = null
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
+    private lateinit var pendingIntentList: PendingIntent
     private lateinit var playbackState: PlaybackState.Builder
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
@@ -48,18 +61,16 @@ class MusicService : Service() {
     // player.isPlayingはseekbarを操作中falseになる
     private var isPlaying = false
 
-    @SuppressLint("UnsafeOptInUsageError")
     override fun onCreate() {
         super.onCreate()
 
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
-        exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
-        mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
-        playbackState = PlaybackState.Builder()
+//        mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
+//        playbackState = PlaybackState.Builder()
 //        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
-//        mediaStyle.setShowActionsInCompactView(0,1,2);
+//        mediaStyle.setShowActionsInCompactView(0, 1, 2)
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -171,11 +182,12 @@ class MusicService : Service() {
         exoPlayer?.shuffleModeEnabled = shuffle
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     private fun setExoPlayer() {
         destroy()
 
         try {
-
+            exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
             val mediaItems = playingList.map {
                 MediaItem.fromUri(it.getMediaUri())
             }
@@ -392,6 +404,38 @@ class MusicService : Service() {
     }
 
     override fun onBind(intent: Intent): IBinder {
+        pendingIntentList = PendingIntent.getActivity(baseContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        notificationManager = baseContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        val channel = NotificationChannel(TAG, TAG, NotificationManager.IMPORTANCE_DEFAULT)
+        channel.description = "Silent Notification"
+        channel.setSound(null, null)
+        channel.enableLights(false)
+        channel.lightColor = Color.BLUE
+        channel.enableVibration(false)
+
+        if (notificationManager != null) {
+            notificationManager.createNotificationChannel(channel)
+//            val notification: Notification
+//            notification = NotificationCompat.Builder(baseContext, TAG)
+//                .setContentTitle(baseContext.getString(R.string.app_name))
+//                .setContentText(TAG)
+//                .setContentIntent(pendingIntentList)
+//                .setWhen(System.currentTimeMillis())
+//                .setSmallIcon(R.drawable.round_favorite_24)
+//                .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.round_favorite_24))
+//                .setStyle(mediaStyle)
+//                .addAction(NotificationCompat.Action(R.drawable.round_favorite_24, RWD, CustomMediaButtonReceiver.buildMediaButtonPendingIntent(baseContext, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)))
+//                .addAction(
+//                    if (exoPlayer?.isPlaying == false) NotificationCompat.Action(
+//                        R.drawable.round_favorite_24,
+//                        PLAY,
+//                        CustomMediaButtonReceiver.buildMediaButtonPendingIntent(baseContext, PlaybackStateCompat.ACTION_PLAY)
+//                    ) else NotificationCompat.Action(R.drawable.ic_round_pause, PAUSE, CustomMediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_PAUSE))
+//                )
+//                .addAction(NotificationCompat.Action(R.drawable.ic_round_fwd, FWD, CustomMediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_SKIP_TO_NEXT)))
+//                .build()
+//            startForeground(1, notification)
+        }
         return binder
     }
 
