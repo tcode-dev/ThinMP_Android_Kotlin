@@ -71,8 +71,6 @@ class MusicService : Service() {
     }
 
     fun getCurrentSong(): SongModel? {
-        println("getCurrentSong ${exoPlayer?.currentPosition}")
-
         if (exoPlayer?.currentMediaItem == null) return null
 
         return playingList.first { MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem }
@@ -203,11 +201,6 @@ class MusicService : Service() {
 
 
             override fun onEvents(player: Player, events: Player.Events) {
-                Player.EVENT_PLAYBACK_STATE_CHANGED
-                println("exoPlayer onEvents start")
-
-
-
                 val size = events.size()
 
                 for (index in 0 until size) {
