@@ -8,9 +8,7 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.ContentValues.TAG
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.media.VolumeShaper.Operation.PLAY
 import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.IBinder
@@ -203,15 +201,6 @@ class MusicService : Service() {
 
     private fun addListener() {
         exoPlayer?.addListener(object : Player.Listener {
-//            override fun onEvents(player: Player, events: Player.Events) {
-//
-//            }
-//
-//            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-//
-//            }
-
-
             override fun onEvents(player: Player, events: Player.Events) {
                 val size = events.size()
 
