@@ -1,20 +1,14 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
-import android.content.ContentValues.TAG
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Color
 import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
-import androidx.core.app.NotificationCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.DeviceInfo
 import androidx.media3.common.MediaItem
@@ -33,7 +27,6 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
-import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
@@ -90,7 +83,6 @@ class MusicService : Service() {
         exoPlayer?.seekTo(index, 0)
         play()
         isPlaying = true
-        LocalNotificationHelper.showNotification(baseContext, "TestTitle", "TestMessage")
     }
 
     fun play() {
@@ -190,9 +182,15 @@ class MusicService : Service() {
             exoPlayer?.setMediaItems(mediaItems)
             exoPlayer?.prepare()
             mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
-            playbackState = PlaybackState.Builder()
+//            playbackState = PlaybackState.Builder()
+//            mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+//            mediaStyle.setShowActionsInCompactView(0, 1, 2)
             mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
             mediaStyle.setShowActionsInCompactView(0, 1, 2)
+            val song = getCurrentSong()
+            if (song != null) {
+                LocalNotificationHelper.showNotification(baseContext, song.name, song.artistName, mediaStyle)
+            }
 
             addListener()
         } catch (e: IllegalStateException) {
@@ -396,36 +394,7 @@ class MusicService : Service() {
 //        }
     }
 
-    // bindした時点でexoplayerをsetする必要がありそう
     override fun onBind(intent: Intent): IBinder {
-        pendingIntentList = PendingIntent.getActivity(baseContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-        notificationManager = baseContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(TAG, TAG, NotificationManager.IMPORTANCE_DEFAULT)
-        channel.description = "Silent Notification"
-        channel.setSound(null, null)
-        channel.enableLights(false)
-        channel.lightColor = Color.BLUE
-        channel.enableVibration(false)
-        if (notificationManager != null) {
-            println("notificationManager ある")
-        } else {
-            println("notificationManager ない")
-        }
-        notificationManager.createNotificationChannel(channel)
-        val notification = NotificationCompat.Builder(baseContext, "1").setContentTitle(baseContext.getString(R.string.app_name)).setContentText(TAG).setContentIntent(pendingIntentList)
-//            .setWhen(System.currentTimeMillis()).setSmallIcon(R.drawable.round_favorite_24).setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.round_favorite_24)).setStyle(mediaStyle)
-////                .addAction(NotificationCompat.Action(R.drawable.round_favorite_24, RWD, CustomMediaButtonReceiver.buildMediaButtonPendingIntent(baseContext, PlaybackStateCompat.ACTION_SKIP_TO_PREVIOUS)))
-////                .addAction(
-////                    if (exoPlayer?.isPlaying == false) NotificationCompat.Action(
-////                        R.drawable.round_favorite_24,
-////                        PLAY,
-////                        CustomMediaButtonReceiver.buildMediaButtonPendingIntent(baseContext, PlaybackStateCompat.ACTION_PLAY)
-////                    ) else NotificationCompat.Action(R.drawable.ic_round_pause, PAUSE, CustomMediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_PAUSE))
-////                )
-////                .addAction(NotificationCompat.Action(R.drawable.ic_round_fwd, FWD, CustomMediaButtonReceiver.buildMediaButtonPendingIntent(context, PlaybackStateCompat.ACTION_SKIP_TO_NEXT)))
-            .build()
-//        notificationManager.notify(1, notification)
-//        startForeground(1, notification)
         return binder
     }
 

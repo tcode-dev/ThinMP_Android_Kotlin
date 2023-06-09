@@ -5,10 +5,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.pm.PackageManager
+import android.graphics.BitmapFactory
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.media3.session.MediaStyleNotificationHelper
 import dev.tcode.thinmp.R
 
 object LocalNotificationHelper {
@@ -17,11 +19,15 @@ object LocalNotificationHelper {
     private const val CHANNEL_NAME = "Your Channel Name"
     private const val CHANNEL_DESCRIPTION = "Your Channel Description"
 
-    fun showNotification(context: Context, title: String, message: String) {
+    fun showNotification(context: Context, title: String, message: String, mediaStyle:  MediaStyleNotificationHelper.MediaStyle) {
         createNotificationChannel(context)
 
+        val b = BitmapFactory.decodeResource(context.resources, R.drawable.round_play_arrow_24)
         val builder =
-            NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.drawable.round_favorite_24).setContentTitle(title).setContentText(message).setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.drawable.round_favorite_24)
+                .setLargeIcon(b)
+                .setStyle(mediaStyle)
+                .setContentTitle(title).setContentText(message).setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setAutoCancel(true)
         val notificationManager = NotificationManagerCompat.from(context)
 
