@@ -183,8 +183,6 @@ class MusicService : Service() {
             exoPlayer?.prepare()
             mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
 //            playbackState = PlaybackState.Builder()
-//            mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
-//            mediaStyle.setShowActionsInCompactView(0, 1, 2)
             mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
             mediaStyle.setShowActionsInCompactView(0, 1, 2)
             val song = getCurrentSong()
