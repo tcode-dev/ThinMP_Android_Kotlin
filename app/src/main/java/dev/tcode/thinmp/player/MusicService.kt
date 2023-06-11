@@ -31,8 +31,8 @@ import androidx.media3.session.MediaStyleNotificationHelper
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.notification.LocalNotificationHelper
 import java.io.IOException
-import java.lang.reflect.InvocationTargetException
 
 interface MusicServiceListener {
     fun onChange() {}
@@ -174,7 +174,9 @@ class MusicService : Service() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun setExoPlayer() {
-        destroy()
+        if (exoPlayer?.isPlaying == true) {
+            exoPlayer?.stop()
+        }
 
         try {
             exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
@@ -200,7 +202,7 @@ class MusicService : Service() {
                 val size = events.size()
 
                 for (index in 0 until size) {
-                    println("exoPlayer onEvents $index:${index + 1}=${events[index]}")
+                    println("exoPlayer onEvents index:${index + 1}=${events[index]}")
                 }
                 if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 

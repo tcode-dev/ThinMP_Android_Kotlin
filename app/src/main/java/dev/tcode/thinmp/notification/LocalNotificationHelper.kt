@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.player
+package dev.tcode.thinmp.notification
 
 import android.Manifest
 import android.app.NotificationChannel
