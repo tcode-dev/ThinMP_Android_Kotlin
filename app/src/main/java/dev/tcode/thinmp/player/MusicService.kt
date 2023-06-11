@@ -187,166 +187,163 @@ class MusicService : Service() {
 
             player?.setMediaItems(mediaItems)
             player?.prepare()
-
-            addListener()
+            player?.addListener(PlayerEventListener())
         } catch (e: IllegalStateException) {
             println(e)
         }
     }
 
-    private fun addListener() {
-        player?.addListener(object : Player.Listener {
-            override fun onEvents(player: Player, events: Player.Events) {
-                val size = events.size()
+    inner class PlayerEventListener : Player.Listener {
+        override fun onEvents(player: Player, events: Player.Events) {
+            val size = events.size()
 
-                println("exoPlayer onEvents start")
+            println("exoPlayer onEvents start")
 
-                for (index in 0 until size) {
-                    println("exoPlayer onEvents index:${index + 1}=${events[index]}")
-                }
-
-                if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
-
-                if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
-                    isPlaying = player.isPlaying
-                    listener?.onChange()
-                    notification()
-                }
-                println("exoPlayer onEvents end")
+            for (index in 0 until size) {
+                println("exoPlayer onEvents index:${index + 1}=${events[index]}")
             }
 
-            override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                println("exoPlayer onMediaItemTransition")
-            }
+            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
-            override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                println("exoPlayer onTimelineChanged")
+            if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                isPlaying = player.isPlaying
+                listener?.onChange()
+                notification()
             }
+            println("exoPlayer onEvents end")
+        }
 
-            override fun onTracksChanged(tracks: Tracks) {
-                println("exoPlayer onTracksChanged")
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            println("exoPlayer onMediaItemTransition")
+        }
+
+        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+            println("exoPlayer onTimelineChanged")
+        }
+
+        override fun onTracksChanged(tracks: Tracks) {
+            println("exoPlayer onTracksChanged")
 //                listener?.onChange(player!!.isPlaying)
-            }
+        }
 
-            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                println("exoPlayer onMediaMetadataChanged")
-            }
+        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+            println("exoPlayer onMediaMetadataChanged")
+        }
 
-            override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
-                println("exoPlayer onPlaylistMetadataChanged")
-            }
+        override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
+            println("exoPlayer onPlaylistMetadataChanged")
+        }
 
-            override fun onIsLoadingChanged(isLoading: Boolean) {
-                println("exoPlayer onIsLoadingChanged")
-            }
+        override fun onIsLoadingChanged(isLoading: Boolean) {
+            println("exoPlayer onIsLoadingChanged")
+        }
 
-            override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
-                println("exoPlayer onAvailableCommandsChanged")
-            }
+        override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
+            println("exoPlayer onAvailableCommandsChanged")
+        }
 
-            override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {
-                println("exoPlayer onTrackSelectionParametersChanged")
-            }
+        override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {
+            println("exoPlayer onTrackSelectionParametersChanged")
+        }
 
-            override fun onPlaybackStateChanged(playbackState: Int) {
-                println("exoPlayer onTrackSelectionParametersChanged")
-            }
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            println("exoPlayer onTrackSelectionParametersChanged")
+        }
 
-            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                println("exoPlayer onPlayWhenReadyChanged")
-            }
+        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+            println("exoPlayer onPlayWhenReadyChanged")
+        }
 
-            override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
-                println("exoPlayer onPlaybackSuppressionReasonChanged")
-            }
+        override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
+            println("exoPlayer onPlaybackSuppressionReasonChanged")
+        }
 
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                println("exoPlayer onIsPlayingChanged: $isPlaying")
+        override fun onIsPlayingChanged(isPlaying: Boolean) {
+            println("exoPlayer onIsPlayingChanged: $isPlaying")
 //                listener?.onChange(isPlaying)
-            }
+        }
 
-            override fun onRepeatModeChanged(repeatMode: Int) {
-                println("exoPlayer onRepeatModeChanged")
-            }
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            println("exoPlayer onRepeatModeChanged")
+        }
 
-            override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-                println("exoPlayer onShuffleModeEnabledChanged")
-            }
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            println("exoPlayer onShuffleModeEnabledChanged")
+        }
 
-            override fun onPlayerError(error: PlaybackException) {
-                println("exoPlayer onPlayerError")
-            }
+        override fun onPlayerError(error: PlaybackException) {
+            println("exoPlayer onPlayerError")
+        }
 
-            override fun onPlayerErrorChanged(error: PlaybackException?) {
-                println("exoPlayer onPlayerErrorChanged")
-            }
+        override fun onPlayerErrorChanged(error: PlaybackException?) {
+            println("exoPlayer onPlayerErrorChanged")
+        }
 
-            override fun onPositionDiscontinuity(oldPosition: PositionInfo, newPosition: PositionInfo, reason: Int) {
-                println("exoPlayer onPositionDiscontinuity")
-            }
+        override fun onPositionDiscontinuity(oldPosition: PositionInfo, newPosition: PositionInfo, reason: Int) {
+            println("exoPlayer onPositionDiscontinuity")
+        }
 
-            override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-                println("exoPlayer onPlaybackParametersChanged")
-            }
+        override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
+            println("exoPlayer onPlaybackParametersChanged")
+        }
 
-            override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {
-                println("exoPlayer onSeekBackIncrementChanged")
-            }
+        override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {
+            println("exoPlayer onSeekBackIncrementChanged")
+        }
 
-            override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {
-                println("exoPlayer onSeekForwardIncrementChanged")
-            }
+        override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {
+            println("exoPlayer onSeekForwardIncrementChanged")
+        }
 
-            override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long) {
-                println("exoPlayer onMaxSeekToPreviousPositionChanged")
-            }
+        override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long) {
+            println("exoPlayer onMaxSeekToPreviousPositionChanged")
+        }
 
-            @UnstableApi
-            override fun onAudioSessionIdChanged(audioSessionId: Int) {
-                println("exoPlayer onAudioSessionIdChanged")
-            }
+        @UnstableApi
+        override fun onAudioSessionIdChanged(audioSessionId: Int) {
+            println("exoPlayer onAudioSessionIdChanged")
+        }
 
-            override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {
-                println("exoPlayer onAudioAttributesChanged")
-            }
+        override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {
+            println("exoPlayer onAudioAttributesChanged")
+        }
 
-            override fun onVolumeChanged(volume: Float) {
-                println("exoPlayer onVolumeChanged")
-            }
+        override fun onVolumeChanged(volume: Float) {
+            println("exoPlayer onVolumeChanged")
+        }
 
-            override fun onSkipSilenceEnabledChanged(skipSilenceEnabled: Boolean) {
-                println("exoPlayer onSkipSilenceEnabledChanged")
-            }
+        override fun onSkipSilenceEnabledChanged(skipSilenceEnabled: Boolean) {
+            println("exoPlayer onSkipSilenceEnabledChanged")
+        }
 
-            override fun onDeviceInfoChanged(deviceInfo: DeviceInfo) {
-                println("exoPlayer onDeviceInfoChanged")
-            }
+        override fun onDeviceInfoChanged(deviceInfo: DeviceInfo) {
+            println("exoPlayer onDeviceInfoChanged")
+        }
 
-            override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {
-                println("exoPlayer onDeviceVolumeChanged")
-            }
+        override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {
+            println("exoPlayer onDeviceVolumeChanged")
+        }
 
-            override fun onVideoSizeChanged(videoSize: VideoSize) {
-                println("exoPlayer onVideoSizeChanged")
-            }
+        override fun onVideoSizeChanged(videoSize: VideoSize) {
+            println("exoPlayer onVideoSizeChanged")
+        }
 
-            override fun onSurfaceSizeChanged(width: Int, height: Int) {
-                println("exoPlayer onSurfaceSizeChanged")
-            }
+        override fun onSurfaceSizeChanged(width: Int, height: Int) {
+            println("exoPlayer onSurfaceSizeChanged")
+        }
 
-            override fun onRenderedFirstFrame() {
-                println("exoPlayer onRenderedFirstFrame")
-            }
+        override fun onRenderedFirstFrame() {
+            println("exoPlayer onRenderedFirstFrame")
+        }
 
-            override fun onCues(cueGroup: CueGroup) {
-                println("exoPlayer onCues")
-            }
+        override fun onCues(cueGroup: CueGroup) {
+            println("exoPlayer onCues")
+        }
 
-            @UnstableApi
-            override fun onMetadata(metadata: Metadata) {
-                println("exoPlayer onMetadata")
-            }
-        })
+        @UnstableApi
+        override fun onMetadata(metadata: Metadata) {
+            println("exoPlayer onMetadata")
+        }
     }
 
     //    private fun createCompletionListener(): OnCompletionListener {
