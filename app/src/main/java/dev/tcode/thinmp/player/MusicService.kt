@@ -2,9 +2,9 @@ package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.ImageDecoder
 import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.IBinder
@@ -42,7 +42,6 @@ class MusicService : Service() {
     private var exoPlayer: ExoPlayer? = null
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
-    private lateinit var pendingIntentList: PendingIntent
     private lateinit var playbackState: PlaybackState.Builder
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
@@ -185,10 +184,6 @@ class MusicService : Service() {
 //            playbackState = PlaybackState.Builder()
             mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
             mediaStyle.setShowActionsInCompactView(0, 1, 2)
-            val song = getCurrentSong()
-            if (song != null) {
-                LocalNotificationHelper.showNotification(baseContext, song.name, song.artistName, mediaStyle)
-            }
 
             addListener()
         } catch (e: IllegalStateException) {
@@ -209,8 +204,15 @@ class MusicService : Service() {
                 if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                     isPlaying = player.isPlaying
                     listener?.onChange()
-                    val intent = Intent("SEND_MESSAGE")
-                    intent.putExtra("MUSIC", "FWD")
+                    val song = getCurrentSong()
+                    if (song != null) {
+                        val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
+                        val albumArtBitmap = ImageDecoder.decodeBitmap(source)
+
+                        LocalNotificationHelper.showNotification(baseContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
+                    }
+//                    val intent = Intent("SEND_MESSAGE")
+//                    intent.putExtra("MUSIC", "FWD")
 //                    Localbroadcastmanager.getInstance(baseContext).sendBroadcast(intent)
                 }
                 println("exoPlayer onEvents end")
