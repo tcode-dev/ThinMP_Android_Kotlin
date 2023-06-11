@@ -1,12 +1,10 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.media.session.PlaybackState
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
@@ -41,11 +39,9 @@ interface MusicServiceListener {
 class MusicService : Service() {
     private val PREV_MS = 3000
     private val binder = MusicBinder()
-    private lateinit var notificationManager: NotificationManager
-    private var exoPlayer: ExoPlayer? = null
+    private var player: ExoPlayer? = null
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
-    private lateinit var playbackState: PlaybackState.Builder
     private var listener: MusicServiceListener? = null
     private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
@@ -72,40 +68,38 @@ class MusicService : Service() {
     }
 
     fun getCurrentSong(): SongModel? {
-        if (exoPlayer?.currentMediaItem == null) return null
+        if (player?.currentMediaItem == null) return null
 
-        return playingList.first { MediaItem.fromUri(it.getMediaUri()) == exoPlayer?.currentMediaItem }
+        return playingList.first { MediaItem.fromUri(it.getMediaUri()) == player?.currentMediaItem }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
         playingList = songs
-        setRepeat()
-        setShuffle()
-        setExoPlayer()
-        exoPlayer?.seekTo(index, 0)
+        setPlayer()
+        player?.seekTo(index, 0)
         play()
         isPlaying = true
     }
 
     fun play() {
         try {
-            exoPlayer?.play()
+            player?.play()
         } catch (e: IllegalStateException) {
             fix()
         }
     }
 
     fun pause() {
-        exoPlayer?.pause()
+        player?.pause()
     }
 
     fun prev() {
-        val isContinue = exoPlayer?.isPlaying
+        val isContinue = player?.isPlaying
 
         if (getCurrentPosition() <= PREV_MS) {
-            exoPlayer?.seekToPrevious()
+            player?.seekToPrevious()
         } else {
-            exoPlayer?.seekTo(0)
+            player?.seekTo(0)
             listener?.onChange()
         }
 
@@ -115,9 +109,9 @@ class MusicService : Service() {
     }
 
     fun next() {
-        val isContinue = exoPlayer?.isPlaying
+        val isContinue = player?.isPlaying
 
-        exoPlayer?.seekToNext()
+        player?.seekToNext()
 
         if (isContinue == true) {
             play()
@@ -149,7 +143,7 @@ class MusicService : Service() {
     }
 
     fun seekTo(ms: Long) {
-        exoPlayer?.seekTo(ms)
+        player?.seekTo(ms)
     }
 
     fun isPlaying(): Boolean {
@@ -157,11 +151,11 @@ class MusicService : Service() {
     }
 
     fun getCurrentPosition(): Long {
-        return exoPlayer?.currentPosition ?: 0
+        return player?.currentPosition ?: 0
     }
 
     private fun setRepeat() {
-        exoPlayer?.repeatMode = when (repeat) {
+        player?.repeatMode = when (repeat) {
             RepeatState.OFF -> Player.REPEAT_MODE_OFF
             RepeatState.ONE -> Player.REPEAT_MODE_ONE
             RepeatState.ALL -> Player.REPEAT_MODE_ALL
@@ -169,26 +163,30 @@ class MusicService : Service() {
     }
 
     private fun setShuffle() {
-        exoPlayer?.shuffleModeEnabled = shuffle
+        player?.shuffleModeEnabled = shuffle
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun setExoPlayer() {
-        if (exoPlayer?.isPlaying == true) {
-            exoPlayer?.stop()
+    private fun setPlayer() {
+        if (player?.isPlaying == true) {
+            player?.stop()
         }
 
         try {
-            exoPlayer = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
+            if (player == null) {
+                player = ExoPlayer.Builder(baseContext).setLooper(Looper.getMainLooper()).build()
+                mediaSession = MediaSession.Builder(baseContext, player!!).build()
+                mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+                setRepeat()
+                setShuffle()
+            }
+
             val mediaItems = playingList.map {
                 MediaItem.fromUri(it.getMediaUri())
             }
-            exoPlayer?.setMediaItems(mediaItems)
-            exoPlayer?.prepare()
-            mediaSession = MediaSession.Builder(baseContext, exoPlayer!!).build()
-//            playbackState = PlaybackState.Builder()
-            mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
-            mediaStyle.setShowActionsInCompactView(0, 1, 2)
+
+            player?.setMediaItems(mediaItems)
+            player?.prepare()
 
             addListener()
         } catch (e: IllegalStateException) {
@@ -197,30 +195,22 @@ class MusicService : Service() {
     }
 
     private fun addListener() {
-        exoPlayer?.addListener(object : Player.Listener {
+        player?.addListener(object : Player.Listener {
             override fun onEvents(player: Player, events: Player.Events) {
                 val size = events.size()
+
+                println("exoPlayer onEvents start")
 
                 for (index in 0 until size) {
                     println("exoPlayer onEvents index:${index + 1}=${events[index]}")
                 }
+
                 if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
                 if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                     isPlaying = player.isPlaying
                     listener?.onChange()
-                    val song = getCurrentSong()
-                    if (song != null) {
-                        var albumArtBitmap: Bitmap? = null
-                        try {
-                            val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
-
-                            albumArtBitmap = ImageDecoder.decodeBitmap(source)
-                        } catch (e: IOException) {
-                        }
-
-                        LocalNotificationHelper.showNotification(baseContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
-                    }
+                    notification()
                 }
                 println("exoPlayer onEvents end")
             }
@@ -235,7 +225,7 @@ class MusicService : Service() {
 
             override fun onTracksChanged(tracks: Tracks) {
                 println("exoPlayer onTracksChanged")
-//                listener?.onChange(exoPlayer!!.isPlaying)
+//                listener?.onChange(player!!.isPlaying)
             }
 
             override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
@@ -359,22 +349,14 @@ class MusicService : Service() {
         })
     }
 
-    private fun destroy() {
-        if (exoPlayer?.isPlaying == true) {
-            exoPlayer?.stop()
-        }
-
-        exoPlayer?.release()
-    }
-
-//    private fun createCompletionListener(): OnCompletionListener {
+    //    private fun createCompletionListener(): OnCompletionListener {
 //        return OnCompletionListener {
 //            if (repeat == RepeatState.ONE) {
-//                song?.let { setExoPlayer(it) }
+//                song?.let { setPlayer(it) }
 //                play()
 //            } else {
 //                if (playingList.hasNext()) {
-//                    setExoPlayer(playingList.next())
+//                    setPlayer(playingList.next())
 //                    play()
 //                } else {
 //                    playingList = if (shuffle) {
@@ -382,7 +364,7 @@ class MusicService : Service() {
 //                    } else {
 //                        originalList.listIterator(0)
 //                    }
-//                    setExoPlayer(playingList.next())
+//                    setPlayer(playingList.next())
 //                    if (repeat == RepeatState.ALL) {
 //                        play()
 //                    }
@@ -395,14 +377,36 @@ class MusicService : Service() {
 
     private fun fix() {
 //        if (playingList.hasNext()) {
-//            setExoPlayer(playingList.next())
+//            setPlayer(playingList.next())
 //            play()
 //            listener?.onChange()
 //        }
     }
 
+    private fun notification() {
+        val song = getCurrentSong() ?: return
+        var albumArtBitmap: Bitmap? = null
+
+        try {
+            val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
+
+            albumArtBitmap = ImageDecoder.decodeBitmap(source)
+        } catch (e: IOException) {
+        }
+
+        LocalNotificationHelper.showNotification(baseContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
+    }
+
     override fun onBind(intent: Intent): IBinder {
         return binder
+    }
+
+    override fun onDestroy() {
+        if (player?.isPlaying == true) {
+            player?.stop()
+        }
+
+        player?.release()
     }
 
     inner class MusicBinder : Binder() {
