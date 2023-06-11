@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.media.session.PlaybackState
 import android.os.Binder
@@ -30,6 +31,8 @@ import androidx.media3.session.MediaStyleNotificationHelper
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
+import java.io.IOException
+import java.lang.reflect.InvocationTargetException
 
 interface MusicServiceListener {
     fun onChange() {}
@@ -206,14 +209,16 @@ class MusicService : Service() {
                     listener?.onChange()
                     val song = getCurrentSong()
                     if (song != null) {
-                        val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
-                        val albumArtBitmap = ImageDecoder.decodeBitmap(source)
+                        var albumArtBitmap: Bitmap? = null
+                        try {
+                            val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
+
+                            albumArtBitmap = ImageDecoder.decodeBitmap(source)
+                        } catch (e: IOException) {
+                        }
 
                         LocalNotificationHelper.showNotification(baseContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
                     }
-//                    val intent = Intent("SEND_MESSAGE")
-//                    intent.putExtra("MUSIC", "FWD")
-//                    Localbroadcastmanager.getInstance(baseContext).sendBroadcast(intent)
                 }
                 println("exoPlayer onEvents end")
             }
