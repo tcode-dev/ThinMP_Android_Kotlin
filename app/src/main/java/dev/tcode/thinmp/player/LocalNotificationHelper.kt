@@ -19,11 +19,13 @@ object LocalNotificationHelper {
     private const val CHANNEL_DESCRIPTION = "Your Channel Description"
 
     fun showNotification(context: Context, mediaStyle: MediaStyleNotificationHelper.MediaStyle, title: String, message: String, albumArtBitmap: Bitmap?) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+
         createNotificationChannel(context)
 
-        val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.round_favorite_24)
-            .setStyle(mediaStyle).setContentTitle(title).setContentText(message)
+        val builder = NotificationCompat.Builder(context, CHANNEL_ID).setSmallIcon(R.drawable.round_audiotrack_24).setStyle(mediaStyle).setContentTitle(title).setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT).setAutoCancel(true)
         if (albumArtBitmap != null) {
             builder.setLargeIcon(albumArtBitmap)
@@ -31,16 +33,6 @@ object LocalNotificationHelper {
 
         val notificationManager = NotificationManagerCompat.from(context)
 
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
         notificationManager.notify(0, builder.build())
     }
 
