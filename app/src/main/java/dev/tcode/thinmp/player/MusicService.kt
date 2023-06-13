@@ -94,8 +94,6 @@ class MusicService : Service() {
     }
 
     fun prev() {
-        val isContinue = player?.isPlaying
-
         if (getCurrentPosition() <= PREV_MS) {
             player?.seekToPrevious()
         } else {
@@ -103,17 +101,15 @@ class MusicService : Service() {
             listener?.onChange()
         }
 
-        if (isContinue == true) {
+        if (isPlaying) {
             play()
         }
     }
 
     fun next() {
-        val isContinue = player?.isPlaying
-
         player?.seekToNext()
 
-        if (isContinue == true) {
+        if (isPlaying) {
             play()
         }
     }
@@ -168,7 +164,7 @@ class MusicService : Service() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun setPlayer() {
-        if (player?.isPlaying == true) {
+        if (isPlaying) {
             player?.stop()
         }
 
