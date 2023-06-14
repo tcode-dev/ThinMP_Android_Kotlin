@@ -342,32 +342,6 @@ class MusicService : Service() {
         }
     }
 
-    //    private fun createCompletionListener(): OnCompletionListener {
-//        return OnCompletionListener {
-//            if (repeat == RepeatState.ONE) {
-//                song?.let { setPlayer(it) }
-//                play()
-//            } else {
-//                if (playingList.hasNext()) {
-//                    setPlayer(playingList.next())
-//                    play()
-//                } else {
-//                    playingList = if (shuffle) {
-//                        shuffledList.listIterator(0)
-//                    } else {
-//                        originalList.listIterator(0)
-//                    }
-//                    setPlayer(playingList.next())
-//                    if (repeat == RepeatState.ALL) {
-//                        play()
-//                    }
-//                }
-//            }
-//
-//            listener?.onChange()
-//        }
-//    }
-
     private fun fix() {
 //        if (playingList.hasNext()) {
 //            setPlayer(playingList.next())
