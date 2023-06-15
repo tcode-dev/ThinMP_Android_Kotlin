@@ -26,6 +26,7 @@
     <string name="add_shortcut">Add to a shortcut</string>
     <string name="remove_shortcut">Remove from shortcut</string>
 
-    <string name="permission_denied">Access to audio files is not allowed.</string>
-    <string name="permission_request">Allow access to audio files</string>
+    <string name="permission_audio_denied">Allow access to music files to play songs.</string>
+    <string name="permission_notifications_denied">If you allow notifications, the media player will appear on the lock screen.</string>
+    <string name="permission_request">Allow access</string>
 </resources>

@@ -20,46 +20,44 @@ import dev.tcode.thinmp.constant.StyleConstant
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionView(content: @Composable BoxScope.() -> Unit) {
-    val permissionState = rememberMultiplePermissionsState(
-        listOf(
-            READ_MEDIA_AUDIO,
-            POST_NOTIFICATIONS
-        )
-    )
+    val permissionState = rememberMultiplePermissionsState(listOf(READ_MEDIA_AUDIO, POST_NOTIFICATIONS))
+    val audio = permissionState.permissions.first { it.permission == READ_MEDIA_AUDIO }
+    val isNotificationsDenied = permissionState.permissions.any { it.permission == POST_NOTIFICATIONS && it.status != PermissionStatus.Granted }
 
-    permissionState.permissions.forEach { permis ->
-        when (permis.permission) {
-            READ_MEDIA_AUDIO -> {
-                when (permis.status) {
-                    PermissionStatus.Granted -> {
-                        Box(content = content)
-                    }
+    when (audio.status) {
+        PermissionStatus.Granted -> {
+            Box(content = content)
+        }
 
-                    is PermissionStatus.Denied -> {
-                        when {
-                            permis.status.shouldShowRationale -> {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Text(
-                                        stringResource(R.string.permission_denied),
-                                        color = MaterialTheme.colorScheme.primary,
-                                        modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
-                                    )
-                                    Button(colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.primary, containerColor = MaterialTheme.colorScheme.onSecondary),
-                                        onClick = { permissionState.launchMultiplePermissionRequest() }) {
-                                        Text(stringResource(R.string.permission_request))
-                                    }
-                                }
-                            }
-
-                            else -> SideEffect {
-                                // 何度も拒否している場合はダイアログが表示されないことがある
-                                // この動作はAndroidレベルのAPIによって異なる
-                                permissionState.launchMultiplePermissionRequest()
-                            }
+        is PermissionStatus.Denied -> {
+            when {
+                audio.status.shouldShowRationale -> {
+                    Column(
+                        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            stringResource(R.string.permission_audio_denied),
+                            color = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
+                        )
+                        if (isNotificationsDenied) {
+                            Text(
+                                stringResource(R.string.permission_notifications_denied),
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
+                            )
+                        }
+                        Button(colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.primary, containerColor = MaterialTheme.colorScheme.onSecondary),
+                            onClick = { permissionState.launchMultiplePermissionRequest() }) {
+                            Text(stringResource(R.string.permission_request))
                         }
                     }
+                }
+
+                else -> SideEffect {
+                    // 何度も拒否している場合はダイアログが表示されないことがある
+                    // この動作はAndroidレベルのAPIによって異なる
+                    permissionState.launchMultiplePermissionRequest()
                 }
             }
         }
