@@ -191,14 +191,6 @@ class MusicService : Service() {
 
     inner class PlayerEventListener : Player.Listener {
         override fun onEvents(player: Player, events: Player.Events) {
-            val size = events.size()
-
-            println("exoPlayer onEvents start")
-
-            for (index in 0 until size) {
-                println("exoPlayer onEvents index:${index + 1}=${events[index]}")
-            }
-
             if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
             if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
@@ -206,7 +198,6 @@ class MusicService : Service() {
                 listener?.onChange()
                 notification()
             }
-            println("exoPlayer onEvents end")
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
@@ -219,7 +210,6 @@ class MusicService : Service() {
 
         override fun onTracksChanged(tracks: Tracks) {
             println("exoPlayer onTracksChanged")
-//                listener?.onChange(player!!.isPlaying)
         }
 
         override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
