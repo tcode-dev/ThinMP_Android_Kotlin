@@ -202,6 +202,7 @@ class MusicService : Service() {
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             println("exoPlayer onMediaItemTransition")
+            listener?.onChange()
         }
 
         override fun onTimelineChanged(timeline: Timeline, reason: Int) {
