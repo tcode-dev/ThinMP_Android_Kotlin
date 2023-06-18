@@ -82,11 +82,7 @@ class MusicService : Service() {
     }
 
     fun play() {
-        try {
-            player?.play()
-        } catch (e: IllegalStateException) {
-            fix()
-        }
+        player?.play()
     }
 
     fun pause() {
@@ -201,144 +197,8 @@ class MusicService : Service() {
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            println("exoPlayer onMediaItemTransition")
             listener?.onChange()
         }
-
-        override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-            println("exoPlayer onTimelineChanged")
-        }
-
-        override fun onTracksChanged(tracks: Tracks) {
-            println("exoPlayer onTracksChanged")
-        }
-
-        override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-            println("exoPlayer onMediaMetadataChanged")
-        }
-
-        override fun onPlaylistMetadataChanged(mediaMetadata: MediaMetadata) {
-            println("exoPlayer onPlaylistMetadataChanged")
-        }
-
-        override fun onIsLoadingChanged(isLoading: Boolean) {
-            println("exoPlayer onIsLoadingChanged")
-        }
-
-        override fun onAvailableCommandsChanged(availableCommands: Player.Commands) {
-            println("exoPlayer onAvailableCommandsChanged")
-        }
-
-        override fun onTrackSelectionParametersChanged(parameters: TrackSelectionParameters) {
-            println("exoPlayer onTrackSelectionParametersChanged")
-        }
-
-        override fun onPlaybackStateChanged(playbackState: Int) {
-            println("exoPlayer onTrackSelectionParametersChanged")
-        }
-
-        override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-            println("exoPlayer onPlayWhenReadyChanged")
-        }
-
-        override fun onPlaybackSuppressionReasonChanged(playbackSuppressionReason: Int) {
-            println("exoPlayer onPlaybackSuppressionReasonChanged")
-        }
-
-        override fun onIsPlayingChanged(isPlaying: Boolean) {
-            println("exoPlayer onIsPlayingChanged: $isPlaying")
-//                listener?.onChange(isPlaying)
-        }
-
-        override fun onRepeatModeChanged(repeatMode: Int) {
-            println("exoPlayer onRepeatModeChanged")
-        }
-
-        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            println("exoPlayer onShuffleModeEnabledChanged")
-        }
-
-        override fun onPlayerError(error: PlaybackException) {
-            println("exoPlayer onPlayerError")
-        }
-
-        override fun onPlayerErrorChanged(error: PlaybackException?) {
-            println("exoPlayer onPlayerErrorChanged")
-        }
-
-        override fun onPositionDiscontinuity(oldPosition: PositionInfo, newPosition: PositionInfo, reason: Int) {
-            println("exoPlayer onPositionDiscontinuity")
-        }
-
-        override fun onPlaybackParametersChanged(playbackParameters: PlaybackParameters) {
-            println("exoPlayer onPlaybackParametersChanged")
-        }
-
-        override fun onSeekBackIncrementChanged(seekBackIncrementMs: Long) {
-            println("exoPlayer onSeekBackIncrementChanged")
-        }
-
-        override fun onSeekForwardIncrementChanged(seekForwardIncrementMs: Long) {
-            println("exoPlayer onSeekForwardIncrementChanged")
-        }
-
-        override fun onMaxSeekToPreviousPositionChanged(maxSeekToPreviousPositionMs: Long) {
-            println("exoPlayer onMaxSeekToPreviousPositionChanged")
-        }
-
-        @UnstableApi
-        override fun onAudioSessionIdChanged(audioSessionId: Int) {
-            println("exoPlayer onAudioSessionIdChanged")
-        }
-
-        override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {
-            println("exoPlayer onAudioAttributesChanged")
-        }
-
-        override fun onVolumeChanged(volume: Float) {
-            println("exoPlayer onVolumeChanged")
-        }
-
-        override fun onSkipSilenceEnabledChanged(skipSilenceEnabled: Boolean) {
-            println("exoPlayer onSkipSilenceEnabledChanged")
-        }
-
-        override fun onDeviceInfoChanged(deviceInfo: DeviceInfo) {
-            println("exoPlayer onDeviceInfoChanged")
-        }
-
-        override fun onDeviceVolumeChanged(volume: Int, muted: Boolean) {
-            println("exoPlayer onDeviceVolumeChanged")
-        }
-
-        override fun onVideoSizeChanged(videoSize: VideoSize) {
-            println("exoPlayer onVideoSizeChanged")
-        }
-
-        override fun onSurfaceSizeChanged(width: Int, height: Int) {
-            println("exoPlayer onSurfaceSizeChanged")
-        }
-
-        override fun onRenderedFirstFrame() {
-            println("exoPlayer onRenderedFirstFrame")
-        }
-
-        override fun onCues(cueGroup: CueGroup) {
-            println("exoPlayer onCues")
-        }
-
-        @UnstableApi
-        override fun onMetadata(metadata: Metadata) {
-            println("exoPlayer onMetadata")
-        }
-    }
-
-    private fun fix() {
-//        if (playingList.hasNext()) {
-//            setPlayer(playingList.next())
-//            play()
-//            listener?.onChange()
-//        }
     }
 
     private fun notification() {
