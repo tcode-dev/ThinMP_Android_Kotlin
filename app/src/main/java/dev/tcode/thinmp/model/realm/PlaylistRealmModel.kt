@@ -10,6 +10,5 @@ class PlaylistRealmModel: RealmObject {
     @PrimaryKey
     var id: String = UUID.randomUUID().toString()
     var name: String = ""
-    var order = 0
     var songs: RealmList<PlaylistSongRealmModel> = realmListOf()
 }
