@@ -35,9 +35,6 @@ class MusicService : Service() {
     private lateinit var repeat: RepeatState
     private var shuffle = false
 
-    // player.isPlayingはseekbarを操作中falseになる
-    private var isPlaying = false
-
     override fun onCreate() {
         super.onCreate()
 
@@ -65,7 +62,6 @@ class MusicService : Service() {
         setPlayer()
         player?.seekTo(index, 0)
         play()
-        isPlaying = true
     }
 
     fun play() {
@@ -83,18 +79,10 @@ class MusicService : Service() {
             player?.seekTo(0)
             listener?.onChange()
         }
-
-        if (isPlaying) {
-            play()
-        }
     }
 
     fun next() {
         player?.seekToNext()
-
-        if (isPlaying) {
-            play()
-        }
     }
 
     fun getRepeat(): RepeatState {
@@ -126,7 +114,7 @@ class MusicService : Service() {
     }
 
     fun isPlaying(): Boolean {
-        return isPlaying
+        return player?.isPlaying ?: false
     }
 
     fun getCurrentPosition(): Long {
@@ -147,7 +135,7 @@ class MusicService : Service() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun setPlayer() {
-        if (isPlaying) {
+        if (player?.isPlaying == true) {
             player?.stop()
         }
 
@@ -177,7 +165,6 @@ class MusicService : Service() {
             if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
             if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
-                isPlaying = player.isPlaying
                 listener?.onChange()
                 notification()
             }
