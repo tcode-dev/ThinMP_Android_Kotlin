@@ -185,6 +185,7 @@ class MusicService : Service() {
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             listener?.onChange()
+            notification()
         }
     }
 
