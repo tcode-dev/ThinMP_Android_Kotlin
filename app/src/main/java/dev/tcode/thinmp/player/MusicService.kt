@@ -184,7 +184,7 @@ class MusicService : Service() {
             val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
 
             albumArtBitmap = ImageDecoder.decodeBitmap(source)
-        } catch (e: IOException) {
+        } catch (_: IOException) {
         }
 
         LocalNotificationHelper.showNotification(baseContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
