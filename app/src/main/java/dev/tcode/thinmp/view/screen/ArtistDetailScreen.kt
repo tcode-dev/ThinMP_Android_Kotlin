@@ -45,8 +45,8 @@ import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.view.util.miniPlayerHeight
-import dev.tcode.thinmp.view.util.spanSize
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @ExperimentalFoundationApi
@@ -54,7 +54,7 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val itemSize: Dp = spanSize()
+    val spanCount: Int = gridSpanCount()
     val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
@@ -65,15 +65,11 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        DetailCollapsingTopAppBarView(
-            title = uiState.primaryText,
-            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
-            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
-            dropdownMenus = { callback ->
-                FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
-                ShortcutDropdownMenuItemView(ArtistId(id), callback)
-            }) {
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+        DetailCollapsingTopAppBarView(title = uiState.primaryText, position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION, columns = GridCells.Fixed(spanCount), dropdownMenus = { callback ->
+            FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
+            ShortcutDropdownMenuItemView(ArtistId(id), callback)
+        }) {
+            item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
@@ -134,19 +130,17 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 }
             }
             if (uiState.albums.isNotEmpty()) {
-                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.albums))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
                     Box(
-                        modifier = Modifier
-                            .width(itemSize)
-                            .wrapContentSize(Alignment.TopStart)
+                        modifier = Modifier.wrapContentSize(Alignment.TopStart)
                     ) {
                         val expanded = remember { mutableStateOf(false) }
                         val close = { expanded.value = false }
 
-                        GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                        GridCellView(index, spanCount) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
                             })
@@ -158,10 +152,10 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 }
             }
             if (uiState.songs.isNotEmpty()) {
-                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.songs))
                 }
-                itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
+                itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
                     Box {
                         val expanded = remember { mutableStateOf(false) }
                         val closeFavorite = { expanded.value = false }

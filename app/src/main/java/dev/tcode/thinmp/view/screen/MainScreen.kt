@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,7 +44,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val miniPlayerHeight = miniPlayerHeight()
-    val itemSize: Dp = spanSize()
+    val spanCount: Int = gridSpanCount()
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
@@ -53,8 +52,8 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        LazyVerticalGrid(columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT)) {
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+        LazyVerticalGrid(columns = GridCells.Fixed(spanCount)) {
+            item(span = { GridItemSpan(spanCount) }) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -102,7 +101,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     DividerView()
                 }
             }
-            items(items = uiState.menu, span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { item ->
+            items(items = uiState.menu, span = { GridItemSpan(spanCount) }) { item ->
                 if (item.visibility) {
                     PlainRowView(stringResource(item.id), modifier = Modifier.clickable {
                         navController.navigate(item.key)
@@ -110,14 +109,12 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 }
             }
             if (uiState.shortcutVisibility && uiState.shortcuts.isNotEmpty()) {
-                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
                 itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
                     Box(
-                        modifier = Modifier
-                            .width(itemSize)
-                            .wrapContentSize(Alignment.TopStart)
+                        modifier = Modifier.wrapContentSize(Alignment.TopStart)
                     ) {
                         val expanded = remember { mutableStateOf(false) }
                         val close = { expanded.value = false }
@@ -126,7 +123,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                             close()
                         }
 
-                        GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                        GridCellView(index, spanCount) {
                             ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(shortcut.url) {
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
                             })
@@ -138,14 +135,12 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 }
             }
             if (uiState.recentlyAlbumsVisibility && uiState.albums.isNotEmpty()) {
-                item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+                item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.recently_added))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
                     Box(
-                        modifier = Modifier
-                            .width(itemSize)
-                            .wrapContentSize(Alignment.TopStart)
+                        modifier = Modifier.wrapContentSize(Alignment.TopStart)
                     ) {
                         val expanded = remember { mutableStateOf(false) }
                         val close = { expanded.value = false }
@@ -154,7 +149,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                             close()
                         }
 
-                        GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                        GridCellView(index, spanCount) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
                                 detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
                             })

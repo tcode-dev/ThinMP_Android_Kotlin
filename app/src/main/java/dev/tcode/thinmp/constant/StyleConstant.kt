@@ -10,7 +10,8 @@ class StyleConstant {
         const val FONT_MEDIUM = 16
         const val FONT_SMALL = 14
         const val FONT_TINY = 12
-        const val GRID_MAX_SPAN_COUNT = 2
+        const val GRID_MIN_SPAN_COUNT = 2
+        const val GRID_SPAN_BASE_SIZE = 200
         const val ICON_SIZE = 24
         const val IMAGE_CORNER_SIZE = 4
         const val IMAGE_SIZE = 40

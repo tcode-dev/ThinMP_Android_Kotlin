@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
+import java.lang.Integer.max
 
 @Composable
-fun spanSize(): Dp {
-    return LocalConfiguration.current.screenWidthDp.dp / StyleConstant.GRID_MAX_SPAN_COUNT
+fun gridSpanCount(): Int {
+    val spanCount = LocalConfiguration.current.screenWidthDp / StyleConstant.GRID_SPAN_BASE_SIZE
+
+    return max(spanCount, StyleConstant.GRID_MIN_SPAN_COUNT)
 }
 
 @Composable

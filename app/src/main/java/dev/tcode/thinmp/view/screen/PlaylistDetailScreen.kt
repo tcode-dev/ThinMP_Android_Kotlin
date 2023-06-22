@@ -41,6 +41,7 @@ import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 
@@ -52,6 +53,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
     val navigator = LocalNavigator.current
+    val spanCount: Int = gridSpanCount()
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -61,12 +63,12 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
         DetailCollapsingTopAppBarView(
             title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
-            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
+            columns = GridCells.Fixed(spanCount),
             dropdownMenus = { callback ->
                 DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })
                 ShortcutDropdownMenuItemView(AlbumId(id), callback)
             }) {
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
@@ -116,7 +118,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     }
                 }
             }
-            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) { index, song ->
+            itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }

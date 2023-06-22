@@ -34,27 +34,25 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val miniPlayerHeight = miniPlayerHeight()
-    val itemSize: Dp = spanSize()
+    val spanCount: Int = gridSpanCount()
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT)) {
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+        GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = GridCells.Fixed(spanCount)) {
+            item(span = { GridItemSpan(spanCount) }) {
                 EmptyTopAppBarView()
             }
             itemsIndexed(uiState.albums) { index, album ->
                 Box(
-                    modifier = Modifier
-                        .width(itemSize)
-                        .wrapContentSize(Alignment.TopStart)
+                    modifier = Modifier.wrapContentSize(Alignment.TopStart)
                 ) {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
 
-                    GridCellView(index, StyleConstant.GRID_MAX_SPAN_COUNT, itemSize) {
+                    GridCellView(index, spanCount) {
                         AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
                             detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
                         })
@@ -64,7 +62,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                     }
                 }
             }
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(spanCount) }) {
                 EmptyMiniPlayerView()
             }
         }

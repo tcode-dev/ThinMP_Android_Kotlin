@@ -36,6 +36,7 @@ import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
@@ -46,6 +47,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
+    val spanCount: Int = gridSpanCount()
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -54,11 +56,11 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
 
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
-            columns = GridCells.Fixed(StyleConstant.GRID_MAX_SPAN_COUNT),
+            columns = GridCells.Fixed(spanCount),
             dropdownMenus = { callback ->
                 ShortcutDropdownMenuItemView(AlbumId(id), callback)
             }) {
-            item(span = { GridItemSpan(StyleConstant.GRID_MAX_SPAN_COUNT) }) {
+            item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
