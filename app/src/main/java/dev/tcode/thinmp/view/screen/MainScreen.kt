@@ -52,7 +52,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        LazyVerticalGrid(columns = GridCells.Fixed(spanCount)) {
+        LazyVerticalGrid(columns = CustomGridCellsFixed(spanCount)) {
             item(span = { GridItemSpan(spanCount) }) {
                 Column(
                     modifier = Modifier

@@ -41,7 +41,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = GridCells.Fixed(spanCount)) {
+        GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount)) {
             item(span = { GridItemSpan(spanCount) }) {
                 EmptyTopAppBarView()
             }

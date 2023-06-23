@@ -34,6 +34,7 @@ import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
+import dev.tcode.thinmp.view.util.CustomGridCellsFixed
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.gridSpanCount
@@ -56,7 +57,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
 
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
-            columns = GridCells.Fixed(spanCount),
+            columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->
                 ShortcutDropdownMenuItemView(AlbumId(id), callback)
             }) {
@@ -110,7 +111,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     }
                 }
             }
-            itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(2) }) { index, song ->
+            itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
                 Box {
                     val expanded = remember { mutableStateOf(false) }
                     val closeFavorite = { expanded.value = false }
