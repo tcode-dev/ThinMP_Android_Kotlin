@@ -29,6 +29,9 @@ class MainActivity : ComponentActivity() {
         // StatusBarを透過
         window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
 
+        // display cutout領域にも表示
+        window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
+
         setContent {
             ThinMPTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
