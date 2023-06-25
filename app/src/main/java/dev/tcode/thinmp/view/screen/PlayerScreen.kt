@@ -167,7 +167,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                             .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                             .clickable { viewModel.changeRepeat() }) {
                         Icon(
-                            painter = painterResource(id = if (uiState.repeat == RepeatState.ONE) R.drawable.round_repeat_24 else R.drawable.round_repeat_one_24),
+                            painter = painterResource(id = if (uiState.repeat == RepeatState.ONE) R.drawable.round_repeat_one_24 else R.drawable.round_repeat_24),
                             contentDescription = null,
                             modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
                             tint = if (uiState.repeat == RepeatState.OFF) MaterialTheme.colorScheme.primary.copy(alpha = 0.38f) else MaterialTheme.colorScheme.primary,

@@ -97,6 +97,7 @@ class MusicService : Service() {
         }
 
         config.saveRepeat(repeat)
+        listener?.onChange()
     }
 
     fun getShuffle(): Boolean {
@@ -107,6 +108,7 @@ class MusicService : Service() {
         shuffle = !shuffle
         setShuffle()
         config.saveShuffle(shuffle)
+        listener?.onChange()
     }
 
     fun seekTo(ms: Long) {
