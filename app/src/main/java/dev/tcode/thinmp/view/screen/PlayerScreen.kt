@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.view.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,6 +18,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -35,78 +38,96 @@ import dev.tcode.thinmp.viewModel.PlayerViewModel
 fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 100 * 64
-    val imageBottomPosition: Dp = LocalConfiguration.current.screenWidthDp.dp - imageSize - WindowInsets.systemBars.asPaddingValues().calculateTopPadding() - StyleConstant.ROW_HEIGHT.dp
+    val width = LocalConfiguration.current.screenWidthDp.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+    val minSize = min(width, height)
+    val maxSize = max(width, height)
+    val imageSize: Dp = minSize / 100 * 64
+    val edgeSize: Dp = minSize / 100 * 18
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val gradientHeight = if (isLandscape) minSize else minSize / 2 + 1.dp
+    val playerHeight = if (isLandscape) minSize else maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
-            ConstraintLayout(
-                Modifier
-                    .fillMaxWidth()
-                    .height(LocalConfiguration.current.screenWidthDp.dp)
-            ) {
-                val (primary) = createRefs()
+        val (player, img, gradient) = createRefs()
 
+        ImageView(
+            uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
+                .fillMaxWidth()
+                .blur(20.dp), painter = null
+        )
+        val gradientModifier = if (isLandscape) Modifier.statusBarsPadding() else Modifier
+        Box(
+            modifier = gradientModifier
+                .fillMaxWidth()
+                .height(gradientHeight)
+                .constrainAs(gradient) {
+                    if (!isLandscape) {
+                        top.linkTo(parent.top, margin = gradientHeight)
+                    }
+                }
+                .background(
+                    brush = Brush.verticalGradient(
+                        0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
+                        1.0F to MaterialTheme.colorScheme.background,
+                    )
+                ),
+        ) {}
+        if (!isLandscape) {
+            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
+                .constrainAs(img) {
+                    centerHorizontallyTo(parent)
+                    top.linkTo(parent.top, margin = edgeSize)
+                }
+                .size(imageSize)) {
                 ImageView(
                     uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
-                        .fillMaxSize()
-                        .blur(20.dp), painter = null
+                        .size(imageSize)
+                        .clip(RoundedCornerShape(8.dp))
                 )
-                Box(
-                    modifier = Modifier
+            }
+        }
+        BackButtonView(
+            modifier = Modifier
+                .statusBarsPadding()
+                .padding(start = StyleConstant.PADDING_TINY.dp)
+        )
+        val playerModifier = if (isLandscape) Modifier
+            .fillMaxSize()
+            .padding(vertical = StyleConstant.PADDING_LARGE.dp) else Modifier
+            .fillMaxWidth()
+            .height(playerHeight)
+            .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }
+        Box(
+            contentAlignment = Alignment.TopCenter, modifier = playerModifier
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Column(
+                    Modifier
                         .fillMaxWidth()
-                        .height(200.dp)
-                        .constrainAs(primary) {
-                            top.linkTo(parent.bottom, margin = (-200).dp)
-                        }
-                        .background(
-                            brush = Brush.verticalGradient(
-                                0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
-                                1.0F to MaterialTheme.colorScheme.background,
-                            )
-                        ),
-                ) {}
-                Box(
-                    contentAlignment = Alignment.BottomCenter, modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = imageBottomPosition)
+                        .padding(horizontal = StyleConstant.PADDING_LARGE.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.SpaceBetween,
                 ) {
-                    ImageView(
-                        uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
-                            .size(imageSize)
-                            .clip(RoundedCornerShape(8.dp))
-                    )
+                    PrimaryTitleView(uiState.primaryText)
+                    SecondaryTitleView(uiState.secondaryText)
                 }
-                BackButtonView(
-                    modifier = Modifier
-                        .statusBarsPadding()
-                        .padding(start = StyleConstant.PADDING_TINY.dp)
-                )
-            }
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
-                    .padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.SpaceBetween,
-            ) {
-                PrimaryTitleView(uiState.primaryText)
-                SecondaryTitleView(uiState.secondaryText)
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(LocalConfiguration.current.screenWidthDp.dp), verticalArrangement = Arrangement.SpaceEvenly
-            ) {
-                Column(modifier = Modifier.padding(start = 30.dp, end = 30.dp)) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 30.dp)
+                ) {
                     Slider(value = uiState.sliderPosition,
                         colors = SliderDefaults.colors(activeTrackColor = MaterialTheme.colorScheme.primary, thumbColor = MaterialTheme.colorScheme.primary),
                         onValueChange = { viewModel.seek(it) },
                         onValueChangeFinished = { viewModel.seekFinished() })
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = StyleConstant.PADDING_SMALL.dp), horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
                         Text(uiState.currentTime, color = MaterialTheme.colorScheme.secondary)
                         Text(uiState.durationTime, color = MaterialTheme.colorScheme.secondary)
                     }
@@ -132,7 +153,9 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                     Box(contentAlignment = Alignment.Center, modifier = Modifier
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                         .clickable { viewModel.next() }) {
-                        Icon(painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
+                        Icon(
+                            painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp)
+                        )
                     }
                 }
                 Row(
@@ -203,9 +226,9 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                     }
                 }
             }
-            if (visiblePopup.value) {
-                PlaylistPopupView(uiState.songId, visiblePopup)
-            }
         }
+    }
+    if (visiblePopup.value) {
+        PlaylistPopupView(uiState.songId, visiblePopup)
     }
 }
