@@ -160,7 +160,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     }
                 }
             }
-            item {
+            item(span = { GridItemSpan(spanCount) }) {
                 EmptyMiniPlayerView()
             }
         }

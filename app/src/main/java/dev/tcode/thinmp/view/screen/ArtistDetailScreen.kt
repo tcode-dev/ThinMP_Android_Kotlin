@@ -179,7 +179,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     }
                 }
             }
-            item {
+            item(span = { GridItemSpan(spanCount) }) {
                 EmptyMiniPlayerView()
             }
         }
