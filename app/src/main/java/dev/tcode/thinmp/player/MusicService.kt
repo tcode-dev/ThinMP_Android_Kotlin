@@ -34,6 +34,7 @@ class MusicService : Service() {
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
     private var shuffle = false
+    private var isPlaying = false
 
     override fun onCreate() {
         super.onCreate()
@@ -95,7 +96,7 @@ class MusicService : Service() {
             RepeatState.ONE -> RepeatState.OFF
             RepeatState.ALL -> RepeatState.ONE
         }
-
+        setRepeat()
         config.saveRepeat(repeat)
         listener?.onChange()
     }
@@ -116,7 +117,7 @@ class MusicService : Service() {
     }
 
     fun isPlaying(): Boolean {
-        return player?.isPlaying ?: false
+        return isPlaying
     }
 
     fun getCurrentPosition(): Long {
@@ -137,7 +138,7 @@ class MusicService : Service() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private fun setPlayer() {
-        if (player?.isPlaying == true) {
+        if (isPlaying) {
             player?.stop()
         }
 
@@ -167,6 +168,7 @@ class MusicService : Service() {
             if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
             if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                isPlaying = player.isPlaying
                 listener?.onChange()
                 notification()
             }
@@ -197,7 +199,7 @@ class MusicService : Service() {
     }
 
     override fun onDestroy() {
-        if (player?.isPlaying == true) {
+        if (isPlaying) {
             player?.stop()
         }
 
