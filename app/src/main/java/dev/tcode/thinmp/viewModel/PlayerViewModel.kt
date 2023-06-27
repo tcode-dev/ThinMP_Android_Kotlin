@@ -64,19 +64,13 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     fun prev() {
         cancelSeekBarProgressTask()
         musicPlayer.prev()
-
-        if (musicPlayer.isPlaying()) {
-            setSeekBarProgressTask()
-        }
+        setSeekBarProgressTask()
     }
 
     fun next() {
         cancelSeekBarProgressTask()
         musicPlayer.next()
-
-        if (musicPlayer.isPlaying()) {
-            setSeekBarProgressTask()
-        }
+        setSeekBarProgressTask()
     }
 
     fun seek(value: Float) {
@@ -91,9 +85,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     fun seekFinished() {
-        if (musicPlayer.isPlaying()) {
-            setSeekBarProgressTask()
-        }
+        setSeekBarProgressTask()
     }
 
     fun changeRepeat() {
@@ -130,10 +122,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     override fun onBind() {
         update()
-
-        if (musicPlayer.isPlaying()) {
-            setSeekBarProgressTask()
-        }
+        setSeekBarProgressTask()
     }
 
     override fun onChange() {
@@ -160,6 +149,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun setSeekBarProgressTask() {
+        if (!musicPlayer.isPlaying()) return
+
         cancelSeekBarProgressTask()
         handler.post(runnable)
     }
@@ -170,6 +161,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     private fun update() {
         val song = musicPlayer.getCurrentSong()
+
         if (song != null) {
             _uiState.update { currentState ->
                 currentState.copy(
@@ -187,6 +179,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                     isFavoriteSong = exists(song.songId)
                 )
             }
+            setSeekBarProgressTask()
         } else {
             _uiState.update {
                 PlayerUiState()
