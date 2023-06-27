@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.service
 
 import android.content.Context
+import android.net.Uri
 import dev.tcode.thinmp.model.media.ArtistDetailModel
 import dev.tcode.thinmp.repository.media.AlbumRepository
 import dev.tcode.thinmp.repository.media.ArtistRepository
@@ -17,11 +18,7 @@ class ArtistDetailService(val context: Context) {
         val songs = songRepository.findByArtistId(id)
         val sortedSongs = songs.sortedWith(compareBy({ it.albumName }, { it.getTrackNumber() }))
         val secondaryText = "${sortedAlbums.count()} albums, ${sortedSongs.count()} songs"
-        val imageUri = if (sortedAlbums.isNotEmpty()) {
-            sortedAlbums.first().getImageUri()
-        } else {
-            sortedAlbums.first().getImageUri()
-        }
+        val imageUri = if (sortedAlbums.isNotEmpty()) sortedAlbums.first().getImageUri() else Uri.EMPTY
 
         return if (artist != null) {
             ArtistDetailModel(id, artist.name, secondaryText, imageUri, sortedAlbums, sortedSongs)
