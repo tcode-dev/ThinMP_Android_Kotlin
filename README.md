@@ -26,6 +26,7 @@
 * Android Version 13
 * Google Pixel 4a
 * Google Pixel 7 Pro
+* Google Pixel Tablet
 
 ## Libraries
 
