@@ -17,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.constant.StyleConstant
@@ -48,6 +49,10 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
     val spanCount: Int = gridSpanCount()
+    val width = LocalConfiguration.current.screenWidthDp.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val minSize = min(width, height) - StyleConstant.ROW_HEIGHT.dp
+    val gradientHeight = minSize / 2
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -64,7 +69,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
-                        .height(LocalConfiguration.current.screenWidthDp.dp)
+                        .height(minSize)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
@@ -73,9 +78,9 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp)
+                            .height(gradientHeight)
                             .constrainAs(primary) {
-                                top.linkTo(parent.bottom, margin = (-200).dp)
+                                top.linkTo(parent.bottom, margin = (-gradientHeight))
                             }
                             .background(
                                 brush = Brush.verticalGradient(

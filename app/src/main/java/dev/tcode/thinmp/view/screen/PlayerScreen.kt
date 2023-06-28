@@ -39,13 +39,13 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
     val width = LocalConfiguration.current.screenWidthDp.dp
-    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val minSize = min(width, height)
     val maxSize = max(width, height)
     val imageSize: Dp = minSize / 100 * 64
     val edgeSize: Dp = minSize / 100 * 18
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val gradientHeight = if (isLandscape) minSize else minSize / 2 + 1.dp
+    val gradientHeight = if (isLandscape) minSize else minSize / 2
     val playerHeight = if (isLandscape) minSize else maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
 
     CustomLifecycleEventObserver(viewModel)
