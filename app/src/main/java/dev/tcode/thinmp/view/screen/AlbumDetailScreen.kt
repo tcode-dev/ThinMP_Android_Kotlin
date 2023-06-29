@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.view.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -51,7 +52,10 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     val spanCount: Int = gridSpanCount()
     val width = LocalConfiguration.current.screenWidthDp.dp
     val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val minSize = min(width, height) - StyleConstant.ROW_HEIGHT.dp
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
+    val primaryTitlePosition = -(minSize / 3)
+    val secondaryTitlePosition = primaryTitlePosition + StyleConstant.ROW_HEIGHT.dp
     val gradientHeight = minSize / 2
 
     CustomLifecycleEventObserver(viewModel)
@@ -73,7 +77,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
-                        uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxSize()
+                        uri = uiState.imageUri, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize()
                     )
                     Box(
                         modifier = Modifier
@@ -92,9 +96,9 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(StyleConstant.ROW_HEIGHT.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = (-StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION).dp)
+                                top.linkTo(parent.bottom, margin = primaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
@@ -106,7 +110,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                             .fillMaxWidth()
                             .height(25.dp)
                             .constrainAs(tertiary) {
-                                top.linkTo(parent.bottom, margin = (-55).dp)
+                                top.linkTo(parent.bottom, margin = secondaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,

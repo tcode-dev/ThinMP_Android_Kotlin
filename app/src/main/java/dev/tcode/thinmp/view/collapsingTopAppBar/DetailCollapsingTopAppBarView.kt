@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.view.collapsingTopAppBar
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
@@ -13,7 +14,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.compose.ui.zIndex
+import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.topAppBar.DetailTopAppBarView
 
 @Composable
@@ -36,9 +39,13 @@ fun DetailCollapsingTopAppBarView(title: String, position: Int, columns: GridCel
 private fun visibleTopAppBar(position: Int, state: LazyGridState): Boolean {
     if (state.firstVisibleItemIndex > 0) return true
 
-    val density = LocalContext.current.resources.displayMetrics.density
-    val width = LocalConfiguration.current.screenWidthDp
-    val top = WindowInsets.systemBars.asPaddingValues().calculateTopPadding().value
+    val width = LocalConfiguration.current.screenWidthDp.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
+    val primaryTitlePosition = minSize / 3
+    val target = (minSize - (primaryTitlePosition + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()))
+    val offset = (state.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density)
 
-    return (state.firstVisibleItemScrollOffset / density) > (width - (top + position))
+    return offset.dp > target
 }
