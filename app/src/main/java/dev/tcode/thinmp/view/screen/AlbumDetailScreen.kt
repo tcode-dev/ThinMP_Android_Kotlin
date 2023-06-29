@@ -54,8 +54,8 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
-    val primaryTitlePosition = -(minSize / 3)
-    val secondaryTitlePosition = primaryTitlePosition + StyleConstant.ROW_HEIGHT.dp
+    val primaryTitlePosition = -(minSize / 5)
+    val secondaryTitlePosition = primaryTitlePosition + StyleConstant.ROW_HEIGHT.dp - StyleConstant.PADDING_SMALL.dp
     val gradientHeight = minSize / 2
 
     CustomLifecycleEventObserver(viewModel)
@@ -63,7 +63,8 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        DetailCollapsingTopAppBarView(title = uiState.primaryText,
+        DetailCollapsingTopAppBarView(
+            title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->

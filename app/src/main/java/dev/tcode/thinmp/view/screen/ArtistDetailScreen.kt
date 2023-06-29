@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.view.screen
 
+import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -21,6 +22,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -56,25 +58,35 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
     val spanCount: Int = gridSpanCount()
-    val imageSize: Dp = LocalConfiguration.current.screenWidthDp.dp / 3
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
     val navigator = LocalNavigator.current
+    val width = LocalConfiguration.current.screenWidthDp.dp
+    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
+    val primaryTitlePosition = -(minSize / 5)
+    val secondaryTitlePosition = primaryTitlePosition + StyleConstant.ROW_HEIGHT.dp - StyleConstant.PADDING_SMALL.dp
+    val gradientHeight = minSize / 2
+    val imageSize: Dp = if (isLandscape) minSize / 2 else minSize / 3
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        DetailCollapsingTopAppBarView(title = uiState.primaryText, position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION, columns = CustomGridCellsFixed(spanCount), dropdownMenus = { callback ->
-            FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
-            ShortcutDropdownMenuItemView(ArtistId(id), callback)
-        }) {
+        DetailCollapsingTopAppBarView(title = uiState.primaryText,
+            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
+            columns = CustomGridCellsFixed(spanCount),
+            dropdownMenus = { callback ->
+                FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
+                ShortcutDropdownMenuItemView(ArtistId(id), callback)
+            }) {
             item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
-                        .height(LocalConfiguration.current.screenWidthDp.dp)
+                        .height(minSize)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
 
@@ -86,8 +98,8 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp)
-                            .constrainAs(primary) { top.linkTo(parent.bottom, margin = (-200).dp) }
+                            .height(gradientHeight)
+                            .constrainAs(primary) { top.linkTo(parent.bottom, margin = (-gradientHeight)) }
                             .background(
                                 brush = Brush.verticalGradient(
                                     0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
@@ -107,9 +119,9 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(StyleConstant.ROW_HEIGHT.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = (-StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION).dp)
+                                top.linkTo(parent.bottom, margin = primaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
@@ -121,7 +133,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                             .fillMaxWidth()
                             .height(25.dp)
                             .constrainAs(tertiary) {
-                                top.linkTo(parent.bottom, margin = (-55).dp)
+                                top.linkTo(parent.bottom, margin = secondaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,

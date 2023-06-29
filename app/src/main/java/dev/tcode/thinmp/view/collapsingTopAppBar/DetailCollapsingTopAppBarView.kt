@@ -43,7 +43,7 @@ private fun visibleTopAppBar(position: Int, state: LazyGridState): Boolean {
     val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
-    val primaryTitlePosition = minSize / 3
+    val primaryTitlePosition = minSize / 5
     val target = (minSize - (primaryTitlePosition + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()))
     val offset = (state.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density)
 
