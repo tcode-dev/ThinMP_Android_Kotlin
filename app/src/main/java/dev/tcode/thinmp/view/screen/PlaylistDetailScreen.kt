@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -28,6 +27,7 @@ import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.detailSize
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
@@ -51,17 +51,17 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
     val miniPlayerHeight = miniPlayerHeight()
-    var playlistRegisterSongId = SongId("")
     val navigator = LocalNavigator.current
     val spanCount: Int = gridSpanCount()
+    val (size, gradientHeight, primaryTitlePosition, secondaryTitlePosition) = detailSize()
+    var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        DetailCollapsingTopAppBarView(
-            title = uiState.primaryText,
+        DetailCollapsingTopAppBarView(title = uiState.primaryText,
             position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->
@@ -72,18 +72,18 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
-                        .height(LocalConfiguration.current.screenWidthDp.dp)
+                        .height(size)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
-                        uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier.fillMaxSize()
+                        uri = uiState.imageUri, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize()
                     )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(200.dp)
+                            .height(gradientHeight)
                             .constrainAs(primary) {
-                                top.linkTo(parent.bottom, margin = (-200).dp)
+                                top.linkTo(parent.bottom, margin = -gradientHeight)
                             }
                             .background(
                                 brush = Brush.verticalGradient(
@@ -95,9 +95,9 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     Row(
                         Modifier
                             .fillMaxWidth()
-                            .height(50.dp)
+                            .height(StyleConstant.ROW_HEIGHT.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = (-90).dp)
+                                top.linkTo(parent.top, margin = primaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
@@ -109,7 +109,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                             .fillMaxWidth()
                             .height(25.dp)
                             .constrainAs(tertiary) {
-                                top.linkTo(parent.bottom, margin = (-55).dp)
+                                top.linkTo(parent.top, margin = secondaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
