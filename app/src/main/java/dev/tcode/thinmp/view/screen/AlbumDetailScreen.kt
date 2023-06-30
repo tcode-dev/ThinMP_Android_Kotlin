@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -15,10 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.constant.StyleConstant
@@ -26,6 +23,7 @@ import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.detailSize
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
@@ -50,13 +48,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
     val spanCount: Int = gridSpanCount()
-    val width = LocalConfiguration.current.screenWidthDp.dp
-    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
-    val primaryTitlePosition = -(minSize / 5)
-    val secondaryTitlePosition = primaryTitlePosition + StyleConstant.ROW_HEIGHT.dp - StyleConstant.PADDING_SMALL.dp
-    val gradientHeight = minSize / 2
+    val (size, gradientHeight, primaryTitlePosition, secondaryTitlePosition) = detailSize()
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -74,7 +66,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
-                        .height(minSize)
+                        .height(size)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
                     ImageView(
@@ -85,7 +77,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                             .fillMaxWidth()
                             .height(gradientHeight)
                             .constrainAs(primary) {
-                                top.linkTo(parent.bottom, margin = (-gradientHeight))
+                                top.linkTo(parent.bottom, margin = -gradientHeight)
                             }
                             .background(
                                 brush = Brush.verticalGradient(
@@ -99,7 +91,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                             .fillMaxWidth()
                             .height(StyleConstant.ROW_HEIGHT.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = primaryTitlePosition)
+                                top.linkTo(parent.top, margin = primaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
@@ -111,7 +103,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                             .fillMaxWidth()
                             .height(25.dp)
                             .constrainAs(tertiary) {
-                                top.linkTo(parent.bottom, margin = secondaryTitlePosition)
+                                top.linkTo(parent.top, margin = secondaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,

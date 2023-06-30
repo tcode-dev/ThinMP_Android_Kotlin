@@ -22,7 +22,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -33,6 +32,7 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
+import dev.tcode.thinmp.view.collapsingTopAppBar.detailSize
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
@@ -61,14 +61,9 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
     val miniPlayerHeight = miniPlayerHeight()
     var playlistRegisterSongId = SongId("")
     val navigator = LocalNavigator.current
-    val width = LocalConfiguration.current.screenWidthDp.dp
-    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val minSize = if (isLandscape) min(width, height) - StyleConstant.ROW_HEIGHT.dp else min(width, height)
-    val primaryTitlePosition = -(minSize / 5)
-    val secondaryTitlePosition = primaryTitlePosition + StyleConstant.ROW_HEIGHT.dp - StyleConstant.PADDING_SMALL.dp
-    val gradientHeight = minSize / 2
-    val imageSize: Dp = if (isLandscape) minSize / 2 else minSize / 3
+    val (size, gradientHeight, primaryTitlePosition, secondaryTitlePosition) = detailSize()
+    val imageSize: Dp = if (isLandscape) size / 2 else size / 3
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -86,7 +81,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 ConstraintLayout(
                     Modifier
                         .fillMaxWidth()
-                        .height(minSize)
+                        .height(size)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
 
@@ -99,7 +94,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(gradientHeight)
-                            .constrainAs(primary) { top.linkTo(parent.bottom, margin = (-gradientHeight)) }
+                            .constrainAs(primary) { top.linkTo(parent.bottom, margin = -gradientHeight) }
                             .background(
                                 brush = Brush.verticalGradient(
                                     0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
@@ -121,7 +116,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                             .fillMaxWidth()
                             .height(StyleConstant.ROW_HEIGHT.dp)
                             .constrainAs(secondary) {
-                                top.linkTo(parent.bottom, margin = primaryTitlePosition)
+                                top.linkTo(parent.top, margin = primaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
@@ -133,7 +128,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                             .fillMaxWidth()
                             .height(25.dp)
                             .constrainAs(tertiary) {
-                                top.linkTo(parent.bottom, margin = secondaryTitlePosition)
+                                top.linkTo(parent.top, margin = secondaryTitlePosition)
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.Center,
