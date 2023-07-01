@@ -62,7 +62,6 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
         val (miniPlayer) = createRefs()
 
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
-            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->
                 DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })

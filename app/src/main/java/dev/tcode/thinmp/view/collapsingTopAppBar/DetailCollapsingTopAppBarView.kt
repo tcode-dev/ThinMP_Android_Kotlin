@@ -21,14 +21,14 @@ import dev.tcode.thinmp.view.topAppBar.DetailTopAppBarView
 import dev.tcode.thinmp.view.util.minSize
 
 @Composable
-fun DetailCollapsingTopAppBarView(title: String, position: Int, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyGridScope.() -> Unit) {
+fun DetailCollapsingTopAppBarView(title: String, columns: GridCells, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyGridScope.() -> Unit) {
     val lazyGridState = rememberLazyGridState()
 
     Box(Modifier.zIndex(1F)) {
         val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        DetailTopAppBarView(title, visible = visibleTopAppBar(position, lazyGridState), callback)
+        DetailTopAppBarView(title, visible = visibleTopAppBar(lazyGridState), callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
             dropdownMenus(callback = callback)
         }
@@ -72,7 +72,7 @@ private fun secondaryTitlePosition(): Dp {
 }
 
 @Composable
-private fun visibleTopAppBar(position: Int, state: LazyGridState): Boolean {
+private fun visibleTopAppBar(state: LazyGridState): Boolean {
     if (state.firstVisibleItemIndex > 0) return true
 
     val target = primaryTitlePosition() - WindowInsets.systemBars.asPaddingValues().calculateTopPadding()

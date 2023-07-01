@@ -71,7 +71,6 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
         val (miniPlayer) = createRefs()
 
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
-            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->
                 FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)

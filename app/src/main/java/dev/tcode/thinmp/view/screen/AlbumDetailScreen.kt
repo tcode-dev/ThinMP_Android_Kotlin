@@ -57,7 +57,6 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
 
         DetailCollapsingTopAppBarView(
             title = uiState.primaryText,
-            position = StyleConstant.COLLAPSING_TOP_APP_BAR_TITLE_POSITION,
             columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->
                 ShortcutDropdownMenuItemView(AlbumId(id), callback)

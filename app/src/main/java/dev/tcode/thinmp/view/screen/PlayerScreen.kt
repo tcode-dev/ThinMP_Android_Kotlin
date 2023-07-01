@@ -18,8 +18,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.max
-import androidx.compose.ui.unit.min
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -31,6 +29,8 @@ import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
+import dev.tcode.thinmp.view.util.maxSize
+import dev.tcode.thinmp.view.util.minSize
 import dev.tcode.thinmp.viewModel.PlayerViewModel
 
 @ExperimentalFoundationApi
@@ -38,10 +38,8 @@ import dev.tcode.thinmp.viewModel.PlayerViewModel
 fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val visiblePopup = remember { mutableStateOf(false) }
-    val width = LocalConfiguration.current.screenWidthDp.dp
-    val height = LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    val minSize = min(width, height)
-    val maxSize = max(width, height)
+    val minSize = minSize()
+    val maxSize = maxSize()
     val imageSize: Dp = minSize / 100 * 64
     val edgeSize: Dp = minSize / 100 * 18
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
