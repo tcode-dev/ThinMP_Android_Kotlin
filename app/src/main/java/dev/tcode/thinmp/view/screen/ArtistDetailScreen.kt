@@ -180,7 +180,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                             modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
                             onDismissRequest = { expanded.value = false }) {
                             FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
-                            PlaylistDropdownMenuItemView(song.songId, closePlaylist)
+                            PlaylistDropdownMenuItemView(closePlaylist)
                         }
                     }
                 }

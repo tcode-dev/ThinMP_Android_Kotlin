@@ -132,7 +132,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     })
                     DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
                         FavoriteSongDropdownMenuItemView(song.songId, close)
-                        PlaylistDropdownMenuItemView(song.songId, closePlaylist)
+                        PlaylistDropdownMenuItemView(closePlaylist)
                     }
                 }
             }
