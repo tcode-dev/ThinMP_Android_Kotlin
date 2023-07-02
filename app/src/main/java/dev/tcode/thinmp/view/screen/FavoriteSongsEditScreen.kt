@@ -36,15 +36,15 @@ fun FavoriteSongsEditScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        Box(Modifier.zIndex(3F)) {
-            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { }) {
-                    Text(stringResource(R.string.done))
-                }
-            }
-        }
+//        Box(Modifier.zIndex(3F)) {
+//            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
+//                Box(contentAlignment = Alignment.Center, modifier = Modifier
+//                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+//                    .clickable { }) {
+//                    Text(stringResource(R.string.done))
+//                }
+//            }
+//        }
         LazyColumn(
             modifier = Modifier.pointerInput(Unit) {
                 detectDragGesturesAfterLongPress(onDrag = { change, offset ->

@@ -49,15 +49,15 @@ fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsViewModel = viewModel())
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box(Modifier.zIndex(3F)) {
-            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier
-                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                    .clickable { }) {
-                    Text(stringResource(R.string.done))
-                }
-            }
-        }
+//        Box(Modifier.zIndex(3F)) {
+//            EditTopAppBarView(stringResource(R.string.edit), lazyListState.firstVisibleItemScrollOffset) {
+//                Box(contentAlignment = Alignment.Center, modifier = Modifier
+//                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+//                    .clickable { }) {
+//                    Text(stringResource(R.string.done))
+//                }
+//            }
+//        }
         LazyColumn(state = lazyListState) {
             item {
                 EmptyTopAppBarView()

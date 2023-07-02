@@ -19,12 +19,12 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 
 @Composable
-fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.() -> Unit) {
+fun EditTopAppBarView(visible: Boolean, callback: () -> Unit) {
     val navigator = LocalNavigator.current
 
     Box {
         AnimatedVisibility(
-            visible = offset > 1, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
+            visible = visible, enter = fadeIn(initialAlpha = 0.3F), exit = fadeOut(targetAlpha = 0.3F)
         ) {
             Box(
                 modifier = Modifier
@@ -50,9 +50,16 @@ fun EditTopAppBarView(title: String, offset: Int, content: @Composable BoxScope.
                 Text(stringResource(R.string.cancel), color = MaterialTheme.colorScheme.primary)
             }
             Box(contentAlignment = Alignment.Center, modifier = Modifier.align(alignment = Alignment.Center)) {
-                PrimaryTitleView(title)
+                PrimaryTitleView(stringResource(R.string.edit))
             }
-            Box(content = content, contentAlignment = Alignment.Center, modifier = Modifier.align(alignment = Alignment.CenterEnd))
+            Box(contentAlignment = Alignment.Center, modifier = Modifier
+                .align(alignment = Alignment.CenterEnd)
+                .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                .clickable {
+                    callback()
+                }) {
+                Text(stringResource(R.string.done), color = MaterialTheme.colorScheme.primary)
+            }
         }
     }
 }
