@@ -3,6 +3,11 @@ package dev.tcode.thinmp.view.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.DismissDirection
+import androidx.compose.material.DismissValue
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.SwipeToDismiss
+import androidx.compose.material.rememberDismissState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.*
@@ -20,7 +25,7 @@ import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.PlaylistDetailEditViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
 @Composable
 fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel = viewModel()) {
@@ -45,7 +50,17 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
                     .padding(StyleConstant.PADDING_LARGE.dp), onValueChange = { name = it })
             }
             itemsIndexed(uiState.songs) { index, song ->
-                MediaRowView(song.name, song.artistName, song.getImageUri())
+                val dismissState = rememberDismissState(confirmStateChange = {
+                    if (it == DismissValue.DismissedToStart) {
+                        println("dismissState: DismissedToStart")
+                    }
+                    true
+                })
+                SwipeToDismiss(state = dismissState, directions = setOf(DismissDirection.EndToStart), background = {
+
+                }) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri())
+                }
             }
             item {
                 EmptyMiniPlayerView()
