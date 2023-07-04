@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistDetailService
@@ -13,7 +14,7 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 data class PlaylistDetailEditUiState(
-    var primaryText: String = ""
+    var primaryText: String = "", var songs: List<SongModel> = emptyList()
 )
 
 @HiltViewModel
@@ -46,7 +47,7 @@ class PlaylistDetailEditViewModel @Inject constructor(
         if (playlist != null) {
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = playlist.primaryText
+                    primaryText = playlist.primaryText, songs = playlist.songs
                 )
             }
         }
