@@ -24,6 +24,7 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.PlaylistDetailEditViewModel
+import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @ExperimentalFoundationApi
@@ -50,16 +51,18 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
                     .padding(StyleConstant.PADDING_LARGE.dp), onValueChange = { name = it })
             }
             itemsIndexed(uiState.songs) { index, song ->
-                val dismissState = rememberDismissState(confirmStateChange = {
-                    if (it == DismissValue.DismissedToStart) {
-                        println("dismissState: DismissedToStart")
+                key(UUID.randomUUID()) {
+                    val dismissState = rememberDismissState(confirmStateChange = {
+                        if (it == DismissValue.DismissedToStart) {
+                            viewModel.removeSong(index)
+                            true
+                        } else {
+                            false
+                        }
+                    })
+                    SwipeToDismiss(state = dismissState, directions = setOf(DismissDirection.EndToStart), background = {}) {
+                        MediaRowView(song.name, song.artistName, song.getImageUri())
                     }
-                    true
-                })
-                SwipeToDismiss(state = dismissState, directions = setOf(DismissDirection.EndToStart), background = {
-
-                }) {
-                    MediaRowView(song.name, song.artistName, song.getImageUri())
                 }
             }
             item {

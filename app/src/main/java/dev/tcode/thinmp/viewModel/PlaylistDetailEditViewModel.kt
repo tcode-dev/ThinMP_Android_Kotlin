@@ -32,6 +32,18 @@ class PlaylistDetailEditViewModel @Inject constructor(
         load(application)
     }
 
+    fun removeSong(index: Int) {
+        _uiState.update { currentState ->
+            val list = currentState.songs.toMutableList()
+
+            list.removeAt(index)
+
+            currentState.copy(
+                songs = list
+            )
+        }
+    }
+
     override fun onResume(context: Context) {
         if (initialized) {
             load(context)
