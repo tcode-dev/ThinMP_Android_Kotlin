@@ -44,7 +44,7 @@ class PlaylistRepository {
         }
     }
 
-    fun update(playlistId: PlaylistId, songIds: List<SongId>) {
+    fun delete(playlistId: PlaylistId, songIds: List<SongId>) {
         realm.writeBlocking {
             val playlist = findById(playlistId)
 
@@ -56,10 +56,21 @@ class PlaylistRepository {
         }
     }
 
-    fun updateName(playlistId: PlaylistId, name: String) {
+    fun update(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
         findById(playlistId)?.also { playlist ->
             realm.writeBlocking {
+                val songIds = playlist.songs.filter { song ->
+                    songIds.any { it.id == song.songId }
+                }.map { it.songId }
+
                 findLatest(playlist)?.name = name
+                findLatest(playlist)?.songs?.clear()
+                songIds.forEach { songId ->
+                    val song = PlaylistSongRealmModel()
+                    song.playlistId = playlistId.id
+                    song.songId = songId
+                    findLatest(playlist)?.songs?.add(song)
+                }
             }
         }
     }

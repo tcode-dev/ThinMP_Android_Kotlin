@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.service
 
 import android.content.Context
+import android.net.Uri
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.PlaylistDetailModel
 import dev.tcode.thinmp.model.media.SongModel
@@ -16,6 +17,10 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
         val songIds = playlist.songs.map { SongId(it.songId) }
         val songRepository = SongRepository(context)
         val songs = songRepository.findByIds(songIds)
+        val sortedSongs = songIds.mapNotNull { id ->
+            songs.find { it.songId == id }
+        }
+        val imageUri = if (sortedSongs.isNotEmpty()) sortedSongs.first().getImageUri() else Uri.EMPTY
 
         if (!validation(songIds, songs)) {
             fix(playlistId, songIds, songs)
@@ -23,11 +28,7 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
             return findById(playlistId)
         }
 
-        val sortedSongs = songIds.mapNotNull { id ->
-            songs.find { it.songId == id }
-        }
-
-        return PlaylistDetailModel(playlistId, playlist.name, resources.getString(R.string.playlist), sortedSongs.first().getImageUri(), sortedSongs)
+        return PlaylistDetailModel(playlistId, playlist.name, resources.getString(R.string.playlist), imageUri, sortedSongs)
     }
 
     private fun validation(songIds: List<SongId>, songs: List<SongModel>): Boolean {
@@ -39,6 +40,6 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
             songs.none { it.songId == id }
         }
 
-        playlistRepository.update(playlistId, deleteIds)
+        playlistRepository.delete(playlistId, deleteIds)
     }
 }

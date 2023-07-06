@@ -44,6 +44,20 @@ class PlaylistDetailEditViewModel @Inject constructor(
         }
     }
 
+    fun changeName(name: String) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                primaryText = name
+            )
+        }
+    }
+
+    fun update() {
+        val songIds = uiState.value.songs.map { it.songId }
+
+        update(id, uiState.value.primaryText, songIds)
+    }
+
     override fun onResume(context: Context) {
         if (initialized) {
             load(context)

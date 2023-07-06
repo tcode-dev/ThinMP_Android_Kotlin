@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.view.collapsingTopAppBar.EditCollapsingTopAppBarView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.MediaRowView
@@ -32,9 +31,8 @@ import java.util.UUID
 fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
-    var name by remember { mutableStateOf(uiState.primaryText) }
     val doneCallback = {
-        viewModel.updateName(PlaylistId(id), name)
+        viewModel.update()
         navigator.back()
     }
 
@@ -46,9 +44,9 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
                 EmptyTopAppBarView()
             }
             item {
-                OutlinedTextField(value = name, singleLine = true, modifier = Modifier
+                OutlinedTextField(value = uiState.primaryText, singleLine = true, modifier = Modifier
                     .fillMaxWidth()
-                    .padding(StyleConstant.PADDING_LARGE.dp), onValueChange = { name = it })
+                    .padding(StyleConstant.PADDING_LARGE.dp), onValueChange = { viewModel.changeName(it) })
             }
             itemsIndexed(uiState.songs) { index, song ->
                 key(UUID.randomUUID()) {
