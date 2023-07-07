@@ -37,6 +37,7 @@ class PlaylistRepository {
         realm.query<PlaylistRealmModel>("id == $0", playlistId.id).first().find()?.also { playlist ->
             realm.writeBlocking {
                 val song = PlaylistSongRealmModel()
+
                 song.playlistId = playlistId.id
                 song.songId = songId.id
                 findLatest(playlist)?.songs?.add(song)
@@ -59,13 +60,12 @@ class PlaylistRepository {
     fun update(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
         findById(playlistId)?.also { playlist ->
             realm.writeBlocking {
-                val songs = playlist.songs.filter { song ->
-                    songIds.any { it.id == song.songId }
-                }.map {
-                    val song = PlaylistSongRealmModel()
-                    song.playlistId = playlistId.id
-                    song.songId = it.songId
-                    song
+                val songs = songIds.map { songId ->
+                    val newSong = PlaylistSongRealmModel()
+
+                    newSong.playlistId = playlistId.id
+                    newSong.songId = songId.id
+                    newSong
                 }
 
                 findLatest(playlist)?.let {
