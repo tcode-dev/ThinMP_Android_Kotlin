@@ -21,4 +21,10 @@ interface FavoriteSongRegister {
 
         repository.delete(songId)
     }
+
+    fun update(songIds: List<SongId>) {
+        val repository = FavoriteSongRepository()
+
+        repository.update(songIds)
+    }
 }

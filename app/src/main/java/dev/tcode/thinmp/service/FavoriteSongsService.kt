@@ -32,6 +32,6 @@ class FavoriteSongsService(val context: Context, private val favoriteSongReposit
             songs.none { it.songId == id }
         }
 
-        favoriteSongRepository.update(deleteIds)
+        favoriteSongRepository.deleteByIds(deleteIds)
     }
 }

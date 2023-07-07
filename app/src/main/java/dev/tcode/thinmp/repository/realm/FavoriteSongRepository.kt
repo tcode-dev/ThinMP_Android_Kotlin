@@ -3,6 +3,7 @@ package dev.tcode.thinmp.repository.realm
 import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.FavoriteSongRealmModel
+import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
@@ -35,6 +36,18 @@ class FavoriteSongRepository {
         }
     }
 
+    fun update(songIds: List<SongId>) {
+        realm.writeBlocking {
+            delete(FavoriteSongRealmModel::class)
+
+            songIds.forEach {
+                copyToRealm(FavoriteSongRealmModel().apply {
+                    songId = it.id
+                })
+            }
+        }
+    }
+
     fun delete(songId: SongId) {
         realm.writeBlocking {
             val song = find(songId).first()
@@ -43,13 +56,13 @@ class FavoriteSongRepository {
         }
     }
 
-    fun update(ids: List<SongId>) {
+    fun deleteByIds(songIds: List<SongId>) {
         realm.writeBlocking {
-            val values = TextUtils.join(", ", ids.map { "'${it.id}'" })
-            val models = realm.query<FavoriteSongRealmModel>("songId in { $values }").find()
+            val values = TextUtils.join(", ", songIds.map { "'${it.id}'" })
+            val songs = realm.query<FavoriteSongRealmModel>("songId in { $values }").find()
 
-            models.forEach { shortcut ->
-                findLatest(shortcut)?.let { delete(it) }
+            songs.forEach { song ->
+                findLatest(song)?.let { delete(it) }
             }
         }
     }
