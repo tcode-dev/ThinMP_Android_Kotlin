@@ -32,6 +32,6 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
             artists.none { it.artistId == id }
         }
 
-        favoriteArtistRepository.update(deleteIds)
+        favoriteArtistRepository.deleteByIds(deleteIds)
     }
 }

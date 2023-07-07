@@ -22,6 +22,8 @@ interface FavoriteSongRegister {
         repository.delete(songId)
     }
 
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("updateSongs")
     fun update(songIds: List<SongId>) {
         val repository = FavoriteSongRepository()
 

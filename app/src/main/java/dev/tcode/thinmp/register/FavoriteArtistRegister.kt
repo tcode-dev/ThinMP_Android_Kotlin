@@ -21,4 +21,12 @@ interface FavoriteArtistRegister {
 
         repository.delete(artistId)
     }
+
+    @Suppress("INAPPLICABLE_JVM_NAME")
+    @JvmName("updateArtists")
+    fun update(artistIds: List<ArtistId>) {
+        val repository = FavoriteArtistRepository()
+
+        repository.update(artistIds)
+    }
 }
