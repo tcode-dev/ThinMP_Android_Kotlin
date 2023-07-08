@@ -10,6 +10,7 @@ interface INavigator {
     fun albumDetail(id: String)
     fun favoriteArtistsEdit()
     fun favoriteSongsEdit()
+    fun playlistsEdit()
     fun playlistDetail(id: String)
     fun playlistDetailEdit(id: String)
     fun player()
@@ -46,6 +47,10 @@ class Navigator(private val navController: NavController) : INavigator {
 
     override fun playlistDetailEdit(id: String) {
         navController.navigate("${NavConstant.PLAYLIST_DETAIL_EDIT}/${id}")
+    }
+
+    override fun playlistsEdit() {
+        navController.navigate(NavConstant.PLAYLISTS_EDIT)
     }
 
     override fun player() {

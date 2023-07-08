@@ -45,7 +45,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
         val (miniPlayer) = createRefs()
 
         MenuCollapsingTopAppBarView(title = stringResource(R.string.playlists), dropdownMenus = {
-            DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { })
+            DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.playlistsEdit() })
         }) {
             item {
                 EmptyTopAppBarView()

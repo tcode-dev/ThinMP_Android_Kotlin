@@ -28,6 +28,8 @@ fun ThinMPNavHost() {
             composable(NavConstant.FAVORITE_SONGS) { FavoriteSongsScreen() }
             composable(NavConstant.FAVORITE_SONGS_EDIT) { FavoriteSongsEditScreen() }
             composable(NavConstant.PLAYLISTS) { PlaylistsScreen() }
+            composable(NavConstant.PLAYLISTS_EDIT) { PlaylistsEditScreen() }
+            composable(NavConstant.PLAYER) { PlayerScreen() }
             composable(
                 "${NavConstant.ALBUM_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
@@ -48,7 +50,6 @@ fun ThinMPNavHost() {
             ) { backStackEntry ->
                 PlaylistDetailEditScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
             }
-            composable(NavConstant.PLAYER) { PlayerScreen() }
         }
     }
 }

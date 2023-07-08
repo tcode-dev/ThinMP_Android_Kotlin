@@ -14,6 +14,7 @@ class NavConstant {
         const val ALBUM_DETAIL = "albumDetail"
         const val ARTIST_DETAIL = "artistDetail"
         const val PLAYLISTS = "playlists"
+        const val PLAYLISTS_EDIT = "playlistsEdit"
         const val PLAYLIST_DETAIL = "playlistDetail"
         const val PLAYLIST_DETAIL_EDIT = "playlistDetailEdit"
         const val PLAYER = "player"
