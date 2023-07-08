@@ -63,7 +63,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                             Modifier
                                 .padding(end = StyleConstant.PADDING_LARGE.dp)
                                 .clickable {
-                                    viewModel.addPlaylist(playlist.id, songId)
+                                    viewModel.addSong(playlist.id, songId)
                                     visiblePopup.value = false
                                 })
                     }

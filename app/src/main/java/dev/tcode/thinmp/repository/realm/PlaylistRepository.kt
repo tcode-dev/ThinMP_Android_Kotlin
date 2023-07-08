@@ -57,7 +57,7 @@ class PlaylistRepository {
         }
     }
 
-    fun update(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
+    fun updatePlaylist(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
         findById(playlistId)?.also { playlist ->
             realm.writeBlocking {
                 val songs = songIds.map { songId ->
@@ -72,6 +72,30 @@ class PlaylistRepository {
                     it.name = name
                     it.songs.clear()
                     it.songs.addAll(songs)
+                }
+            }
+        }
+    }
+
+    fun updatePlaylists(playlistIds: List<PlaylistId>) {
+        findAll().also { playlists ->
+            val group = playlists.groupBy { playlist -> playlistIds.any { it.id == playlist.id } }
+            val deletePlaylists = if (group[false] != null) group[false]!! else emptyList()
+            val sortedPlaylists = if (group[true] != null) {
+                playlistIds.mapNotNull { playlistId -> group[true]?.first { it.id == playlistId.id } }
+            } else {
+                emptyList()
+            }
+
+            realm.writeBlocking {
+                deletePlaylists.forEach { playlist ->
+                    findLatest(playlist)?.let { delete(it) }
+                }
+
+                for ((index, playlist) in sortedPlaylists.withIndex()) {
+                    findLatest(playlist)?.let {
+                        it.order = index + 1
+                    }
                 }
             }
         }

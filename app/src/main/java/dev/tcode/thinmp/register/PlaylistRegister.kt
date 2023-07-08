@@ -11,7 +11,7 @@ interface PlaylistRegister {
         repository.create(songId, text)
     }
 
-    fun addPlaylist(playlistId: PlaylistId, songId: SongId) {
+    fun addSong(playlistId: PlaylistId, songId: SongId) {
         val repository = PlaylistRepository()
 
         repository.add(playlistId, songId)
@@ -23,9 +23,15 @@ interface PlaylistRegister {
         repository.delete(playlistId)
     }
 
-    fun update(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
+    fun updatePlaylist(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
         val repository = PlaylistRepository()
 
-        repository.update(playlistId, name, songIds)
+        repository.updatePlaylist(playlistId, name, songIds)
+    }
+
+    fun updatePlaylists(playlistIds: List<PlaylistId>) {
+        val repository = PlaylistRepository()
+
+        repository.updatePlaylists(playlistIds)
     }
 }
