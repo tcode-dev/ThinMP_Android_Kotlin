@@ -25,16 +25,14 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
-import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
 import dev.tcode.thinmp.view.collapsingTopAppBar.detailSize
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.layout.CommonLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.player.MiniPlayerView
-import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
@@ -42,25 +40,19 @@ import dev.tcode.thinmp.view.util.CustomGridCellsFixed
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.gridSpanCount
-import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val visiblePopup = remember { mutableStateOf(false) }
-    val miniPlayerHeight = miniPlayerHeight()
     val navigator = LocalNavigator.current
     val spanCount: Int = gridSpanCount()
     val (size, gradientHeight, primaryTitlePosition, secondaryTitlePosition) = detailSize()
-    var playlistRegisterSongId = SongId("")
 
     CustomLifecycleEventObserver(viewModel)
 
-    ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
-
+    CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
             columns = CustomGridCellsFixed(spanCount),
             dropdownMenus = { callback ->
@@ -122,8 +114,8 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
                     val closePlaylist = {
-                        playlistRegisterSongId = song.songId
-                        visiblePopup.value = true
+                        setPlaylistRegisterSongId(song.songId)
+                        togglePopup()
                         close()
                     }
 
@@ -139,14 +131,6 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
             item(span = { GridItemSpan(spanCount) }) {
                 EmptyMiniPlayerView()
             }
-        }
-        if (visiblePopup.value) {
-            PlaylistPopupView(playlistRegisterSongId, visiblePopup)
-        }
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
         }
     }
 }

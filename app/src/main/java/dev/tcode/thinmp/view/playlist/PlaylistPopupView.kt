@@ -23,7 +23,7 @@ import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewModel: PlaylistsViewModel = viewModel()) {
+fun PlaylistPopupView(songId: SongId, callback: () -> Unit, viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var isCreate by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }
@@ -31,7 +31,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
     CustomLifecycleEventObserver(viewModel)
 
     Popup(
-        alignment = Alignment.Center, onDismissRequest = { visiblePopup.value = false }, properties = PopupProperties(focusable = true)
+        alignment = Alignment.Center, onDismissRequest = { callback() }, properties = PopupProperties(focusable = true)
     ) {
         Column(
             modifier = Modifier
@@ -55,7 +55,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                         color = MaterialTheme.colorScheme.primary,
-                        modifier = Modifier.clickable { visiblePopup.value = false })
+                        modifier = Modifier.clickable { callback() })
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
@@ -64,7 +64,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                                 .padding(end = StyleConstant.PADDING_LARGE.dp)
                                 .clickable {
                                     viewModel.addSong(playlist.id, songId)
-                                    visiblePopup.value = false
+                                    callback()
                                 })
                     }
                 }
@@ -92,7 +92,7 @@ fun PlaylistPopupView(songId: SongId, visiblePopup: MutableState<Boolean>, viewM
                     OutlinedButton(
                         onClick = {
                             viewModel.createPlaylist(songId, name)
-                            visiblePopup.value = false
+                            callback()
                         },
                     ) {
                         Text(stringResource(R.string.done))

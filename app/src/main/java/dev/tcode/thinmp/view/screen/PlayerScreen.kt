@@ -227,6 +227,6 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
         }
     }
     if (visiblePopup.value) {
-        PlaylistPopupView(uiState.songId, visiblePopup)
+        PlaylistPopupView(uiState.songId, { visiblePopup.value = false })
     }
 }
