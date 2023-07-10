@@ -5,7 +5,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.view.playlist.PlaylistPopupView
+import dev.tcode.thinmp.view.playlist.PlaylistRegisterPopupView
 
 @Composable
 fun PopupLayoutView(content: @Composable() (BoxScope.(togglePopup: () -> Unit, setPlaylistRegisterSongId: (songId: SongId) -> Unit) -> Unit)) {
@@ -19,7 +19,7 @@ fun PopupLayoutView(content: @Composable() (BoxScope.(togglePopup: () -> Unit, s
             content(togglePopup, setPlaylistRegisterSongId)
         }
         if (visiblePopup.value) {
-            PlaylistPopupView(playlistRegisterSongId, { visiblePopup.value = false })
+            PlaylistRegisterPopupView(playlistRegisterSongId, { visiblePopup.value = false })
         }
     }
 }

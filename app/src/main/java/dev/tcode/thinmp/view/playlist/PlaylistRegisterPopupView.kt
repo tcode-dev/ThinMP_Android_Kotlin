@@ -23,7 +23,7 @@ import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PlaylistPopupView(songId: SongId, callback: () -> Unit, viewModel: PlaylistsViewModel = viewModel()) {
+fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: PlaylistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var isCreate by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }

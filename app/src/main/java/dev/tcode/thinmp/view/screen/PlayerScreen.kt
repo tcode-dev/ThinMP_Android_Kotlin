@@ -25,7 +25,7 @@ import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.image.ImageView
-import dev.tcode.thinmp.view.playlist.PlaylistPopupView
+import dev.tcode.thinmp.view.playlist.PlaylistRegisterPopupView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
@@ -227,6 +227,6 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
         }
     }
     if (visiblePopup.value) {
-        PlaylistPopupView(uiState.songId, { visiblePopup.value = false })
+        PlaylistRegisterPopupView(uiState.songId, { visiblePopup.value = false })
     }
 }
