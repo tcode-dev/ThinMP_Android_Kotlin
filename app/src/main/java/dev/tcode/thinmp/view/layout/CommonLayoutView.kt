@@ -11,7 +11,7 @@ import dev.tcode.thinmp.view.playlist.PlaylistPopupView
 import dev.tcode.thinmp.view.util.miniPlayerHeight
 
 @Composable
-fun CommonLayoutView(content: @Composable() (BoxScope.(togglePopup: () -> Unit, setPlaylistRegisterSongId: (songId: SongId) -> Unit) -> Unit)) {
+fun CommonLayoutView(content: @Composable ((togglePopup: () -> Unit, setPlaylistRegisterSongId: (songId: SongId) -> Unit) -> Unit)) {
     val miniPlayerHeight = miniPlayerHeight()
     val visiblePopup = remember { mutableStateOf(false) }
     var playlistRegisterSongId = SongId("")
@@ -21,12 +21,12 @@ fun CommonLayoutView(content: @Composable() (BoxScope.(togglePopup: () -> Unit, 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (miniPlayer) = createRefs()
 
-        Box {
-            content(togglePopup, setPlaylistRegisterSongId)
-        }
+        content(togglePopup, setPlaylistRegisterSongId)
+
         if (visiblePopup.value) {
             PlaylistPopupView(playlistRegisterSongId, { visiblePopup.value = false })
         }
+
         Box(modifier = Modifier.constrainAs(miniPlayer) {
             top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
         }) {

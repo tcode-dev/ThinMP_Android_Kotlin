@@ -22,9 +22,7 @@ import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.minSize
 
 @Composable
-fun DetailCollapsingTopAppBarView(
-    title: String, columns: GridCells, spanCount: Int, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: (LazyGridScope.() -> Unit)
-) {
+fun DetailCollapsingTopAppBarView(title: String, columns: GridCells, spanCount: Int, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyGridScope.() -> Unit) {
     val lazyGridState = rememberLazyGridState()
 
     Box(Modifier.zIndex(1F)) {

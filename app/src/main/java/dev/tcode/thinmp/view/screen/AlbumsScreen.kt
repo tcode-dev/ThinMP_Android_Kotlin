@@ -35,10 +35,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     CustomLifecycleEventObserver(viewModel)
 
     MiniPlayerLayoutView {
-        GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount)) {
-            item(span = { GridItemSpan(spanCount) }) {
-                EmptyTopAppBarView()
-            }
+        GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount), spanCount) {
             itemsIndexed(uiState.albums) { index, album ->
                 Box(
                     modifier = Modifier.wrapContentSize(Alignment.TopStart)
@@ -55,9 +52,6 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
                         ShortcutDropdownMenuItemView(album.albumId, close)
                     }
                 }
-            }
-            item(span = { GridItemSpan(spanCount) }) {
-                EmptyMiniPlayerView()
             }
         }
     }
