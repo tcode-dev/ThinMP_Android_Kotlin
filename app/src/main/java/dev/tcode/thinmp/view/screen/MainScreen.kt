@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
@@ -32,8 +31,8 @@ import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.cell.ShortcutCellView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
+import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.*
@@ -43,15 +42,12 @@ import dev.tcode.thinmp.viewModel.MainViewModel
 fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val miniPlayerHeight = miniPlayerHeight()
     val spanCount: Int = gridSpanCount()
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
-    ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
-
+    MiniPlayerLayoutView {
         LazyVerticalGrid(columns = CustomGridCellsFixed(spanCount)) {
             item(span = { GridItemSpan(spanCount) }) {
                 Column(
@@ -163,11 +159,6 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
             item(span = { GridItemSpan(spanCount) }) {
                 EmptyMiniPlayerView()
             }
-        }
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
         }
     }
 }

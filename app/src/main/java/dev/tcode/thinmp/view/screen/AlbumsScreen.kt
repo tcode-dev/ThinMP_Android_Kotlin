@@ -12,19 +12,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
-import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
 import dev.tcode.thinmp.view.collapsingTopAppBar.GridCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
+import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.util.*
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
@@ -33,14 +30,11 @@ import dev.tcode.thinmp.viewModel.AlbumsViewModel
 fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
-    val miniPlayerHeight = miniPlayerHeight()
     val spanCount: Int = gridSpanCount()
 
     CustomLifecycleEventObserver(viewModel)
 
-    ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
-
+    MiniPlayerLayoutView {
         GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount)) {
             item(span = { GridItemSpan(spanCount) }) {
                 EmptyTopAppBarView()
@@ -65,11 +59,6 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
             item(span = { GridItemSpan(spanCount) }) {
                 EmptyMiniPlayerView()
             }
-        }
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
         }
     }
 }

@@ -14,33 +14,28 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.collapsingTopAppBar.ColumnCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
+import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.EmptyTopAppBarView
-import dev.tcode.thinmp.view.util.miniPlayerHeight
 import dev.tcode.thinmp.viewModel.ArtistsViewModel
 
 @ExperimentalFoundationApi
 @Composable
 fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val miniPlayerHeight = miniPlayerHeight()
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
-    ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
-
+    MiniPlayerLayoutView {
         ColumnCollapsingTopAppBarView(stringResource(R.string.artists)) {
             item {
                 EmptyTopAppBarView()
@@ -66,11 +61,6 @@ fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
             item {
                 EmptyMiniPlayerView()
             }
-        }
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
         }
     }
 }
