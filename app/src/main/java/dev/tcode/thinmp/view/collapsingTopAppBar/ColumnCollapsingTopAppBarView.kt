@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import dev.tcode.thinmp.view.topAppBar.PlainTopAppBarView
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 
 @Composable
 fun ColumnCollapsingTopAppBarView(title: String, content: LazyListScope.() -> Unit) {
@@ -17,7 +19,15 @@ fun ColumnCollapsingTopAppBarView(title: String, content: LazyListScope.() -> Un
     Box(Modifier.zIndex(1F)) {
         PlainTopAppBarView(title, visible = visibleTopAppBar(lazyListState))
     }
-    LazyColumn(state = lazyListState, content = content)
+    LazyColumn(state = lazyListState) {
+        item {
+            EmptyTopAppBarView()
+        }
+        content()
+        item {
+            EmptyMiniPlayerView()
+        }
+    }
 }
 
 @Composable

@@ -23,8 +23,6 @@ import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.ArtistsViewModel
 
 @ExperimentalFoundationApi
@@ -37,9 +35,7 @@ fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
 
     MiniPlayerLayoutView {
         ColumnCollapsingTopAppBarView(stringResource(R.string.artists)) {
-            item {
-                EmptyTopAppBarView()
-            }
+
             items(uiState.artists) { artist ->
                 Box(
                     modifier = Modifier
@@ -58,9 +54,7 @@ fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
                     }
                 }
             }
-            item {
-                EmptyMiniPlayerView()
-            }
+
         }
     }
 }

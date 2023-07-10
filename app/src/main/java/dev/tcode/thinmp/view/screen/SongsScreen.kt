@@ -22,8 +22,6 @@ import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.CommonLayoutView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.SongsViewModel
 
 @ExperimentalFoundationApi
@@ -35,9 +33,6 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
 
     CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
-            item {
-                EmptyTopAppBarView()
-            }
             itemsIndexed(uiState.songs) { index, song ->
                 Box(
                     modifier = Modifier
@@ -60,9 +55,6 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
                         PlaylistDropdownMenuItemView(closePlaylist)
                     }
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }
