@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -19,8 +20,6 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.DropdownRowView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 import java.util.UUID
 
@@ -28,6 +27,7 @@ import java.util.UUID
 @Composable
 fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val context = LocalContext.current
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
@@ -42,6 +42,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
                         setPlaylistRegisterSongId(song.songId)
                         togglePopup()
                         callback()
+                        viewModel.load(context)
                     }
                     FavoriteSongDropdownMenuItemView(song.songId, { callback() })
                     PlaylistDropdownMenuItemView(callbackPlaylist)
