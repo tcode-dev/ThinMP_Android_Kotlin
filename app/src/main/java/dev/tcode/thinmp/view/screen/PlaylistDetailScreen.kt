@@ -38,7 +38,6 @@ import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomGridCellsFixed
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 
@@ -55,6 +54,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
             columns = CustomGridCellsFixed(spanCount),
+            spanCount = spanCount,
             dropdownMenus = { callback ->
                 DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })
                 ShortcutDropdownMenuItemView(AlbumId(id), callback)
@@ -127,9 +127,6 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                         PlaylistDropdownMenuItemView(closePlaylist)
                     }
                 }
-            }
-            item(span = { GridItemSpan(spanCount) }) {
-                EmptyMiniPlayerView()
             }
         }
     }

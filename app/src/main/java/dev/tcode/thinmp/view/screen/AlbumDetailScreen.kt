@@ -33,7 +33,6 @@ import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomGridCellsFixed
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
 import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
@@ -47,12 +46,9 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
     CustomLifecycleEventObserver(viewModel)
 
     CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
-        DetailCollapsingTopAppBarView(
-            title = uiState.primaryText,
-            columns = CustomGridCellsFixed(spanCount),
-            dropdownMenus = { callback ->
-                ShortcutDropdownMenuItemView(AlbumId(id), callback)
-            }) {
+        DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
+            ShortcutDropdownMenuItemView(AlbumId(id), callback)
+        }) {
             item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
                     Modifier
@@ -124,9 +120,6 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                         PlaylistDropdownMenuItemView(closePlaylist)
                     }
                 }
-            }
-            item(span = { GridItemSpan(spanCount) }) {
-                EmptyMiniPlayerView()
             }
         }
     }
