@@ -44,7 +44,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
+    CommonLayoutView { showPlaylistPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
             ShortcutDropdownMenuItemView(AlbumId(id), callback)
         }) {
@@ -101,8 +101,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
             itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
                 DropdownRowView(dropdownContent = { callback ->
                     val callbackPlaylist = {
-                        setPlaylistRegisterSongId(song.songId)
-                        togglePopup()
+                        showPlaylistPopup(song.songId)
                         callback()
                     }
                     FavoriteSongDropdownMenuItemView(song.songId, callback)

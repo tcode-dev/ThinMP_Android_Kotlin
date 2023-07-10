@@ -32,19 +32,21 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
+    CommonLayoutView { showPlaylistPopup ->
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_songs), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
             itemsIndexed(uiState.songs) { index, song ->
                 DropdownRowView(dropdownContent = { callback ->
-                    val callbackPlaylist = {
-                        setPlaylistRegisterSongId(song.songId)
-                        togglePopup()
+                    val callbackFavorite = {
                         callback()
                         viewModel.load(context)
                     }
-                    FavoriteSongDropdownMenuItemView(song.songId, { callback() })
+                    val callbackPlaylist = {
+                        showPlaylistPopup(song.songId)
+                        callback()
+                    }
+                    FavoriteSongDropdownMenuItemView(song.songId, callbackFavorite)
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(UUID.randomUUID()) {

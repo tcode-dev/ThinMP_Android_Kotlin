@@ -31,7 +31,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
+    CommonLayoutView { showPlaylistPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             itemsIndexed(uiState.songs) { index, song ->
                 Box(
@@ -42,8 +42,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
                     val closePlaylist = {
-                        setPlaylistRegisterSongId(song.songId)
-                        togglePopup()
+                        showPlaylistPopup(song.songId)
                         close()
                     }
 

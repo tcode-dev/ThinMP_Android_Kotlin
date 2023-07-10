@@ -51,7 +51,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { togglePopup, setPlaylistRegisterSongId ->
+    CommonLayoutView { showPlaylistPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
             columns = CustomGridCellsFixed(spanCount),
             spanCount = spanCount,
@@ -114,8 +114,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     val expanded = remember { mutableStateOf(false) }
                     val close = { expanded.value = false }
                     val closePlaylist = {
-                        setPlaylistRegisterSongId(song.songId)
-                        togglePopup()
+                        showPlaylistPopup(song.songId)
                         close()
                     }
 
