@@ -36,9 +36,6 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_songs), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
-            item {
-                EmptyTopAppBarView()
-            }
             itemsIndexed(uiState.songs) { index, song ->
                 DropdownRowView(dropdownContent = { callback ->
                     val callbackPlaylist = {
@@ -53,9 +50,6 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
                     })
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }

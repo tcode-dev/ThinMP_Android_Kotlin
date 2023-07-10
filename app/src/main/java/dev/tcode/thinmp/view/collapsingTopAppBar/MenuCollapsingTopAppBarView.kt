@@ -16,6 +16,8 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import dev.tcode.thinmp.view.topAppBar.MenuTopAppBarView
+import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 
 @Composable
 fun MenuCollapsingTopAppBarView(title: String, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyListScope.() -> Unit) {
@@ -30,7 +32,15 @@ fun MenuCollapsingTopAppBarView(title: String, dropdownMenus: @Composable Column
             dropdownMenus(callback = callback)
         }
     }
-    LazyColumn(state = lazyListState, content = content)
+    LazyColumn(state = lazyListState) {
+        item {
+            EmptyTopAppBarView()
+        }
+        content()
+        item {
+            EmptyMiniPlayerView()
+        }
+    }
 }
 
 @Composable

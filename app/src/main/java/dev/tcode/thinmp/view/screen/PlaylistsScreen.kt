@@ -25,8 +25,6 @@ import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @ExperimentalFoundationApi
@@ -42,9 +40,6 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.playlists), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.playlistsEdit() })
         }) {
-            item {
-                EmptyTopAppBarView()
-            }
             itemsIndexed(uiState.playlists) { index, playlist ->
                 Box(
                     modifier = Modifier
@@ -66,9 +61,6 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
                         ShortcutDropdownMenuItemView(playlist.id, close)
                     }
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }

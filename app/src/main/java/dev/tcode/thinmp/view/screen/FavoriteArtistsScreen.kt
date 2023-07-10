@@ -25,8 +25,6 @@ import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.FavoriteArtistsViewModel
 
 @ExperimentalFoundationApi
@@ -42,9 +40,6 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_artists), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteArtistsEdit() })
         }) {
-            item {
-                EmptyTopAppBarView()
-            }
             itemsIndexed(uiState.artists) { index, artist ->
                 Box(
                     modifier = Modifier
@@ -67,9 +62,6 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
                         FavoriteArtistDropdownMenuItemView(artist.artistId, close)
                     }
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }
