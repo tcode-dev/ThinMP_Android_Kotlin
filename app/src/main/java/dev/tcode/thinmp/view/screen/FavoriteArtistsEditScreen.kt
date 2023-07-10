@@ -12,8 +12,6 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.swipe.SwipeToDismissView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.FavoriteArtistsEditViewModel
 
 @ExperimentalFoundationApi
@@ -30,16 +28,10 @@ fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = viewMode
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(doneCallback) {
-            item {
-                EmptyTopAppBarView()
-            }
             itemsIndexed(uiState.artists) { index, artist ->
                 SwipeToDismissView(callback = { viewModel.removeArtist(index) }) {
                     PlainRowView(artist.name)
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }

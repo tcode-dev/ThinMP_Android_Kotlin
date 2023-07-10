@@ -15,7 +15,6 @@ import dev.tcode.thinmp.view.collapsingTopAppBar.EditCollapsingTopAppBarView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.EditRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.MainEditViewModel
 
 @ExperimentalFoundationApi
@@ -33,9 +32,6 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(doneCallback) {
-            item {
-                EmptyTopAppBarView()
-            }
             items(uiState.menu) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })
             }

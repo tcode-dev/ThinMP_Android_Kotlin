@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
+import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 
 @Composable
 fun EditCollapsingTopAppBarView(callback: () -> Unit, content: LazyListScope.() -> Unit) {
@@ -17,7 +18,12 @@ fun EditCollapsingTopAppBarView(callback: () -> Unit, content: LazyListScope.() 
     Box(Modifier.zIndex(1F)) {
         EditTopAppBarView(visible = visibleTopAppBar(lazyListState), callback)
     }
-    LazyColumn(state = lazyListState, content = content)
+    LazyColumn(state = lazyListState) {
+        item {
+            EmptyTopAppBarView()
+        }
+        content()
+    }
 }
 
 @Composable

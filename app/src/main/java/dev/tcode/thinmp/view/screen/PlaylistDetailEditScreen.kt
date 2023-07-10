@@ -16,8 +16,6 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.swipe.SwipeToDismissView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.PlaylistDetailEditViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -36,9 +34,6 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(doneCallback) {
             item {
-                EmptyTopAppBarView()
-            }
-            item {
                 OutlinedTextField(value = uiState.primaryText, singleLine = true, modifier = Modifier
                     .fillMaxWidth()
                     .padding(StyleConstant.PADDING_LARGE.dp), onValueChange = { viewModel.changeName(it) })
@@ -47,9 +42,6 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
                 SwipeToDismissView(callback = { viewModel.removeSong(index) }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }

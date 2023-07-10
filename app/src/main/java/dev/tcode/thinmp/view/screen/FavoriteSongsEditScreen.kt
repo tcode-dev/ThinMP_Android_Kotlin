@@ -12,8 +12,6 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.swipe.SwipeToDismissView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
-import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
-import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 import dev.tcode.thinmp.viewModel.FavoriteSongsEditViewModel
 
 @ExperimentalFoundationApi
@@ -30,16 +28,10 @@ fun FavoriteSongsEditScreen(viewModel: FavoriteSongsEditViewModel = viewModel())
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(doneCallback) {
-            item {
-                EmptyTopAppBarView()
-            }
             itemsIndexed(uiState.songs) { index, song ->
                 SwipeToDismissView(callback = { viewModel.removeSong(index) }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
                 }
-            }
-            item {
-                EmptyMiniPlayerView()
             }
         }
     }
