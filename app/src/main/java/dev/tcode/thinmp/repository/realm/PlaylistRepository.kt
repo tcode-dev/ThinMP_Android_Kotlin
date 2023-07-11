@@ -5,6 +5,7 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
+import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
@@ -26,6 +27,7 @@ class PlaylistRepository {
         song.songId = songId.id
 
         playlist.name = name
+        playlist.order = increment()
         playlist.songs.add(song)
 
         realm.writeBlocking {
@@ -102,7 +104,7 @@ class PlaylistRepository {
     }
 
     fun findAll(): List<PlaylistRealmModel> {
-        return realm.query<PlaylistRealmModel>().find()
+        return realm.query<PlaylistRealmModel>().find().sortedBy(PlaylistRealmModel::order)
     }
 
     fun findById(playlistId: PlaylistId): PlaylistRealmModel? {
@@ -121,5 +123,13 @@ class PlaylistRepository {
 
             findLatest(playlist)?.let { delete(it) }
         }
+    }
+
+    private fun increment(): Int {
+        val result = realm.query<PlaylistRealmModel>().find()
+
+        if (result.isEmpty()) return 1
+
+        return result.maxOf(PlaylistRealmModel::order) + 1
     }
 }
