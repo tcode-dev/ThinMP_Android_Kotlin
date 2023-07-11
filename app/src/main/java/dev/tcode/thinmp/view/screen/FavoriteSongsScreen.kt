@@ -17,7 +17,7 @@ import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.CommonLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.row.DropdownRowView
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
@@ -37,7 +37,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
             itemsIndexed(uiState.songs) { index, song ->
-                DropdownRowView(dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val callbackFavorite = {
                         callback()
                         viewModel.load(context)

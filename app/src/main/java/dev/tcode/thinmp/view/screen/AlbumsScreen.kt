@@ -15,7 +15,7 @@ import dev.tcode.thinmp.view.collapsingTopAppBar.GridCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.row.DropdownRowView
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.util.*
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
@@ -31,7 +31,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     MiniPlayerLayoutView {
         GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount), spanCount) {
             itemsIndexed(uiState.albums) { index, album ->
-                DropdownRowView(dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     ShortcutDropdownMenuItemView(album.albumId, callback)
                 }) { callback ->
                     GridCellView(index, spanCount) {

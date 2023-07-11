@@ -13,7 +13,7 @@ import dev.tcode.thinmp.view.collapsingTopAppBar.ColumnCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.CommonLayoutView
-import dev.tcode.thinmp.view.row.DropdownRowView
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.SongsViewModel
@@ -28,7 +28,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     CommonLayoutView { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             itemsIndexed(uiState.songs) { index, song ->
-                DropdownRowView(dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
                         callback()

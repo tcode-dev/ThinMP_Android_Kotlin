@@ -33,6 +33,7 @@ import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.layout.CommonLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
@@ -110,21 +111,17 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                 }
             }
             itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
-                Box {
-                    val expanded = remember { mutableStateOf(false) }
-                    val close = { expanded.value = false }
-                    val closePlaylist = {
+                DropdownMenuView(dropdownContent = { callback ->
+                    val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
-                        close()
+                        callback()
                     }
-
+                    FavoriteSongDropdownMenuItemView(song.songId, callback)
+                    PlaylistDropdownMenuItemView(callbackPlaylist)
+                }) { callback ->
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
-                        detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
+                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
                     })
-                    DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                        FavoriteSongDropdownMenuItemView(song.songId, close)
-                        PlaylistDropdownMenuItemView(closePlaylist)
-                    }
                 }
             }
         }

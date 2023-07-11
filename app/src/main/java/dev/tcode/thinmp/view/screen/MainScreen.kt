@@ -33,6 +33,7 @@ import dev.tcode.thinmp.view.cell.ShortcutCellView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.*
@@ -109,23 +110,17 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
                 itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
-                    Box(
-                        modifier = Modifier.wrapContentSize(Alignment.TopStart)
-                    ) {
-                        val expanded = remember { mutableStateOf(false) }
-                        val close = { expanded.value = false }
-                        val callback = {
+                    DropdownMenuView(dropdownContent = { callback ->
+                        val callbackShortcut = {
+                            callback()
                             viewModel.load(context)
-                            close()
                         }
-
+                        ShortcutDropdownMenuItemView(shortcut.itemId, callbackShortcut)
+                    }) { callback ->
                         GridCellView(index, spanCount) {
                             ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(shortcut.url) {
-                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navController.navigate(shortcut.url) })
+                                detectTapGestures(onLongPress = { callback() }, onTap = { navController.navigate(shortcut.url) })
                             })
-                        }
-                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                            ShortcutDropdownMenuItemView(shortcut.itemId, callback)
                         }
                     }
                 }
@@ -135,23 +130,17 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     SectionTitleView(stringResource(R.string.recently_added))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
-                    Box(
-                        modifier = Modifier.wrapContentSize(Alignment.TopStart)
-                    ) {
-                        val expanded = remember { mutableStateOf(false) }
-                        val close = { expanded.value = false }
-                        val callback = {
+                    DropdownMenuView(dropdownContent = { callback ->
+                        val callbackAlbum = {
+                            callback()
                             viewModel.load(context)
-                            close()
                         }
-
+                        ShortcutDropdownMenuItemView(album.albumId, callbackAlbum)
+                    }) { callback ->
                         GridCellView(index, spanCount) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
-                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
+                                detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
                             })
-                        }
-                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                            ShortcutDropdownMenuItemView(album.albumId, callback)
                         }
                     }
                 }

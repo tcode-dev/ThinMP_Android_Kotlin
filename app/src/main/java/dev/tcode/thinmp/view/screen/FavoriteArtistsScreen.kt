@@ -14,9 +14,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.collapsingTopAppBar.MenuCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteArtistDropdownMenuItemView
+import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
-import dev.tcode.thinmp.view.row.DropdownRowView
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.FavoriteArtistsViewModel
@@ -35,12 +36,13 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteArtistsEdit() })
         }) {
             itemsIndexed(uiState.artists) { index, artist ->
-                DropdownRowView(dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val close = {
                         callback()
                         viewModel.load(context)
                     }
                     FavoriteArtistDropdownMenuItemView(artist.artistId, close)
+                    ShortcutDropdownMenuItemView(artist.artistId, callback)
                 }) { callback ->
                     PlainRowView(artist.name, Modifier.pointerInput(artist.url) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { navigator.artistDetail(artist.id) })

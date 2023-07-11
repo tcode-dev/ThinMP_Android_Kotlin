@@ -8,6 +8,6 @@ import androidx.compose.ui.res.stringResource
 import dev.tcode.thinmp.R
 
 @Composable
-fun PlaylistDropdownMenuItemView(callback: () -> Unit) {
-    DropdownMenuItem(text = { Text(stringResource(R.string.add_playlist), color = MaterialTheme.colorScheme.primary) }, onClick = callback)
+fun PlaylistRemoveDropdownMenuItemView(callback: () -> Unit) {
+    DropdownMenuItem(text = { Text(stringResource(R.string.remove_playlist), color = MaterialTheme.colorScheme.primary) }, onClick = callback)
 }

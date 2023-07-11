@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import java.util.UUID
 
 @Composable
-fun DropdownRowView(dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable BoxScope.(callback: () -> Unit) -> Unit) {
+fun DropdownMenuView(dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable BoxScope.(callback: () -> Unit) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()

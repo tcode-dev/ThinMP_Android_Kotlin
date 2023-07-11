@@ -19,7 +19,7 @@ import dev.tcode.thinmp.viewModel.FavoriteSongsEditViewModel
 fun FavoriteSongsEditScreen(viewModel: FavoriteSongsEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
-    val doneCallback = {
+    val callback = {
         viewModel.update()
         navigator.back()
     }
@@ -27,7 +27,7 @@ fun FavoriteSongsEditScreen(viewModel: FavoriteSongsEditViewModel = viewModel())
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        EditCollapsingTopAppBarView(doneCallback) {
+        EditCollapsingTopAppBarView(callback) {
             itemsIndexed(uiState.songs) { index, song ->
                 SwipeToDismissView(callback = { viewModel.removeSong(index) }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())

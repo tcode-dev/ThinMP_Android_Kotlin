@@ -7,7 +7,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,7 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,6 +37,7 @@ import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.layout.CommonLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
@@ -133,19 +132,13 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     SectionTitleView(stringResource(R.string.albums))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
-                    Box(
-                        modifier = Modifier.wrapContentSize(Alignment.TopStart)
-                    ) {
-                        val expanded = remember { mutableStateOf(false) }
-                        val close = { expanded.value = false }
-
+                    DropdownMenuView(dropdownContent = { callback ->
+                        ShortcutDropdownMenuItemView(album.albumId, callback)
+                    }) { callback ->
                         GridCellView(index, spanCount) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
-                                detectTapGestures(onLongPress = { expanded.value = true }, onTap = { navigator.albumDetail(album.id) })
+                                detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
                             })
-                        }
-                        DropdownMenu(expanded = expanded.value, offset = DpOffset(0.dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = close) {
-                            ShortcutDropdownMenuItemView(album.albumId, close)
                         }
                     }
                 }
@@ -155,24 +148,17 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     SectionTitleView(stringResource(R.string.songs))
                 }
                 itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
-                    Box {
-                        val expanded = remember { mutableStateOf(false) }
-                        val closeFavorite = { expanded.value = false }
-                        val closePlaylist = {
+                    DropdownMenuView(dropdownContent = { callback ->
+                        val callbackPlaylist = {
                             showPlaylistRegisterPopup(song.songId)
-                            expanded.value = false
+                            callback()
                         }
-
+                        FavoriteSongDropdownMenuItemView(song.songId, callback)
+                        PlaylistDropdownMenuItemView(callbackPlaylist)
+                    }) { callback ->
                         MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
-                            detectTapGestures(onLongPress = { expanded.value = true }, onTap = { viewModel.start(index) })
+                            detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
                         })
-                        DropdownMenu(expanded = expanded.value,
-                            offset = DpOffset((-1).dp, 0.dp),
-                            modifier = Modifier.background(MaterialTheme.colorScheme.onBackground),
-                            onDismissRequest = { expanded.value = false }) {
-                            FavoriteSongDropdownMenuItemView(song.songId, closeFavorite)
-                            PlaylistDropdownMenuItemView(closePlaylist)
-                        }
                     }
                 }
             }

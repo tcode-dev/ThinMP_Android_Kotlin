@@ -26,7 +26,7 @@ import dev.tcode.thinmp.view.dropdownMenu.PlaylistDropdownMenuItemView
 import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.layout.CommonLayoutView
-import dev.tcode.thinmp.view.row.DropdownRowView
+import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
@@ -99,7 +99,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                 }
             }
             itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
-                DropdownRowView(dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
                         callback()
