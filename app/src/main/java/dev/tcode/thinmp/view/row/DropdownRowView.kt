@@ -3,7 +3,7 @@ package dev.tcode.thinmp.view.row
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.wrapContentSize
@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import java.util.UUID
 
 @Composable
-fun DropdownRowView(dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable ColumnScope.(callback: () -> Unit) -> Unit) {
+fun DropdownRowView(dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable BoxScope.(callback: () -> Unit) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -29,7 +29,7 @@ fun DropdownRowView(dropdownContent: @Composable ColumnScope.(callback: () -> Un
         val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        Column(Modifier.pointerInput(UUID.randomUUID()) {
+        Box(Modifier.pointerInput(UUID.randomUUID()) {
             detectTapGestures(onLongPress = { callback() }, onTap = { callback() })
         }) {
             content(callback = callback)
