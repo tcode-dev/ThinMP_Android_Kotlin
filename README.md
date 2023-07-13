@@ -40,6 +40,7 @@
 ## Permission
 
 Manifest.permission.READ_MEDIA_AUDIO
+Manifest.permission.POST_NOTIFICATIONS
 
 ## Architecture
 
