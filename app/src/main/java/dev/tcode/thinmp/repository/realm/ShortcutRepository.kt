@@ -4,6 +4,7 @@ import android.text.TextUtils
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
+import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import io.realm.kotlin.Realm
@@ -55,7 +56,31 @@ class ShortcutRepository {
         return realm.query<ShortcutRealmModel>().find().sortedByDescending(ShortcutRealmModel::order)
     }
 
-    fun update(ids: List<String>) {
+    fun update(shortcutIds: List<ShortcutId>) {
+        findAll().also { shortcuts ->
+            val group = shortcuts.groupBy { shortcut -> shortcutIds.any { it.id == shortcut.id } }
+            val deleteShortcuts = if (group[false] != null) group[false]!! else emptyList()
+            val sortedShortcuts = if (group[true] != null) {
+                shortcutIds.mapNotNull { shortcutId -> group[true]?.first { it.id == shortcutId.id } }
+            } else {
+                emptyList()
+            }
+
+            realm.writeBlocking {
+                deleteShortcuts.forEach { shortcut ->
+                    findLatest(shortcut)?.let { delete(it) }
+                }
+
+                for ((index, shortcut) in sortedShortcuts.withIndex()) {
+                    findLatest(shortcut)?.let {
+                        it.order = index + 1
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteByIds(ids: List<String>) {
         realm.writeBlocking {
             val values = TextUtils.join(", ", ids.map { "'${it}'" })
             val shortcuts = realm.query<ShortcutRealmModel>("id in { $values }").find()

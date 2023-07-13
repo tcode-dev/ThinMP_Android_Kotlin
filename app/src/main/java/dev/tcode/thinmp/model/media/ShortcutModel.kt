@@ -2,11 +2,12 @@ package dev.tcode.thinmp.model.media
 
 import android.net.Uri
 import dev.tcode.thinmp.constant.NavConstant
+import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.repository.realm.ItemType
 
 data class ShortcutModel(
-    var itemId: ShortcutItemId, var primaryText: String, var secondaryText: String, var imageUri: Uri, var type: ItemType
+    var id: ShortcutId, var itemId: ShortcutItemId, var primaryText: String, var secondaryText: String, var imageUri: Uri, var type: ItemType
 ) {
     val url: String
         get() {

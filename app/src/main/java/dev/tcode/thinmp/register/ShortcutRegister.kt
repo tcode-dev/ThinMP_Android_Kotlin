@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.register
 
+import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.repository.realm.ShortcutRepository
 
@@ -20,5 +21,11 @@ interface ShortcutRegister {
         val repository = ShortcutRepository()
 
         repository.delete(shortcutItemId)
+    }
+
+    fun update(shortcutIds: List<ShortcutId>) {
+        val repository = ShortcutRepository()
+
+        repository.update(shortcutIds)
     }
 }

@@ -5,6 +5,8 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuItem
+import dev.tcode.thinmp.model.media.ShortcutModel
+import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.MainService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,10 +15,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class MainEditUiState(
-    var menu: List<MainMenuItem> = emptyList(), var recentlyAlbumsVisibility: Boolean = true, var shortcutVisibility: Boolean = true
+    var menu: List<MainMenuItem> = emptyList(), var shortcuts: List<ShortcutModel> = emptyList(), var recentlyAlbumsVisibility: Boolean = true, var shortcutVisibility: Boolean = true
 )
 
-class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {
     private val _uiState = MutableStateFlow(MainEditUiState())
     val uiState: StateFlow<MainEditUiState> = _uiState.asStateFlow()
 
@@ -29,10 +31,11 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         val menu = service.getMenu()
         val shortcutVisibility = service.getShortcutVisibility()
         val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
+        val shortcuts = service.getShortcuts()
 
         _uiState.update { currentState ->
             currentState.copy(
-                menu = menu, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
+                menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
             )
         }
     }
@@ -68,6 +71,18 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun removeShortcut(index: Int) {
+        _uiState.update { currentState ->
+            val list = currentState.shortcuts.toMutableList()
+
+            list.removeAt(index)
+
+            currentState.copy(
+                shortcuts = list
+            )
+        }
+    }
+
     fun save(context: Context) {
         val config = ConfigStore(context)
 
@@ -77,5 +92,9 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
 
         config.saveShortcutVisibility(uiState.value.recentlyAlbumsVisibility)
         config.saveRecentlyAlbumsVisibility(uiState.value.shortcutVisibility)
+
+        val shortcutIds = uiState.value.shortcuts.map { it.id }
+
+        update(shortcutIds)
     }
 }

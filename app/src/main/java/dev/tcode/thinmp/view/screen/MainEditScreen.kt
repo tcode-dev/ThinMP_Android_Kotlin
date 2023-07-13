@@ -3,7 +3,9 @@ package dev.tcode.thinmp.view.screen
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -14,6 +16,9 @@ import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.collapsingTopAppBar.EditCollapsingTopAppBarView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.EditRowView
+import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.swipe.SwipeToDismissView
+import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MainEditViewModel
 
@@ -23,7 +28,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val context = LocalContext.current
     val navigator = LocalNavigator.current
-    val doneCallback = {
+    val callback = {
         viewModel.save(context)
         navigator.back()
     }
@@ -31,7 +36,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        EditCollapsingTopAppBarView(doneCallback) {
+        EditCollapsingTopAppBarView(callback) {
             items(uiState.menu) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })
             }
@@ -40,6 +45,14 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
             }
             item {
                 EditRowView(stringResource(R.string.recently_added), uiState.recentlyAlbumsVisibility, Modifier.clickable { viewModel.setRecentlyAlbumsVisibility() })
+            }
+            item {
+                SectionTitleView(stringResource(R.string.shortcut))
+            }
+            itemsIndexed(uiState.shortcuts) { index, shortcut ->
+                SwipeToDismissView(callback = { viewModel.removeShortcut(index) }) {
+                    PlainRowView(shortcut.primaryText)
+                }
             }
         }
     }

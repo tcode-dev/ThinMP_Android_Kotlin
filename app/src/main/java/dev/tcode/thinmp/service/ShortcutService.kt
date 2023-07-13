@@ -7,6 +7,7 @@ import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
+import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import dev.tcode.thinmp.repository.media.AlbumRepository
 import dev.tcode.thinmp.repository.media.ArtistRepository
@@ -33,10 +34,11 @@ class ShortcutService(
             val artistIds = group[ItemType.ARTIST.ordinal]?.map { ArtistId(it.itemId) }!!
             val artists = artistRepository.findByIds(artistIds)
 
-            map[ItemType.ARTIST.ordinal] = artists.map {
-                val albums = albumRepository.findByArtistId(it.id)
+            map[ItemType.ARTIST.ordinal] = artists.map { artist ->
+                val imageUri = albumRepository.findByArtistId(artist.id).first().getImageUri()
+                val id = group[ItemType.ARTIST.ordinal]?.firstOrNull() { shortcut -> shortcut.itemId == artist.id }?.id
 
-                ShortcutModel(it.artistId, it.name, resources.getString(R.string.artist), albums.first().getImageUri(), ItemType.ARTIST)
+                ShortcutModel(ShortcutId(id ?: ""), artist.artistId, artist.name, resources.getString(R.string.artist), imageUri, ItemType.ARTIST)
             }
         }
 
@@ -44,8 +46,10 @@ class ShortcutService(
             val albumIds = group[ItemType.ALBUM.ordinal]?.map { AlbumId(it.itemId) }!!
             val albums = albumRepository.findByIds(albumIds)
 
-            map[ItemType.ALBUM.ordinal] = albums.map {
-                ShortcutModel(it.albumId, it.name, resources.getString(R.string.album), it.getImageUri(), ItemType.ALBUM)
+            map[ItemType.ALBUM.ordinal] = albums.map { album ->
+                val id = group[ItemType.ALBUM.ordinal]?.firstOrNull { shortcut -> shortcut.itemId == album.id }?.id
+
+                ShortcutModel(ShortcutId(id ?: ""), album.albumId, album.name, resources.getString(R.string.album), album.getImageUri(), ItemType.ALBUM)
             }
         }
 
@@ -53,10 +57,11 @@ class ShortcutService(
             val playlistIds = group[ItemType.PLAYLIST.ordinal]?.map { PlaylistId(it.itemId) }!!
             val playlists = playlistRepository.findByIds(playlistIds)
 
-            map[ItemType.PLAYLIST.ordinal] = playlists.map {
-                val song = songRepository.findById(it.songs.first().songId)
+            map[ItemType.PLAYLIST.ordinal] = playlists.map { playlist ->
+                val imageUri = songRepository.findById(playlist.songs.first().songId)!!.getImageUri()
+                val id = group[ItemType.PLAYLIST.ordinal]?.firstOrNull { shortcut -> shortcut.itemId == playlist.id }?.id
 
-                ShortcutModel(PlaylistId(it.id), it.name, resources.getString(R.string.playlist), song!!.getImageUri(), ItemType.PLAYLIST)
+                ShortcutModel(ShortcutId(id ?: ""), PlaylistId(playlist.id), playlist.name, resources.getString(R.string.playlist), imageUri, ItemType.PLAYLIST)
             }
         }
 
@@ -82,6 +87,6 @@ class ShortcutService(
             shortcutModels.none { it.itemId.toId(it.type) == shortcutRealmModel.itemId }
         }.map { it.id }
 
-        shortcutRepository.update(deleteShortcutIds)
+        shortcutRepository.deleteByIds(deleteShortcutIds)
     }
 }
