@@ -29,4 +29,7 @@
     <string name="permission_audio_denied">Allow access to music files to play songs.</string>
     <string name="permission_notifications_denied">If you allow notifications, the media player will appear on the lock screen.</string>
     <string name="permission_request">Allow access</string>
+
+    <string name="channel_name">ThinMP</string>
+    <string name="channel_description">media controls</string>
 </resources>

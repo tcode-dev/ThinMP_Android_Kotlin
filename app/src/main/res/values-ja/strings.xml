@@ -29,4 +29,7 @@
     <string name="permission_audio_denied">音楽ファイルへのアクセスを許可すると曲の再生ができます。</string>
     <string name="permission_notifications_denied">通知を許可するとロック画面にメディアプレイヤーが表示されます。</string>
     <string name="permission_request">アクセスを許可する</string>
+
+    <string name="channel_name">ThinMP</string>
+    <string name="channel_description">メディアコントロール</string>
 </resources>
