@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.nav
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.NavType
@@ -11,7 +10,6 @@ import androidx.navigation.navArgument
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.view.screen.*
 
-@ExperimentalFoundationApi
 @Composable
 fun ThinMPNavHost() {
     val navController = rememberNavController()

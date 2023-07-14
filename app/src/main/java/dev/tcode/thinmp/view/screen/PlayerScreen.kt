@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.view.screen
 
 import android.content.res.Configuration
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -33,7 +32,6 @@ import dev.tcode.thinmp.view.util.maxSize
 import dev.tcode.thinmp.view.util.minSize
 import dev.tcode.thinmp.viewModel.PlayerViewModel
 
-@ExperimentalFoundationApi
 @Composable
 fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
@@ -45,6 +43,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val gradientHeight = if (isLandscape) minSize else minSize / 2
     val playerHeight = if (isLandscape) minSize else maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
+    val gradientModifier = if (isLandscape) Modifier.statusBarsPadding() else Modifier
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -56,7 +55,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .fillMaxWidth()
                 .blur(20.dp), painter = null
         )
-        val gradientModifier = if (isLandscape) Modifier.statusBarsPadding() else Modifier
+
         Box(
             modifier = gradientModifier
                 .fillMaxWidth()

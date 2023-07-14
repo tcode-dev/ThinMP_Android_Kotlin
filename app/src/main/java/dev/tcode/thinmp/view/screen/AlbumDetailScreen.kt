@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.*
@@ -35,7 +34,6 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
-@ExperimentalFoundationApi
 @Composable
 fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

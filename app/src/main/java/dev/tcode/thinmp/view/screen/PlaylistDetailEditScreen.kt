@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,7 +18,6 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlaylistDetailEditViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
-@ExperimentalFoundationApi
 @Composable
 fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

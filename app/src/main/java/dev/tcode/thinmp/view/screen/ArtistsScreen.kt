@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.*
@@ -19,7 +18,6 @@ import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.ArtistsViewModel
 
-@ExperimentalFoundationApi
 @Composable
 fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.*
@@ -14,7 +13,6 @@ import dev.tcode.thinmp.view.swipe.SwipeToDismissView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.FavoriteSongsEditViewModel
 
-@ExperimentalFoundationApi
 @Composable
 fun FavoriteSongsEditScreen(viewModel: FavoriteSongsEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

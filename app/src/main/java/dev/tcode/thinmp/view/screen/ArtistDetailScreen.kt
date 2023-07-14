@@ -47,7 +47,6 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
-@ExperimentalFoundationApi
 @Composable
 fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.DropdownMenuItem
@@ -23,7 +22,6 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 import java.util.UUID
 
-@ExperimentalFoundationApi
 @Composable
 fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()

@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.lazy.grid.*
 import androidx.compose.runtime.*
@@ -19,7 +18,6 @@ import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.util.*
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
-@ExperimentalFoundationApi
 @Composable
 fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
