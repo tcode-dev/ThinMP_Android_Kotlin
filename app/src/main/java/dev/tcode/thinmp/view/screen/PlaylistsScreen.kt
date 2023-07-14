@@ -2,7 +2,7 @@ package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -35,7 +35,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.playlists), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.playlistsEdit() })
         }) {
-            itemsIndexed(uiState.playlists) { index, playlist ->
+            items(uiState.playlists) { playlist ->
                 DropdownMenuView(dropdownContent = { callback ->
                     val callbackPlaylist = {
                         viewModel.deletePlaylist(playlist.id)
