@@ -43,7 +43,6 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val gradientHeight = if (isLandscape) minSize else minSize / 2
     val playerHeight = if (isLandscape) minSize else maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
-    val gradientModifier = if (isLandscape) Modifier.statusBarsPadding() else Modifier
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -56,8 +55,16 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .blur(20.dp), painter = null
         )
 
+        val brush = if (isLandscape) Brush.verticalGradient(
+            0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
+            1.0F to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
+        ) else Brush.verticalGradient(
+            0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
+            1.0F to MaterialTheme.colorScheme.background,
+        )
+
         Box(
-            modifier = gradientModifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .height(gradientHeight)
                 .constrainAs(gradient) {
@@ -65,12 +72,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                         top.linkTo(parent.top, margin = gradientHeight)
                     }
                 }
-                .background(
-                    brush = Brush.verticalGradient(
-                        0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
-                        1.0F to MaterialTheme.colorScheme.background,
-                    )
-                ),
+                .background(brush = brush),
         ) {}
         if (!isLandscape) {
             Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
@@ -93,7 +95,8 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
         )
         val playerModifier = if (isLandscape) Modifier
             .fillMaxSize()
-            .padding(vertical = StyleConstant.PADDING_LARGE.dp) else Modifier
+            .padding(vertical = StyleConstant.PADDING_LARGE.dp)
+        else Modifier
             .fillMaxWidth()
             .height(playerHeight)
             .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }
