@@ -21,8 +21,10 @@ object LocalNotificationHelper {
 
         createNotificationChannel(context)
 
-        val builder = NotificationCompat.Builder(context, NotificationConstant.CHANNEL_ID).setSmallIcon(R.drawable.round_audiotrack_24).setStyle(mediaStyle).setContentTitle(title).setContentText(message)
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT).setAutoCancel(true)
+        val builder =
+            NotificationCompat.Builder(context, NotificationConstant.CHANNEL_ID).setSmallIcon(R.drawable.round_audiotrack_24).setStyle(mediaStyle).setContentTitle(title).setContentText(message)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT).setAutoCancel(true)
+
         if (albumArtBitmap != null) {
             builder.setLargeIcon(albumArtBitmap)
         }
@@ -33,10 +35,7 @@ object LocalNotificationHelper {
     }
 
     private fun createNotificationChannel(context: Context) {
-        val channel = NotificationChannel(
-            NotificationConstant.CHANNEL_ID, context.resources.getString(R.string.channel_name), NotificationManager.IMPORTANCE_DEFAULT
-        )
-        channel.description = context.resources.getString(R.string.channel_description)
+        val channel = NotificationChannel(NotificationConstant.CHANNEL_ID, context.resources.getString(R.string.channel_name), NotificationManager.IMPORTANCE_LOW)
 
         val notificationManager = context.getSystemService(NotificationManager::class.java)
 
