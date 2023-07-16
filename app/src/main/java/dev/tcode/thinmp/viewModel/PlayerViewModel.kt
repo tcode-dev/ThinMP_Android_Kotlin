@@ -13,7 +13,10 @@ import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 const val TIME_FORMAT = "%1\$tM:%1\$tS"
 const val START_TIME = "00:00"

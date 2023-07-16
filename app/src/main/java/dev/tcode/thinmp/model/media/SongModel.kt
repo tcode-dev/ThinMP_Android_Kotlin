@@ -29,6 +29,7 @@ class SongModel(
     }
 
     fun getTrackNumber(): Int {
+        // "15"、"15/30" → 15
         val regex = Regex("""\d{1,}""")
         val match = regex.find(trackNumber) ?: return 0
 

@@ -10,7 +10,10 @@ import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.service.AlbumDetailService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class AlbumDetailUiState(

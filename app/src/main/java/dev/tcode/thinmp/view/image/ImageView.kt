@@ -1,7 +1,7 @@
 package dev.tcode.thinmp.view.image
 
 import android.net.Uri
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale

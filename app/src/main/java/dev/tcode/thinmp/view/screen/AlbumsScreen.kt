@@ -1,8 +1,10 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.lazy.grid.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
@@ -15,7 +17,9 @@ import dev.tcode.thinmp.view.dropdownMenu.ShortcutDropdownMenuItemView
 import dev.tcode.thinmp.view.layout.MiniPlayerLayoutView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.DropdownMenuView
-import dev.tcode.thinmp.view.util.*
+import dev.tcode.thinmp.view.util.CustomGridCellsFixed
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
+import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @Composable

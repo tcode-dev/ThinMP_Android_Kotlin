@@ -8,7 +8,22 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.tcode.thinmp.constant.NavConstant
-import dev.tcode.thinmp.view.screen.*
+import dev.tcode.thinmp.view.screen.AlbumDetailScreen
+import dev.tcode.thinmp.view.screen.AlbumsScreen
+import dev.tcode.thinmp.view.screen.ArtistDetailScreen
+import dev.tcode.thinmp.view.screen.ArtistsScreen
+import dev.tcode.thinmp.view.screen.FavoriteArtistsEditScreen
+import dev.tcode.thinmp.view.screen.FavoriteArtistsScreen
+import dev.tcode.thinmp.view.screen.FavoriteSongsEditScreen
+import dev.tcode.thinmp.view.screen.FavoriteSongsScreen
+import dev.tcode.thinmp.view.screen.MainEditScreen
+import dev.tcode.thinmp.view.screen.MainScreen
+import dev.tcode.thinmp.view.screen.PlayerScreen
+import dev.tcode.thinmp.view.screen.PlaylistDetailEditScreen
+import dev.tcode.thinmp.view.screen.PlaylistDetailScreen
+import dev.tcode.thinmp.view.screen.PlaylistsEditScreen
+import dev.tcode.thinmp.view.screen.PlaylistsScreen
+import dev.tcode.thinmp.view.screen.SongsScreen
 
 @Composable
 fun ThinMPNavHost() {

@@ -6,11 +6,10 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.min
 import androidx.compose.ui.unit.max
+import androidx.compose.ui.unit.min
 import dev.tcode.thinmp.constant.StyleConstant
 import java.lang.Integer.max
 

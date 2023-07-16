@@ -1,9 +1,9 @@
 package dev.tcode.thinmp.constant
 
 import android.content.Context
+import androidx.compose.runtime.Immutable
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.ConfigStore
-import androidx.compose.runtime.Immutable
 
 @Immutable
 data class MainMenuItem(

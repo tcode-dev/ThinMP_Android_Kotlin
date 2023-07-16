@@ -5,7 +5,6 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.realm.PlaylistRealmModel
 import dev.tcode.thinmp.model.realm.PlaylistSongRealmModel
-import dev.tcode.thinmp.model.realm.ShortcutRealmModel
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
