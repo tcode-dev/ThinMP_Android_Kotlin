@@ -30,6 +30,5 @@
     <string name="permission_notifications_denied">If you allow notifications, the media player will appear on the lock screen.</string>
     <string name="permission_request">Allow access</string>
 
-    <string name="channel_name">ThinMP</string>
-    <string name="channel_description">media controls</string>
+    <string name="channel_name">Lock screen media controls</string>
 </resources>
