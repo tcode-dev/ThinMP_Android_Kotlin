@@ -77,7 +77,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .height(gradientHeight)
                 .constrainAs(gradient) {
                     if (!isLandscape) {
-                        top.linkTo(parent.top, margin = gradientHeight)
+                        top.linkTo(parent.top, margin = gradientHeight + 1.dp)
                     }
                 }
                 .background(brush = brush),
