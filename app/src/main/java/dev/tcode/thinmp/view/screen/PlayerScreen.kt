@@ -28,8 +28,10 @@ import dev.tcode.thinmp.view.playlist.PlaylistRegisterPopupView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
+import dev.tcode.thinmp.view.util.isHeightMedium
 import dev.tcode.thinmp.view.util.maxSize
 import dev.tcode.thinmp.view.util.minSize
+import dev.tcode.thinmp.view.util.systemBars
 import dev.tcode.thinmp.viewModel.PlayerViewModel
 
 @Composable
@@ -38,11 +40,17 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val visiblePopup = remember { mutableStateOf(false) }
     val minSize = minSize()
     val maxSize = maxSize()
-    val imageSize: Dp = minSize / 100 * 64
+    val isHeightMedium = isHeightMedium()
+    val systemBars = systemBars()
     val edgeSize: Dp = minSize / 100 * 18
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
+    val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
+    val imageSize = if (isLandscape && isHeightMedium) minSize / 100 * 40 else minSize / 100 * 64
     val gradientHeight = if (isLandscape) minSize else minSize / 2
-    val playerHeight = if (isLandscape) minSize else maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
+    val playerPadding = if (isLandscape) StyleConstant.PADDING_LARGE.dp else 0.dp
+    val playerHeight = if (isPortrait) maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
+    else if (isHeightMedium) minSize / 100 * 60 - systemBars - StyleConstant.PADDING_LARGE.dp
+    else minSize
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -74,11 +82,12 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 }
                 .background(brush = brush),
         ) {}
-        if (!isLandscape) {
+        if (!isLandscape || isHeightMedium) {
             Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
                 .constrainAs(img) {
                     centerHorizontallyTo(parent)
-                    top.linkTo(parent.top, margin = edgeSize)
+                    val imageMargin = if (isLandscape) systemBars + StyleConstant.PADDING_LARGE.dp else edgeSize
+                    top.linkTo(parent.top, margin = imageMargin)
                 }
                 .size(imageSize)) {
                 ImageView(
@@ -93,16 +102,12 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .statusBarsPadding()
                 .padding(start = StyleConstant.PADDING_TINY.dp)
         )
-        val playerModifier = if (isLandscape) Modifier
-            .fillMaxSize()
-            .padding(vertical = StyleConstant.PADDING_LARGE.dp)
-        else Modifier
-            .fillMaxWidth()
-            .height(playerHeight)
-            .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }
-        Box(
-            contentAlignment = Alignment.TopCenter, modifier = playerModifier
-        ) {
+        Box(contentAlignment = Alignment.TopCenter,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(playerHeight)
+                .padding(vertical = playerPadding)
+                .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }) {
             Column(
                 modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly
             ) {

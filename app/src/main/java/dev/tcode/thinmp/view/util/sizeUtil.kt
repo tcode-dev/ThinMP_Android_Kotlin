@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.min
@@ -33,6 +34,16 @@ fun screenWidth(): Dp {
 @Composable
 fun screenHeight(): Dp {
     return LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+}
+
+@Composable
+fun systemBars(): Dp {
+    return WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+}
+
+@Composable
+fun isHeightMedium(): Boolean {
+    return screenHeight() >= 480f.dp
 }
 
 @Composable
