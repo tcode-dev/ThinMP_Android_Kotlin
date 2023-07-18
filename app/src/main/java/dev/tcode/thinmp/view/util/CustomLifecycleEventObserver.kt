@@ -12,25 +12,37 @@ import androidx.lifecycle.LifecycleEventObserver
 
 interface CustomLifecycleEventObserverListener {
     fun onResume(context: Context) {}
-    fun onStop() {}
+    fun onStop(context: Context) {}
+    fun onDestroy(context: Context) {
+        println("Log: onDestroy")
+    }
 }
 
 @Composable
 fun CustomLifecycleEventObserver(listener: CustomLifecycleEventObserverListener) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val currentOnEvent by rememberUpdatedState(listener)
-    val context = LocalContext.current
+    val applicationContext = LocalContext.current.applicationContext
 
     DisposableEffect(key1 = lifecycle, key2 = currentOnEvent) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
+            println("Log: $event CustomLifecycleEventObserver")
             when (event) {
-                Lifecycle.Event.ON_RESUME -> listener.onResume(context)
-                Lifecycle.Event.ON_STOP -> listener.onStop()
+                Lifecycle.Event.ON_RESUME -> {
+                    listener.onResume(applicationContext)
+                }
+                Lifecycle.Event.ON_STOP -> {
+                    listener.onStop(applicationContext)
+                }
+                Lifecycle.Event.ON_DESTROY -> {
+                    listener.onDestroy(applicationContext)
+                }
                 else -> {}
             }
         }
         lifecycle.addObserver(lifecycleObserver)
         onDispose {
+            println("Log: onDispose CustomLifecycleEventObserver")
             lifecycle.removeObserver(lifecycleObserver)
         }
     }
