@@ -11,10 +11,12 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ThinMP">
+
+        <service android:name=".player.MusicService" />
+
         <service
-            android:name=".player.MusicService"
-            android:enabled="true"
-            android:exported="false" />
+            android:name=".application.MainApplication$DestroyingService"
+            android:stopWithTask="false" />
 
         <activity
             android:name=".activity.MainActivity"
