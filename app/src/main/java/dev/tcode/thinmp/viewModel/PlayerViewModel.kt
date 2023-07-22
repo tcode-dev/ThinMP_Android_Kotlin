@@ -137,7 +137,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         update()
     }
 
-    override fun onStop() {
+    override fun onStop(context: Context) {
         musicPlayer.removeEventListener()
         cancelSeekBarProgressTask()
     }

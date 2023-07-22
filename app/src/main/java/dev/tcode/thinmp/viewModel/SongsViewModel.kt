@@ -32,7 +32,13 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
+    override fun onStop(context: Context) {
+        musicPlayer.destroy(context)
+    }
+
     override fun onResume(context: Context) {
+        musicPlayer.bindService(context)
+
         if (initialized) {
             load(context)
         } else {

@@ -8,6 +8,7 @@ import android.graphics.ImageDecoder
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
+import androidx.core.app.NotificationManagerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -198,11 +199,16 @@ class MusicService : Service() {
         return binder
     }
 
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return START_NOT_STICKY
+    }
+
     override fun onDestroy() {
         if (isPlaying) {
             player?.stop()
         }
 
+        NotificationManagerCompat.from(applicationContext).cancelAll()
         player?.release()
     }
 

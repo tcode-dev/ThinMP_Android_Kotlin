@@ -23,7 +23,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
 
     init {
         musicPlayer = MusicPlayer(application)
-        musicPlayer.addEventListener(this)
     }
 
     fun toggle() {
@@ -47,12 +46,13 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     override fun onResume(context: Context) {
+        musicPlayer.bindService(context)
         musicPlayer.addEventListener(this)
         update()
     }
 
-    override fun onStop() {
-        musicPlayer.removeEventListener()
+    override fun onStop(context: Context) {
+        musicPlayer.destroy(context)
     }
 
     private fun update() {

@@ -16,36 +16,23 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
 
-        startService(Intent(this, DestroyingService::class.java))
-        startService(Intent(this, MusicService::class.java))
+        startService(Intent(applicationContext, DestroyingService::class.java))
+        startService(Intent(applicationContext, MusicService::class.java))
     }
 
-    override fun onActivityCreated(p0: Activity, p1: Bundle?) {
-        println("Log: MainApplication: onActivityCreated")
-    }
+    override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
 
-    override fun onActivityStarted(p0: Activity) {
-        println("Log: MainApplication: onActivityStarted")
-    }
+    override fun onActivityStarted(p0: Activity) {}
 
-    override fun onActivityResumed(p0: Activity) {
-        println("Log: MainApplication: onActivityResumed")
-    }
+    override fun onActivityResumed(p0: Activity) {}
 
-    override fun onActivityPaused(p0: Activity) {
-        println("Log: MainApplication: onActivityPaused")
-    }
+    override fun onActivityPaused(p0: Activity) {}
 
-    override fun onActivityStopped(p0: Activity) {
-        println("Log: MainApplication: onActivityStopped")
-    }
+    override fun onActivityStopped(p0: Activity) {}
 
-    override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {
-        println("Log: MainApplication: onActivitySaveInstanceState")
-    }
+    override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
     override fun onActivityDestroyed(p0: Activity) {
-        println("Log: MainApplication: onActivityDestroyed")
         val destroyingServiceIntent = Intent(applicationContext, DestroyingService::class.java)
         val musicServiceIntent = Intent(applicationContext, MusicService::class.java)
 
@@ -57,12 +44,6 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
 
         override fun onBind(intent: Intent?): IBinder? {
             return null
-        }
-
-        override fun onDestroy() {
-            super.onDestroy()
-
-            println("Log: DestroyingService: onDestroy")
         }
     }
 }

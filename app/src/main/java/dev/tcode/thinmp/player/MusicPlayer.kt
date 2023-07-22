@@ -8,7 +8,7 @@ import android.os.IBinder
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 
-interface MusicPlayerListener: MusicServiceListener {
+interface MusicPlayerListener : MusicServiceListener {
     fun onBind() {}
 }
 
@@ -16,10 +16,7 @@ class MusicPlayer(context: Context) {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
     private var listener: MusicPlayerListener? = null
-
-    init {
-        bindService(context)
-    }
+    private var bound = false
 
     fun start(songs: List<SongModel>, index: Int) {
         if (songs.isEmpty()) {
@@ -78,22 +75,34 @@ class MusicPlayer(context: Context) {
         musicService?.addEventListener(listener)
     }
 
+    fun getCurrentPosition(): Long {
+        return musicService?.getCurrentPosition() ?: 0
+    }
+
+    fun destroy(context: Context) {
+        removeEventListener()
+        unbindService(context)
+    }
+
     fun removeEventListener() {
         this.listener = null
         musicService?.removeEventListener()
     }
 
-    fun getCurrentPosition(): Long {
-        return musicService?.getCurrentPosition() ?: 0
-    }
+    fun bindService(context: Context) {
+        if (bound) return
 
-    private fun bindService(context: Context) {
         connection = createConnection()
         context.bindService(
-            Intent(context, MusicService::class.java),
-            connection,
-            Context.BIND_AUTO_CREATE
+            Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
         )
+    }
+
+    private fun unbindService(context: Context) {
+        if (bound) {
+            context.unbindService(connection)
+            bound = false
+        }
     }
 
     private fun createConnection(): ServiceConnection {
@@ -103,6 +112,7 @@ class MusicPlayer(context: Context) {
                 musicService = binder.getService()
                 listener?.let { musicService!!.addEventListener(it) }
                 listener?.onBind()
+                bound = true
             }
 
             override fun onServiceDisconnected(name: ComponentName) {}
