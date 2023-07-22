@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.service.FavoriteSongsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -19,12 +18,10 @@ data class FavoriteSongsEditUiState(
 
 class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteSongRegister {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(FavoriteSongsEditUiState())
     val uiState: StateFlow<FavoriteSongsEditUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application)
         load(application)
     }
 
@@ -37,10 +34,6 @@ class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(ap
                 songs = songs
             )
         }
-    }
-
-    fun start(index: Int) {
-        musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
     fun removeSong(index: Int) {

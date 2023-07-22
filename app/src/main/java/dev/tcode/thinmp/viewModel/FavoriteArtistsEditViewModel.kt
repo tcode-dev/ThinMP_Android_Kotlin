@@ -4,7 +4,6 @@ import android.app.Application
 import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
-import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.service.FavoriteArtistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -19,12 +18,10 @@ data class FavoriteArtistsEditUiState(
 
 class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer
     private val _uiState = MutableStateFlow(FavoriteArtistsEditUiState())
     val uiState: StateFlow<FavoriteArtistsEditUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application)
         load(application)
     }
 
