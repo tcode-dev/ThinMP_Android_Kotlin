@@ -33,6 +33,7 @@ class MusicService : Service() {
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
     private var listener: MusicServiceListener? = null
+    private var playerEventListener: PlayerEventListener? = null
     private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
@@ -160,7 +161,8 @@ class MusicService : Service() {
 
             player?.setMediaItems(mediaItems)
             player?.prepare()
-            player?.addListener(PlayerEventListener())
+            playerEventListener = PlayerEventListener()
+            player?.addListener(playerEventListener!!)
         } catch (e: IllegalStateException) {
             println(e)
         }
@@ -174,10 +176,12 @@ class MusicService : Service() {
                 isPlaying = player.isPlaying
                 listener?.onChange()
                 notification()
+                println("Log: onEvents notification")
             }
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            println("Log: onMediaItemTransition notification")
             listener?.onChange()
             notification()
         }
@@ -209,13 +213,12 @@ class MusicService : Service() {
     override fun onDestroy() {
         println("Log: MusicService onDestroy")
         if (isPlaying) {
+            playerEventListener?.let { player?.removeListener(it) }
             player?.stop()
         }
 
-        NotificationManagerCompat.from(applicationContext).cancelAll()
-//        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.cancelAll()
         player?.release()
+        LocalNotificationHelper.cancelAll(applicationContext)
     }
 
     inner class MusicBinder : Binder() {
