@@ -25,6 +25,7 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     init {
         musicPlayer = MusicPlayer(application)
 
+        musicPlayer.bindService(application)
         load(application)
     }
 
@@ -33,13 +34,13 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     override fun onStop(context: Context) {
+        println("Log: SongsViewModel onStop")
         musicPlayer.destroy(context)
     }
 
     override fun onResume(context: Context) {
-        musicPlayer.bindService(context)
-
         if (initialized) {
+            musicPlayer.bindService(context)
             load(context)
         } else {
             initialized = true

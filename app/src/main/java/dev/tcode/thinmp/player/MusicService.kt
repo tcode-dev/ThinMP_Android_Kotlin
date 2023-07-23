@@ -1,7 +1,9 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
@@ -192,7 +194,7 @@ class MusicService : Service() {
         } catch (_: IOException) {
         }
 
-        LocalNotificationHelper.showNotification(baseContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
+        LocalNotificationHelper.showNotification(applicationContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -203,12 +205,16 @@ class MusicService : Service() {
         return START_NOT_STICKY
     }
 
+    @SuppressLint("ServiceCast")
     override fun onDestroy() {
+        println("Log: MusicService onDestroy")
         if (isPlaying) {
             player?.stop()
         }
 
         NotificationManagerCompat.from(applicationContext).cancelAll()
+//        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+//        notificationManager.cancelAll()
         player?.release()
     }
 

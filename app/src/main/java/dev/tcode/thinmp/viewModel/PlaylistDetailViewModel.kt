@@ -35,6 +35,7 @@ class PlaylistDetailViewModel @Inject constructor(
         musicPlayer = MusicPlayer(application)
         id = PlaylistId(savedStateHandle.get<String>("id").toString())
 
+        musicPlayer.bindService(application)
         load(application)
     }
 
@@ -42,8 +43,13 @@ class PlaylistDetailViewModel @Inject constructor(
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
+    override fun onStop(context: Context) {
+        musicPlayer.destroy(context)
+    }
+
     override fun onResume(context: Context) {
         if (initialized) {
+            musicPlayer.bindService(context)
             load(context)
         } else {
             initialized = true

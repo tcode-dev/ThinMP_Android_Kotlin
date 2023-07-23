@@ -18,11 +18,15 @@ data class MiniPlayerUiState(
 
 class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
     private var musicPlayer: MusicPlayer
+    private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
         musicPlayer = MusicPlayer(application)
+
+        musicPlayer.addEventListener(this)
+        musicPlayer.bindService(application)
     }
 
     fun toggle() {
@@ -45,28 +49,28 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         update()
     }
 
-    override fun onResume(context: Context) {
-        musicPlayer.bindService(context)
-        musicPlayer.addEventListener(this)
-        update()
-    }
-
     override fun onStop(context: Context) {
+        println("Log: MiniPlayerViewModel onStop")
         musicPlayer.destroy(context)
     }
 
-    private fun update() {
-        val song = musicPlayer.getCurrentSong()
-        if (song != null) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = musicPlayer.isPlaying()
-                )
-            }
+    override fun onResume(context: Context) {
+        if (initialized) {
+            musicPlayer.addEventListener(this)
+            musicPlayer.bindService(context)
         } else {
-            _uiState.update {
-                MiniPlayerUiState()
-            }
+            initialized = true
         }
+    }
+
+    private fun update() {
+        val song = musicPlayer.getCurrentSong() ?: return
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = musicPlayer.isPlaying()
+            )
+        }
+
     }
 }

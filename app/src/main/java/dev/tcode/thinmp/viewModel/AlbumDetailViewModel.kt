@@ -34,6 +34,7 @@ class AlbumDetailViewModel @Inject constructor(
         musicPlayer = MusicPlayer(application)
         id = savedStateHandle.get<String>("id").toString()
 
+        musicPlayer.bindService(application)
         load(application)
     }
 
@@ -41,8 +42,13 @@ class AlbumDetailViewModel @Inject constructor(
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
+    override fun onStop(context: Context) {
+        musicPlayer.destroy(context)
+    }
+
     override fun onResume(context: Context) {
         if (initialized) {
+            musicPlayer.bindService(context)
             load(context)
         } else {
             initialized = true
@@ -51,14 +57,12 @@ class AlbumDetailViewModel @Inject constructor(
 
     private fun load(context: Context) {
         val service = AlbumDetailService(context)
-        val album = service.findById(id)
+        val album = service.findById(id) ?: return
 
-        if (album != null) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs
-                )
-            }
+        _uiState.update { currentState ->
+            currentState.copy(
+                primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs
+            )
         }
     }
 }

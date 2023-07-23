@@ -39,6 +39,7 @@ data class PlayerUiState(
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteArtistRegister, FavoriteSongRegister {
     private val INTERVAL_MS = 1000L
     private var musicPlayer: MusicPlayer
+    private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     private val handler = Handler(Looper.getMainLooper())
@@ -51,7 +52,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     init {
         musicPlayer = MusicPlayer(application)
+
         musicPlayer.addEventListener(this)
+        musicPlayer.bindService(application)
     }
 
     fun toggle() {
@@ -133,12 +136,16 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     override fun onResume(context: Context) {
-        musicPlayer.addEventListener(this)
-        update()
+        if (initialized) {
+            musicPlayer.addEventListener(this)
+            musicPlayer.bindService(context)
+        } else {
+            initialized = true
+        }
     }
 
     override fun onStop(context: Context) {
-        musicPlayer.removeEventListener()
+        musicPlayer.destroy(context)
         cancelSeekBarProgressTask()
     }
 
@@ -163,31 +170,26 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     private fun update() {
-        val song = musicPlayer.getCurrentSong()
+        val song = musicPlayer.getCurrentSong() ?: return
 
-        if (song != null) {
-            _uiState.update { currentState ->
-                currentState.copy(
-                    songId = song.songId,
-                    primaryText = song.name,
-                    secondaryText = song.artistName,
-                    imageUri = song.getImageUri(),
-                    sliderPosition = getSliderPosition(),
-                    currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
-                    durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
-                    isPlaying = musicPlayer.isPlaying(),
-                    repeat = musicPlayer.getRepeat(),
-                    shuffle = musicPlayer.getShuffle(),
-                    isFavoriteArtist = exists(song.artistId),
-                    isFavoriteSong = exists(song.songId)
-                )
-            }
-            setSeekBarProgressTask()
-        } else {
-            _uiState.update {
-                PlayerUiState()
-            }
+        _uiState.update { currentState ->
+            currentState.copy(
+                songId = song.songId,
+                primaryText = song.name,
+                secondaryText = song.artistName,
+                imageUri = song.getImageUri(),
+                sliderPosition = getSliderPosition(),
+                currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
+                durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
+                isPlaying = musicPlayer.isPlaying(),
+                repeat = musicPlayer.getRepeat(),
+                shuffle = musicPlayer.getShuffle(),
+                isFavoriteArtist = exists(song.artistId),
+                isFavoriteSong = exists(song.songId)
+            )
         }
+
+        setSeekBarProgressTask()
     }
 
     private fun getSliderPosition(): Float {

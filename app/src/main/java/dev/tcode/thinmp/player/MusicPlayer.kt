@@ -101,6 +101,7 @@ class MusicPlayer(context: Context) {
     private fun unbindService(context: Context) {
         if (bound) {
             context.unbindService(connection)
+            musicService = null
             bound = false
         }
     }

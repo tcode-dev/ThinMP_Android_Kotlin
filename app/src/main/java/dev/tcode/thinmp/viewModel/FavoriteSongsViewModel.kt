@@ -24,6 +24,8 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
 
     init {
         musicPlayer = MusicPlayer(application)
+
+        musicPlayer.bindService(application)
         load(application)
     }
 
@@ -42,8 +44,13 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
     }
 
+    override fun onStop(context: Context) {
+        musicPlayer.destroy(context)
+    }
+
     override fun onResume(context: Context) {
         if (initialized) {
+            musicPlayer.bindService(context)
             load(context)
         } else {
             initialized = true
