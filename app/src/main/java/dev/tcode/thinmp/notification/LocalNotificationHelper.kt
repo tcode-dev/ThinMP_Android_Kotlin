@@ -33,7 +33,7 @@ object LocalNotificationHelper {
 
         val notificationManager = NotificationManagerCompat.from(context)
         val id = UUID.randomUUID().hashCode()
-        println("Log: LocalNotificationHelper $id")
+
         notificationManager.notify(id, builder.build())
     }
 

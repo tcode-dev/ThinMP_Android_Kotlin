@@ -34,7 +34,6 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     override fun onStop(context: Context) {
-        println("Log: SongsViewModel onStop")
         musicPlayer.destroy(context)
     }
 

@@ -1,16 +1,13 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
-import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
-import androidx.core.app.NotificationManagerCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
@@ -163,8 +160,7 @@ class MusicService : Service() {
             player?.prepare()
             playerEventListener = PlayerEventListener()
             player?.addListener(playerEventListener!!)
-        } catch (e: IllegalStateException) {
-            println(e)
+        } catch (_: IllegalStateException) {
         }
     }
 
@@ -176,12 +172,10 @@ class MusicService : Service() {
                 isPlaying = player.isPlaying
                 listener?.onChange()
                 notification()
-                println("Log: onEvents notification")
             }
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            println("Log: onMediaItemTransition notification")
             listener?.onChange()
             notification()
         }
@@ -211,7 +205,6 @@ class MusicService : Service() {
 
     @SuppressLint("ServiceCast")
     override fun onDestroy() {
-        println("Log: MusicService onDestroy")
         if (isPlaying) {
             playerEventListener?.let { player?.removeListener(it) }
             player?.stop()

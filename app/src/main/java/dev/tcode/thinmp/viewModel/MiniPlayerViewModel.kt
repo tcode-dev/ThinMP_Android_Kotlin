@@ -50,7 +50,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     override fun onStop(context: Context) {
-        println("Log: MiniPlayerViewModel onStop")
         musicPlayer.destroy(context)
     }
 
