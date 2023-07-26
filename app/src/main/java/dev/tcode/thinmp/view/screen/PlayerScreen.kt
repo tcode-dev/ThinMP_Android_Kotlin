@@ -62,12 +62,6 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val edgeSize: Dp = minSize / 100 * 18
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
-    val imageSize = if (isLandscape && isHeightMedium) minSize / 100 * 40 else minSize / 100 * 64
-    val gradientHeight = if (isLandscape) minSize else minSize / 2
-    val playerPadding = if (isLandscape) StyleConstant.PADDING_LARGE.dp else 0.dp
-    val playerHeight = if (isPortrait) maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
-    else if (isHeightMedium) minSize / 100 * 60 - systemBars - StyleConstant.PADDING_LARGE.dp
-    else minSize
 
     CustomLifecycleEventObserver(viewModel)
 
@@ -80,6 +74,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .blur(20.dp), painter = null
         )
 
+        val gradientHeight = if (isLandscape) minSize else minSize / 2
         val brush = if (isLandscape) Brush.verticalGradient(
             0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
             1.0F to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
@@ -100,10 +95,12 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .background(brush = brush),
         ) {}
         if (!isLandscape || isHeightMedium) {
+            val imageSize = if (isLandscape) minSize / 100 * 40 else minSize / 100 * 64
+            val imageMargin = if (isLandscape) systemBars + StyleConstant.PADDING_LARGE.dp else edgeSize
+
             Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier
                 .constrainAs(img) {
                     centerHorizontallyTo(parent)
-                    val imageMargin = if (isLandscape) systemBars + StyleConstant.PADDING_LARGE.dp else edgeSize
                     top.linkTo(parent.top, margin = imageMargin)
                 }
                 .size(imageSize)) {
@@ -119,133 +116,143 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 .statusBarsPadding()
                 .padding(start = StyleConstant.PADDING_TINY.dp)
         )
-        Box(contentAlignment = Alignment.TopCenter,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(playerHeight)
-                .padding(vertical = playerPadding)
-                .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }) {
+
+        val playerHeight = if (isPortrait) maxSize - minSize + (StyleConstant.PADDING_LARGE.dp * 2) + (edgeSize / 2)
+        else if (isHeightMedium) minSize / 100 * 60 - systemBars - StyleConstant.PADDING_LARGE.dp
+        else minSize
+        val modifier = if (isPortrait) Modifier
+            .fillMaxWidth()
+            .height(playerHeight)
+            .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }
+        else if (isHeightMedium) Modifier
+            .fillMaxWidth()
+            .height(playerHeight)
+            .padding(vertical = StyleConstant.PADDING_LARGE.dp)
+            .constrainAs(player) { top.linkTo(parent.bottom, margin = -(playerHeight)) }
+        else Modifier
+            .fillMaxSize()
+            .padding(vertical = StyleConstant.PADDING_LARGE.dp)
+
+        Column(
+            modifier = modifier, verticalArrangement = Arrangement.SpaceEvenly
+        ) {
             Column(
-                modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.SpaceEvenly
+                Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column(
-                    Modifier
+                PrimaryTitleView(uiState.primaryText)
+                SecondaryTitleView(uiState.secondaryText)
+            }
+            Column(
+                modifier = Modifier.padding(horizontal = 30.dp)
+            ) {
+                Slider(value = uiState.sliderPosition,
+                    colors = SliderDefaults.colors(activeTrackColor = MaterialTheme.colorScheme.primary, thumbColor = MaterialTheme.colorScheme.primary),
+                    onValueChange = { viewModel.seek(it) },
+                    onValueChangeFinished = { viewModel.seekFinished() })
+                Row(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = StyleConstant.PADDING_LARGE.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceBetween,
+                        .padding(horizontal = StyleConstant.PADDING_SMALL.dp), horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    PrimaryTitleView(uiState.primaryText)
-                    SecondaryTitleView(uiState.secondaryText)
+                    Text(uiState.currentTime, color = MaterialTheme.colorScheme.secondary)
+                    Text(uiState.durationTime, color = MaterialTheme.colorScheme.secondary)
                 }
-                Column(
-                    modifier = Modifier.padding(horizontal = 30.dp)
-                ) {
-                    Slider(value = uiState.sliderPosition,
-                        colors = SliderDefaults.colors(activeTrackColor = MaterialTheme.colorScheme.primary, thumbColor = MaterialTheme.colorScheme.primary),
-                        onValueChange = { viewModel.seek(it) },
-                        onValueChangeFinished = { viewModel.seekFinished() })
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = StyleConstant.PADDING_SMALL.dp), horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(uiState.currentTime, color = MaterialTheme.colorScheme.secondary)
-                        Text(uiState.durationTime, color = MaterialTheme.colorScheme.secondary)
-                    }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { viewModel.prev() }) {
+                    Icon(painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable { viewModel.prev() }) {
-                        Icon(painter = painterResource(id = R.drawable.round_skip_previous_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp))
-                    }
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable { viewModel.toggle() }) {
-                        Icon(
-                            painter = painterResource(id = if (uiState.isPlaying) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(88.dp)
-                        )
-                    }
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable { viewModel.next() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp)
-                        )
-                    }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { viewModel.toggle() }) {
+                    Icon(
+                        painter = painterResource(id = if (uiState.isPlaying) R.drawable.round_pause_24 else R.drawable.round_play_arrow_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(88.dp)
+                    )
                 }
-                Row(
-                    modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(StyleConstant.BUTTON_SIZE.dp)
-                            .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                            .clickable { viewModel.changeRepeat() }) {
-                        Icon(
-                            painter = painterResource(id = if (uiState.repeat == RepeatState.ONE) R.drawable.round_repeat_one_24 else R.drawable.round_repeat_24),
-                            contentDescription = null,
-                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
-                            tint = if (uiState.repeat == RepeatState.OFF) MaterialTheme.colorScheme.primary.copy(alpha = 0.38f) else MaterialTheme.colorScheme.primary,
-                        )
-                    }
-                    Box(contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .size(StyleConstant.BUTTON_SIZE.dp)
-                            .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                            .clickable { viewModel.changeShuffle() }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_shuffle_24),
-                            contentDescription = null,
-                            tint = if (uiState.shuffle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
-                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                        )
-                    }
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable { viewModel.next() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_skip_next_24), contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(72.dp)
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                Box(contentAlignment = Alignment.Center,
+                    modifier = Modifier
                         .size(StyleConstant.BUTTON_SIZE.dp)
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable {
-                            viewModel.favoriteArtist()
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_person_24),
-                            contentDescription = null,
-                            tint = if (uiState.isFavoriteArtist) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
-                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                        )
-                    }
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
+                        .clickable { viewModel.changeRepeat() }) {
+                    Icon(
+                        painter = painterResource(id = if (uiState.repeat == RepeatState.ONE) R.drawable.round_repeat_one_24 else R.drawable.round_repeat_24),
+                        contentDescription = null,
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp),
+                        tint = if (uiState.repeat == RepeatState.OFF) MaterialTheme.colorScheme.primary.copy(alpha = 0.38f) else MaterialTheme.colorScheme.primary,
+                    )
+                }
+                Box(contentAlignment = Alignment.Center,
+                    modifier = Modifier
                         .size(StyleConstant.BUTTON_SIZE.dp)
                         .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable {
-                            viewModel.favoriteSong()
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_favorite_24),
-                            contentDescription = null,
-                            tint = if (uiState.isFavoriteSong) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
-                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                        )
-                    }
-                    Box(contentAlignment = Alignment.Center, modifier = Modifier
-                        .size(StyleConstant.BUTTON_SIZE.dp)
-                        .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                        .clickable {
-                            visiblePopup.value = true
-                        }) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.round_playlist_add_24),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
-                        )
-                    }
+                        .clickable { viewModel.changeShuffle() }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_shuffle_24),
+                        contentDescription = null,
+                        tint = if (uiState.shuffle) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
+                }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable {
+                        viewModel.favoriteArtist()
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_person_24),
+                        contentDescription = null,
+                        tint = if (uiState.isFavoriteArtist) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
+                }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable {
+                        viewModel.favoriteSong()
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_favorite_24),
+                        contentDescription = null,
+                        tint = if (uiState.isFavoriteSong) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.38f),
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
+                }
+                Box(contentAlignment = Alignment.Center, modifier = Modifier
+                    .size(StyleConstant.BUTTON_SIZE.dp)
+                    .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
+                    .clickable {
+                        visiblePopup.value = true
+                    }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.round_playlist_add_24),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(StyleConstant.IMAGE_SIZE.dp)
+                    )
                 }
             }
         }
