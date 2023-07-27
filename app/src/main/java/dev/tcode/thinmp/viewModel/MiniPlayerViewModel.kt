@@ -17,13 +17,12 @@ data class MiniPlayerUiState(
 )
 
 class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
-    private var musicPlayer: MusicPlayer
+    private var musicPlayer: MusicPlayer = MusicPlayer()
     private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application)
 
         musicPlayer.addEventListener(this)
         musicPlayer.bindService(application)

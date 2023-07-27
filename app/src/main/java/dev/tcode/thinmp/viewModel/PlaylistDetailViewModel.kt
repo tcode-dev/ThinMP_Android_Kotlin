@@ -26,13 +26,12 @@ class PlaylistDetailViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer
+    private var musicPlayer: MusicPlayer = MusicPlayer()
     private val _uiState = MutableStateFlow(PlaylistDetailUiState())
     val uiState: StateFlow<PlaylistDetailUiState> = _uiState.asStateFlow()
     val id: PlaylistId
 
     init {
-        musicPlayer = MusicPlayer(application)
         id = PlaylistId(savedStateHandle.get<String>("id").toString())
 
         musicPlayer.bindService(application)

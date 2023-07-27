@@ -12,7 +12,7 @@ interface MusicPlayerListener : MusicServiceListener {
     fun onBind() {}
 }
 
-class MusicPlayer(context: Context) {
+class MusicPlayer {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
     private var listener: MusicPlayerListener? = null

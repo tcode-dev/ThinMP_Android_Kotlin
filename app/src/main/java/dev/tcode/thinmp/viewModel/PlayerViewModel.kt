@@ -51,7 +51,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     init {
-        musicPlayer = MusicPlayer(application)
+        musicPlayer = MusicPlayer()
 
         musicPlayer.addEventListener(this)
         musicPlayer.bindService(application)

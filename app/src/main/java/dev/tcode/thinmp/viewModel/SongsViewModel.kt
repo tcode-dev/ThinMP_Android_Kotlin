@@ -18,12 +18,11 @@ data class SongsUiState(
 
 class SongsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer
+    private var musicPlayer: MusicPlayer = MusicPlayer()
     private val _uiState = MutableStateFlow(SongsUiState())
     val uiState: StateFlow<SongsUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer = MusicPlayer(application)
 
         musicPlayer.bindService(application)
         load(application)
