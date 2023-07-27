@@ -12,7 +12,6 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.media3.session.MediaStyleNotificationHelper
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.NotificationConstant
-import java.util.UUID
 
 object LocalNotificationHelper {
     fun showNotification(context: Context, mediaStyle: MediaStyleNotificationHelper.MediaStyle, title: String, message: String, albumArtBitmap: Bitmap?) {
@@ -20,7 +19,6 @@ object LocalNotificationHelper {
             return
         }
 
-        cancelAll(context)
         createNotificationChannel(context)
 
         val builder =
@@ -32,9 +30,8 @@ object LocalNotificationHelper {
         }
 
         val notificationManager = NotificationManagerCompat.from(context)
-        val id = UUID.randomUUID().hashCode()
 
-        notificationManager.notify(id, builder.build())
+        notificationManager.notify(0, builder.build())
     }
 
     fun cancelAll(context: Context) {
