@@ -66,34 +66,33 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val (player, img, gradient) = createRefs()
+        val (player, img) = createRefs()
 
-        ImageView(
-            uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
-                .fillMaxWidth()
-                .blur(20.dp), painter = null
-        )
+        Box {
+            ImageView(
+                uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
+                    .fillMaxWidth()
+                    .blur(20.dp), painter = null
+            )
 
-        val gradientHeight = if (isLandscape) minSize else minSize / 2
-        val brush = if (isLandscape) Brush.verticalGradient(
-            0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
-            1.0F to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
-        ) else Brush.verticalGradient(
-            0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
-            1.0F to MaterialTheme.colorScheme.background,
-        )
+            val gradientHeight = if (isLandscape) minSize else minSize / 2
+            val brush = if (isLandscape) Brush.verticalGradient(
+                0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
+                1.0F to MaterialTheme.colorScheme.background.copy(alpha = 0.5F),
+            ) else Brush.verticalGradient(
+                0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),
+                1.0F to MaterialTheme.colorScheme.background,
+            )
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(gradientHeight)
-                .constrainAs(gradient) {
-                    if (!isLandscape) {
-                        top.linkTo(parent.top, margin = gradientHeight + 1.dp)
-                    }
-                }
-                .background(brush = brush),
-        ) {}
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(gradientHeight)
+                    .align(Alignment.BottomStart)
+                    .background(brush = brush),
+            ) {}
+        }
+
         if (!isLandscape || isHeightMedium) {
             val imageSize = if (isLandscape) minSize / 100 * 40 else minSize / 100 * 64
             val imageMargin = if (isLandscape) systemBars + StyleConstant.PADDING_LARGE.dp else edgeSize
@@ -105,7 +104,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                 }
                 .size(imageSize)) {
                 ImageView(
-                    uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
+                    uri = uiState.imageUri, contentScale = ContentScale.Fit, modifier = Modifier
                         .size(imageSize)
                         .clip(RoundedCornerShape(8.dp))
                 )
