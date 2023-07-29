@@ -14,10 +14,6 @@
 
         <service android:name=".player.MusicService" />
 
-        <service
-            android:name=".application.MainApplication$DestroyingService"
-            android:stopWithTask="false" />
-
         <activity
             android:name=".activity.MainActivity"
             android:configChanges="orientation|screenSize"
