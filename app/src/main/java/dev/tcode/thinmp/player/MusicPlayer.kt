@@ -84,11 +84,6 @@ class MusicPlayer {
         unbindService(context)
     }
 
-    fun removeEventListener() {
-        this.listener = null
-        musicService?.removeEventListener()
-    }
-
     fun bindService(context: Context) {
         if (bound) return
 
@@ -96,6 +91,11 @@ class MusicPlayer {
         context.bindService(
             Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
         )
+    }
+
+    private fun removeEventListener() {
+        this.listener = null
+        musicService?.removeEventListener()
     }
 
     private fun unbindService(context: Context) {
