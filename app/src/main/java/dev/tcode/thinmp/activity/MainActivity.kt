@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
@@ -11,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tcode.thinmp.player.MusicService
 import dev.tcode.thinmp.ui.theme.ThinMPTheme
 import dev.tcode.thinmp.view.nav.ThinMPNavHost
 import dev.tcode.thinmp.view.permission.PermissionView
@@ -39,5 +41,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+//        println("Log: MainApplication startService")
+//        startForeground(Intent(applicationContext, MusicService::class.java))
+//        startForegroundService(Intent(applicationContext, MusicService::class.java))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        println("Log: MainActivity onDestroy")
     }
 }

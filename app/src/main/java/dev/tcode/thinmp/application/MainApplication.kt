@@ -13,8 +13,9 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
-
-        startService(Intent(applicationContext, MusicService::class.java))
+        println("Log: MainApplication startService")
+        startForegroundService(Intent(applicationContext, MusicService::class.java))
+//        startService(Intent(applicationContext, MusicService::class.java))
     }
 
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
@@ -30,6 +31,7 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
     override fun onActivityDestroyed(p0: Activity) {
+        println("Log: MainApplication onActivityDestroyed")
         val musicServiceIntent = Intent(applicationContext, MusicService::class.java)
 
         applicationContext.stopService(musicServiceIntent)
