@@ -39,7 +39,6 @@ import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.notification.LocalNotificationHelper
 import java.io.IOException
 
-
 interface MusicServiceListener {
     fun onChange() {}
 }
