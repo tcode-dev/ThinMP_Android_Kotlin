@@ -64,30 +64,30 @@ class MusicService : Service() {
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
 
-//        val notificationChannel = NotificationChannel(
-//            "primary_notification_channel",
-//            "MyApp notification",
-//            NotificationManager.IMPORTANCE_LOW
-//        )
-//        notificationChannel.enableLights(true)
-//        notificationChannel.lightColor = Color.RED
-//        notificationChannel.enableVibration(true)
-//        notificationChannel.description = "AppApp Tests"
-//
-//        val notificationManager = applicationContext.getSystemService(
-//            Context.NOTIFICATION_SERVICE) as NotificationManager
-//        notificationManager.createNotificationChannel(
-//            notificationChannel)
-//        val openIntent = Intent(this, MainActivity::class.java).let {
-//            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
-//        }
-//        val notification = NotificationCompat.Builder(this, "primary_notification_channel")
-//            .setContentTitle("MyService is running")
-//            .setContentText("MyService is running")
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .setContentIntent(openIntent)
-//            .build()
-//        startForeground(9999, notification)
+        val notificationChannel = NotificationChannel(
+            "primary_notification_channel",
+            "MyApp notification",
+            NotificationManager.IMPORTANCE_LOW
+        )
+        notificationChannel.enableLights(true)
+        notificationChannel.lightColor = Color.RED
+        notificationChannel.enableVibration(true)
+        notificationChannel.description = "AppApp Tests"
+
+        val notificationManager = applicationContext.getSystemService(
+            Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(
+            notificationChannel)
+        val openIntent = Intent(this, MainActivity::class.java).let {
+            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
+        }
+        val notification = NotificationCompat.Builder(this, "primary_notification_channel")
+            .setContentTitle("MyService is running")
+            .setContentText("MyService is running")
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(openIntent)
+            .build()
+        startForeground(9999, notification)
     }
 
     fun addEventListener(listener: MusicServiceListener) {
