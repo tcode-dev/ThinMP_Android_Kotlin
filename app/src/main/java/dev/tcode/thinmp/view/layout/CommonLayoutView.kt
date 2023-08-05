@@ -25,7 +25,7 @@ fun CommonLayoutView(content: @Composable ((showPlaylistRegisterPopup: (songId: 
     }
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
+//        val (miniPlayer) = createRefs()
 
         content(showPlaylistRegisterPopup)
 
@@ -33,10 +33,10 @@ fun CommonLayoutView(content: @Composable ((showPlaylistRegisterPopup: (songId: 
             PlaylistRegisterPopupView(playlistRegisterSongId, togglePopup)
         }
 
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
-        }
+//        Box(modifier = Modifier.constrainAs(miniPlayer) {
+//            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+//        }) {
+//            MiniPlayerView()
+//        }
     }
 }

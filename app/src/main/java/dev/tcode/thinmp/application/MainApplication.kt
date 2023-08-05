@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import dagger.hilt.android.HiltAndroidApp
+import dev.tcode.thinmp.notification.LocalNotificationHelper
 import dev.tcode.thinmp.player.MusicService
 
 @HiltAndroidApp
@@ -14,6 +15,7 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
         println("Log: MainApplication startService")
+        LocalNotificationHelper.createNotificationChannel(applicationContext)
         startForegroundService(Intent(applicationContext, MusicService::class.java))
 //        startService(Intent(applicationContext, MusicService::class.java))
     }

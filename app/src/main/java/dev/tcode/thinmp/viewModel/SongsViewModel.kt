@@ -30,6 +30,8 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
 
     fun start(index: Int) {
         musicPlayer.start(_uiState.asStateFlow().value.songs, index)
+        load(getApplication())
+        println("Log: SongsViewModel start")
     }
 
     override fun onStop(context: Context) {

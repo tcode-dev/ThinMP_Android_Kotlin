@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.player
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -63,31 +64,6 @@ class MusicService : Service() {
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
-
-        val notificationChannel = NotificationChannel(
-            "primary_notification_channel",
-            "MyApp notification",
-            NotificationManager.IMPORTANCE_LOW
-        )
-        notificationChannel.enableLights(true)
-        notificationChannel.lightColor = Color.RED
-        notificationChannel.enableVibration(true)
-        notificationChannel.description = "AppApp Tests"
-
-        val notificationManager = applicationContext.getSystemService(
-            Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(
-            notificationChannel)
-        val openIntent = Intent(this, MainActivity::class.java).let {
-            PendingIntent.getActivity(this, 0, it, PendingIntent.FLAG_IMMUTABLE)
-        }
-        val notification = NotificationCompat.Builder(this, "primary_notification_channel")
-            .setContentTitle("MyService is running")
-            .setContentText("MyService is running")
-            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setContentIntent(openIntent)
-            .build()
-        startForeground(9999, notification)
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -109,6 +85,10 @@ class MusicService : Service() {
         setPlayer()
         player?.seekTo(index, 0)
         play()
+
+        val notification = createNotification()
+
+        startForeground(1, notification)
     }
 
     fun play() {
@@ -218,7 +198,7 @@ class MusicService : Service() {
             if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                 isPlaying = player.isPlaying
                 listener?.onChange()
-                notification()
+//                notification()
             }
         }
 
@@ -226,7 +206,7 @@ class MusicService : Service() {
 
             println("Log: MusicService PlayerEventListener onMediaItemTransition")
             listener?.onChange()
-            notification()
+//            notification()
         }
 
         override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {
@@ -417,8 +397,9 @@ class MusicService : Service() {
         super.onRebind(intent)
         println("Log: MusicService onConfigurationChanged")
     }
-    private fun notification() {
-        val song = getCurrentSong() ?: return
+
+    private fun createNotification(): Notification? {
+        val song = getCurrentSong() ?: return null
         var albumArtBitmap: Bitmap? = null
 
         try {
@@ -429,7 +410,15 @@ class MusicService : Service() {
             println("Log: MusicService notification IOException $e")
         }
 
-        LocalNotificationHelper.showNotification(applicationContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
+        return LocalNotificationHelper.createNotification(applicationContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
+    }
+
+    private fun notification() {
+        val notification = createNotification()
+
+        if (notification != null) {
+            LocalNotificationHelper.notify(notification, applicationContext)
+        }
     }
 
     override fun onBind(intent: Intent): IBinder {
