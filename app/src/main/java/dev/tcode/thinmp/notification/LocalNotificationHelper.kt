@@ -47,8 +47,4 @@ object LocalNotificationHelper {
     fun cancelAll(context: Context) {
         NotificationManagerCompat.from(context).cancelAll()
     }
-
-    fun isNotificationAllowed(context: Context): Boolean {
-        return ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-    }
 }

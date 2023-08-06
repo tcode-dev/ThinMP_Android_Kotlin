@@ -66,7 +66,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { showPlaylistRegisterPopup ->
+    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText,
             columns = CustomGridCellsFixed(spanCount),
             spanCount = spanCount,

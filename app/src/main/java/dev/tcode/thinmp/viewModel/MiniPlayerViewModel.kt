@@ -23,7 +23,9 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-//        setup(application)
+        println("Log: MiniPlayerViewModel init")
+        musicPlayer.addEventListener(this)
+        setup(application)
     }
 
     fun toggle() {
@@ -34,18 +36,20 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
-    fun setup(context: Context) {
-        if (!musicPlayer.isServiceRunning()) return
-
-        musicPlayer.addEventListener(this)
-        musicPlayer.bindService(context)
-    }
-
     fun next() {
         musicPlayer.next()
     }
 
+    private fun setup(context: Context) {
+        println("Log: MiniPlayerViewModel setup 1")
+        if (!musicPlayer.isServiceRunning()) return
+        println("Log: MiniPlayerViewModel setup 2")
+        musicPlayer.addEventListener(this)
+        musicPlayer.bindService(context)
+    }
+
     override fun onBind() {
+        println("Log: MiniPlayerViewModel onBind")
         update()
     }
 
@@ -60,7 +64,7 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     override fun onResume(context: Context) {
         println("Log: MiniPlayerViewModel onResume")
         if (initialized) {
-//            setup(context)
+            setup(context)
         } else {
             initialized = true
         }
@@ -74,6 +78,5 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
                 primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = musicPlayer.isPlaying()
             )
         }
-
     }
 }

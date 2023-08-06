@@ -29,13 +29,14 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
 @Composable
-fun MiniPlayerView(isVisible: Boolean = false, viewModel: MiniPlayerViewModel = viewModel()) {
+fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
-println("Log: MiniPlayerView")
-    if (isVisible) {
+
+    println("Log: MiniPlayerView")
+    if (!uiState.isVisible) {
         return
     }
 

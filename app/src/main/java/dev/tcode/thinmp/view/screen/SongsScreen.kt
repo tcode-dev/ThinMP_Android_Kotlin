@@ -31,7 +31,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView(false) { showPlaylistRegisterPopup ->
+    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             itemsIndexed(uiState.songs) { index, song ->
                 DropdownMenuView(dropdownContent = { callback ->
