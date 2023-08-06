@@ -39,7 +39,7 @@ class ArtistDetailViewModel @Inject constructor(
     }
 
     fun start(index: Int) {
-        musicPlayer.start(_uiState.asStateFlow().value.songs, index)
+        musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
     }
 
     override fun onStop(context: Context) {

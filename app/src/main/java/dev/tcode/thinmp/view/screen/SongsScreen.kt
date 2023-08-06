@@ -30,12 +30,8 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
 
     CustomLifecycleEventObserver(viewModel)
-    val miniPlayerHeight = miniPlayerHeight()
 
-    ConstraintLayout(Modifier.fillMaxSize()) {
-        val (miniPlayer) = createRefs()
-
-    CommonLayoutView { showPlaylistRegisterPopup ->
+    CommonLayoutView(false) { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             itemsIndexed(uiState.songs) { index, song ->
                 DropdownMenuView(dropdownContent = { callback ->
@@ -52,11 +48,5 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
                 }
             }
         }
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
-        }
-    }
     }
 }

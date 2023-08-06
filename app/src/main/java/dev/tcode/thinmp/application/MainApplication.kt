@@ -16,8 +16,6 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
         registerActivityLifecycleCallbacks(this)
         println("Log: MainApplication startService")
         LocalNotificationHelper.createNotificationChannel(applicationContext)
-        startForegroundService(Intent(applicationContext, MusicService::class.java))
-//        startService(Intent(applicationContext, MusicService::class.java))
     }
 
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {}

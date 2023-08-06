@@ -24,12 +24,12 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
 
     init {
 
-        musicPlayer.bindService(application)
+//        musicPlayer.bindService(application)
         load(application)
     }
 
     fun start(index: Int) {
-        musicPlayer.start(_uiState.asStateFlow().value.songs, index)
+        musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
         load(getApplication())
         println("Log: SongsViewModel start")
     }

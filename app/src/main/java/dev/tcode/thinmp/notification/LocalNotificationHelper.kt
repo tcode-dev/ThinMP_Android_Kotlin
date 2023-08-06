@@ -22,7 +22,7 @@ object LocalNotificationHelper {
 
         val notificationManager = NotificationManagerCompat.from(context)
 
-        notificationManager.notify(1, notification)
+        notificationManager.notify(NotificationConstant.NOTIFICATION_ID, notification)
     }
 
     fun createNotification(context: Context, mediaStyle: MediaStyleNotificationHelper.MediaStyle, title: String, message: String, albumArtBitmap: Bitmap?): Notification {
@@ -38,10 +38,6 @@ object LocalNotificationHelper {
     }
 
     fun createNotificationChannel(context: Context) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-
         val channel = NotificationChannel(NotificationConstant.CHANNEL_ID, context.resources.getString(R.string.channel_name), NotificationManager.IMPORTANCE_LOW)
         val notificationManager = context.getSystemService(NotificationManager::class.java)
 
@@ -49,10 +45,10 @@ object LocalNotificationHelper {
     }
 
     fun cancelAll(context: Context) {
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-
         NotificationManagerCompat.from(context).cancelAll()
+    }
+
+    fun isNotificationAllowed(context: Context): Boolean {
+        return ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
     }
 }

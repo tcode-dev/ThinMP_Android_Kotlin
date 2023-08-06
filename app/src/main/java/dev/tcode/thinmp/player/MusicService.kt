@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.player
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
@@ -9,6 +10,7 @@ import android.app.Service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -16,6 +18,7 @@ import android.graphics.ImageDecoder
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.DeviceInfo
@@ -36,6 +39,7 @@ import androidx.media3.session.MediaStyleNotificationHelper
 import dev.tcode.thinmp.activity.MainActivity
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
+import dev.tcode.thinmp.constant.NotificationConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.notification.LocalNotificationHelper
 import java.io.IOException
@@ -55,12 +59,17 @@ class MusicService : Service() {
     private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
+    private var initialized: Boolean = false
     private var shuffle = false
     private var isPlaying = false
+    companion object {
+        var isServiceRunning = false
+    }
 
     override fun onCreate() {
         super.onCreate()
 
+        isServiceRunning = true
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
@@ -86,9 +95,13 @@ class MusicService : Service() {
         player?.seekTo(index, 0)
         play()
 
-        val notification = createNotification()
+        if (!initialized) {
+            val notification = createNotification()
 
-        startForeground(1, notification)
+            startForeground(NotificationConstant.NOTIFICATION_ID, notification)
+
+            initialized = true
+        }
     }
 
     fun play() {
@@ -198,7 +211,7 @@ class MusicService : Service() {
             if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                 isPlaying = player.isPlaying
                 listener?.onChange()
-//                notification()
+                notification()
             }
         }
 
@@ -206,7 +219,7 @@ class MusicService : Service() {
 
             println("Log: MusicService PlayerEventListener onMediaItemTransition")
             listener?.onChange()
-//            notification()
+            notification()
         }
 
         override fun onAudioAttributesChanged(audioAttributes: AudioAttributes) {
@@ -431,7 +444,6 @@ class MusicService : Service() {
         return START_NOT_STICKY
     }
 
-
     @SuppressLint("ServiceCast")
     override fun onDestroy() {
         println("Log: MusicService onDestroy")
@@ -443,6 +455,7 @@ class MusicService : Service() {
         player?.release()
         LocalNotificationHelper.cancelAll(applicationContext)
         stopForeground(STOP_FOREGROUND_DETACH)
+        isServiceRunning = false
     }
 
     inner class MusicBinder : Binder() {
