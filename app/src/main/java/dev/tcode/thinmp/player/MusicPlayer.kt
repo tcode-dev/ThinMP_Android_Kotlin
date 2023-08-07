@@ -15,6 +15,8 @@ interface MusicPlayerListener : MusicServiceListener {
 class MusicPlayer {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
+    private var playingList: List<SongModel> = emptyList()
+    private var startIndex: Int = 0
     private var listener: MusicPlayerListener? = null
     private var isConnecting = false
     private var bound = false
@@ -30,15 +32,25 @@ class MusicPlayer {
     fun start(context: Context, songs: List<SongModel>, index: Int) {
         if (songs.isEmpty()) return
 
+        playingList = songs
+        startIndex = index
+
+        if (isConnecting) return
+
         if (!isServiceRunning()) {
             context.startForegroundService(Intent(context, MusicService::class.java))
+            bindService(context)
+
+            return
         }
 
-        if (!isConnecting || !bound) {
-            bindService(context) { musicService?.start(songs, index) }
+        if (!bound) {
+            bindService(context)
+
+            return
         }
 
-        musicService?.start(songs, index)
+        musicService?.start(playingList, startIndex)
     }
 
     fun play() {
@@ -95,11 +107,11 @@ class MusicPlayer {
         unbindService(context)
     }
 
-    fun bindService(context: Context, callback: () -> Unit = {}) {
+    fun bindService(context: Context) {
         if (isConnecting || bound) return
 
         isConnecting = true
-        connection = createConnection(callback)
+        connection = createConnection()
         context.bindService(
             Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
         )
@@ -118,16 +130,16 @@ class MusicPlayer {
         bound = false
     }
 
-    private fun createConnection(callback: () -> Unit): ServiceConnection {
+    private fun createConnection(): ServiceConnection {
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
                 listener?.let { musicService!!.addEventListener(it) }
                 listener?.onBind()
+                musicService?.start(playingList, startIndex)
                 isConnecting = false
                 bound = true
-                callback()
             }
 
             override fun onServiceDisconnected(name: ComponentName) {}
