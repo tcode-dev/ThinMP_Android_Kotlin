@@ -23,8 +23,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-        println("Log: MiniPlayerViewModel init")
-        musicPlayer.addEventListener(this)
         setup(application)
     }
 
@@ -38,14 +36,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
 
     fun next() {
         musicPlayer.next()
-    }
-
-    private fun setup(context: Context) {
-        println("Log: MiniPlayerViewModel setup 1")
-        if (!musicPlayer.isServiceRunning()) return
-        println("Log: MiniPlayerViewModel setup 2")
-        musicPlayer.addEventListener(this)
-        musicPlayer.bindService(context)
     }
 
     override fun onBind() {
@@ -70,8 +60,18 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    private fun setup(context: Context) {
+        println("Log: MiniPlayerViewModel setup 1")
+        if (!musicPlayer.isServiceRunning()) return
+        println("Log: MiniPlayerViewModel setup 2")
+        musicPlayer.addEventListener(this)
+        musicPlayer.bindService(context)
+    }
+
     private fun update() {
+        println("Log: MiniPlayerViewModel update 1")
         val song = musicPlayer.getCurrentSong() ?: return
+        println("Log: MiniPlayerViewModel update 2")
 
         _uiState.update { currentState ->
             currentState.copy(

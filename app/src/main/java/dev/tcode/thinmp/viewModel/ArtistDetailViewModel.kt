@@ -38,16 +38,21 @@ class ArtistDetailViewModel @Inject constructor(
     val id: String
 
     init {
+        println("Log: ArtistDetailViewModel init")
         id = savedStateHandle.get<String>("id").toString()
 
-        musicPlayer.addEventListener(this)
         load(application)
+        setup(application)
     }
 
     fun start(index: Int) {
-        musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
+        println("Log: ArtistDetailViewModel start 1")
+        if (!musicPlayer.isServiceRunning()) {
+            musicPlayer.addEventListener(this)
+        }
 
-        println("Log: ArtistDetailViewModel start")
+        musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
+        println("Log: ArtistDetailViewModel start 2")
     }
 
     override fun onStop(context: Context) {
@@ -56,7 +61,7 @@ class ArtistDetailViewModel @Inject constructor(
 
     override fun onResume(context: Context) {
         if (initialized) {
-            musicPlayer.bindService(context)
+            setup(context)
             load(context)
         } else {
             initialized = true
@@ -64,7 +69,16 @@ class ArtistDetailViewModel @Inject constructor(
     }
 
     override fun onBind() {
+        println("Log: ArtistDetailViewModel onBind")
         updateIsVisiblePlayer()
+    }
+
+    private fun setup(context: Context) {
+        println("Log: ArtistDetailViewModel setup 1")
+        if (!musicPlayer.isServiceRunning()) return
+        println("Log: ArtistDetailViewModel setup 2")
+        musicPlayer.addEventListener(this)
+        musicPlayer.bindService(context)
     }
 
     private fun load(context: Context) {

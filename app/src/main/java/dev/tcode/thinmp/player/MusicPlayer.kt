@@ -38,9 +38,11 @@ class MusicPlayer {
         if (isConnecting) return
 
         if (!isServiceRunning()) {
+            println("Log: MusicPlayer start 1")
             context.startForegroundService(Intent(context, MusicService::class.java))
+            println("Log: MusicPlayer start 2")
             bindService(context)
-
+            println("Log: MusicPlayer start 3")
             return
         }
 
@@ -95,7 +97,7 @@ class MusicPlayer {
 
     fun addEventListener(listener: MusicPlayerListener) {
         this.listener = listener
-        musicService?.addEventListener(listener)
+//        musicService?.addEventListener(listener)
     }
 
     fun getCurrentPosition(): Long {
@@ -133,11 +135,12 @@ class MusicPlayer {
     private fun createConnection(): ServiceConnection {
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
+                println("Log: MusicPlayer onServiceConnected")
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
                 listener?.let { musicService!!.addEventListener(it) }
-                listener?.onBind()
                 musicService?.start(playingList, startIndex)
+                listener?.onBind()
                 isConnecting = false
                 bound = true
             }

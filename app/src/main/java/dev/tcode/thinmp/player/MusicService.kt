@@ -68,7 +68,7 @@ class MusicService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-
+        println("Log: MusicService onCreate")
         isServiceRunning = true
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
