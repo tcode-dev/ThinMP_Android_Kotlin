@@ -15,8 +15,6 @@ interface MusicPlayerListener : MusicServiceListener {
 class MusicPlayer {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
-    private var playingList: List<SongModel> = emptyList()
-    private var startIndex: Int = 0
     private var listener: MusicPlayerListener? = null
     private var isConnecting = false
     private var bound = false
@@ -30,27 +28,24 @@ class MusicPlayer {
     }
 
     fun start(context: Context, songs: List<SongModel>, index: Int) {
-        playingList = songs
-        startIndex = index
-
         if (isConnecting) return
 
         if (!isServiceRunning()) {
             println("Log: MusicPlayer start 1")
             context.startForegroundService(Intent(context, MusicService::class.java))
             println("Log: MusicPlayer start 2")
-            bindService(context) {musicService?.start(playingList, startIndex)}
+            bindService(context) { musicService?.start(songs, index) }
             println("Log: MusicPlayer start 3")
             return
         }
 
         if (!bound) {
-            bindService(context){}
+            bindService(context)
 
             return
         }
 
-        musicService?.start(playingList, startIndex)
+        musicService?.start(songs, index)
     }
 
     fun play() {

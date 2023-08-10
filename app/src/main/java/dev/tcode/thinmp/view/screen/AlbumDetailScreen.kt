@@ -49,7 +49,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { showPlaylistRegisterPopup ->
+    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
             ShortcutDropdownMenuItemView(AlbumId(id), callback)
         }) {
