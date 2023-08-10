@@ -54,7 +54,7 @@ class MusicService : Service() {
     private var player: ExoPlayer? = null
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
-    private var listener: MusicServiceListener? = null
+    private var listeners: MutableList<MusicServiceListener> = mutableListOf()
     private var playerEventListener: PlayerEventListener? = null
     private var playingList: List<SongModel> = emptyList()
     private lateinit var config: ConfigStore
@@ -76,32 +76,37 @@ class MusicService : Service() {
     }
 
     fun addEventListener(listener: MusicServiceListener) {
-        this.listener = listener
+        listeners.add(listener)
     }
 
-    fun removeEventListener() {
-        this.listener = null
+    fun removeEventListener(listener: MusicServiceListener) {
+        listeners.remove(listener)
     }
 
     fun getCurrentSong(): SongModel? {
+        println("Log: MusicService getCurrentSong 1")
+        println("Log: $playingList")
         if (player?.currentMediaItem == null) return null
-
+        println("Log: MusicService getCurrentSong 2")
         return playingList.first { MediaItem.fromUri(it.getMediaUri()) == player?.currentMediaItem }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
+        println("Log: MusicService start 1")
         playingList = songs
         setPlayer()
         player?.seekTo(index, 0)
         play()
 
         if (!initialized) {
+            println("Log: MusicService start 2")
             val notification = createNotification()
 
             startForeground(NotificationConstant.NOTIFICATION_ID, notification)
 
             initialized = true
         }
+        println("Log: MusicService start 3")
     }
 
     fun play() {
@@ -117,7 +122,7 @@ class MusicService : Service() {
             player?.seekToPrevious()
         } else {
             player?.seekTo(0)
-            listener?.onChange()
+            onChange()
         }
     }
 
@@ -137,7 +142,7 @@ class MusicService : Service() {
         }
         setRepeat()
         config.saveRepeat(repeat)
-        listener?.onChange()
+        onChange()
     }
 
     fun getShuffle(): Boolean {
@@ -148,7 +153,7 @@ class MusicService : Service() {
         shuffle = !shuffle
         setShuffle()
         config.saveShuffle(shuffle)
-        listener?.onChange()
+        onChange()
     }
 
     fun seekTo(ms: Long) {
@@ -210,7 +215,7 @@ class MusicService : Service() {
 
             if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                 isPlaying = player.isPlaying
-                listener?.onChange()
+                onChange()
                 notification()
             }
         }
@@ -218,7 +223,7 @@ class MusicService : Service() {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
 
             println("Log: MusicService PlayerEventListener onMediaItemTransition")
-            listener?.onChange()
+            onChange()
             notification()
         }
 
@@ -431,6 +436,13 @@ class MusicService : Service() {
 
         if (notification != null) {
             LocalNotificationHelper.notify(notification, applicationContext)
+        }
+    }
+
+    private fun onChange() {
+        listeners.forEach {
+            println("Log: MusicService onChange")
+            it.onChange()
         }
     }
 

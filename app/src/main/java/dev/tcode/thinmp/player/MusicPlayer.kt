@@ -30,8 +30,6 @@ class MusicPlayer {
     }
 
     fun start(context: Context, songs: List<SongModel>, index: Int) {
-        if (songs.isEmpty()) return
-
         playingList = songs
         startIndex = index
 
@@ -41,13 +39,13 @@ class MusicPlayer {
             println("Log: MusicPlayer start 1")
             context.startForegroundService(Intent(context, MusicService::class.java))
             println("Log: MusicPlayer start 2")
-            bindService(context)
+            bindService(context) {musicService?.start(playingList, startIndex)}
             println("Log: MusicPlayer start 3")
             return
         }
 
         if (!bound) {
-            bindService(context)
+            bindService(context){}
 
             return
         }
@@ -92,12 +90,12 @@ class MusicPlayer {
     }
 
     fun getCurrentSong(): SongModel? {
+        println("Log: MusicPlayer getCurrentSong 1")
         return musicService?.getCurrentSong()
     }
 
     fun addEventListener(listener: MusicPlayerListener) {
         this.listener = listener
-//        musicService?.addEventListener(listener)
     }
 
     fun getCurrentPosition(): Long {
@@ -105,23 +103,20 @@ class MusicPlayer {
     }
 
     fun destroy(context: Context) {
-        removeEventListener()
+        musicService?.removeEventListener(listener!!)
+        listener = null
+
         unbindService(context)
     }
 
-    fun bindService(context: Context) {
+    fun bindService(context: Context, callback: () -> Unit? = {}) {
         if (isConnecting || bound) return
 
         isConnecting = true
-        connection = createConnection()
+        connection = createConnection(callback)
         context.bindService(
             Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
         )
-    }
-
-    private fun removeEventListener() {
-        this.listener = null
-        musicService?.removeEventListener()
     }
 
     private fun unbindService(context: Context) {
@@ -132,14 +127,14 @@ class MusicPlayer {
         bound = false
     }
 
-    private fun createConnection(): ServiceConnection {
+    private fun createConnection(callback: () -> Unit? = {}): ServiceConnection {
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 println("Log: MusicPlayer onServiceConnected")
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
                 listener?.let { musicService!!.addEventListener(it) }
-                musicService?.start(playingList, startIndex)
+                callback()
                 listener?.onBind()
                 isConnecting = false
                 bound = true

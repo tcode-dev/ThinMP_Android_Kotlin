@@ -10,7 +10,7 @@ import dev.tcode.thinmp.view.player.MiniPlayerView
 import dev.tcode.thinmp.view.util.miniPlayerHeight
 
 @Composable
-fun MiniPlayerLayoutView(content: @Composable (() -> Unit)) {
+fun MiniPlayerLayoutView(isVisibleMiniPlayer: Boolean = true, content: @Composable (() -> Unit)) {
     val miniPlayerHeight = miniPlayerHeight()
 
     ConstraintLayout(Modifier.fillMaxSize()) {
@@ -18,10 +18,12 @@ fun MiniPlayerLayoutView(content: @Composable (() -> Unit)) {
 
         content()
 
-        Box(modifier = Modifier.constrainAs(miniPlayer) {
-            top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
-        }) {
-            MiniPlayerView()
+        if (isVisibleMiniPlayer) {
+            Box(modifier = Modifier.constrainAs(miniPlayer) {
+                top.linkTo(parent.bottom, margin = (-miniPlayerHeight).dp)
+            }) {
+                MiniPlayerView()
+            }
         }
     }
 }
