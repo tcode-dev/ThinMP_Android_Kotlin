@@ -17,13 +17,13 @@ data class MiniPlayerUiState(
 )
 
 class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
-    private var musicPlayer: MusicPlayer = MusicPlayer()
+    private var musicPlayer: MusicPlayer = MusicPlayer(this)
     private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
 
     init {
-        setup(application)
+        bindService()
     }
 
     fun toggle() {
@@ -39,7 +39,6 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     override fun onBind() {
-        println("Log: MiniPlayerViewModel onBind")
         update()
     }
 
@@ -52,20 +51,17 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     override fun onResume(context: Context) {
-        println("Log: MiniPlayerViewModel onResume")
         if (initialized) {
-            setup(context)
+            bindService()
         } else {
             initialized = true
         }
     }
 
-    private fun setup(context: Context) {
-        println("Log: MiniPlayerViewModel setup 1")
-        if (!musicPlayer.isServiceRunning()) return
-        println("Log: MiniPlayerViewModel setup 2")
-        musicPlayer.addEventListener(this)
-        musicPlayer.bindService(context)
+    private fun bindService() {
+        if (musicPlayer.isServiceRunning()) {
+            musicPlayer.bindService(getApplication())
+        }
     }
 
     private fun update() {

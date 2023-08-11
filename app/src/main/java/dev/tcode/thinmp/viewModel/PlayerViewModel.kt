@@ -38,7 +38,7 @@ data class PlayerUiState(
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteArtistRegister, FavoriteSongRegister {
     private val INTERVAL_MS = 1000L
-    private var musicPlayer: MusicPlayer
+    private val musicPlayer: MusicPlayer = MusicPlayer(this)
     private var initialized: Boolean = false
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
@@ -51,9 +51,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     init {
-        musicPlayer = MusicPlayer()
-
-        musicPlayer.addEventListener(this)
         musicPlayer.bindService(application)
     }
 

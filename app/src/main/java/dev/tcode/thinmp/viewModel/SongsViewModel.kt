@@ -17,21 +17,19 @@ data class SongsUiState(
     var songs: List<SongModel> = emptyList(), var isVisiblePlayer: Boolean = false
 )
 
-class SongsViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
+class SongsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer = MusicPlayer()
+    private var musicPlayer: MusicPlayer = MusicPlayer(this)
     private val _uiState = MutableStateFlow(SongsUiState())
     val uiState: StateFlow<SongsUiState> = _uiState.asStateFlow()
 
     init {
-        musicPlayer.addEventListener(this)
         load(application)
+        bindService()
     }
 
     fun start(index: Int) {
         musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
-
-        println("Log: SongsViewModel start")
     }
 
     override fun onStop(context: Context) {
@@ -40,8 +38,8 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
 
     override fun onResume(context: Context) {
         if (initialized) {
-            musicPlayer.bindService(context)
             load(context)
+            bindService()
         } else {
             initialized = true
         }
@@ -49,6 +47,12 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
 
     override fun onBind() {
         updateIsVisiblePlayer()
+    }
+
+    private fun bindService() {
+        if (musicPlayer.isServiceRunning()) {
+            musicPlayer.bindService(getApplication())
+        }
     }
 
     private fun load(context: Context) {
@@ -64,7 +68,6 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     private fun updateIsVisiblePlayer() {
-        println("Log: SongsViewModel updateIsVisiblePlayer ${musicPlayer.isServiceRunning()}")
         _uiState.update { currentState ->
             currentState.copy(
                 isVisiblePlayer = musicPlayer.isServiceRunning()

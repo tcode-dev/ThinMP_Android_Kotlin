@@ -12,10 +12,9 @@ interface MusicPlayerListener : MusicServiceListener {
     fun onBind() {}
 }
 
-class MusicPlayer {
+class MusicPlayer(var listener: MusicPlayerListener) {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
-    private var listener: MusicPlayerListener? = null
     private var isConnecting = false
     private var bound = false
 
@@ -99,7 +98,6 @@ class MusicPlayer {
 
     fun destroy(context: Context) {
         musicService?.removeEventListener(listener!!)
-        listener = null
 
         unbindService(context)
     }
@@ -128,9 +126,9 @@ class MusicPlayer {
                 println("Log: MusicPlayer onServiceConnected")
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
                 musicService = binder.getService()
-                listener?.let { musicService!!.addEventListener(it) }
+                musicService!!.addEventListener(listener)
                 callback()
-                listener?.onBind()
+                listener.onBind()
                 isConnecting = false
                 bound = true
             }

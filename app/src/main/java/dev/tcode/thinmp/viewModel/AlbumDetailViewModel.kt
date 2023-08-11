@@ -24,9 +24,9 @@ data class AlbumDetailUiState(
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
+) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer = MusicPlayer()
+    private val musicPlayer: MusicPlayer = MusicPlayer(this)
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
     val id: String
@@ -35,14 +35,10 @@ class AlbumDetailViewModel @Inject constructor(
         id = savedStateHandle.get<String>("id").toString()
 
         load(application)
-        setup(application)
+        bindService()
     }
 
     fun start(index: Int) {
-        if (!musicPlayer.isServiceRunning()) {
-            musicPlayer.addEventListener(this)
-        }
-
         musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
     }
 
@@ -52,8 +48,8 @@ class AlbumDetailViewModel @Inject constructor(
 
     override fun onResume(context: Context) {
         if (initialized) {
-            setup(context)
             load(context)
+            bindService()
         } else {
             initialized = true
         }
@@ -63,11 +59,10 @@ class AlbumDetailViewModel @Inject constructor(
         updateIsVisiblePlayer()
     }
 
-    private fun setup(context: Context) {
-        if (!musicPlayer.isServiceRunning()) return
-
-        musicPlayer.addEventListener(this)
-        musicPlayer.bindService(context)
+    private fun bindService() {
+        if (musicPlayer.isServiceRunning()) {
+            musicPlayer.bindService(getApplication())
+        }
     }
 
     private fun load(context: Context) {

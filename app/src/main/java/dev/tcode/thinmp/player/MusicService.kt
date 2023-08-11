@@ -94,7 +94,11 @@ class MusicService : Service() {
     fun start(songs: List<SongModel>, index: Int) {
         println("Log: MusicService start 1")
         playingList = songs
-        setPlayer()
+
+        val result = setPlayer()
+
+        if (!result) return
+
         player?.seekTo(index, 0)
         play()
 
@@ -181,7 +185,7 @@ class MusicService : Service() {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun setPlayer() {
+    private fun setPlayer(): Boolean {
         if (isPlaying) {
             player?.stop()
         }
@@ -203,8 +207,11 @@ class MusicService : Service() {
             player?.prepare()
             playerEventListener = PlayerEventListener()
             player?.addListener(playerEventListener!!)
+
+            return true
         } catch (e: IllegalStateException) {
             println("Log: MusicService notification IllegalStateException $e")
+            return false
         }
     }
 

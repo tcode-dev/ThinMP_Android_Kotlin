@@ -67,7 +67,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
 
     CustomLifecycleEventObserver(viewModel)
 
-    MiniPlayerLayoutView(true) {
+    MiniPlayerLayoutView {
         LazyVerticalGrid(columns = CustomGridCellsFixed(spanCount)) {
             item(span = { GridItemSpan(spanCount) }) {
                 Column(

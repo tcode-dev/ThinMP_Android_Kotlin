@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.player.MusicPlayer
+import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.PlaylistDetailService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,15 +19,15 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class PlaylistDetailUiState(
-    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY, var songs: List<SongModel> = emptyList()
+    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY, var songs: List<SongModel> = emptyList(), var isVisiblePlayer: Boolean = false
 )
 
 @HiltViewModel
 class PlaylistDetailViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer = MusicPlayer()
+    private var musicPlayer: MusicPlayer = MusicPlayer(this)
     private val _uiState = MutableStateFlow(PlaylistDetailUiState())
     val uiState: StateFlow<PlaylistDetailUiState> = _uiState.asStateFlow()
     val id: PlaylistId
@@ -34,8 +35,8 @@ class PlaylistDetailViewModel @Inject constructor(
     init {
         id = PlaylistId(savedStateHandle.get<String>("id").toString())
 
-        musicPlayer.bindService(application)
         load(application)
+        bindService()
     }
 
     fun start(index: Int) {
@@ -48,10 +49,20 @@ class PlaylistDetailViewModel @Inject constructor(
 
     override fun onResume(context: Context) {
         if (initialized) {
-            musicPlayer.bindService(context)
             load(context)
+            bindService()
         } else {
             initialized = true
+        }
+    }
+
+    override fun onBind() {
+        updateIsVisiblePlayer()
+    }
+
+    private fun bindService() {
+        if (musicPlayer.isServiceRunning()) {
+            musicPlayer.bindService(getApplication())
         }
     }
 
@@ -62,9 +73,17 @@ class PlaylistDetailViewModel @Inject constructor(
         if (playlist != null) {
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = playlist.primaryText, secondaryText = playlist.secondaryText, imageUri = playlist.imageUri, songs = playlist.songs
+                    primaryText = playlist.primaryText, secondaryText = playlist.secondaryText, imageUri = playlist.imageUri, songs = playlist.songs, isVisiblePlayer = musicPlayer.isServiceRunning()
                 )
             }
+        }
+    }
+
+    private fun updateIsVisiblePlayer() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isVisiblePlayer = musicPlayer.isServiceRunning()
+            )
         }
     }
 }
