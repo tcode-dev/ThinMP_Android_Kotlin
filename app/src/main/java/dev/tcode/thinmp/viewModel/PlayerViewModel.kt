@@ -51,7 +51,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     init {
-        musicPlayer.bindService(application)
+        bindService()
     }
 
     fun toggle() {
@@ -134,8 +134,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     override fun onResume(context: Context) {
         if (initialized) {
-            musicPlayer.addEventListener(this)
-            musicPlayer.bindService(context)
+            bindService()
         } else {
             initialized = true
         }
@@ -144,6 +143,12 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     override fun onStop(context: Context) {
         musicPlayer.destroy(context)
         cancelSeekBarProgressTask()
+    }
+
+    private fun bindService() {
+        if (musicPlayer.isServiceRunning()) {
+            musicPlayer.bindService(getApplication())
+        }
     }
 
     private fun seekBarProgress() {

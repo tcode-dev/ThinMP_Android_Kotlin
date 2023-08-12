@@ -88,16 +88,12 @@ class MusicPlayer(var listener: MusicPlayerListener) {
         return musicService?.getCurrentSong()
     }
 
-    fun addEventListener(listener: MusicPlayerListener) {
-        this.listener = listener
-    }
-
     fun getCurrentPosition(): Long {
         return musicService?.getCurrentPosition() ?: 0
     }
 
     fun destroy(context: Context) {
-        musicService?.removeEventListener(listener!!)
+        musicService?.removeEventListener(listener)
 
         unbindService(context)
     }
