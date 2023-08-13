@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.player.MusicPlayer
@@ -46,11 +45,11 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         update()
     }
 
-    override fun onStop(context: Context) {
-        musicPlayer.destroy(context)
+    override fun onStop() {
+        musicPlayer.destroy(getApplication())
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
             bindService()
         } else {

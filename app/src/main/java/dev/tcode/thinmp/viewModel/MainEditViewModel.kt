@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuItem
@@ -23,11 +22,11 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
     val uiState: StateFlow<MainEditUiState> = _uiState.asStateFlow()
 
     init {
-        load(application)
+        load()
     }
 
-    fun load(context: Context) {
-        val service = MainService(context)
+    fun load() {
+        val service = MainService(getApplication())
         val menu = service.getMenu()
         val shortcutVisibility = service.getShortcutVisibility()
         val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
@@ -83,8 +82,8 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun save(context: Context) {
-        val config = ConfigStore(context)
+    fun save() {
+        val config = ConfigStore(getApplication())
 
         uiState.value.menu.forEach {
             config.saveMainMenuVisibility(it.key, it.visibility)

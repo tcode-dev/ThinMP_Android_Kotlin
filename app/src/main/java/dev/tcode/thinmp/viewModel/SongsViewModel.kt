@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
@@ -24,7 +23,7 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     val uiState: StateFlow<SongsUiState> = _uiState.asStateFlow()
 
     init {
-        load(application)
+        load()
         bindService()
     }
 
@@ -32,13 +31,13 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
     }
 
-    override fun onStop(context: Context) {
-        musicPlayer.destroy(context)
+    override fun onStop() {
+        musicPlayer.destroy(getApplication())
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
             bindService()
         } else {
             initialized = true
@@ -55,8 +54,8 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         }
     }
 
-    private fun load(context: Context) {
-        val repository = SongsService(context)
+    private fun load() {
+        val repository = SongsService(getApplication())
         val songs = repository.findAll()
 
         _uiState.update { currentState ->

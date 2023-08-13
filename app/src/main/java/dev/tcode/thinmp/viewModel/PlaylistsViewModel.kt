@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.register.PlaylistRegister
@@ -22,19 +21,19 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
     val uiState: StateFlow<PlaylistsUiState> = _uiState.asStateFlow()
 
     init {
-        load(application)
+        load()
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
         } else {
             initialized = true
         }
     }
 
-    fun load(context: Context) {
-        val repository = PlaylistsService(context)
+    fun load() {
+        val repository = PlaylistsService(getApplication())
         val playlists = repository.findAll()
 
         _uiState.update { currentState ->

@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -34,7 +33,7 @@ class AlbumDetailViewModel @Inject constructor(
     init {
         id = savedStateHandle.get<String>("id").toString()
 
-        load(application)
+        load()
         bindService()
     }
 
@@ -42,13 +41,13 @@ class AlbumDetailViewModel @Inject constructor(
         musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
     }
 
-    override fun onStop(context: Context) {
-        musicPlayer.destroy(context)
+    override fun onStop() {
+        musicPlayer.destroy(getApplication())
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
             bindService()
         } else {
             initialized = true
@@ -65,8 +64,8 @@ class AlbumDetailViewModel @Inject constructor(
         }
     }
 
-    private fun load(context: Context) {
-        val service = AlbumDetailService(context)
+    private fun load() {
+        val service = AlbumDetailService(getApplication())
         val album = service.findById(id) ?: return
 
         _uiState.update { currentState ->

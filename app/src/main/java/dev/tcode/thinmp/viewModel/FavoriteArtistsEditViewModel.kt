@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.register.FavoriteArtistRegister
@@ -22,11 +21,11 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
     val uiState: StateFlow<FavoriteArtistsEditUiState> = _uiState.asStateFlow()
 
     init {
-        load(application)
+        load()
     }
 
-    fun load(context: Context) {
-        val repository = FavoriteArtistsService(context)
+    fun load() {
+        val repository = FavoriteArtistsService(getApplication())
         val artists = repository.findAll()
 
         _uiState.update { currentState ->
@@ -54,9 +53,9 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
         update(artistIds)
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
         } else {
             initialized = true
         }

@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.AlbumModel
@@ -27,19 +26,19 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     init {
-        load(application)
+        load()
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
         } else {
             initialized = true
         }
     }
 
-    fun load(context: Context) {
-        val service = MainService(context)
+    fun load() {
+        val service = MainService(getApplication())
         val menu = service.getMenu()
         val shortcutVisibility = service.getShortcutVisibility()
         val shortcuts = if (shortcutVisibility) service.getShortcuts() else emptyList()

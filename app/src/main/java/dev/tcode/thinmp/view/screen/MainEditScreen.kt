@@ -8,7 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,10 +24,9 @@ import dev.tcode.thinmp.viewModel.MainEditViewModel
 @Composable
 fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val navigator = LocalNavigator.current
     val callback = {
-        viewModel.save(context)
+        viewModel.save()
         navigator.back()
     }
 

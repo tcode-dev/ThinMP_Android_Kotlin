@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +31,7 @@ class PlaylistDetailEditViewModel @Inject constructor(
     init {
         id = PlaylistId(savedStateHandle.get<String>("id").toString())
 
-        load(application)
+        load()
     }
 
     fun removeSong(index: Int) {
@@ -61,16 +60,16 @@ class PlaylistDetailEditViewModel @Inject constructor(
         updatePlaylist(id, uiState.value.primaryText, songIds)
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
         } else {
             initialized = true
         }
     }
 
-    private fun load(context: Context) {
-        val service = PlaylistDetailService(context)
+    private fun load() {
+        val service = PlaylistDetailService(getApplication())
         val playlist = service.findById(id)
 
         if (playlist != null) {

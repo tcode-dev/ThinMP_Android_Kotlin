@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
@@ -35,7 +34,7 @@ class PlaylistDetailViewModel @Inject constructor(
     init {
         id = PlaylistId(savedStateHandle.get<String>("id").toString())
 
-        load(application)
+        load()
         bindService()
     }
 
@@ -43,13 +42,13 @@ class PlaylistDetailViewModel @Inject constructor(
         musicPlayer.start(getApplication(), _uiState.asStateFlow().value.songs, index)
     }
 
-    override fun onStop(context: Context) {
-        musicPlayer.destroy(context)
+    override fun onStop() {
+        musicPlayer.destroy(getApplication())
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
             bindService()
         } else {
             initialized = true
@@ -66,8 +65,8 @@ class PlaylistDetailViewModel @Inject constructor(
         }
     }
 
-    private fun load(context: Context) {
-        val service = PlaylistDetailService(context)
+    private fun load() {
+        val service = PlaylistDetailService(getApplication())
         val playlist = service.findById(id)
 
         if (playlist != null) {

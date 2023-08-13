@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.os.Looper
@@ -132,7 +131,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         update()
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
             bindService()
         } else {
@@ -140,8 +139,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         }
     }
 
-    override fun onStop(context: Context) {
-        musicPlayer.destroy(context)
+    override fun onStop() {
+        musicPlayer.destroy(getApplication())
         cancelSeekBarProgressTask()
     }
 

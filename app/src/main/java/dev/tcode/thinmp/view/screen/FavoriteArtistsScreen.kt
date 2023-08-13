@@ -9,7 +9,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
@@ -26,7 +25,6 @@ import dev.tcode.thinmp.viewModel.FavoriteArtistsViewModel
 @Composable
 fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
@@ -39,7 +37,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
                 DropdownMenuView(dropdownContent = { callback ->
                     val close = {
                         callback()
-                        viewModel.load(context)
+                        viewModel.load()
                     }
                     FavoriteArtistDropdownMenuItemView(artist.artistId, close)
                     ShortcutDropdownMenuItemView(artist.artistId, callback)

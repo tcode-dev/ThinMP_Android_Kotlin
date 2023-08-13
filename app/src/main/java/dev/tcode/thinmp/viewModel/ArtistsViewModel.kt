@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.service.ArtistsService
@@ -21,19 +20,19 @@ class ArtistsViewModel(application: Application) : AndroidViewModel(application)
     val uiState: StateFlow<ArtistsUiState> = _uiState.asStateFlow()
 
     init {
-        load(application)
+        load()
     }
 
-    override fun onResume(context: Context) {
+    override fun onResume() {
         if (initialized) {
-            load(context)
+            load()
         } else {
             initialized = true
         }
     }
 
-    private fun load(context: Context) {
-        val service = ArtistsService(context)
+    private fun load() {
+        val service = ArtistsService(getApplication())
         val artists = service.findAll()
 
         _uiState.update { currentState ->
