@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,46 +22,65 @@ import dev.tcode.thinmp.constant.StyleConstant
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun PermissionView(content: @Composable BoxScope.() -> Unit) {
-    val permissionState = rememberMultiplePermissionsState(listOf(READ_MEDIA_AUDIO, POST_NOTIFICATIONS))
+    val initialized = remember { mutableStateOf(false) }
+    val permissionState = rememberMultiplePermissionsState(listOf(READ_MEDIA_AUDIO, POST_NOTIFICATIONS)) {
+        initialized.value = true
+    }
     val audio = permissionState.permissions.first { it.permission == READ_MEDIA_AUDIO }
-    val isNotificationsDenied = permissionState.permissions.any { it.permission == POST_NOTIFICATIONS && it.status != PermissionStatus.Granted }
+    val notification = permissionState.permissions.first { it.permission == POST_NOTIFICATIONS }
+    val isAudioGranted = audio.status == PermissionStatus.Granted
+    val isNotificationGranted = notification.status == PermissionStatus.Granted
 
-    when (audio.status) {
-        PermissionStatus.Granted -> {
+    when {
+        isAudioGranted && isNotificationGranted -> {
             Box(content = content)
         }
 
-        is PermissionStatus.Denied -> {
-            when {
-                audio.status.shouldShowRationale -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            stringResource(R.string.permission_audio_denied),
-                            color = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
-                        )
-                        if (isNotificationsDenied) {
-                            Text(
-                                stringResource(R.string.permission_notifications_denied),
-                                color = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
-                            )
-                        }
-                        Button(colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.primary, containerColor = MaterialTheme.colorScheme.onSecondary),
-                            onClick = { permissionState.launchMultiplePermissionRequest() }) {
-                            Text(stringResource(R.string.permission_request))
-                        }
-                    }
-                }
+        audio.status.shouldShowRationale || notification.status.shouldShowRationale -> {
+            DescriptionView(isAudioGranted, isNotificationGranted) {
+                permissionState.launchMultiplePermissionRequest()
+            }
+        }
 
-                else -> SideEffect {
-                    // 何度も拒否している場合はダイアログが表示されないことがある
-                    // この動作はAndroidレベルのAPIによって異なる
+        else -> {
+            SideEffect {
+                permissionState.launchMultiplePermissionRequest()
+            }
+            if (initialized.value) {
+                DescriptionView(isAudioGranted, isNotificationGranted) {
                     permissionState.launchMultiplePermissionRequest()
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun DescriptionView(isAudioGranted: Boolean, isNotificationGranted: Boolean, callback: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        if (!isAudioGranted) {
+            Text(
+                stringResource(R.string.permission_audio_denied),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
+            )
+        }
+        if (!isNotificationGranted) {
+            Text(
+                stringResource(R.string.permission_notifications_denied),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
+            )
+        }
+        Text(
+            stringResource(R.string.permission_denied_advice),
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = StyleConstant.PADDING_LARGE.dp, end = StyleConstant.PADDING_LARGE.dp, bottom = StyleConstant.PADDING_LARGE.dp)
+        )
+        Button(colors = ButtonDefaults.buttonColors(contentColor = MaterialTheme.colorScheme.primary, containerColor = MaterialTheme.colorScheme.onSecondary), onClick = { callback() }) {
+            Text(stringResource(R.string.permission_request))
         }
     }
 }

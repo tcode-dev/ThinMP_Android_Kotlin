@@ -28,6 +28,7 @@
 
     <string name="permission_audio_denied">音楽ファイルへのアクセスを許可すると曲の再生ができます。</string>
     <string name="permission_notifications_denied">通知を許可するとロック画面にメディアプレイヤーが表示されます。</string>
+    <string name="permission_denied_advice">何度も拒否するとダイアログが表示されなくなりますが、設定から権限を変更できます。</string>
     <string name="permission_request">アクセスを許可する</string>
 
     <string name="channel_name">ロック画面のメディアコントロール</string>
