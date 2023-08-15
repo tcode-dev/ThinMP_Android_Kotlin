@@ -28,6 +28,7 @@ class MusicPlayer(var listener: MusicPlayerListener) {
 
     fun start(context: Context, songs: List<SongModel>, index: Int) {
         if (isConnecting) return
+        if (MusicService.isPreparing) return
 
         if (!isServiceRunning()) {
             println("Log: MusicPlayer start 1")

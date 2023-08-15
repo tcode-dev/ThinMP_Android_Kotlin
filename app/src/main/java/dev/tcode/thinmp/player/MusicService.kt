@@ -53,6 +53,7 @@ class MusicService : Service() {
     private var isPlaying = false
     companion object {
         var isServiceRunning = false
+        var isPreparing = false
     }
 
     override fun onCreate() {
@@ -82,11 +83,15 @@ class MusicService : Service() {
 
     fun start(songs: List<SongModel>, index: Int) {
         println("Log: MusicService start 1")
+        isPreparing = true
         playingList = songs
 
         val result = setPlayer()
 
-        if (!result) return
+        if (!result) {
+            isPreparing = false
+            return
+        }
 
         player?.seekTo(index, 0)
         play()
@@ -200,6 +205,8 @@ class MusicService : Service() {
             return true
         } catch (e: IllegalStateException) {
             println("Log: MusicService notification IllegalStateException $e")
+            player = null
+
             return false
         }
     }
@@ -213,6 +220,7 @@ class MusicService : Service() {
                 isPlaying = player.isPlaying
                 onChange()
                 notification()
+                isPreparing = false
             }
         }
 
