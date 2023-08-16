@@ -69,11 +69,11 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
         val (player, img) = createRefs()
 
         Box {
-            ImageView(
-                uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier
-                    .fillMaxWidth()
-                    .blur(20.dp), painter = null
-            )
+            val modifier = if (isLandscape && !isHeightMedium) Modifier.fillMaxWidth() else Modifier
+                .fillMaxWidth()
+                .blur(20.dp)
+
+            ImageView(uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = modifier, painter = null)
 
             val gradientHeight = if (isLandscape) minSize else minSize / 2
             val brush = if (isLandscape) Brush.verticalGradient(
