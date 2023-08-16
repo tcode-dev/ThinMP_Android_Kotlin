@@ -100,6 +100,7 @@ class MusicService : Service() {
             println("Log: MusicService start 2")
             val notification = createNotification()
 
+            LocalNotificationHelper.createNotificationChannel(applicationContext)
             startForeground(NotificationConstant.NOTIFICATION_ID, notification)
 
             initialized = true

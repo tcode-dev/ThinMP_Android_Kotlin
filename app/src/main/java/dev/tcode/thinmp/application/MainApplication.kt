@@ -5,7 +5,6 @@ import android.app.Application
 import android.content.Intent
 import android.os.Bundle
 import dagger.hilt.android.HiltAndroidApp
-import dev.tcode.thinmp.notification.LocalNotificationHelper
 import dev.tcode.thinmp.player.MusicService
 
 @HiltAndroidApp
@@ -14,8 +13,6 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
-
-        LocalNotificationHelper.createNotificationChannel(applicationContext)
     }
 
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {}
