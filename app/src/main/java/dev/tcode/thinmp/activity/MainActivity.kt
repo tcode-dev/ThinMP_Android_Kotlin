@@ -40,9 +40,4 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        println("Log: MainActivity onDestroy")
-    }
 }

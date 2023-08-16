@@ -35,7 +35,6 @@ fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
 
     CustomLifecycleEventObserver(viewModel)
 
-    println("Log: MiniPlayerView")
     if (!uiState.isVisible) {
         return
     }

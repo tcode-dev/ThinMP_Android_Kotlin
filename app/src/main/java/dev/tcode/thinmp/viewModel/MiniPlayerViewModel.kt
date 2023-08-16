@@ -64,9 +64,7 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
     }
 
     private fun update() {
-        println("Log: MiniPlayerViewModel update 1")
         val song = musicPlayer.getCurrentSong() ?: return
-        println("Log: MiniPlayerViewModel update 2")
 
         _uiState.update { currentState ->
             currentState.copy(
