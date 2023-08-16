@@ -14,7 +14,7 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onCreate() {
         super.onCreate()
         registerActivityLifecycleCallbacks(this)
-        println("Log: MainApplication startService")
+
         LocalNotificationHelper.createNotificationChannel(applicationContext)
     }
 
@@ -32,6 +32,8 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
 
     override fun onActivityDestroyed(p0: Activity) {
         println("Log: MainApplication onActivityDestroyed")
+        if (!MusicService.isServiceRunning) return
+
         val musicServiceIntent = Intent(applicationContext, MusicService::class.java)
 
         applicationContext.stopService(musicServiceIntent)
