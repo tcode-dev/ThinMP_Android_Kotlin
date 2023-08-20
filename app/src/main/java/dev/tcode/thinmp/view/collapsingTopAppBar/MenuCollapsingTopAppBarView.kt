@@ -5,11 +5,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -23,12 +23,13 @@ import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 @Composable
 fun MenuCollapsingTopAppBarView(title: String, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyListScope.() -> Unit) {
     val lazyListState = rememberLazyListState()
+    val scrollOffset = remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }
 
     Box(Modifier.zIndex(1F)) {
         val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        MenuTopAppBarView(title, visible = visibleTopAppBar(lazyListState), callback)
+        MenuTopAppBarView(title, visible = scrollOffset.value > 1, callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
             dropdownMenus(callback = callback)
         }
@@ -42,9 +43,4 @@ fun MenuCollapsingTopAppBarView(title: String, dropdownMenus: @Composable Column
             EmptyMiniPlayerView()
         }
     }
-}
-
-@Composable
-private fun visibleTopAppBar(state: LazyListState): Boolean {
-    return state.firstVisibleItemScrollOffset > 1
 }

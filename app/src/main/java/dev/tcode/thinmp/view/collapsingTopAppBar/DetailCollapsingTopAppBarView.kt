@@ -10,12 +10,12 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridScope
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -33,12 +33,14 @@ import dev.tcode.thinmp.view.util.minSize
 @Composable
 fun DetailCollapsingTopAppBarView(title: String, columns: GridCells, spanCount: Int, dropdownMenus: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: LazyGridScope.() -> Unit) {
     val lazyGridState = rememberLazyGridState()
+    val index = remember { derivedStateOf { lazyGridState.firstVisibleItemIndex } }
+    val scrollOffset = remember { derivedStateOf { lazyGridState.firstVisibleItemScrollOffset } }
 
     Box(Modifier.zIndex(1F)) {
         val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        DetailTopAppBarView(title, visible = visibleTopAppBar(lazyGridState), callback)
+        DetailTopAppBarView(title, visible = visibleTopAppBar(index.value, scrollOffset.value), callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
             dropdownMenus(callback = callback)
         }
@@ -87,11 +89,11 @@ private fun secondaryTitlePosition(): Dp {
 }
 
 @Composable
-private fun visibleTopAppBar(state: LazyGridState): Boolean {
-    if (state.firstVisibleItemIndex > 0) return true
+private fun visibleTopAppBar(index: Int, scrollOffset: Int): Boolean {
+    if (index > 0) return true
 
     val target = primaryTitlePosition() - WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-    val offset = (state.firstVisibleItemScrollOffset / LocalContext.current.resources.displayMetrics.density)
+    val offset = (scrollOffset / LocalContext.current.resources.displayMetrics.density)
 
     return offset.dp > target
 }
