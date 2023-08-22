@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
+import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Binder
@@ -19,6 +20,7 @@ import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.NotificationConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.notification.LocalNotificationHelper
+import dev.tcode.thinmp.receiver.HeadsetEventReceiver
 import java.io.IOException
 
 interface MusicServiceListener {
@@ -31,6 +33,7 @@ class MusicService : Service() {
     private var player: ExoPlayer? = null
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
+    private lateinit var headsetEventReceiver: HeadsetEventReceiver
     private var listeners: MutableList<MusicServiceListener> = mutableListOf()
     private var playerEventListener: PlayerEventListener? = null
     private var playingList: List<SongModel> = emptyList()
@@ -52,6 +55,8 @@ class MusicService : Service() {
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
+        headsetEventReceiver = HeadsetEventReceiver { player?.stop() }
+        registerReceiver(headsetEventReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -259,6 +264,7 @@ class MusicService : Service() {
         player?.release()
         LocalNotificationHelper.cancelAll(applicationContext)
         stopForeground(STOP_FOREGROUND_DETACH)
+        unregisterReceiver(headsetEventReceiver)
         isServiceRunning = false
     }
 
