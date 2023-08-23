@@ -67,9 +67,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(gradientHeight)
-                            .constrainAs(primary) {
-                                top.linkTo(parent.bottom, margin = -gradientHeight)
-                            }
+                            .constrainAs(primary) { top.linkTo(parent.bottom, margin = -gradientHeight) }
                             .background(
                                 brush = Brush.verticalGradient(
                                     0.0f to MaterialTheme.colorScheme.background.copy(alpha = 0F),

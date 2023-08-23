@@ -34,9 +34,13 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(doneCallback) {
             item {
-                OutlinedTextField(value = uiState.primaryText, singleLine = true, modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(StyleConstant.PADDING_LARGE.dp), onValueChange = { viewModel.changeName(it) })
+                OutlinedTextField(
+                    value = uiState.primaryText,
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(StyleConstant.PADDING_LARGE.dp),
+                    onValueChange = { viewModel.changeName(it) })
             }
             itemsIndexed(uiState.songs) { index, song ->
                 SwipeToDismissView(callback = { viewModel.removeSong(index) }) {

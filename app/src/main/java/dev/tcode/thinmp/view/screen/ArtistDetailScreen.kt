@@ -67,13 +67,10 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
     CustomLifecycleEventObserver(viewModel)
 
     CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
-        DetailCollapsingTopAppBarView(title = uiState.primaryText,
-            columns = CustomGridCellsFixed(spanCount),
-            spanCount = spanCount,
-            dropdownMenus = { callback ->
-                FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
-                ShortcutDropdownMenuItemView(ArtistId(id), callback)
-            }) {
+        DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
+            FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
+            ShortcutDropdownMenuItemView(ArtistId(id), callback)
+        }) {
             item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
                     Modifier
