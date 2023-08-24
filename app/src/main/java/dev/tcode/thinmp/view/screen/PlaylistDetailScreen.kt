@@ -67,6 +67,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                         .height(size)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
+
                     ImageView(
                         uri = uiState.imageUri, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize()
                     )

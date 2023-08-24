@@ -60,6 +60,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                         .height(size)
                 ) {
                     val (primary, secondary, tertiary) = createRefs()
+
                     ImageView(
                         uri = uiState.imageUri, contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize()
                     )
@@ -107,6 +108,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                         showPlaylistRegisterPopup(song.songId)
                         callback()
                     }
+
                     FavoriteSongDropdownMenuItemView(song.songId, callback)
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->

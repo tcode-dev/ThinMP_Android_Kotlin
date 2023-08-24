@@ -157,6 +157,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                             showPlaylistRegisterPopup(song.songId)
                             callback()
                         }
+
                         FavoriteSongDropdownMenuItemView(song.songId, callback)
                         PlaylistDropdownMenuItemView(callbackPlaylist)
                     }) { callback ->
