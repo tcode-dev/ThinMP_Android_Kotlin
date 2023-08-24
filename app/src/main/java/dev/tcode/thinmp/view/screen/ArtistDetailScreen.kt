@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -53,6 +54,8 @@ import dev.tcode.thinmp.view.title.SectionTitleView
 import dev.tcode.thinmp.view.util.CustomGridCellsFixed
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.gridSpanCount
+import dev.tcode.thinmp.view.util.isHeightMedium
+import dev.tcode.thinmp.view.util.isLandscape
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @Composable
@@ -96,8 +99,11 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                                 )
                             ),
                     ) {}
+
+                    val modifier = if (isLandscape() && !isHeightMedium()) Modifier.fillMaxSize().offset(y = -(size / 10)) else Modifier.fillMaxSize()
+
                     Box(
-                        contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()
+                        contentAlignment = Alignment.Center, modifier = modifier
                     ) {
                         ImageView(
                             uri = uiState.imageUri, contentScale = ContentScale.FillWidth, modifier = Modifier

@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.view.util
 
+import android.content.res.Configuration
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
@@ -32,7 +33,11 @@ fun screenWidth(): Dp {
 
 @Composable
 fun screenHeight(): Dp {
-    return LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    return if (isLandscape() && isHeightMedium()) {
+        LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    } else {
+        LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
+    }
 }
 
 @Composable
@@ -42,7 +47,12 @@ fun systemBars(): Dp {
 
 @Composable
 fun isHeightMedium(): Boolean {
-    return screenHeight() >= 480f.dp
+    return LocalConfiguration.current.screenHeightDp.dp >= 480f.dp
+}
+
+@Composable
+fun isHeightExpanded(): Boolean {
+    return LocalConfiguration.current.screenHeightDp.dp >= 900.dp
 }
 
 @Composable
@@ -53,4 +63,9 @@ fun minSize(): Dp {
 @Composable
 fun maxSize(): Dp {
     return max(screenWidth(), screenHeight())
+}
+
+@Composable
+fun isLandscape(): Boolean {
+    return LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
 }

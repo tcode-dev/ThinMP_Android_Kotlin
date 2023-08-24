@@ -1,6 +1,5 @@
 package dev.tcode.thinmp.view.collapsingTopAppBar
 
-import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
@@ -19,7 +18,6 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
@@ -28,6 +26,9 @@ import androidx.compose.ui.zIndex
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.topAppBar.DetailTopAppBarView
 import dev.tcode.thinmp.view.util.EmptyMiniPlayerView
+import dev.tcode.thinmp.view.util.isHeightExpanded
+import dev.tcode.thinmp.view.util.isHeightMedium
+import dev.tcode.thinmp.view.util.isLandscape
 import dev.tcode.thinmp.view.util.minSize
 
 @Composable
@@ -62,25 +63,19 @@ data class DetailSize(
 
 @Composable
 fun detailSize(): DetailSize {
-    return DetailSize(detailMinSize(), gradientHeight(), primaryTitlePosition(), secondaryTitlePosition())
-}
-
-@Composable
-private fun detailMinSize(): Dp {
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val size = minSize()
-
-    return if (isLandscape) size - StyleConstant.ROW_HEIGHT.dp else size
+    return DetailSize(minSize(), gradientHeight(), primaryTitlePosition(), secondaryTitlePosition())
 }
 
 @Composable
 private fun gradientHeight(): Dp {
-    return detailMinSize() / 2
+    return minSize() / 2
 }
 
 @Composable
 private fun primaryTitlePosition(): Dp {
-    return (detailMinSize() / 5) * 4
+    val rate = if (isLandscape() && isHeightMedium() || isHeightExpanded()) 80 else 70
+
+    return (minSize() / 100) * rate
 }
 
 @Composable
