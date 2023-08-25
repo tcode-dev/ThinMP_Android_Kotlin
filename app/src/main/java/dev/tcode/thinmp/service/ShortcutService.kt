@@ -35,7 +35,9 @@ class ShortcutService(
             val artists = artistRepository.findByIds(artistIds)
 
             map[ItemType.ARTIST.ordinal] = artists.map { artist ->
-                val imageUri = albumRepository.findByArtistId(artist.id).first().getImageUri()
+                val albums = albumRepository.findByArtistId(artist.id)
+                val sortedAlbums = albums.sortedBy { it.name }
+                val imageUri = sortedAlbums.first().getImageUri()
                 val id = group[ItemType.ARTIST.ordinal]?.firstOrNull() { shortcut -> shortcut.itemId == artist.id }?.id
 
                 ShortcutModel(ShortcutId(id ?: ""), artist.artistId, artist.name, resources.getString(R.string.artist), imageUri, ItemType.ARTIST)
