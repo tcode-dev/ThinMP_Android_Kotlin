@@ -31,39 +31,39 @@ class ShortcutService(
         val map = mutableMapOf(ItemType.ARTIST.ordinal to emptyList<ShortcutModel>(), ItemType.ALBUM.ordinal to emptyList(), ItemType.PLAYLIST.ordinal to emptyList())
 
         if (group.containsKey(ItemType.ARTIST.ordinal)) {
-            val artistIds = group[ItemType.ARTIST.ordinal]?.map { ArtistId(it.itemId) }!!
+            val artistIds = group[ItemType.ARTIST.ordinal]!!.map { ArtistId(it.itemId) }
             val artists = artistRepository.findByIds(artistIds)
 
             map[ItemType.ARTIST.ordinal] = artists.map { artist ->
                 val albums = albumRepository.findByArtistId(artist.id)
                 val sortedAlbums = albums.sortedBy { it.name }
                 val imageUri = sortedAlbums.first().getImageUri()
-                val id = group[ItemType.ARTIST.ordinal]?.firstOrNull() { shortcut -> shortcut.itemId == artist.id }?.id
+                val id = group[ItemType.ARTIST.ordinal]!!.first { shortcut -> shortcut.itemId == artist.id }.id
 
-                ShortcutModel(ShortcutId(id ?: ""), artist.artistId, artist.name, resources.getString(R.string.artist), imageUri, ItemType.ARTIST)
+                ShortcutModel(ShortcutId(id), artist.artistId, artist.name, resources.getString(R.string.artist), imageUri, ItemType.ARTIST)
             }
         }
 
         if (group.containsKey(ItemType.ALBUM.ordinal)) {
-            val albumIds = group[ItemType.ALBUM.ordinal]?.map { AlbumId(it.itemId) }!!
+            val albumIds = group[ItemType.ALBUM.ordinal]!!.map { AlbumId(it.itemId) }
             val albums = albumRepository.findByIds(albumIds)
 
             map[ItemType.ALBUM.ordinal] = albums.map { album ->
-                val id = group[ItemType.ALBUM.ordinal]?.firstOrNull { shortcut -> shortcut.itemId == album.id }?.id
+                val id = group[ItemType.ALBUM.ordinal]!!.first { shortcut -> shortcut.itemId == album.id }.id
 
-                ShortcutModel(ShortcutId(id ?: ""), album.albumId, album.name, resources.getString(R.string.album), album.getImageUri(), ItemType.ALBUM)
+                ShortcutModel(ShortcutId(id), album.albumId, album.name, resources.getString(R.string.album), album.getImageUri(), ItemType.ALBUM)
             }
         }
 
         if (group.containsKey(ItemType.PLAYLIST.ordinal)) {
-            val playlistIds = group[ItemType.PLAYLIST.ordinal]?.map { PlaylistId(it.itemId) }!!
+            val playlistIds = group[ItemType.PLAYLIST.ordinal]!!.map { PlaylistId(it.itemId) }
             val playlists = playlistRepository.findByIds(playlistIds)
 
             map[ItemType.PLAYLIST.ordinal] = playlists.map { playlist ->
                 val imageUri = songRepository.findById(playlist.songs.first().songId)!!.getImageUri()
-                val id = group[ItemType.PLAYLIST.ordinal]?.firstOrNull { shortcut -> shortcut.itemId == playlist.id }?.id
+                val id = group[ItemType.PLAYLIST.ordinal]!!.first { shortcut -> shortcut.itemId == playlist.id }.id
 
-                ShortcutModel(ShortcutId(id ?: ""), PlaylistId(playlist.id), playlist.name, resources.getString(R.string.playlist), imageUri, ItemType.PLAYLIST)
+                ShortcutModel(ShortcutId(id), PlaylistId(playlist.id), playlist.name, resources.getString(R.string.playlist), imageUri, ItemType.PLAYLIST)
             }
         }
 
