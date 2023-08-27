@@ -77,12 +77,7 @@ class MusicService : Service() {
         isPreparing = true
         playingList = songs
 
-        val result = setPlayer()
-
-        if (!result) {
-            isPreparing = false
-            return
-        }
+        setPlayer()
 
         player?.seekTo(index, 0)
         play()
@@ -169,7 +164,7 @@ class MusicService : Service() {
     }
 
     @SuppressLint("UnsafeOptInUsageError")
-    private fun setPlayer(): Boolean {
+    private fun setPlayer() {
         if (isPlaying) {
             player?.stop()
         }
@@ -191,12 +186,12 @@ class MusicService : Service() {
             player?.prepare()
             playerEventListener = PlayerEventListener()
             player?.addListener(playerEventListener!!)
-
-            return true
         } catch (e: IllegalStateException) {
+            if (player != null) {
+                player?.release()
+            }
             player = null
-
-            return false
+            throw e
         }
     }
 
@@ -262,10 +257,12 @@ class MusicService : Service() {
         }
 
         player?.release()
+        mediaSession.release()
         LocalNotificationHelper.cancelAll(applicationContext)
         stopForeground(STOP_FOREGROUND_DETACH)
         unregisterReceiver(headsetEventReceiver)
         isServiceRunning = false
+        isPreparing = false
     }
 
     inner class MusicBinder : Binder() {
