@@ -30,15 +30,15 @@ interface MusicServiceListener {
 class MusicService : Service() {
     private val PREV_MS = 3000
     private val binder = MusicBinder()
-    private var player: ExoPlayer? = null
+    private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
     private lateinit var headsetEventReceiver: HeadsetEventReceiver
-    private var listeners: MutableList<MusicServiceListener> = mutableListOf()
-    private var playerEventListener: PlayerEventListener? = null
-    private var playingList: List<SongModel> = emptyList()
+    private lateinit var playerEventListener: PlayerEventListener
     private lateinit var config: ConfigStore
     private lateinit var repeat: RepeatState
+    private var listeners: MutableList<MusicServiceListener> = mutableListOf()
+    private var playingList: List<SongModel> = emptyList()
     private var initialized: Boolean = false
     private var shuffle = false
     private var isPlaying = false
@@ -55,7 +55,8 @@ class MusicService : Service() {
         config = ConfigStore(baseContext)
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
-        headsetEventReceiver = HeadsetEventReceiver { player?.stop() }
+        headsetEventReceiver = HeadsetEventReceiver { player.stop() }
+        initPlayer()
         registerReceiver(headsetEventReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
     }
 
@@ -68,49 +69,39 @@ class MusicService : Service() {
     }
 
     fun getCurrentSong(): SongModel? {
-        if (player?.currentMediaItem == null) return null
+        if (player.currentMediaItem == null) return null
 
-        return playingList.first { MediaItem.fromUri(it.getMediaUri()) == player?.currentMediaItem }
+        return playingList.first { MediaItem.fromUri(it.getMediaUri()) == player.currentMediaItem }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
         isPreparing = true
         playingList = songs
 
-        setPlayer()
-
-        player?.seekTo(index, 0)
+        setPlayer(index)
         play()
-
-        if (!initialized) {
-            val notification = createNotification()
-
-            LocalNotificationHelper.createNotificationChannel(applicationContext)
-            startForeground(NotificationConstant.NOTIFICATION_ID, notification)
-
-            initialized = true
-        }
+        startFirstService()
     }
 
     fun play() {
-        player?.play()
+        player.play()
     }
 
     fun pause() {
-        player?.pause()
+        player.pause()
     }
 
     fun prev() {
         if (getCurrentPosition() <= PREV_MS) {
-            player?.seekToPrevious()
+            player.seekToPrevious()
         } else {
-            player?.seekTo(0)
+            player.seekTo(0)
             onChange()
         }
     }
 
     fun next() {
-        player?.seekToNext()
+        player.seekToNext()
     }
 
     fun getRepeat(): RepeatState {
@@ -140,7 +131,7 @@ class MusicService : Service() {
     }
 
     fun seekTo(ms: Long) {
-        player?.seekTo(ms)
+        player.seekTo(ms)
     }
 
     fun isPlaying(): Boolean {
@@ -148,11 +139,47 @@ class MusicService : Service() {
     }
 
     fun getCurrentPosition(): Long {
-        return player?.currentPosition ?: 0
+        return player.currentPosition ?: 0
+    }
+
+    @SuppressLint("UnsafeOptInUsageError")
+    private fun initPlayer() {
+        player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).build()
+        mediaSession = MediaSession.Builder(applicationContext, player).build()
+        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+        setRepeat()
+        setShuffle()
+    }
+
+    private fun setPlayer(index: Int) {
+        if (isPlaying) {
+            player.stop()
+        }
+
+        val mediaItems = playingList.map {
+            MediaItem.fromUri(it.getMediaUri())
+        }
+
+        player.setMediaItems(mediaItems)
+        player.prepare()
+        player.seekTo(index, 0)
+        playerEventListener = PlayerEventListener()
+        player.addListener(playerEventListener)
+    }
+
+    private fun startFirstService() {
+        if (initialized) return
+
+        val notification = createNotification()
+
+        LocalNotificationHelper.createNotificationChannel(applicationContext)
+        startForeground(NotificationConstant.NOTIFICATION_ID, notification)
+
+        initialized = true
     }
 
     private fun setRepeat() {
-        player?.repeatMode = when (repeat) {
+        player.repeatMode = when (repeat) {
             RepeatState.OFF -> Player.REPEAT_MODE_OFF
             RepeatState.ONE -> Player.REPEAT_MODE_ONE
             RepeatState.ALL -> Player.REPEAT_MODE_ALL
@@ -160,57 +187,7 @@ class MusicService : Service() {
     }
 
     private fun setShuffle() {
-        player?.shuffleModeEnabled = shuffle
-    }
-
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun setPlayer() {
-        if (isPlaying) {
-            player?.stop()
-        }
-
-        try {
-            if (player == null) {
-                player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).build()
-                mediaSession = MediaSession.Builder(applicationContext, player!!).build()
-                mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
-                setRepeat()
-                setShuffle()
-            }
-
-            val mediaItems = playingList.map {
-                MediaItem.fromUri(it.getMediaUri())
-            }
-
-            player?.setMediaItems(mediaItems)
-            player?.prepare()
-            playerEventListener = PlayerEventListener()
-            player?.addListener(playerEventListener!!)
-        } catch (e: IllegalStateException) {
-            if (player != null) {
-                player?.release()
-            }
-            player = null
-            throw e
-        }
-    }
-
-    inner class PlayerEventListener : Player.Listener {
-        override fun onEvents(player: Player, events: Player.Events) {
-            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
-
-            if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
-                isPlaying = player.isPlaying
-                onChange()
-                notification()
-                isPreparing = false
-            }
-        }
-
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            onChange()
-            notification()
-        }
+        player.shuffleModeEnabled = shuffle
     }
 
     private fun createNotification(): Notification? {
@@ -252,17 +229,35 @@ class MusicService : Service() {
     @SuppressLint("ServiceCast")
     override fun onDestroy() {
         if (isPlaying) {
-            playerEventListener?.let { player?.removeListener(it) }
-            player?.stop()
+            player.stop()
         }
 
-        player?.release()
+        player.removeListener(playerEventListener)
+        player.release()
         mediaSession.release()
         LocalNotificationHelper.cancelAll(applicationContext)
-        stopForeground(STOP_FOREGROUND_DETACH)
         unregisterReceiver(headsetEventReceiver)
+        stopForeground(STOP_FOREGROUND_DETACH)
         isServiceRunning = false
         isPreparing = false
+    }
+
+    inner class PlayerEventListener : Player.Listener {
+        override fun onEvents(player: Player, events: Player.Events) {
+            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
+
+            if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+                isPlaying = player.isPlaying
+                onChange()
+                notification()
+                isPreparing = false
+            }
+        }
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            onChange()
+            notification()
+        }
     }
 
     inner class MusicBinder : Binder() {
