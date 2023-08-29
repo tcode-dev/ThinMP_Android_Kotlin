@@ -23,12 +23,12 @@ class MusicPlayer(var listener: MusicPlayerListener) {
     }
 
     fun isPlaying(): Boolean {
-        return musicService?.isPlaying() ?: false
+        return musicService?.isPlaying() == true
     }
 
     fun start(context: Context, songs: List<SongModel>, index: Int) {
         if (isConnecting) return
-        if (MusicService.isPreparing) return
+        if (isPreparing()) return
 
         if (!isServiceRunning()) {
             context.startForegroundService(Intent(context, MusicService::class.java))
@@ -104,6 +104,10 @@ class MusicPlayer(var listener: MusicPlayerListener) {
         context.bindService(
             Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
         )
+    }
+
+    private fun isPreparing(): Boolean {
+        return musicService?.isPreparing() == true
     }
 
     private fun unbindService(context: Context) {

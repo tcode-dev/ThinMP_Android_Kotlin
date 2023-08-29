@@ -42,10 +42,14 @@ class MusicService : Service() {
     private var initialized: Boolean = false
     private var shuffle = false
     private var isPlaying = false
+    private var isPreparing = false
 
+    // Serviceの起動状態を確認する必要がある
+    // Android13以降を対象にしているのでgetRunningServicesやLocalBroadcastManagerは使用できない
+    // そのためcompanion objectでServiceの起動状態を管理する
+    // アプリを再起動してもisServiceRunningは前回起動時の値のままなのでonDestroyで初期化する
     companion object {
         var isServiceRunning = false
-        var isPreparing = false
     }
 
     override fun onCreate() {
@@ -56,8 +60,9 @@ class MusicService : Service() {
         repeat = config.getRepeat()
         shuffle = config.getShuffle()
         headsetEventReceiver = HeadsetEventReceiver { player.stop() }
-        initPlayer()
+
         registerReceiver(headsetEventReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
+        initPlayer()
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -138,8 +143,12 @@ class MusicService : Service() {
         return isPlaying
     }
 
+    fun isPreparing(): Boolean {
+        return isPreparing
+    }
+
     fun getCurrentPosition(): Long {
-        return player.currentPosition ?: 0
+        return player.currentPosition
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -239,7 +248,6 @@ class MusicService : Service() {
         unregisterReceiver(headsetEventReceiver)
         stopForeground(STOP_FOREGROUND_DETACH)
         isServiceRunning = false
-        isPreparing = false
     }
 
     inner class PlayerEventListener : Player.Listener {
