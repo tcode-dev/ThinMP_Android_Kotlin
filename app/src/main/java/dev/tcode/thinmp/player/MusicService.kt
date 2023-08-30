@@ -11,6 +11,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
 import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -227,6 +228,23 @@ class MusicService : Service() {
         }
     }
 
+    private fun retry() {
+        val count = playingList.count()
+        val currentIndex = player.currentMediaItemIndex
+        val list = playingList.toMutableList()
+
+        list.removeAt(currentIndex)
+        player.release()
+        mediaSession.release()
+        initPlayer()
+
+        if (list.isNotEmpty()) {
+            val nextIndex = if (count == currentIndex + 1) currentIndex -1 else currentIndex
+
+            start(list, nextIndex)
+        }
+    }
+
     override fun onBind(intent: Intent): IBinder {
         return binder
     }
@@ -265,6 +283,13 @@ class MusicService : Service() {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             onChange()
             notification()
+        }
+
+        override fun onPlayerError(error: PlaybackException) {
+            // 曲が削除されている場合
+            if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
+                retry()
+            }
         }
     }
 
