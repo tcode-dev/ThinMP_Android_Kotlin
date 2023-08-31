@@ -48,6 +48,10 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
         updateIsVisiblePlayer()
     }
 
+    override fun onError() {
+        load()
+    }
+
     private fun bindService() {
         if (musicPlayer.isServiceRunning()) {
             musicPlayer.bindService(getApplication())

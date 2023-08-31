@@ -59,6 +59,10 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
         updateIsVisiblePlayer()
     }
 
+    override fun onError() {
+        load()
+    }
+
     private fun bindService() {
         if (musicPlayer.isServiceRunning()) {
             musicPlayer.bindService(getApplication())

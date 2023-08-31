@@ -70,6 +70,10 @@ class ArtistDetailViewModel @Inject constructor(
         updateIsVisiblePlayer()
     }
 
+    override fun onError() {
+        load()
+    }
+
     private fun load() {
         val service = ArtistDetailService(getApplication())
         val artist = service.findById(id)

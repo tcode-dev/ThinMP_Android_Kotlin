@@ -26,6 +26,7 @@ import java.io.IOException
 
 interface MusicServiceListener {
     fun onChange() {}
+    fun onError() {}
 }
 
 class MusicService : Service() {
@@ -228,6 +229,12 @@ class MusicService : Service() {
         }
     }
 
+    private fun onError() {
+        listeners.forEach {
+            it.onError()
+        }
+    }
+
     private fun retry() {
         val count = playingList.count()
         val currentIndex = player.currentMediaItemIndex
@@ -289,6 +296,7 @@ class MusicService : Service() {
             // 曲が削除されている場合
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
                 retry()
+                onError()
             }
         }
     }

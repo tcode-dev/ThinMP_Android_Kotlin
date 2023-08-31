@@ -58,6 +58,10 @@ class AlbumDetailViewModel @Inject constructor(
         updateIsVisiblePlayer()
     }
 
+    override fun onError() {
+        load()
+    }
+
     private fun bindService() {
         if (musicPlayer.isServiceRunning()) {
             musicPlayer.bindService(getApplication())
