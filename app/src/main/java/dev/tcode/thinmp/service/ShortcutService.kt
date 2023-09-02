@@ -2,6 +2,7 @@ package dev.tcode.thinmp.service
 
 import android.content.Context
 import android.content.res.Resources
+import android.net.Uri
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
@@ -60,7 +61,9 @@ class ShortcutService(
             val playlists = playlistRepository.findByIds(playlistIds)
 
             map[ItemType.PLAYLIST.ordinal] = playlists.map { playlist ->
-                val imageUri = songRepository.findById(playlist.songs.first().songId)!!.getImageUri()
+                val playlistSongRealmModel = playlist.songs.firstOrNull()
+                val songModel = playlistSongRealmModel?.let { songRepository.findById(it.songId) }
+                val imageUri = songModel?.getImageUri() ?: Uri.EMPTY
                 val id = group[ItemType.PLAYLIST.ordinal]!!.first { shortcut -> shortcut.itemId == playlist.id }.id
 
                 ShortcutModel(ShortcutId(id), PlaylistId(playlist.id), playlist.name, resources.getString(R.string.playlist), imageUri, ItemType.PLAYLIST)
