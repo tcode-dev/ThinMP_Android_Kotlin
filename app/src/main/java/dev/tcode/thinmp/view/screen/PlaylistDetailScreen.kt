@@ -28,7 +28,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.model.media.valueObject.AlbumId
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
 import dev.tcode.thinmp.view.collapsingTopAppBar.detailSize
 import dev.tcode.thinmp.view.dropdownMenu.FavoriteSongDropdownMenuItemView
@@ -58,7 +58,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
     CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
             DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })
-            ShortcutDropdownMenuItemView(AlbumId(id), callback)
+            ShortcutDropdownMenuItemView(PlaylistId(id), callback)
         }) {
             item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
