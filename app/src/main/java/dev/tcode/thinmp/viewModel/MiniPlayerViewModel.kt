@@ -57,6 +57,14 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         }
     }
 
+    override fun onError() {
+        _uiState.update { currentState ->
+            currentState.copy(
+                isVisible = false
+            )
+        }
+    }
+
     private fun bindService() {
         if (musicPlayer.isServiceRunning()) {
             musicPlayer.bindService(getApplication())
