@@ -4,13 +4,12 @@ import android.content.Context
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuEnum
 import dev.tcode.thinmp.constant.MainMenuItem
+import dev.tcode.thinmp.constant.RecentlyAlbumConstant
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.repository.media.AlbumRepository
 
 class MainService(val context: Context) {
-    private val albumCount = 20
-
     fun getMenu(): List<MainMenuItem> {
         return MainMenuEnum.getList(context)
     }
@@ -24,7 +23,7 @@ class MainService(val context: Context) {
     fun getRecentlyAlbums(): List<AlbumModel> {
         val repository = AlbumRepository(context)
 
-        return repository.findRecentlyAdded(albumCount)
+        return repository.findRecentlyAdded(RecentlyAlbumConstant.DISPLAY_COUNT)
     }
 
     fun getShortcutVisibility(): Boolean {
