@@ -55,7 +55,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { showPlaylistRegisterPopup ->
+    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
             DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })
             ShortcutDropdownMenuItemView(AlbumId(id), callback)

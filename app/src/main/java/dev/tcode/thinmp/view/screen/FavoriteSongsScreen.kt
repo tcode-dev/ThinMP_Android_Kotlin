@@ -30,7 +30,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView { showPlaylistRegisterPopup ->
+    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_songs), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
