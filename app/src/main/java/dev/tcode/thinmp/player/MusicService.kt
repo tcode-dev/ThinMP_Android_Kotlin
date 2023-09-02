@@ -249,6 +249,8 @@ class MusicService : Service() {
             val nextIndex = if (count == currentIndex + 1) currentIndex -1 else currentIndex
 
             start(list, nextIndex)
+        } else {
+            isPreparing = false
         }
     }
 
@@ -297,6 +299,8 @@ class MusicService : Service() {
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
                 retry()
                 onError()
+            } else {
+                isPreparing = false
             }
         }
     }
