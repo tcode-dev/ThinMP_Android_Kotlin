@@ -33,11 +33,7 @@ fun screenWidth(): Dp {
 
 @Composable
 fun screenHeight(): Dp {
-    return if (isLandscape() && isHeightMedium()) {
-        LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-    } else {
-        LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding()
-    }
+    return LocalConfiguration.current.screenHeightDp.dp + WindowInsets.systemBars.asPaddingValues().calculateTopPadding() + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 }
 
 @Composable
