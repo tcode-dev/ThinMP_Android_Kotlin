@@ -34,6 +34,7 @@ class MusicService : Service() {
     private val binder = MusicBinder()
     private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
+    @SuppressLint("UnsafeOptInUsageError")
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
     private lateinit var headsetEventReceiver: HeadsetEventReceiver
     private lateinit var playerEventListener: PlayerEventListener

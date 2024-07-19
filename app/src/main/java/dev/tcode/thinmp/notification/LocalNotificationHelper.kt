@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.notification
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -25,7 +26,7 @@ object LocalNotificationHelper {
         notificationManager.notify(NotificationConstant.NOTIFICATION_ID, notification)
     }
 
-    fun createNotification(context: Context, mediaStyle: MediaStyleNotificationHelper.MediaStyle, title: String, message: String, albumArtBitmap: Bitmap?): Notification {
+    fun createNotification(context: Context, @SuppressLint("UnsafeOptInUsageError") mediaStyle: MediaStyleNotificationHelper.MediaStyle, title: String, message: String, albumArtBitmap: Bitmap?): Notification {
         val builder =
             NotificationCompat.Builder(context, NotificationConstant.CHANNEL_ID).setSmallIcon(R.drawable.round_audiotrack_24).setStyle(mediaStyle).setContentTitle(title).setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT).setAutoCancel(true)

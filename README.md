@@ -24,7 +24,7 @@
 
 ## Environments
 
-* Android Studio Flamingo | 2022.2.1 Patch 1
+* Android Studio Koala | 2024.1.1
 * Kotlin
 * Gradle
 * minSdkVersion 33
