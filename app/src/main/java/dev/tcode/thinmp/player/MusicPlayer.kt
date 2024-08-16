@@ -15,7 +15,7 @@ interface MusicPlayerListener : MusicServiceListener {
 class MusicPlayer(var listener: MusicPlayerListener) {
     private var musicService: MusicService? = null
     private lateinit var connection: ServiceConnection
-    private var isConnecting = false
+    private var isServiceBinding = false
     private var bound = false
 
     fun isServiceRunning(): Boolean {
@@ -27,8 +27,7 @@ class MusicPlayer(var listener: MusicPlayerListener) {
     }
 
     fun start(context: Context, songs: List<SongModel>, index: Int) {
-        if (isConnecting) return
-        if (isPreparing()) return
+        if (isServiceBinding) return
 
         if (!isServiceRunning()) {
             context.startForegroundService(Intent(context, MusicService::class.java))
@@ -38,7 +37,7 @@ class MusicPlayer(var listener: MusicPlayerListener) {
         }
 
         if (!bound) {
-            bindService(context)
+            bindService(context) { musicService?.start(songs, index) }
 
             return
         }
@@ -97,17 +96,13 @@ class MusicPlayer(var listener: MusicPlayerListener) {
     }
 
     fun bindService(context: Context, callback: () -> Unit? = {}) {
-        if (isConnecting || bound) return
+        if (isServiceBinding || bound) return
 
-        isConnecting = true
+        isServiceBinding = true
         connection = createConnection(callback)
         context.bindService(
             Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
         )
-    }
-
-    private fun isPreparing(): Boolean {
-        return musicService?.isPreparing() == true
     }
 
     private fun unbindService(context: Context) {
@@ -126,7 +121,7 @@ class MusicPlayer(var listener: MusicPlayerListener) {
                 musicService!!.addEventListener(listener)
                 callback()
                 listener.onBind()
-                isConnecting = false
+                isServiceBinding = false
                 bound = true
             }
 

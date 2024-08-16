@@ -45,7 +45,7 @@ class MusicService : Service() {
     private var initialized: Boolean = false
     private var shuffle = false
     private var isPlaying = false
-    private var isPreparing = false
+    private var isStarting = false
 
     // Serviceの起動状態を確認する必要がある
     // Android13以降を対象にしているのでgetRunningServicesやLocalBroadcastManagerは使用できない
@@ -83,7 +83,9 @@ class MusicService : Service() {
     }
 
     fun start(songs: List<SongModel>, index: Int) {
-        isPreparing = true
+        if (isStarting) return
+
+        isStarting = true
         playingList = songs
 
         setPlayer(index)
@@ -144,10 +146,6 @@ class MusicService : Service() {
 
     fun isPlaying(): Boolean {
         return isPlaying
-    }
-
-    fun isPreparing(): Boolean {
-        return isPreparing
     }
 
     fun getCurrentPosition(): Long {
@@ -251,7 +249,7 @@ class MusicService : Service() {
 
             start(list, nextIndex)
         } else {
-            isPreparing = false
+            isStarting = false
         }
     }
 
@@ -286,7 +284,7 @@ class MusicService : Service() {
                 isPlaying = player.isPlaying
                 onChange()
                 notification()
-                isPreparing = false
+                isStarting = false
             }
         }
 
@@ -301,7 +299,7 @@ class MusicService : Service() {
                 retry()
                 onError()
             } else {
-                isPreparing = false
+                isStarting = false
             }
         }
     }
