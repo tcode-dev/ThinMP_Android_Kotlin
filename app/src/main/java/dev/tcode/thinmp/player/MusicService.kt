@@ -104,7 +104,11 @@ class MusicService : Service() {
 
     fun prev() {
         if (getCurrentPosition() <= PREV_MS) {
-            player.seekToPrevious()
+            if (isFirstSong()) {
+                seekToLast()
+            } else {
+                player.seekToPrevious()
+            }
         } else {
             player.seekTo(0)
             onChange()
@@ -112,7 +116,11 @@ class MusicService : Service() {
     }
 
     fun next() {
-        player.seekToNext()
+        if (isLastSong()) {
+            seekToFirst()
+        } else {
+            player.seekToNext()
+        }
     }
 
     fun getRepeat(): RepeatState {
@@ -199,6 +207,22 @@ class MusicService : Service() {
 
     private fun setShuffle() {
         player.shuffleModeEnabled = shuffle
+    }
+
+    private fun isFirstSong(): Boolean {
+        return player.currentMediaItemIndex == 0
+    }
+
+    private fun isLastSong(): Boolean {
+        return player.currentMediaItemIndex == player.mediaItemCount - 1
+    }
+
+    private fun seekToFirst() {
+        player.seekTo(0, 0)
+    }
+
+    private fun seekToLast() {
+        player.seekTo(player.mediaItemCount - 1, 0)
     }
 
     private fun createNotification(): Notification? {
@@ -304,7 +328,7 @@ class MusicService : Service() {
             if (playbackState == Player.STATE_ENDED) {
                 isPlaying = false
                 player.pause()
-                player.seekTo(0, 0)
+                seekToFirst()
                 onEnded()
             }
         }
