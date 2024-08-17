@@ -131,6 +131,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         update()
     }
 
+    override fun onEnded() {
+        cancelSeekBarProgressTask()
+        update()
+    }
+
     override fun onResume() {
         if (initialized) {
             bindService()

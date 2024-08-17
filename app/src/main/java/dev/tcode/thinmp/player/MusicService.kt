@@ -26,6 +26,7 @@ import java.io.IOException
 
 interface MusicServiceListener {
     fun onChange() {}
+    fun onEnded() {}
     fun onError() {}
 }
 
@@ -228,6 +229,12 @@ class MusicService : Service() {
         }
     }
 
+    private fun onEnded() {
+        listeners.forEach {
+            it.onEnded()
+        }
+    }
+
     private fun onError() {
         listeners.forEach {
             it.onError()
@@ -291,6 +298,15 @@ class MusicService : Service() {
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             onChange()
             notification()
+        }
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            if (playbackState == Player.STATE_ENDED) {
+                isPlaying = false
+                player.pause()
+                player.seekTo(0, 0)
+                onEnded()
+            }
         }
 
         override fun onPlayerError(error: PlaybackException) {
