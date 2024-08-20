@@ -56,23 +56,17 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     fun toggle() {
         if (musicPlayer.isPlaying()) {
             musicPlayer.pause()
-            cancelSeekBarProgressTask()
         } else {
             musicPlayer.play()
-            setSeekBarProgressTask()
         }
     }
 
     fun prev() {
-        cancelSeekBarProgressTask()
         musicPlayer.prev()
-        setSeekBarProgressTask()
     }
 
     fun next() {
-        cancelSeekBarProgressTask()
         musicPlayer.next()
-        setSeekBarProgressTask()
     }
 
     fun seek(value: Float) {
@@ -124,14 +118,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
 
     override fun onBind() {
         update()
-        setSeekBarProgressTask()
     }
 
     override fun onChange() {
-        update()
-    }
-
-    override fun onEnded() {
         cancelSeekBarProgressTask()
         update()
     }

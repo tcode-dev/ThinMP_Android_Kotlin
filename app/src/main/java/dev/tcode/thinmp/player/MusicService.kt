@@ -26,7 +26,6 @@ import java.io.IOException
 
 interface MusicServiceListener {
     fun onChange() {}
-    fun onEnded() {}
     fun onError() {}
 }
 
@@ -253,12 +252,6 @@ class MusicService : Service() {
         }
     }
 
-    private fun onEnded() {
-        listeners.forEach {
-            it.onEnded()
-        }
-    }
-
     private fun onError() {
         listeners.forEach {
             it.onError()
@@ -311,10 +304,9 @@ class MusicService : Service() {
         override fun onEvents(player: Player, events: Player.Events) {
             if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
 
-            if (events.contains(Player.EVENT_MEDIA_METADATA_CHANGED) || events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
+            if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                 isPlaying = player.isPlaying
                 onChange()
-                notification()
                 isStarting = false
             }
         }
@@ -325,11 +317,13 @@ class MusicService : Service() {
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
+            // ループ再生していない場合最後の曲の再生が終了すると呼ばれる
+            // 曲が1曲の場合events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
             if (playbackState == Player.STATE_ENDED) {
                 isPlaying = false
                 player.pause()
                 seekToFirst()
-                onEnded()
+                onChange()
             }
         }
 
