@@ -10,9 +10,11 @@ import android.graphics.ImageDecoder
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
+import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaStyleNotificationHelper
@@ -65,7 +67,6 @@ class MusicService : Service() {
         headsetEventReceiver = HeadsetEventReceiver { player.stop() }
 
         registerReceiver(headsetEventReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
-        initPlayer()
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -88,6 +89,7 @@ class MusicService : Service() {
         isStarting = true
         playingList = songs
 
+        release()
         setPlayer(index)
         play()
         startFirstService()
@@ -160,19 +162,14 @@ class MusicService : Service() {
         return player.currentPosition
     }
 
-    @SuppressLint("UnsafeOptInUsageError")
-    private fun initPlayer() {
+    @OptIn(UnstableApi::class)
+    private fun setPlayer(index: Int) {
         player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).build()
         mediaSession = MediaSession.Builder(applicationContext, player).build()
         mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+
         setRepeat()
         setShuffle()
-    }
-
-    private fun setPlayer(index: Int) {
-        if (isPlaying) {
-            player.stop()
-        }
 
         val mediaItems = playingList.map {
             MediaItem.fromUri(it.getMediaUri())
@@ -264,9 +261,8 @@ class MusicService : Service() {
         val list = playingList.toMutableList()
 
         list.removeAt(currentIndex)
-        player.release()
-        mediaSession.release()
-        initPlayer()
+
+        release()
 
         if (list.isNotEmpty()) {
             val nextIndex = if (count == currentIndex + 1) currentIndex -1 else currentIndex
@@ -275,6 +271,18 @@ class MusicService : Service() {
         } else {
             isStarting = false
         }
+    }
+
+    private fun release() {
+        if (!initialized) return
+
+        if (isPlaying) {
+            player.stop()
+        }
+
+        player.removeListener(playerEventListener)
+        player.release()
+        mediaSession.release()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -318,7 +326,7 @@ class MusicService : Service() {
 
         override fun onPlaybackStateChanged(playbackState: Int) {
             // ループ再生していない場合最後の曲の再生が終了すると呼ばれる
-            // 曲が1曲の場合events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
+            // 曲が1曲の場合、onMediaItemTransition、events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
             if (playbackState == Player.STATE_ENDED) {
                 isPlaying = false
                 player.pause()
