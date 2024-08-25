@@ -39,7 +39,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     fun findByArtistId(artistId: String): List<AlbumModel> {
         selection = MediaStore.Audio.Media.ARTIST_ID + " = ?"
         selectionArgs = arrayOf(artistId)
-        sortOrder = null
+        sortOrder = "${MediaStore.Audio.Media.ALBUM} ASC"
 
         return getList()
     }

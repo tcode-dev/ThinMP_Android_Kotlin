@@ -14,14 +14,12 @@ class ArtistDetailService(val context: Context) {
         val songRepository = SongRepository(context)
         val artist = artistRepository.findById(id)
         val albums = albumRepository.findByArtistId(id)
-        val sortedAlbums = albums.sortedBy { it.name }
         val songs = songRepository.findByArtistId(id)
-        val sortedSongs = songs.sortedWith(compareBy({ it.albumName }, { it.getTrackNumber() }))
-        val secondaryText = "${sortedAlbums.count()} albums, ${sortedSongs.count()} songs"
-        val imageUri = if (sortedAlbums.isNotEmpty()) sortedAlbums.first().getImageUri() else Uri.EMPTY
+        val secondaryText = "${albums.count()} albums, ${songs.count()} songs"
+        val imageUri = if (albums.isNotEmpty()) albums.first().getImageUri() else Uri.EMPTY
 
         return if (artist != null) {
-            ArtistDetailModel(id, artist.name, secondaryText, imageUri, sortedAlbums, sortedSongs)
+            ArtistDetailModel(id, artist.name, secondaryText, imageUri, albums, songs)
         } else {
             null
         }
