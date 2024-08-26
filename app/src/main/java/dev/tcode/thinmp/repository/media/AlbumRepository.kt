@@ -14,6 +14,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         selection = null
         selectionArgs = null
         sortOrder = MediaStore.Audio.Albums.ALBUM + " ASC"
+        bundle = null
 
         return getList();
     }
@@ -22,6 +23,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         selection = MediaStore.Audio.Albums._ID + " = ?"
         selectionArgs = arrayOf(albumId)
         sortOrder = null
+        bundle = null
 
         return get()
     }
@@ -32,6 +34,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         selection = MediaStore.Audio.Albums._ID + " IN (" + makePlaceholders(ids.size) + ")"
         selectionArgs = toStringArray(ids)
         sortOrder = null
+        bundle = null
 
         return getList()
     }
@@ -40,6 +43,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         selection = MediaStore.Audio.Media.ARTIST_ID + " = ?"
         selectionArgs = arrayOf(artistId)
         sortOrder = "${MediaStore.Audio.Media.ALBUM} ASC"
+        bundle = null
 
         return getList()
     }
@@ -47,6 +51,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     fun findRecentlyAdded(limit: Int): List<AlbumModel> {
         selection = null
         selectionArgs = null
+        sortOrder = null
         bundle = Bundle().apply {
             putStringArray(ContentResolver.QUERY_ARG_SORT_COLUMNS, arrayOf(MediaStore.Audio.Artists._ID))
             putInt(ContentResolver.QUERY_ARG_SORT_DIRECTION, ContentResolver.QUERY_SORT_DIRECTION_DESCENDING)
