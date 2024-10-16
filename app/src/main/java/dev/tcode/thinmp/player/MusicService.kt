@@ -151,7 +151,11 @@ class MusicService : Service() {
     }
 
     fun seekTo(ms: Long) {
-        player.seekTo(ms)
+        try {
+            player.seekTo(ms)
+        } catch (e: Exception) {
+            onError()
+        }
     }
 
     fun isPlaying(): Boolean {
@@ -250,6 +254,7 @@ class MusicService : Service() {
     }
 
     private fun onError() {
+        retry()
         listeners.forEach {
             it.onError()
         }
@@ -338,7 +343,6 @@ class MusicService : Service() {
         override fun onPlayerError(error: PlaybackException) {
             // 曲が削除されている場合
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
-                retry()
                 onError()
             } else {
                 isStarting = false
