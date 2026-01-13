@@ -43,7 +43,7 @@ fun DetailCollapsingTopAppBarView(title: String, columns: GridCells, spanCount: 
 
         DetailTopAppBarView(title, visible = visibleTopAppBar(index.value, scrollOffset.value), callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
-            dropdownMenus(callback = callback)
+            dropdownMenus(callback)
         }
     }
     LazyVerticalGrid(columns = columns, state = lazyGridState) {

@@ -31,7 +31,7 @@ fun MenuCollapsingTopAppBarView(title: String, dropdownMenus: @Composable Column
 
         MenuTopAppBarView(title, visible = scrollOffset.value > 1, callback)
         DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
-            dropdownMenus(callback = callback)
+            dropdownMenus(callback)
         }
     }
     LazyColumn(state = lazyListState) {

@@ -32,9 +32,9 @@ fun DropdownMenuView(dropdownContent: @Composable ColumnScope.(callback: () -> U
         Box(Modifier.pointerInput(UUID.randomUUID()) {
             detectTapGestures(onLongPress = { callback() }, onTap = { callback() })
         }) {
-            content(callback = callback)
+            content(callback)
             DropdownMenu(expanded = expanded.value, offset = DpOffset((-1).dp, 0.dp), modifier = Modifier.background(MaterialTheme.colorScheme.onBackground), onDismissRequest = callback) {
-                dropdownContent(callback = callback)
+                dropdownContent(callback)
             }
         }
     }

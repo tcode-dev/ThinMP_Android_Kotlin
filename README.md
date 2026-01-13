@@ -27,15 +27,14 @@
 
 ## Environments
 
-* Android Studio Koala | 2024.1.1
+* Android Studio | 2025.2.2 Patch 1
 * Kotlin
 * Gradle
 * minSdkVersion 33
-* targetSdkVersion 33
-* Android Version 13
-* Google Pixel 4a
-* Google Pixel 7 Pro
-* Google Pixel Tablet
+* targetSdkVersion 36
+* Google Pixel 4a (Android Version 13)
+* Google Pixel 7 Pro (Android Version 16)
+* Google Pixel Tablet (Android Version 16)
 
 ## Libraries
 
