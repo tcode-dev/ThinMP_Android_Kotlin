@@ -8,13 +8,14 @@ import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.media.SongRepository
-import dev.tcode.thinmp.repository.realm.PlaylistRepository
+import dev.tcode.thinmp.repository.room.PlaylistRepository
 
 class PlaylistDetailService(val context: Context, private val playlistRepository: PlaylistRepository = PlaylistRepository()) {
     fun findById(playlistId: PlaylistId): PlaylistDetailModel? {
         val resources = context.resources
         val playlist = playlistRepository.findById(playlistId) ?: return null
-        val songIds = playlist.songs.map { SongId(it.songId) }
+        val playlistSongs = playlistRepository.findSongsByPlaylistId(playlistId)
+        val songIds = playlistSongs.map { SongId(it.songId) }
         val songRepository = SongRepository(context)
         val songs = songRepository.findByIds(songIds)
         val sortedSongs = songIds.mapNotNull { id ->

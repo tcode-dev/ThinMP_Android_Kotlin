@@ -9,13 +9,13 @@ import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutId
-import dev.tcode.thinmp.model.realm.ShortcutRealmModel
+import dev.tcode.thinmp.model.room.ShortcutEntity
 import dev.tcode.thinmp.repository.media.AlbumRepository
 import dev.tcode.thinmp.repository.media.ArtistRepository
 import dev.tcode.thinmp.repository.media.SongRepository
-import dev.tcode.thinmp.repository.realm.ItemType
-import dev.tcode.thinmp.repository.realm.PlaylistRepository
-import dev.tcode.thinmp.repository.realm.ShortcutRepository
+import dev.tcode.thinmp.repository.room.ItemType
+import dev.tcode.thinmp.repository.room.PlaylistRepository
+import dev.tcode.thinmp.repository.room.ShortcutRepository
 
 class ShortcutService(
     val context: Context,
@@ -27,8 +27,8 @@ class ShortcutService(
     private val playlistRepository: PlaylistRepository = PlaylistRepository()
 ) {
     fun findAll(): List<ShortcutModel> {
-        val shortcutRealmModels = shortcutRepository.findAll()
-        val group = shortcutRealmModels.groupBy { it.type }
+        val shortcutEntities = shortcutRepository.findAll()
+        val group = shortcutEntities.groupBy { it.type }
         val map = mutableMapOf(ItemType.ARTIST.ordinal to emptyList<ShortcutModel>(), ItemType.ALBUM.ordinal to emptyList(), ItemType.PLAYLIST.ordinal to emptyList())
 
         if (group.containsKey(ItemType.ARTIST.ordinal)) {
@@ -61,8 +61,9 @@ class ShortcutService(
             val playlists = playlistRepository.findByIds(playlistIds)
 
             map[ItemType.PLAYLIST.ordinal] = playlists.map { playlist ->
-                val playlistSongRealmModel = playlist.songs.firstOrNull()
-                val songModel = playlistSongRealmModel?.let { songRepository.findById(it.songId) }
+                val playlistSongs = playlistRepository.findSongsByPlaylistId(PlaylistId(playlist.id))
+                val firstSong = playlistSongs.firstOrNull()
+                val songModel = firstSong?.let { songRepository.findById(it.songId) }
                 val imageUri = songModel?.getImageUri() ?: Uri.EMPTY
                 val id = group[ItemType.PLAYLIST.ordinal]!!.first { shortcut -> shortcut.itemId == playlist.id }.id
 
@@ -70,12 +71,12 @@ class ShortcutService(
             }
         }
 
-        val shortcutModels = shortcutRealmModels.mapNotNull { shortcut ->
+        val shortcutModels = shortcutEntities.mapNotNull { shortcut ->
             map[shortcut.type]?.firstOrNull { item -> item.itemId.toId(item.type) == shortcut.itemId }
         }
 
-        if (!validation(shortcutRealmModels, shortcutModels)) {
-            fix(shortcutRealmModels, shortcutModels)
+        if (!validation(shortcutEntities, shortcutModels)) {
+            fix(shortcutEntities, shortcutModels)
 
             return findAll()
         }
@@ -83,13 +84,13 @@ class ShortcutService(
         return shortcutModels
     }
 
-    private fun validation(shortcutRealmModels: List<ShortcutRealmModel>, shortcutModels: List<ShortcutModel>): Boolean {
-        return shortcutRealmModels.count() == shortcutModels.count()
+    private fun validation(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>): Boolean {
+        return shortcutEntities.count() == shortcutModels.count()
     }
 
-    private fun fix(shortcutRealmModels: List<ShortcutRealmModel>, shortcutModels: List<ShortcutModel>) {
-        val deleteShortcutIds = shortcutRealmModels.filter { shortcutRealmModel ->
-            shortcutModels.none { it.itemId.toId(it.type) == shortcutRealmModel.itemId }
+    private fun fix(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
+        val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->
+            shortcutModels.none { it.itemId.toId(it.type) == shortcutEntity.itemId }
         }.map { it.id }
 
         shortcutRepository.deleteByIds(deleteShortcutIds)

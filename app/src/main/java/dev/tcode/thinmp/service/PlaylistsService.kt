@@ -3,7 +3,7 @@ package dev.tcode.thinmp.service
 import android.content.Context
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
-import dev.tcode.thinmp.repository.realm.PlaylistRepository
+import dev.tcode.thinmp.repository.room.PlaylistRepository
 
 class PlaylistsService(val context: Context) {
     fun findAll(): List<PlaylistModel> {

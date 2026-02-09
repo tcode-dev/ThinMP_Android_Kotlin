@@ -4,7 +4,7 @@ import android.content.Context
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.repository.media.ArtistRepository
-import dev.tcode.thinmp.repository.realm.FavoriteArtistRepository
+import dev.tcode.thinmp.repository.room.FavoriteArtistRepository
 
 class FavoriteArtistsService(val context: Context, private val favoriteArtistRepository: FavoriteArtistRepository = FavoriteArtistRepository()) {
     fun findAll(): List<ArtistModel> {
