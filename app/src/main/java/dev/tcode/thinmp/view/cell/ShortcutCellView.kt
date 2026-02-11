@@ -19,7 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.repository.realm.ItemType
+import dev.tcode.thinmp.repository.room.ItemType
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.text.PrimaryTextView
 import dev.tcode.thinmp.view.text.SecondaryTextView
