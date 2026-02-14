@@ -1,6 +1,6 @@
 package dev.tcode.thinmp.model.media.valueObject
 
-import dev.tcode.thinmp.repository.room.ItemType
+import dev.tcode.thinmp.constant.ItemType
 
 interface ShortcutItemId {
     fun toId(type: ItemType): String {

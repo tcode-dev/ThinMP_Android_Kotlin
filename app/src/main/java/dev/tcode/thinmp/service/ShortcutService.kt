@@ -13,7 +13,7 @@ import dev.tcode.thinmp.model.room.ShortcutEntity
 import dev.tcode.thinmp.repository.media.AlbumRepository
 import dev.tcode.thinmp.repository.media.ArtistRepository
 import dev.tcode.thinmp.repository.media.SongRepository
-import dev.tcode.thinmp.repository.room.ItemType
+import dev.tcode.thinmp.constant.ItemType
 import dev.tcode.thinmp.repository.room.PlaylistRepository
 import dev.tcode.thinmp.repository.room.ShortcutRepository
 

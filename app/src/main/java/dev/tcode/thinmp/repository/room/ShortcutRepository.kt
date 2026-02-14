@@ -6,11 +6,8 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
+import dev.tcode.thinmp.constant.ItemType
 import dev.tcode.thinmp.model.room.ShortcutEntity
-
-enum class ItemType {
-    ARTIST, ALBUM, PLAYLIST
-}
 
 class ShortcutRepository {
     private val dao = AppDatabase.getDatabase(MainApplication.appContext).shortcutDao()

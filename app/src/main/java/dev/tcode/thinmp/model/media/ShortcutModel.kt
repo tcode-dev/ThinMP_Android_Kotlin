@@ -4,7 +4,7 @@ import android.net.Uri
 import dev.tcode.thinmp.constant.NavConstant
 import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
-import dev.tcode.thinmp.repository.room.ItemType
+import dev.tcode.thinmp.constant.ItemType
 
 data class ShortcutModel(
     var id: ShortcutId, var itemId: ShortcutItemId, var primaryText: String, var secondaryText: String, var imageUri: Uri, var type: ItemType
