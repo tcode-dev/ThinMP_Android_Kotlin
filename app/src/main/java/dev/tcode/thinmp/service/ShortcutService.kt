@@ -10,12 +10,12 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.room.ShortcutEntity
-import dev.tcode.thinmp.repository.media.AlbumRepository
-import dev.tcode.thinmp.repository.media.ArtistRepository
-import dev.tcode.thinmp.repository.media.SongRepository
+import dev.tcode.thinmp.repository.AlbumRepository
+import dev.tcode.thinmp.repository.ArtistRepository
+import dev.tcode.thinmp.repository.SongRepository
 import dev.tcode.thinmp.constant.ItemType
-import dev.tcode.thinmp.repository.room.PlaylistRepository
-import dev.tcode.thinmp.repository.room.ShortcutRepository
+import dev.tcode.thinmp.repository.PlaylistRepository
+import dev.tcode.thinmp.repository.ShortcutRepository
 
 class ShortcutService(
     val context: Context,

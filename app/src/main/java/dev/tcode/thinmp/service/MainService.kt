@@ -7,7 +7,7 @@ import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.constant.RecentlyAlbumConstant
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ShortcutModel
-import dev.tcode.thinmp.repository.media.AlbumRepository
+import dev.tcode.thinmp.repository.AlbumRepository
 
 class MainService(val context: Context) {
     fun getMenu(): List<MainMenuItem> {

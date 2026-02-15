@@ -7,8 +7,8 @@ import dev.tcode.thinmp.model.media.PlaylistDetailModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.repository.media.SongRepository
-import dev.tcode.thinmp.repository.room.PlaylistRepository
+import dev.tcode.thinmp.repository.SongRepository
+import dev.tcode.thinmp.repository.PlaylistRepository
 
 class PlaylistDetailService(val context: Context, private val playlistRepository: PlaylistRepository = PlaylistRepository()) {
     fun findById(playlistId: PlaylistId): PlaylistDetailModel? {

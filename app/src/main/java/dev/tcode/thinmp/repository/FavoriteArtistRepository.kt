@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.repository.room
+package dev.tcode.thinmp.repository
 
 import dev.tcode.thinmp.application.MainApplication
 import dev.tcode.thinmp.model.media.valueObject.ArtistId

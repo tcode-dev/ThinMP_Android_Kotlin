@@ -1,7 +1,7 @@
 package dev.tcode.thinmp.register
 
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.repository.room.FavoriteSongRepository
+import dev.tcode.thinmp.repository.FavoriteSongRepository
 
 interface FavoriteSongRegister {
     fun exists(songId: SongId): Boolean {

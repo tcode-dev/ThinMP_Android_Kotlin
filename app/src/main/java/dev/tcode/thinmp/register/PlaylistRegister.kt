@@ -2,7 +2,7 @@ package dev.tcode.thinmp.register
 
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.repository.room.PlaylistRepository
+import dev.tcode.thinmp.repository.PlaylistRepository
 
 interface PlaylistRegister {
     fun createPlaylist(songId: SongId, text: String) {

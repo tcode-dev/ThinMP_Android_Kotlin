@@ -2,7 +2,7 @@ package dev.tcode.thinmp.register
 
 import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
-import dev.tcode.thinmp.repository.room.ShortcutRepository
+import dev.tcode.thinmp.repository.ShortcutRepository
 
 interface ShortcutRegister {
     fun exists(shortcutItemId: ShortcutItemId): Boolean {

@@ -3,8 +3,8 @@ package dev.tcode.thinmp.service
 import android.content.Context
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.repository.media.SongRepository
-import dev.tcode.thinmp.repository.room.FavoriteSongRepository
+import dev.tcode.thinmp.repository.SongRepository
+import dev.tcode.thinmp.repository.FavoriteSongRepository
 
 class FavoriteSongsService(val context: Context, private val favoriteSongRepository: FavoriteSongRepository = FavoriteSongRepository()) {
     fun findAll(): List<SongModel> {

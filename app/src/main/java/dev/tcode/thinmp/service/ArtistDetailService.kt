@@ -3,9 +3,9 @@ package dev.tcode.thinmp.service
 import android.content.Context
 import android.net.Uri
 import dev.tcode.thinmp.model.media.ArtistDetailModel
-import dev.tcode.thinmp.repository.media.AlbumRepository
-import dev.tcode.thinmp.repository.media.ArtistRepository
-import dev.tcode.thinmp.repository.media.SongRepository
+import dev.tcode.thinmp.repository.AlbumRepository
+import dev.tcode.thinmp.repository.ArtistRepository
+import dev.tcode.thinmp.repository.SongRepository
 
 class ArtistDetailService(val context: Context) {
     fun findById(id: String): ArtistDetailModel? {

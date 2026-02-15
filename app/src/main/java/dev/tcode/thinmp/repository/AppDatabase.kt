@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.repository.room
+package dev.tcode.thinmp.repository
 
 import android.content.Context
 import androidx.room.Database
@@ -9,11 +9,11 @@ import dev.tcode.thinmp.model.room.FavoriteSongEntity
 import dev.tcode.thinmp.model.room.PlaylistEntity
 import dev.tcode.thinmp.model.room.PlaylistSongEntity
 import dev.tcode.thinmp.model.room.ShortcutEntity
-import dev.tcode.thinmp.repository.room.dao.FavoriteArtistDao
-import dev.tcode.thinmp.repository.room.dao.FavoriteSongDao
-import dev.tcode.thinmp.repository.room.dao.PlaylistDao
-import dev.tcode.thinmp.repository.room.dao.PlaylistSongDao
-import dev.tcode.thinmp.repository.room.dao.ShortcutDao
+import dev.tcode.thinmp.repository.dao.FavoriteArtistDao
+import dev.tcode.thinmp.repository.dao.FavoriteSongDao
+import dev.tcode.thinmp.repository.dao.PlaylistDao
+import dev.tcode.thinmp.repository.dao.PlaylistSongDao
+import dev.tcode.thinmp.repository.dao.ShortcutDao
 
 @Database(
     entities = [

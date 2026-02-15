@@ -1,4 +1,4 @@
-package dev.tcode.thinmp.repository.media
+package dev.tcode.thinmp.repository
 
 import android.content.ContentResolver
 import android.content.Context
