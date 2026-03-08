@@ -59,8 +59,8 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     private fun load() {
-        val repository = SongsService(getApplication())
-        val songs = repository.findAll()
+        val service = SongsService(getApplication())
+        val songs = service.findAll()
 
         _uiState.update { currentState ->
             currentState.copy(

@@ -28,8 +28,8 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun load() {
-        val repository = FavoriteSongsService(getApplication())
-        val songs = repository.findAll()
+        val service = FavoriteSongsService(getApplication())
+        val songs = service.findAll()
 
         _uiState.update { currentState ->
             currentState.copy(

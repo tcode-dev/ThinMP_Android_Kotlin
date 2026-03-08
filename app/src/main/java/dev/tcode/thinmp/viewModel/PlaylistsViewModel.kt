@@ -33,8 +33,8 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun load() {
-        val repository = PlaylistsService(getApplication())
-        val playlists = repository.findAll()
+        val service = PlaylistsService(getApplication())
+        val playlists = service.findAll()
 
         _uiState.update { currentState ->
             currentState.copy(
