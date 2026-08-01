@@ -6,7 +6,7 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.repository.PlaylistRepository
 
 class PlaylistsService(val context: Context) {
-    fun findAll(): List<PlaylistModel> {
+    suspend fun findAll(): List<PlaylistModel> {
         val repository = PlaylistRepository()
         val playlists = repository.findAll()
 

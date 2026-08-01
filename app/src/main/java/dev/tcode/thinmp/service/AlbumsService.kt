@@ -5,7 +5,7 @@ import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.repository.AlbumRepository
 
 class AlbumsService(val context: Context) {
-    fun findAll(): List<AlbumModel> {
+    suspend fun findAll(): List<AlbumModel> {
         val repository = AlbumRepository(context)
         val albums = repository.findAll()
 

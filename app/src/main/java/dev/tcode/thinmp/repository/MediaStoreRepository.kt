@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Bundle
 import android.text.TextUtils
 import dev.tcode.thinmp.model.media.Music
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 abstract class MediaStoreRepository<T : Music>(private val context: Context, private val uri: Uri, private val projection: Array<String>) {
     protected var cursor: Cursor? = null
@@ -20,30 +22,32 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
 
     abstract fun fetch(): T
 
-    protected fun get(): T? {
+    protected suspend fun get(): T? = withContext(Dispatchers.IO) {
         initialize()
 
-        if (!cursor?.moveToNext()!!) return null
+        try {
+            if (cursor?.moveToNext() != true) return@withContext null
 
-        val item: T = fetch()
-
-        destroy()
-
-        return item
+            fetch()
+        } finally {
+            destroy()
+        }
     }
 
-    protected fun getList(): List<T> {
+    protected suspend fun getList(): List<T> = withContext(Dispatchers.IO) {
         initialize()
 
-        val list: MutableList<T> = ArrayList()
+        try {
+            val list: MutableList<T> = ArrayList()
 
-        while (cursor?.moveToNext() == true) {
-            list.add(fetch())
+            while (cursor?.moveToNext() == true) {
+                list.add(fetch())
+            }
+
+            list
+        } finally {
+            destroy()
         }
-
-        destroy()
-
-        return list
     }
 
     protected fun toStringArray(list: List<String>): Array<String> {

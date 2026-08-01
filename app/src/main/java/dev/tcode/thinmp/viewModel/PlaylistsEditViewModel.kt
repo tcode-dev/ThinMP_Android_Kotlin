@@ -2,10 +2,13 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,6 +20,7 @@ data class PlaylistsEditUiState(
 
 class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(PlaylistsEditUiState())
     val uiState: StateFlow<PlaylistsEditUiState> = _uiState.asStateFlow()
 
@@ -33,13 +37,16 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun load() {
-        val service = PlaylistsService(getApplication())
-        val playlists = service.findAll()
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = PlaylistsService(getApplication())
+            val playlists = service.findAll()
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                playlists = playlists
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    playlists = playlists
+                )
+            }
         }
     }
 

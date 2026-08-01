@@ -2,12 +2,15 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.MainService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +21,7 @@ data class MainEditUiState(
 )
 
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(MainEditUiState())
     val uiState: StateFlow<MainEditUiState> = _uiState.asStateFlow()
 
@@ -26,16 +30,19 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun load() {
-        val service = MainService(getApplication())
-        val menu = service.getMenu()
-        val shortcutVisibility = service.getShortcutVisibility()
-        val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
-        val shortcuts = service.getShortcuts()
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = MainService(getApplication())
+            val menu = service.getMenu()
+            val shortcutVisibility = service.getShortcutVisibility()
+            val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
+            val shortcuts = service.getShortcuts()
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
+                )
+            }
         }
     }
 

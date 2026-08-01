@@ -10,7 +10,7 @@ import dev.tcode.thinmp.model.media.valueObject.AlbumId
 class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
     context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Albums.ARTIST)
 ) {
-    fun findAll(): List<AlbumModel> {
+    suspend fun findAll(): List<AlbumModel> {
         selection = null
         selectionArgs = null
         sortOrder = MediaStore.Audio.Albums.ALBUM + " ASC"
@@ -19,7 +19,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         return getList();
     }
 
-    fun findById(albumId: String): AlbumModel? {
+    suspend fun findById(albumId: String): AlbumModel? {
         selection = MediaStore.Audio.Albums._ID + " = ?"
         selectionArgs = arrayOf(albumId)
         sortOrder = null
@@ -28,7 +28,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         return get()
     }
 
-    fun findByIds(albumIds: List<AlbumId>): List<AlbumModel> {
+    suspend fun findByIds(albumIds: List<AlbumId>): List<AlbumModel> {
         val ids = albumIds.map { it.id }
 
         selection = MediaStore.Audio.Albums._ID + " IN (" + makePlaceholders(ids.size) + ")"
@@ -39,7 +39,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         return getList()
     }
 
-    fun findByArtistId(artistId: String): List<AlbumModel> {
+    suspend fun findByArtistId(artistId: String): List<AlbumModel> {
         selection = MediaStore.Audio.Media.ARTIST_ID + " = ?"
         selectionArgs = arrayOf(artistId)
         sortOrder = "${MediaStore.Audio.Media.ALBUM} ASC"
@@ -48,7 +48,7 @@ class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
         return getList()
     }
 
-    fun findRecentlyAdded(limit: Int): List<AlbumModel> {
+    suspend fun findRecentlyAdded(limit: Int): List<AlbumModel> {
         selection = null
         selectionArgs = null
         sortOrder = null

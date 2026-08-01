@@ -26,7 +26,7 @@ class ShortcutService(
     private val songRepository: SongRepository = SongRepository(context),
     private val playlistRepository: PlaylistRepository = PlaylistRepository()
 ) {
-    fun findAll(): List<ShortcutModel> {
+    suspend fun findAll(): List<ShortcutModel> {
         val shortcutEntities = shortcutRepository.findAll()
         val group = shortcutEntities.groupBy { it.type }
         val map = mutableMapOf(ItemType.ARTIST.ordinal to emptyList<ShortcutModel>(), ItemType.ALBUM.ordinal to emptyList(), ItemType.PLAYLIST.ordinal to emptyList())
@@ -88,7 +88,7 @@ class ShortcutService(
         return shortcutEntities.count() == shortcutModels.count()
     }
 
-    private fun fix(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
+    private suspend fun fix(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->
             shortcutModels.none { it.itemId.toId(it.type) == shortcutEntity.itemId }
         }.map { it.id }

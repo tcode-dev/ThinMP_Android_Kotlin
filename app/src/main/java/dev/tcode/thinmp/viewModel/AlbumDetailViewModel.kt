@@ -4,12 +4,15 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.AlbumDetailService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +29,7 @@ class AlbumDetailViewModel @Inject constructor(
 ) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
     private val musicPlayer: MusicPlayer = MusicPlayer(this)
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
     val id: String
@@ -69,13 +73,16 @@ class AlbumDetailViewModel @Inject constructor(
     }
 
     private fun load() {
-        val service = AlbumDetailService(getApplication())
-        val album = service.findById(id) ?: return
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = AlbumDetailService(getApplication())
+            val album = service.findById(id) ?: return@launch
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs, isVisiblePlayer = musicPlayer.isServiceRunning()
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs, isVisiblePlayer = musicPlayer.isServiceRunning()
+                )
+            }
         }
     }
 
