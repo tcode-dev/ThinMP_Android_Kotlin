@@ -37,6 +37,10 @@ android {
     }
     buildFeatures {
         compose true
+        buildConfig true
+    }
+    sourceSets {
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
     }
     packagingOptions {
         resources {
@@ -76,8 +80,13 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
     androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.8'
+    androidTestImplementation "androidx.room:room-testing:2.6.1"
+    androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
     debugImplementation 'androidx.compose.ui:ui-tooling:1.6.8'
 }
 kapt {
     correctErrorTypes true
+    arguments {
+        arg('room.schemaLocation', "$projectDir/schemas")
+    }
 }

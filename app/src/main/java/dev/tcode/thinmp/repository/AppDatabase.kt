@@ -23,7 +23,8 @@ import dev.tcode.thinmp.repository.dao.ShortcutDao
         PlaylistSongEntity::class,
         ShortcutEntity::class
     ],
-    version = 1
+    version = 1,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteSongDao(): FavoriteSongDao
