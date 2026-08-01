@@ -89,8 +89,8 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
             config.saveMainMenuVisibility(it.key, it.visibility)
         }
 
-        config.saveShortcutVisibility(uiState.value.recentlyAlbumsVisibility)
-        config.saveRecentlyAlbumsVisibility(uiState.value.shortcutVisibility)
+        config.saveShortcutVisibility(uiState.value.shortcutVisibility)
+        config.saveRecentlyAlbumsVisibility(uiState.value.recentlyAlbumsVisibility)
 
         val shortcutIds = uiState.value.shortcuts.map { it.id }
 
