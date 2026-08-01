@@ -11,7 +11,7 @@ ThinMP is a lightweight Android music player built in Kotlin. It plays audio fro
 ```bash
 ./gradlew assembleDebug        # Build debug APK
 ./gradlew test                 # Run unit tests
-./gradlew connectedAndroidTest # Run instrumented tests
+./gradlew connectedAndroidTest # Run instrumented tests (Room repository tests live here)
 ```
 
 - Compile/Target SDK: 36, Min SDK: 33 (Android 13+)
@@ -39,9 +39,9 @@ View → ViewModel → Register → Repository  (for domain operations like favo
 - **UI**: Jetpack Compose + Material 3, Coil for images, Accompanist for insets/permissions
 - **Playback**: MediaPlayer3 (ExoPlayer) 1.4.0, MusicService (foreground service), MediaSession
 - **DI**: Hilt
-- **Database**: Room (favorites, playlists, shortcuts), AppDatabase singleton via `MainApplication.appContext`
+- **Database**: Room (favorites, playlists, shortcuts), AppDatabase singleton via `MainApplication.appContext`. Schemas exported to `app/schemas/`
 - **Preferences**: DataStore Preferences (repeat, shuffle, menu visibility)
-- **Async**: Kotlin Coroutines
+- **Async**: Kotlin Coroutines. All Room and MediaStore I/O is off the main thread
 
 ## Key Directories
 
@@ -69,6 +69,34 @@ app/src/main/java/dev/tcode/thinmp/
 - Type-safe value objects for IDs (never raw strings/longs for entity IDs)
 - Each screen has a dedicated ViewModel
 - Room for user-created data; MediaStore for device audio
-- Room repositories use `MainApplication.appContext` for DB access (no DI for repositories)
+- Room repositories default to `MainApplication.appContext` for DB access but take the DAO or `AppDatabase` as a constructor argument, so tests can supply an in-memory database
 - Register interfaces create repository instances on-demand in each method
 - No ProGuard/R8 minification enabled
+
+### Threading
+
+- **Every function in `repository/dao/` is `suspend`.** That is what makes Room's
+  `assertNotMainThread()` unreachable and lets `AppDatabase` drop
+  `.allowMainThreadQueries()`. Adding a non-suspend DAO function reintroduces main-thread I/O
+  and breaks `MainThreadAccessTest`
+- **Do not wrap suspend Room calls in `withContext(Dispatchers.IO)`.** Room already moves them
+  to its own query executor, and switching dispatchers inside `withTransaction { }` leaves the
+  transaction's thread and breaks it
+- `withContext(Dispatchers.IO)` belongs in exactly two places: `MediaStoreRepository.get()` /
+  `getList()` (plain blocking `ContentResolver.query()`), and the `ConfigStore` reads in
+  `MainService` / `MainEditViewModel`, which are marked TODO until `ConfigStore` stops using
+  `runBlocking`
+- Transactions: work expressible in one DAO gets `@Transaction` on a DAO method; work spanning
+  DAOs or interleaved with Kotlin logic gets `db.withTransaction { }` in the repository
+- **Never read a row and then write it from two separate calls.** Every suspend DAO call is a
+  suspension point, so `if (exists(id)) delete(id) else insert(id)` lets two concurrent callers
+  both see "absent" and insert twice — and no table here has a unique index to stop them. Such
+  read-modify-write belongs in one `@Transaction` DAO method (`toggle`, `insertAtEnd`,
+  `replaceAll`). This is not hypothetical: it is why `FavoriteSongDao.toggle` exists
+- ViewModel `load()` runs in `viewModelScope` and cancels the previous job first
+  (`loadJob?.cancel()`); `onResume` and `MusicPlayerListener.onError()` can both trigger it
+- Edit screens save via `OneShotEvent` / `OnEvent` and navigate away only after the write
+  completes. Writes triggered by something that closes immediately (dropdown menus, the playlist
+  popup) run in `viewModelScope`, never `rememberCoroutineScope()`
+- Dropdown menu items read their state with `produceState(initialValue, id)` so effect and state
+  share one key

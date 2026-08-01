@@ -3,28 +3,49 @@ package dev.tcode.thinmp.repository.dao
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import dev.tcode.thinmp.model.room.FavoriteSongEntity
 
 @Dao
 interface FavoriteSongDao {
     @Query("SELECT * FROM favorite_songs")
-    fun findAll(): List<FavoriteSongEntity>
+    suspend fun findAll(): List<FavoriteSongEntity>
 
     @Query("SELECT * FROM favorite_songs WHERE songId = :songId")
-    fun findBySongId(songId: String): List<FavoriteSongEntity>
+    suspend fun findBySongId(songId: String): List<FavoriteSongEntity>
 
     @Query("SELECT COUNT(*) > 0 FROM favorite_songs WHERE songId = :songId")
-    fun exists(songId: String): Boolean
+    suspend fun exists(songId: String): Boolean
 
     @Insert
-    fun insert(entity: FavoriteSongEntity)
+    suspend fun insert(entity: FavoriteSongEntity)
+
+    @Insert
+    suspend fun insertAll(entities: List<FavoriteSongEntity>)
 
     @Query("DELETE FROM favorite_songs")
-    fun deleteAll()
+    suspend fun deleteAll()
 
     @Query("DELETE FROM favorite_songs WHERE songId = :songId")
-    fun deleteBySongId(songId: String)
+    suspend fun deleteBySongId(songId: String)
 
     @Query("DELETE FROM favorite_songs WHERE songId IN (:songIds)")
-    fun deleteBySongIds(songIds: List<String>)
+    suspend fun deleteBySongIds(songIds: List<String>)
+
+    @Transaction
+    suspend fun replaceAll(entities: List<FavoriteSongEntity>) {
+        deleteAll()
+        insertAll(entities)
+    }
+
+    /** Reads the current state and writes as one unit; separately they race and two concurrent
+     * toggles can both see "not a favourite" and insert a second row for the same song. */
+    @Transaction
+    suspend fun toggle(songId: String) {
+        if (exists(songId)) {
+            deleteBySongId(songId)
+        } else {
+            insert(FavoriteSongEntity(songId = songId))
+        }
+    }
 }

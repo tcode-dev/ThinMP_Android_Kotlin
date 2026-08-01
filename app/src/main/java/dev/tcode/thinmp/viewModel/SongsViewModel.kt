@@ -2,11 +2,14 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.SongsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +22,7 @@ data class SongsUiState(
 class SongsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer = MusicPlayer(this)
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(SongsUiState())
     val uiState: StateFlow<SongsUiState> = _uiState.asStateFlow()
 
@@ -59,14 +63,17 @@ class SongsViewModel(application: Application) : AndroidViewModel(application), 
     }
 
     private fun load() {
-        val service = SongsService(getApplication())
-        val songs = service.findAll()
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = SongsService(getApplication())
+            val songs = service.findAll()
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                songs = songs,
-                isVisiblePlayer = musicPlayer.isServiceRunning()
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    songs = songs,
+                    isVisiblePlayer = musicPlayer.isServiceRunning()
+                )
+            }
         }
     }
 

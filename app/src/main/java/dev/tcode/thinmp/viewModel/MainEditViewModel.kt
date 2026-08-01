@@ -2,12 +2,17 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.MainService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,24 +23,30 @@ data class MainEditUiState(
 )
 
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {
+    private var loadJob: Job? = null
+    private var saveJob: Job? = null
     private val _uiState = MutableStateFlow(MainEditUiState())
     val uiState: StateFlow<MainEditUiState> = _uiState.asStateFlow()
+    val saved = OneShotEvent<Unit>()
 
     init {
         load()
     }
 
     fun load() {
-        val service = MainService(getApplication())
-        val menu = service.getMenu()
-        val shortcutVisibility = service.getShortcutVisibility()
-        val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
-        val shortcuts = service.getShortcuts()
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = MainService(getApplication())
+            val menu = service.getMenu()
+            val shortcutVisibility = service.getShortcutVisibility()
+            val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
+            val shortcuts = service.getShortcuts()
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
+                )
+            }
         }
     }
 
@@ -83,17 +94,24 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun save() {
-        val config = ConfigStore(getApplication())
+        if (saveJob?.isActive == true) return
 
-        uiState.value.menu.forEach {
-            config.saveMainMenuVisibility(it.key, it.visibility)
+        saveJob = viewModelScope.launch {
+            // TODO: ConfigStore blocks internally on runBlocking; drop the withContext once it
+            // exposes suspend accessors.
+            withContext(Dispatchers.IO) {
+                val config = ConfigStore(getApplication())
+
+                uiState.value.menu.forEach {
+                    config.saveMainMenuVisibility(it.key, it.visibility)
+                }
+
+                config.saveShortcutVisibility(uiState.value.shortcutVisibility)
+                config.saveRecentlyAlbumsVisibility(uiState.value.recentlyAlbumsVisibility)
+            }
+
+            reorderShortcuts(uiState.value.shortcuts.map { it.id })
+            saved.emit(Unit)
         }
-
-        config.saveShortcutVisibility(uiState.value.recentlyAlbumsVisibility)
-        config.saveRecentlyAlbumsVisibility(uiState.value.shortcutVisibility)
-
-        val shortcutIds = uiState.value.shortcuts.map { it.id }
-
-        update(shortcutIds)
     }
 }

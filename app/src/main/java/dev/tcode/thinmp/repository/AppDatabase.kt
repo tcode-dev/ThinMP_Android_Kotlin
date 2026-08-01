@@ -23,7 +23,8 @@ import dev.tcode.thinmp.repository.dao.ShortcutDao
         PlaylistSongEntity::class,
         ShortcutEntity::class
     ],
-    version = 1
+    version = 1,
+    exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteSongDao(): FavoriteSongDao
@@ -38,12 +39,11 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(
+                INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
                     "thinmp_database"
                 )
-                    .allowMainThreadQueries()
                     .build()
                     .also { INSTANCE = it }
             }

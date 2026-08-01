@@ -2,9 +2,12 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.service.FavoriteArtistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +19,7 @@ data class FavoriteArtistsUiState(
 
 class FavoriteArtistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(FavoriteArtistsUiState())
     val uiState: StateFlow<FavoriteArtistsUiState> = _uiState.asStateFlow()
 
@@ -24,13 +28,16 @@ class FavoriteArtistsViewModel(application: Application) : AndroidViewModel(appl
     }
 
     fun load() {
-        val service = FavoriteArtistsService(getApplication())
-        val artists = service.findAll()
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = FavoriteArtistsService(getApplication())
+            val artists = service.findAll()
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                artists = artists
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    artists = artists
+                )
+            }
         }
     }
 

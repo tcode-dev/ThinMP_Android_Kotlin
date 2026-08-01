@@ -6,7 +6,7 @@ import dev.tcode.thinmp.repository.AlbumRepository
 import dev.tcode.thinmp.repository.SongRepository
 
 class AlbumDetailService(val context: Context) {
-    fun findById(id: String): AlbumDetailModel? {
+    suspend fun findById(id: String): AlbumDetailModel? {
         val albumRepository = AlbumRepository(context)
         val songRepository = SongRepository(context)
         val album = albumRepository.findById(id)

@@ -11,7 +11,7 @@ import dev.tcode.thinmp.repository.SongRepository
 import dev.tcode.thinmp.repository.PlaylistRepository
 
 class PlaylistDetailService(val context: Context, private val playlistRepository: PlaylistRepository = PlaylistRepository()) {
-    fun findById(playlistId: PlaylistId): PlaylistDetailModel? {
+    suspend fun findById(playlistId: PlaylistId): PlaylistDetailModel? {
         val resources = context.resources
         val playlist = playlistRepository.findById(playlistId) ?: return null
         val playlistSongs = playlistRepository.findSongsByPlaylistId(playlistId)
@@ -36,7 +36,7 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
         return songIds.count() == songs.count()
     }
 
-    private fun fix(playlistId: PlaylistId, songIds: List<SongId>, songs: List<SongModel>) {
+    private suspend fun fix(playlistId: PlaylistId, songIds: List<SongId>, songs: List<SongModel>) {
         val deleteIds = songIds.filter { id ->
             songs.none { it.songId == id }
         }

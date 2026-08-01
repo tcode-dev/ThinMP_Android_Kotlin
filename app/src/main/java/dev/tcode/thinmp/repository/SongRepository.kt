@@ -26,7 +26,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
             "CAST(${MediaStore.Audio.Media.CD_TRACK_NUMBER} AS INTEGER) " +
             "END ASC"
 
-    fun findById(songId: String): SongModel? {
+    suspend fun findById(songId: String): SongModel? {
         selection = MediaStore.Audio.Media._ID + " = ?"
         selectionArgs = arrayOf(songId)
         sortOrder = null
@@ -34,7 +34,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return get()
     }
 
-    fun findByIds(songIds: List<SongId>): List<SongModel> {
+    suspend fun findByIds(songIds: List<SongId>): List<SongModel> {
         val ids = songIds.map { it.id }
 
         selection = MediaStore.Audio.Media._ID + " IN (" + makePlaceholders(ids.size) + ") " + "AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
@@ -44,7 +44,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList()
     }
 
-    fun findByArtistId(artistId: String): List<SongModel> {
+    suspend fun findByArtistId(artistId: String): List<SongModel> {
         selection = MediaStore.Audio.Media.ARTIST_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = arrayOf(artistId)
         sortOrder = "${MediaStore.Audio.Media.ALBUM} ASC, $trackNumberSortOrder"
@@ -52,7 +52,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList()
     }
 
-    fun findByAlbumId(albumId: String): List<SongModel> {
+    suspend fun findByAlbumId(albumId: String): List<SongModel> {
         selection = MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = arrayOf(albumId)
         sortOrder = trackNumberSortOrder
@@ -60,7 +60,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList()
     }
 
-    fun findAll(): List<SongModel> {
+    suspend fun findAll(): List<SongModel> {
         selection = MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = null
         sortOrder = MediaStore.Audio.Media.TITLE + " ASC"

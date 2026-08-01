@@ -13,17 +13,16 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.swipe.SwipeToDismissView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
+import dev.tcode.thinmp.view.util.OnEvent
 import dev.tcode.thinmp.viewModel.FavoriteArtistsEditViewModel
 
 @Composable
 fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
-    val callback = {
-        viewModel.update()
-        navigator.back()
-    }
+    val callback = { viewModel.save() }
 
+    OnEvent(viewModel.saved) { navigator.back() }
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {

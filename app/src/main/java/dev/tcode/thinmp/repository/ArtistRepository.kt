@@ -13,7 +13,7 @@ class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
         MediaStore.Audio.Artists.NUMBER_OF_TRACKS
     )
 ) {
-    fun findAll(): List<ArtistModel> {
+    suspend fun findAll(): List<ArtistModel> {
         selection = null
         selectionArgs = null
         sortOrder = MediaStore.Audio.Artists.ARTIST + " ASC"
@@ -21,7 +21,7 @@ class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
         return getList();
     }
 
-    fun findById(artistId: String): ArtistModel? {
+    suspend fun findById(artistId: String): ArtistModel? {
         selection = MediaStore.Audio.Media._ID + " = ?"
         selectionArgs = arrayOf(artistId)
         sortOrder = null
@@ -29,7 +29,7 @@ class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
         return get()
     }
 
-    fun findByIds(artistIds: List<ArtistId>): List<ArtistModel> {
+    suspend fun findByIds(artistIds: List<ArtistId>): List<ArtistModel> {
         val ids = artistIds.map { it.id }
 
         selection = MediaStore.Audio.Media._ID + " IN (" + makePlaceholders(ids.size) + ")"

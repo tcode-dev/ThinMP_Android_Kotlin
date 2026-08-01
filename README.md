@@ -60,3 +60,9 @@
 ### Register
 
 `View` → `ViewModel` → `Register` → `Repository`
+
+### Threading
+
+Room and MediaStore access runs off the main thread. Every DAO function is `suspend`, so
+`AppDatabase` does not need `allowMainThreadQueries()`, and `ContentResolver` queries are wrapped
+in `Dispatchers.IO` inside `MediaStoreRepository`. ViewModels load in `viewModelScope`.

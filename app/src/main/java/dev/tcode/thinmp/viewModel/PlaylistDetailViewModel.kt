@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
@@ -11,6 +12,8 @@ import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.PlaylistDetailService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +30,7 @@ class PlaylistDetailViewModel @Inject constructor(
 ) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
     private var musicPlayer: MusicPlayer = MusicPlayer(this)
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(PlaylistDetailUiState())
     val uiState: StateFlow<PlaylistDetailUiState> = _uiState.asStateFlow()
     val id: PlaylistId
@@ -70,10 +74,11 @@ class PlaylistDetailViewModel @Inject constructor(
     }
 
     private fun load() {
-        val service = PlaylistDetailService(getApplication())
-        val playlist = service.findById(id)
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = PlaylistDetailService(getApplication())
+            val playlist = service.findById(id) ?: return@launch
 
-        if (playlist != null) {
             _uiState.update { currentState ->
                 currentState.copy(
                     primaryText = playlist.primaryText, secondaryText = playlist.secondaryText, imageUri = playlist.imageUri, songs = playlist.songs, isVisiblePlayer = musicPlayer.isServiceRunning()

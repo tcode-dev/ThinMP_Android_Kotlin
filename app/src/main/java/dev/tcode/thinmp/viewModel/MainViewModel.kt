@@ -2,11 +2,14 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.service.MainService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,6 +25,7 @@ data class MainUiState(
 
 class MainViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
+    private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(MainUiState())
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
@@ -38,17 +42,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application), C
     }
 
     fun load() {
-        val service = MainService(getApplication())
-        val menu = service.getMenu()
-        val shortcutVisibility = service.getShortcutVisibility()
-        val shortcuts = if (shortcutVisibility) service.getShortcuts() else emptyList()
-        val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
-        val albums = if (recentlyAlbumsVisibility) service.getRecentlyAlbums() else emptyList()
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
+            val service = MainService(getApplication())
+            val menu = service.getMenu()
+            val shortcutVisibility = service.getShortcutVisibility()
+            val shortcuts = if (shortcutVisibility) service.getShortcuts() else emptyList()
+            val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
+            val albums = if (recentlyAlbumsVisibility) service.getRecentlyAlbums() else emptyList()
 
-        _uiState.update { currentState ->
-            currentState.copy(
-                menu = menu, shortcutVisibility = shortcutVisibility, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, albums = albums,
-            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    menu = menu, shortcutVisibility = shortcutVisibility, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, albums = albums,
+                )
+            }
         }
     }
 }

@@ -7,7 +7,7 @@ import dev.tcode.thinmp.repository.ArtistRepository
 import dev.tcode.thinmp.repository.FavoriteArtistRepository
 
 class FavoriteArtistsService(val context: Context, private val favoriteArtistRepository: FavoriteArtistRepository = FavoriteArtistRepository()) {
-    fun findAll(): List<ArtistModel> {
+    suspend fun findAll(): List<ArtistModel> {
         val artistIds = favoriteArtistRepository.findAll()
         val artistRepository = ArtistRepository(context)
         val artists = artistRepository.findByIds(artistIds)
@@ -27,7 +27,7 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
         return artistIds.count() == artists.count()
     }
 
-    private fun fix(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
+    private suspend fun fix(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
         val deleteIds = artistIds.filter { id ->
             artists.none { it.artistId == id }
         }
