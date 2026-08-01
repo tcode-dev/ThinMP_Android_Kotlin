@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.service
 
 import android.content.Context
+import android.database.sqlite.SQLiteConstraintException
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -70,16 +71,25 @@ class DuplicateEntryServiceTest {
         assertEquals(2, playlist?.songs?.size)
     }
 
+    /**
+     * Unlike a playlist, a song is either a favourite or it is not, so the songId is the primary
+     * key and the duplicate this test used to construct is no longer a state the schema allows.
+     */
     @Test
-    fun duplicateFavouriteRowStillLoads() = runBlocking {
+    fun duplicateFavouriteRowCannotBeCreated() = runBlocking {
         db.favoriteSongDao().insert(FavoriteSongEntity(songId = realSongIdValue))
-        db.favoriteSongDao().insert(FavoriteSongEntity(songId = realSongIdValue))
+
+        try {
+            db.favoriteSongDao().insert(FavoriteSongEntity(songId = realSongIdValue))
+            throw AssertionError("expected the primary key to reject the duplicate favourite")
+        } catch (expected: SQLiteConstraintException) {
+            // Nothing to clean up: the second row was never written.
+        }
 
         val songs = withTimeout(timeoutMs) {
             FavoriteSongsService(context, FavoriteSongRepository(db.favoriteSongDao())).findAll()
         }
 
-        // Unlike a playlist, a song is either a favourite or it is not.
         assertEquals(1, songs.size)
     }
 

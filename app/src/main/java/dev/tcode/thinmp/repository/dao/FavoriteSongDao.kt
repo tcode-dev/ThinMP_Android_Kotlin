@@ -39,7 +39,9 @@ interface FavoriteSongDao {
     }
 
     /** Reads the current state and writes as one unit; separately they race and two concurrent
-     * toggles can both see "not a favourite" and insert a second row for the same song. */
+     * toggles can both see "not a favourite" and try to insert the song twice. The primary key
+     * now rejects that second insert, so the transaction is what keeps it from surfacing as a
+     * SQLiteConstraintException on a double tap. */
     @Transaction
     suspend fun toggle(songId: String) {
         if (exists(songId)) {

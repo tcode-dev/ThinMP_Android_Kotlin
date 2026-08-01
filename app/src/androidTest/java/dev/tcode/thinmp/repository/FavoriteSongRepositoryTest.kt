@@ -62,10 +62,7 @@ class FavoriteSongRepositoryTest {
         val dao = db.favoriteSongDao()
         repository.replaceAll(listOf(SongId("1"), SongId("2"), SongId("3")))
 
-        val collidingId = "duplicate-primary-key"
-        val entities = listOf(
-            FavoriteSongEntity(id = collidingId, songId = "4"), FavoriteSongEntity(id = collidingId, songId = "5")
-        )
+        val entities = listOf(FavoriteSongEntity(songId = "4"), FavoriteSongEntity(songId = "4"))
 
         try {
             dao.replaceAll(entities)
@@ -89,8 +86,8 @@ class FavoriteSongRepositoryTest {
     /**
      * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
      * between the read and the write, so two concurrent toggles can both see "not a favourite"
-     * and insert a second row. Nothing in the schema forbids the duplicate, and a duplicate makes
-     * FavoriteSongsService.findAll() loop forever.
+     * and both go on to insert. The primary key now turns that into a crash rather than a
+     * duplicate row, which is still not what a double tap should do.
      */
     @Test
     fun concurrentTogglesNeverInsertTheSameSongTwice() = runBlocking {
@@ -105,16 +102,20 @@ class FavoriteSongRepositoryTest {
         }
     }
 
-    /** A row inserted before toggle existed still has to be cleanable. */
+    /** What the primary key buys: the duplicate row toggle used to have to clean up cannot exist. */
     @Test
-    fun toggleRemovesEveryRowForTheSameSong() = runTest {
+    fun theSameSongCannotBeStoredTwice() = runTest {
         val dao = db.favoriteSongDao()
         dao.insert(FavoriteSongEntity(songId = "1"))
-        dao.insert(FavoriteSongEntity(songId = "1"))
 
-        repository.toggle(SongId("1"))
+        try {
+            dao.insert(FavoriteSongEntity(songId = "1"))
+            throw AssertionError("expected the primary key to reject the duplicate song")
+        } catch (expected: android.database.sqlite.SQLiteConstraintException) {
+            // The row is the song, so storing it twice is not a state the schema allows.
+        }
 
-        assertEquals(emptyList<SongId>(), repository.findAll())
+        assertEquals(listOf(SongId("1")), repository.findAll())
     }
 
     @Test
