@@ -39,7 +39,7 @@ View → ViewModel → Register → Repository  (for domain operations like favo
 - **UI**: Jetpack Compose + Material 3, Coil for images, Accompanist for insets/permissions
 - **Playback**: MediaPlayer3 (ExoPlayer) 1.4.0, MusicService (foreground service), MediaSession
 - **DI**: Hilt
-- **Database**: Room (favorites, playlists, shortcuts), AppDatabase singleton via `MainApplication.appContext`. Schemas exported to `app/schemas/`. There is no `fallbackToDestructiveMigration()`, so every schema change needs a `Migration` in `AppDatabase` plus a case in `MigrationTest`, which validates it against the exported schema
+- **Database**: Room (favorites, playlists, shortcuts), AppDatabase singleton via `MainApplication.appContext`. Schemas exported to `app/schemas/`. The app is unreleased, so schema changes edit version 1 in place and the exported schema is regenerated — no `Migration` is written. Once it ships, that stops being safe: there is no `fallbackToDestructiveMigration()`, so from then on every schema change needs a version bump and a `Migration` in `AppDatabase`
 - **Preferences**: DataStore Preferences (repeat, shuffle, menu visibility)
 - **Async**: Kotlin Coroutines. All Room and MediaStore I/O is off the main thread
 
