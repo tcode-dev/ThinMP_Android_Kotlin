@@ -70,13 +70,17 @@ app/src/main/java/dev/tcode/thinmp/
 - Each screen has a dedicated ViewModel
 - Room for user-created data; MediaStore for device audio
 - A surrogate `id` only exists where something reads it. The favourite tables are keyed by the
-  MediaStore id itself (`favorite_songs(songId)`, `favorite_artists(artistId)`), which is what
+  MediaStore id itself (`favorite_songs(song_id)`, `favorite_artists(artist_id)`), which is what
   forbids the duplicate rows `toggle` was written to avoid and indexes the column at the same time.
   `shortcuts` keeps its `id` because `ShortcutService` carries it into `ShortcutModel`, and
   `playlist_songs` keeps its own because the same song may legitimately appear in a playlist twice
 - Every non-primary-key column a DAO query filters on carries an `@Index`, and nothing more:
-  composite only where every query filters on the whole pair (`shortcuts(itemId, type)`), not where
-  a leading column already narrows the scan to a handful of rows (`playlist_songs(playlistId)`)
+  composite only where every query filters on the whole pair (`shortcuts(item_id, type)`), not where
+  a leading column already narrows the scan to a handful of rows (`playlist_songs(playlist_id)`)
+- Column names are `snake_case`, set with `@ColumnInfo(name = ...)` where the Kotlin property is
+  camelCase. Without it Room names the column after the property, which is how the schema ended up
+  mixing snake_case tables with camelCase columns. SQLite identifiers are case-insensitive, so
+  camelCase never distinguished anything there in the first place
 - Room repositories default to `MainApplication.appContext` for DB access but take the DAO or `AppDatabase` as a constructor argument, so tests can supply an in-memory database
 - Register interfaces create repository instances on-demand in each method
 - No ProGuard/R8 minification enabled
