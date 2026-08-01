@@ -37,4 +37,15 @@ interface FavoriteSongDao {
         deleteAll()
         insertAll(entities)
     }
+
+    /** Reads the current state and writes as one unit; separately they race and two concurrent
+     * toggles can both see "not a favourite" and insert a second row for the same song. */
+    @Transaction
+    suspend fun toggle(songId: String) {
+        if (exists(songId)) {
+            deleteBySongId(songId)
+        } else {
+            insert(FavoriteSongEntity(songId = songId))
+        }
+    }
 }

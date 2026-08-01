@@ -37,4 +37,15 @@ interface FavoriteArtistDao {
         deleteAll()
         insertAll(entities)
     }
+
+    /** Reads the current state and writes as one unit; separately they race and two concurrent
+     * toggles can both see "not a favourite" and insert a second row for the same artist. */
+    @Transaction
+    suspend fun toggle(artistId: String) {
+        if (exists(artistId)) {
+            deleteByArtistId(artistId)
+        } else {
+            insert(FavoriteArtistEntity(artistId = artistId))
+        }
+    }
 }

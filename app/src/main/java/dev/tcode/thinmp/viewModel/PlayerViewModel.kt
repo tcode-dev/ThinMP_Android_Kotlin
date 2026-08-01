@@ -94,12 +94,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         val song = musicPlayer.getCurrentSong() ?: return
 
         viewModelScope.launch {
-            if (existsFavoriteArtist(song.artistId)) {
-                deleteFavoriteArtist(song.artistId)
-            } else {
-                addFavoriteArtist(song.artistId)
-            }
-
+            toggleFavoriteArtist(song.artistId)
             updateFavorites(song.artistId, song.songId)
         }
     }
@@ -108,12 +103,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         val song = musicPlayer.getCurrentSong() ?: return
 
         viewModelScope.launch {
-            if (existsFavoriteSong(song.songId)) {
-                deleteFavoriteSong(song.songId)
-            } else {
-                addFavoriteSong(song.songId)
-            }
-
+            toggleFavoriteSong(song.songId)
             updateFavorites(song.artistId, song.songId)
         }
     }

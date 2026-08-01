@@ -3,6 +3,10 @@ package dev.tcode.thinmp.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.room.FavoriteArtistEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -66,5 +70,45 @@ class FavoriteArtistRepositoryTest {
         }
 
         assertEquals(listOf(ArtistId("1"), ArtistId("2"), ArtistId("3")), repository.findAll())
+    }
+
+    @Test
+    fun toggleAddsWhenAbsentAndRemovesWhenPresent() = runTest {
+        repository.toggle(ArtistId("1"))
+        assertTrue(repository.exists(ArtistId("1")))
+
+        repository.toggle(ArtistId("1"))
+        assertFalse(repository.exists(ArtistId("1")))
+    }
+
+    /**
+     * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
+     * between the read and the write, so two concurrent toggles can both see "not a favourite"
+     * and insert a second row. Nothing in the schema forbids the duplicate, and a duplicate makes
+     * FavoriteArtistsService.findAll() loop forever.
+     */
+    @Test
+    fun concurrentTogglesNeverInsertTheSameArtistTwice() = runBlocking {
+        repeat(100) {
+            db.favoriteArtistDao().deleteAll()
+
+            (1..2).map {
+                async(Dispatchers.Default) { repository.toggle(ArtistId("1")) }
+            }.awaitAll()
+
+            assertTrue(db.favoriteArtistDao().findAll().size <= 1)
+        }
+    }
+
+    /** A row inserted before toggle existed still has to be cleanable. */
+    @Test
+    fun toggleRemovesEveryRowForTheSameArtist() = runTest {
+        val dao = db.favoriteArtistDao()
+        dao.insert(FavoriteArtistEntity(artistId = "1"))
+        dao.insert(FavoriteArtistEntity(artistId = "1"))
+
+        repository.toggle(ArtistId("1"))
+
+        assertEquals(emptyList<ArtistId>(), repository.findAll())
     }
 }

@@ -3,6 +3,10 @@ package dev.tcode.thinmp.repository
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.room.FavoriteSongEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -71,6 +75,46 @@ class FavoriteSongRepositoryTest {
         }
 
         assertEquals(listOf(SongId("1"), SongId("2"), SongId("3")), repository.findAll())
+    }
+
+    @Test
+    fun toggleAddsWhenAbsentAndRemovesWhenPresent() = runTest {
+        repository.toggle(SongId("1"))
+        assertTrue(repository.exists(SongId("1")))
+
+        repository.toggle(SongId("1"))
+        assertFalse(repository.exists(SongId("1")))
+    }
+
+    /**
+     * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
+     * between the read and the write, so two concurrent toggles can both see "not a favourite"
+     * and insert a second row. Nothing in the schema forbids the duplicate, and a duplicate makes
+     * FavoriteSongsService.findAll() loop forever.
+     */
+    @Test
+    fun concurrentTogglesNeverInsertTheSameSongTwice() = runBlocking {
+        repeat(100) {
+            db.favoriteSongDao().deleteAll()
+
+            (1..2).map {
+                async(Dispatchers.Default) { repository.toggle(SongId("1")) }
+            }.awaitAll()
+
+            assertTrue(db.favoriteSongDao().findAll().size <= 1)
+        }
+    }
+
+    /** A row inserted before toggle existed still has to be cleanable. */
+    @Test
+    fun toggleRemovesEveryRowForTheSameSong() = runTest {
+        val dao = db.favoriteSongDao()
+        dao.insert(FavoriteSongEntity(songId = "1"))
+        dao.insert(FavoriteSongEntity(songId = "1"))
+
+        repository.toggle(SongId("1"))
+
+        assertEquals(emptyList<SongId>(), repository.findAll())
     }
 
     @Test

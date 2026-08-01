@@ -14,14 +14,13 @@ class FavoriteSongRegisterViewModel : ViewModel(), FavoriteSongRegister {
     /**
      * Runs in viewModelScope rather than the caller's scope: the menu closes as soon as this is
      * invoked, so a composition-scoped coroutine would be cancelled before the write lands.
+     *
+     * The current state is decided inside the transaction rather than passed in from the menu
+     * label, so a stale label cannot turn an add into a second add.
      */
-    fun toggle(songId: SongId, isFavorite: Boolean) {
+    fun toggle(songId: SongId) {
         viewModelScope.launch {
-            if (isFavorite) {
-                deleteFavoriteSong(songId)
-            } else {
-                addFavoriteSong(songId)
-            }
+            toggleFavoriteSong(songId)
         }
     }
 }

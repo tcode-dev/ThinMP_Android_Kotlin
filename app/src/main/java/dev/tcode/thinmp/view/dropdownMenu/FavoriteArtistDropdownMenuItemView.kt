@@ -22,7 +22,7 @@ fun FavoriteArtistDropdownMenuItemView(id: ArtistId, close: () -> Unit, viewMode
         enabled = isFavorite != null,
         text = { Text(stringResource(if (isFavorite == true) R.string.remove_favorite else R.string.add_favorite), color = MaterialTheme.colorScheme.primary) },
         onClick = {
-            viewModel.toggle(id, isFavorite == true)
+            viewModel.toggle(id)
             close()
         },
     )

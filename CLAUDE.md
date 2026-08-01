@@ -88,6 +88,11 @@ app/src/main/java/dev/tcode/thinmp/
   `runBlocking`
 - Transactions: work expressible in one DAO gets `@Transaction` on a DAO method; work spanning
   DAOs or interleaved with Kotlin logic gets `db.withTransaction { }` in the repository
+- **Never read a row and then write it from two separate calls.** Every suspend DAO call is a
+  suspension point, so `if (exists(id)) delete(id) else insert(id)` lets two concurrent callers
+  both see "absent" and insert twice — and no table here has a unique index to stop them. Such
+  read-modify-write belongs in one `@Transaction` DAO method (`toggle`, `insertAtEnd`,
+  `replaceAll`). This is not hypothetical: it is why `FavoriteSongDao.toggle` exists
 - ViewModel `load()` runs in `viewModelScope` and cancels the previous job first
   (`loadJob?.cancel()`); `onResume` and `MusicPlayerListener.onError()` can both trigger it
 - Edit screens save via `OneShotEvent` / `OnEvent` and navigate away only after the write

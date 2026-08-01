@@ -20,6 +20,10 @@ class FavoriteArtistRepository(
         dao.insert(FavoriteArtistEntity(artistId = _artistId.id))
     }
 
+    suspend fun toggle(artistId: ArtistId) {
+        dao.toggle(artistId.id)
+    }
+
     suspend fun replaceAll(artistIds: List<ArtistId>) {
         dao.replaceAll(artistIds.map { FavoriteArtistEntity(artistId = it.id) })
     }

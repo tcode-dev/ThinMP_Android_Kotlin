@@ -10,16 +10,15 @@ interface FavoriteSongRegister {
         return repository.exists(songId)
     }
 
-    suspend fun addFavoriteSong(songId: SongId) {
+    /**
+     * The only way to flip one song's favourite state. Deliberately not exposed as separate add
+     * and delete: reading existsFavoriteSong() and then writing leaves a suspension point between
+     * the two, so a double tap inserts the song twice.
+     */
+    suspend fun toggleFavoriteSong(songId: SongId) {
         val repository = FavoriteSongRepository()
 
-        repository.add(songId)
-    }
-
-    suspend fun deleteFavoriteSong(songId: SongId) {
-        val repository = FavoriteSongRepository()
-
-        repository.delete(songId)
+        repository.toggle(songId)
     }
 
     suspend fun replaceFavoriteSongs(songIds: List<SongId>) {
