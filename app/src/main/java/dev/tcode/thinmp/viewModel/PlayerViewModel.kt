@@ -2,8 +2,6 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import android.net.Uri
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.RepeatState
@@ -15,6 +13,7 @@ import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -44,15 +43,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private val musicPlayer: MusicPlayer = MusicPlayer(this)
     private var initialized: Boolean = false
     private var favoriteJob: Job? = null
+    private var seekBarJob: Job? = null
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
-    private val handler = Handler(Looper.getMainLooper())
-    private val runnable = object : Runnable {
-        override fun run() {
-            seekBarProgress()
-            handler.postDelayed(this, INTERVAL_MS)
-        }
-    }
 
     init {
         bindService()
@@ -166,11 +159,16 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         if (!musicPlayer.isPlaying()) return
 
         cancelSeekBarProgressTask()
-        handler.post(runnable)
+        seekBarJob = viewModelScope.launch {
+            while (true) {
+                seekBarProgress()
+                delay(INTERVAL_MS)
+            }
+        }
     }
 
     private fun cancelSeekBarProgressTask() {
-        handler.removeCallbacks(runnable)
+        seekBarJob?.cancel()
     }
 
     private fun update() {
