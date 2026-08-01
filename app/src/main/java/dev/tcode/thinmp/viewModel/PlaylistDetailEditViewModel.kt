@@ -54,7 +54,7 @@ class PlaylistDetailEditViewModel @Inject constructor(
         }
     }
 
-    fun update() {
+    fun save() {
         val songIds = uiState.value.songs.map { it.songId }
 
         updatePlaylist(id, uiState.value.primaryText, songIds)

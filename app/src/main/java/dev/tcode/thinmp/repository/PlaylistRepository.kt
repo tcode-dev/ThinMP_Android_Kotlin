@@ -39,7 +39,7 @@ class PlaylistRepository {
         playlistSongDao.insertAll(songs)
     }
 
-    fun updatePlaylists(playlistIds: List<PlaylistId>) {
+    fun reorder(playlistIds: List<PlaylistId>) {
         val playlists = findAll()
         val group = playlists.groupBy { playlist -> playlistIds.any { it.id == playlist.id } }
         val deletePlaylists = group[false] ?: emptyList()

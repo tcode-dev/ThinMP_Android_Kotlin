@@ -29,9 +29,9 @@ interface PlaylistRegister {
         repository.updatePlaylist(playlistId, name, songIds)
     }
 
-    fun updatePlaylists(playlistIds: List<PlaylistId>) {
+    fun reorderPlaylists(playlistIds: List<PlaylistId>) {
         val repository = PlaylistRepository()
 
-        repository.updatePlaylists(playlistIds)
+        repository.reorder(playlistIds)
     }
 }

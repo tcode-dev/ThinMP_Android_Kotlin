@@ -55,9 +55,9 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
-    fun update() {
+    fun save() {
         val playlistIds = uiState.value.playlists.map { it.id }
 
-        updatePlaylists(playlistIds)
+        reorderPlaylists(playlistIds)
     }
 }

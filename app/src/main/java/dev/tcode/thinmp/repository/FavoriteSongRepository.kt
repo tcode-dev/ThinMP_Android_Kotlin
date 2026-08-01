@@ -19,7 +19,7 @@ class FavoriteSongRepository {
         dao.insert(FavoriteSongEntity(songId = _songId.id))
     }
 
-    fun update(songIds: List<SongId>) {
+    fun replaceAll(songIds: List<SongId>) {
         dao.deleteAll()
         songIds.forEach {
             dao.insert(FavoriteSongEntity(songId = it.id))

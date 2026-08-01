@@ -23,9 +23,9 @@ interface ShortcutRegister {
         repository.delete(shortcutItemId)
     }
 
-    fun update(shortcutIds: List<ShortcutId>) {
+    fun reorderShortcuts(shortcutIds: List<ShortcutId>) {
         val repository = ShortcutRepository()
 
-        repository.update(shortcutIds)
+        repository.reorder(shortcutIds)
     }
 }

@@ -20,7 +20,7 @@ fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = viewMode
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val callback = {
-        viewModel.update()
+        viewModel.save()
         navigator.back()
     }
 

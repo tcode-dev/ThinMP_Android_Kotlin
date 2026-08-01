@@ -94,6 +94,6 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
 
         val shortcutIds = uiState.value.shortcuts.map { it.id }
 
-        update(shortcutIds)
+        reorderShortcuts(shortcutIds)
     }
 }

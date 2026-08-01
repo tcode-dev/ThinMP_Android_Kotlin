@@ -20,7 +20,7 @@ fun FavoriteSongsEditScreen(viewModel: FavoriteSongsEditViewModel = viewModel())
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val callback = {
-        viewModel.update()
+        viewModel.save()
         navigator.back()
     }
 

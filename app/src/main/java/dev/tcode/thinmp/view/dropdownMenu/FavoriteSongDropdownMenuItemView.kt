@@ -12,14 +12,14 @@ import dev.tcode.thinmp.viewModel.FavoriteSongRegisterViewModel
 
 @Composable
 fun FavoriteSongDropdownMenuItemView(id: SongId, callback: () -> Unit, viewModel: FavoriteSongRegisterViewModel = viewModel()) {
-    if (viewModel.exists(id)) {
+    if (viewModel.existsFavoriteSong(id)) {
         DropdownMenuItem(text = { Text(stringResource(R.string.remove_favorite), color = MaterialTheme.colorScheme.primary) }, onClick = {
-            viewModel.delete(id)
+            viewModel.deleteFavoriteSong(id)
             callback()
         })
     } else {
         DropdownMenuItem(text = { Text(stringResource(R.string.add_favorite), color = MaterialTheme.colorScheme.primary) }, onClick = {
-            viewModel.add(id)
+            viewModel.addFavoriteSong(id)
             callback()
         })
     }

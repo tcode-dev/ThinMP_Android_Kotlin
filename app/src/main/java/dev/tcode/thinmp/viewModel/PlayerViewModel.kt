@@ -95,10 +95,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     fun favoriteArtist() {
         val song = musicPlayer.getCurrentSong() ?: return
 
-        if (exists(song.artistId)) {
-            delete(song.artistId)
+        if (existsFavoriteArtist(song.artistId)) {
+            deleteFavoriteArtist(song.artistId)
         } else {
-            add(song.artistId)
+            addFavoriteArtist(song.artistId)
         }
 
         update()
@@ -107,10 +107,10 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     fun favoriteSong() {
         val song = musicPlayer.getCurrentSong() ?: return
 
-        if (exists(song.songId)) {
-            delete(song.songId)
+        if (existsFavoriteSong(song.songId)) {
+            deleteFavoriteSong(song.songId)
         } else {
-            add(song.songId)
+            addFavoriteSong(song.songId)
         }
 
         update()
@@ -179,8 +179,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                 isPlaying = musicPlayer.isPlaying(),
                 repeat = musicPlayer.getRepeat(),
                 shuffle = musicPlayer.getShuffle(),
-                isFavoriteArtist = exists(song.artistId),
-                isFavoriteSong = exists(song.songId)
+                isFavoriteArtist = existsFavoriteArtist(song.artistId),
+                isFavoriteSong = existsFavoriteSong(song.songId)
             )
         }
 

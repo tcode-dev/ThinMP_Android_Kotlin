@@ -47,10 +47,10 @@ class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
-    fun update() {
+    fun save() {
         val songIds = uiState.value.songs.map { it.songId }
 
-        update(songIds)
+        replaceFavoriteSongs(songIds)
     }
 
     override fun onResume() {

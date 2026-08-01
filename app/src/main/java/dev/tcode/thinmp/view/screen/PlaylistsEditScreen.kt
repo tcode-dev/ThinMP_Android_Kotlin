@@ -20,7 +20,7 @@ fun PlaylistsEditScreen(viewModel: PlaylistsEditViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val doneCallback = {
-        viewModel.update()
+        viewModel.save()
         navigator.back()
     }
 

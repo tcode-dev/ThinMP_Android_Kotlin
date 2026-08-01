@@ -19,7 +19,7 @@ class FavoriteArtistRepository {
         dao.insert(FavoriteArtistEntity(artistId = _artistId.id))
     }
 
-    fun update(artistIds: List<ArtistId>) {
+    fun replaceAll(artistIds: List<ArtistId>) {
         dao.deleteAll()
         artistIds.forEach {
             dao.insert(FavoriteArtistEntity(artistId = it.id))

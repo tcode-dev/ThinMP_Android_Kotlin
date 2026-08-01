@@ -43,7 +43,7 @@ class ShortcutRepository {
         return dao.findAll()
     }
 
-    fun update(shortcutIds: List<ShortcutId>) {
+    fun reorder(shortcutIds: List<ShortcutId>) {
         val shortcuts = findAll()
         val group = shortcuts.groupBy { shortcut -> shortcutIds.any { it.id == shortcut.id } }
         val deleteShortcuts = group[false] ?: emptyList()
