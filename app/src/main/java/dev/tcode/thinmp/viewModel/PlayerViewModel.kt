@@ -5,13 +5,17 @@ import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.RepeatState
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.player.MusicPlayer
 import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -39,6 +43,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private val INTERVAL_MS = 1000L
     private val musicPlayer: MusicPlayer = MusicPlayer(this)
     private var initialized: Boolean = false
+    private var favoriteJob: Job? = null
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     private val handler = Handler(Looper.getMainLooper())
@@ -95,25 +100,29 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     fun favoriteArtist() {
         val song = musicPlayer.getCurrentSong() ?: return
 
-        if (existsFavoriteArtist(song.artistId)) {
-            deleteFavoriteArtist(song.artistId)
-        } else {
-            addFavoriteArtist(song.artistId)
-        }
+        viewModelScope.launch {
+            if (existsFavoriteArtist(song.artistId)) {
+                deleteFavoriteArtist(song.artistId)
+            } else {
+                addFavoriteArtist(song.artistId)
+            }
 
-        update()
+            updateFavorites(song.artistId, song.songId)
+        }
     }
 
     fun favoriteSong() {
         val song = musicPlayer.getCurrentSong() ?: return
 
-        if (existsFavoriteSong(song.songId)) {
-            deleteFavoriteSong(song.songId)
-        } else {
-            addFavoriteSong(song.songId)
-        }
+        viewModelScope.launch {
+            if (existsFavoriteSong(song.songId)) {
+                deleteFavoriteSong(song.songId)
+            } else {
+                addFavoriteSong(song.songId)
+            }
 
-        update()
+            updateFavorites(song.artistId, song.songId)
+        }
     }
 
     override fun onBind() {
@@ -178,13 +187,34 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                 durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
                 isPlaying = musicPlayer.isPlaying(),
                 repeat = musicPlayer.getRepeat(),
-                shuffle = musicPlayer.getShuffle(),
-                isFavoriteArtist = existsFavoriteArtist(song.artistId),
-                isFavoriteSong = existsFavoriteSong(song.songId)
+                shuffle = musicPlayer.getShuffle()
             )
         }
 
+        updateFavorites(song.artistId, song.songId)
         setSeekBarProgressTask()
+    }
+
+    /**
+     * Kept out of the _uiState.update lambda above: update re-runs its lambda when the compare-
+     * and-set loses, which would re-issue the queries.
+     *
+     * Cancelling the previous job matters while skipping tracks, where onMediaItemTransition and
+     * EVENT_IS_PLAYING_CHANGED call onChange() back to back. Without it two in-flight queries can
+     * complete out of order and paint the previous track's favourite state.
+     */
+    private fun updateFavorites(artistId: ArtistId, songId: SongId) {
+        favoriteJob?.cancel()
+        favoriteJob = viewModelScope.launch {
+            val isFavoriteArtist = existsFavoriteArtist(artistId)
+            val isFavoriteSong = existsFavoriteSong(songId)
+
+            _uiState.update { currentState ->
+                currentState.copy(
+                    isFavoriteArtist = isFavoriteArtist, isFavoriteSong = isFavoriteSong
+                )
+            }
+        }
     }
 
     private fun getSliderPosition(): Float {

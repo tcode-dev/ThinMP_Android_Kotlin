@@ -8,31 +8,27 @@ import dev.tcode.thinmp.repository.dao.FavoriteArtistDao
 class FavoriteArtistRepository(
     private val dao: FavoriteArtistDao = AppDatabase.getDatabase(MainApplication.appContext).favoriteArtistDao()
 ) {
-
-    fun exists(artistId: ArtistId): Boolean {
+    suspend fun exists(artistId: ArtistId): Boolean {
         return dao.exists(artistId.id)
     }
 
-    fun findAll(): List<ArtistId> {
+    suspend fun findAll(): List<ArtistId> {
         return dao.findAll().map { ArtistId(it.artistId) }
     }
 
-    fun add(_artistId: ArtistId) {
+    suspend fun add(_artistId: ArtistId) {
         dao.insert(FavoriteArtistEntity(artistId = _artistId.id))
     }
 
-    fun replaceAll(artistIds: List<ArtistId>) {
-        dao.deleteAll()
-        artistIds.forEach {
-            dao.insert(FavoriteArtistEntity(artistId = it.id))
-        }
+    suspend fun replaceAll(artistIds: List<ArtistId>) {
+        dao.replaceAll(artistIds.map { FavoriteArtistEntity(artistId = it.id) })
     }
 
-    fun delete(artistId: ArtistId) {
+    suspend fun delete(artistId: ArtistId) {
         dao.deleteByArtistId(artistId.id)
     }
 
-    fun deleteByIds(artistIds: List<ArtistId>) {
+    suspend fun deleteByIds(artistIds: List<ArtistId>) {
         dao.deleteByArtistIds(artistIds.map { it.id })
     }
 }

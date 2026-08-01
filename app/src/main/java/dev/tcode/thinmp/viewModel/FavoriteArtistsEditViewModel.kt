@@ -21,8 +21,10 @@ data class FavoriteArtistsEditUiState(
 class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
+    private var saveJob: Job? = null
     private val _uiState = MutableStateFlow(FavoriteArtistsEditUiState())
     val uiState: StateFlow<FavoriteArtistsEditUiState> = _uiState.asStateFlow()
+    val saved = OneShotEvent<Unit>()
 
     init {
         load()
@@ -55,9 +57,12 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
     }
 
     fun save() {
-        val artistIds = uiState.value.artists.map { it.artistId }
+        if (saveJob?.isActive == true) return
 
-        replaceFavoriteArtists(artistIds)
+        saveJob = viewModelScope.launch {
+            replaceFavoriteArtists(uiState.value.artists.map { it.artistId })
+            saved.emit(Unit)
+        }
     }
 
     override fun onResume() {

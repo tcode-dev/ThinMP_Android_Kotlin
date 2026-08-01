@@ -4,25 +4,25 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.FavoriteSongRepository
 
 interface FavoriteSongRegister {
-    fun existsFavoriteSong(songId: SongId): Boolean {
+    suspend fun existsFavoriteSong(songId: SongId): Boolean {
         val repository = FavoriteSongRepository()
 
         return repository.exists(songId)
     }
 
-    fun addFavoriteSong(songId: SongId) {
+    suspend fun addFavoriteSong(songId: SongId) {
         val repository = FavoriteSongRepository()
 
         repository.add(songId)
     }
 
-    fun deleteFavoriteSong(songId: SongId) {
+    suspend fun deleteFavoriteSong(songId: SongId) {
         val repository = FavoriteSongRepository()
 
         repository.delete(songId)
     }
 
-    fun replaceFavoriteSongs(songIds: List<SongId>) {
+    suspend fun replaceFavoriteSongs(songIds: List<SongId>) {
         val repository = FavoriteSongRepository()
 
         repository.replaceAll(songIds)
