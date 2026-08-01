@@ -22,7 +22,7 @@ fun ShortcutDropdownMenuItemView(id: ShortcutItemId, callback: () -> Unit, viewM
         enabled = isShortcut != null,
         text = { Text(stringResource(if (isShortcut == true) R.string.remove_shortcut else R.string.add_shortcut), color = MaterialTheme.colorScheme.primary) },
         onClick = {
-            viewModel.toggle(id, isShortcut == true)
+            viewModel.toggle(id)
             callback()
         },
     )

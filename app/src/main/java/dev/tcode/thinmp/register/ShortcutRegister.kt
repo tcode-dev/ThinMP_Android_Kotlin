@@ -11,16 +11,15 @@ interface ShortcutRegister {
         return repository.exists(shortcutItemId)
     }
 
-    suspend fun add(shortcutItemId: ShortcutItemId) {
+    /**
+     * The only way to flip one item's shortcut state. Deliberately not exposed as separate add
+     * and delete: reading exists() and then writing leaves a suspension point between the two,
+     * so a double tap inserts the item twice.
+     */
+    suspend fun toggleShortcut(shortcutItemId: ShortcutItemId) {
         val repository = ShortcutRepository()
 
-        repository.add(shortcutItemId)
-    }
-
-    suspend fun delete(shortcutItemId: ShortcutItemId) {
-        val repository = ShortcutRepository()
-
-        repository.delete(shortcutItemId)
+        repository.toggle(shortcutItemId)
     }
 
     suspend fun reorderShortcuts(shortcutIds: List<ShortcutId>) {

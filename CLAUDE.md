@@ -82,10 +82,14 @@ app/src/main/java/dev/tcode/thinmp/
 - **Do not wrap suspend Room calls in `withContext(Dispatchers.IO)`.** Room already moves them
   to its own query executor, and switching dispatchers inside `withTransaction { }` leaves the
   transaction's thread and breaks it
+- **Every `ConfigStore` accessor is `suspend` too**, and for the same reason must not be wrapped
+  in `withContext(Dispatchers.IO)` — DataStore already does its file access on its own
+  dispatcher. `ConfigStore` used to hide `runBlocking` inside every getter and setter, which is
+  how blocking reads ended up in `MusicService.onCreate()` and a blocking fsync ended up behind
+  the repeat and shuffle buttons
 - `withContext(Dispatchers.IO)` belongs in exactly two places: `MediaStoreRepository.get()` /
-  `getList()` (plain blocking `ContentResolver.query()`), and the `ConfigStore` reads in
-  `MainService` / `MainEditViewModel`, which are marked TODO until `ConfigStore` stops using
-  `runBlocking`
+  `getList()` (plain blocking `ContentResolver.query()`), and `MusicService.decodeAlbumArt()`
+  (`ImageDecoder`)
 - Transactions: work expressible in one DAO gets `@Transaction` on a DAO method; work spanning
   DAOs or interleaved with Kotlin logic gets `db.withTransaction { }` in the repository
 - **Never read a row and then write it from two separate calls.** Every suspend DAO call is a
@@ -99,4 +103,13 @@ app/src/main/java/dev/tcode/thinmp/
   completes. Writes triggered by something that closes immediately (dropdown menus, the playlist
   popup) run in `viewModelScope`, never `rememberCoroutineScope()`
 - Dropdown menu items read their state with `produceState(initialValue, id)` so effect and state
-  share one key
+  share one key. They pass only the id to the write — never the state they displayed, which may
+  have gone stale while the menu was open
+- `MusicService` owns a `serviceScope` (cancelled in `onDestroy`) for its `ConfigStore` access and
+  the album art decode. It is a `Service`, not a `ViewModel`, so there is no `viewModelScope` to
+  lean on
+- Services that reconcile Room ids against MediaStore (`FavoriteSongsService`, `ShortcutService`,
+  `PlaylistDetailService`, …) delete the ids that resolved to nothing and **return the list they
+  already mapped**. Do not re-enter the function after the cleanup: a duplicated id makes an id
+  count and a MediaStore row count disagree forever, and the old re-read spun instead of
+  converging

@@ -21,10 +21,10 @@ enum class MainMenuEnum(val key: String, val id: Int) {
     PLAYLISTS(NavConstant.PLAYLISTS, R.string.playlists);
 
     companion object {
-        fun getList(context: Context): List<MainMenuItem> {
+        suspend fun getList(context: Context): List<MainMenuItem> {
             val config = ConfigStore(context)
 
-            return MainMenuEnum.values().toList().map {
+            return MainMenuEnum.entries.map {
                 MainMenuItem(it.id, it.key, config.getMainMenuVisibility(it.key))
             }
         }
