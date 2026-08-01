@@ -1,16 +1,15 @@
 package dev.tcode.thinmp.model.room
 
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
-import java.util.UUID
 
-@Entity(
-    tableName = "favorite_songs",
-    indices = [Index(value = ["songId"])]
-)
+/**
+ * A song is either a favourite or it is not, so the MediaStore id is the identity of the row and
+ * there is nothing for a surrogate key to add. Making it the primary key is also what forbids the
+ * duplicate rows that `toggle` exists to avoid, and it indexes the column every query filters on.
+ */
+@Entity(tableName = "favorite_songs")
 data class FavoriteSongEntity(
     @PrimaryKey
-    val id: String = UUID.randomUUID().toString(),
     val songId: String = ""
 )

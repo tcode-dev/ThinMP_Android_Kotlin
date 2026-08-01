@@ -12,9 +12,8 @@ class FavoriteArtistRepository(
         return dao.exists(artistId.id)
     }
 
-    /** See FavoriteSongRepository.findAll() for why this is distinct(). */
     suspend fun findAll(): List<ArtistId> {
-        return dao.findAll().map { ArtistId(it.artistId) }.distinct()
+        return dao.findAll().map { ArtistId(it.artistId) }
     }
 
     suspend fun add(_artistId: ArtistId) {
