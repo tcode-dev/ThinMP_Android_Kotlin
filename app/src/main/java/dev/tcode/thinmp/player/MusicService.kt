@@ -10,6 +10,7 @@ import android.graphics.ImageDecoder
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
+import android.util.Size
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
@@ -24,6 +25,12 @@ import dev.tcode.thinmp.constant.NotificationConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.notification.LocalNotificationHelper
 import dev.tcode.thinmp.receiver.HeadsetEventReceiver
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.IOException
 
 interface MusicServiceListener {
@@ -33,6 +40,7 @@ interface MusicServiceListener {
 
 class MusicService : Service() {
     private val PREV_MS = 3000
+    private val ALBUM_ART_MAX_PX = 512
     private val binder = MusicBinder()
     private lateinit var player: ExoPlayer
     private lateinit var mediaSession: MediaSession
@@ -41,7 +49,21 @@ class MusicService : Service() {
     private lateinit var headsetEventReceiver: HeadsetEventReceiver
     private lateinit var playerEventListener: PlayerEventListener
     private lateinit var config: ConfigStore
-    private lateinit var repeat: RepeatState
+
+    /**
+     * Owns the ConfigStore reads and writes and the album art decode, so none of them run on the
+     * main thread. Cancelled in onDestroy().
+     */
+    private val serviceJob = SupervisorJob()
+    private val serviceScope = CoroutineScope(serviceJob + Dispatchers.Main.immediate)
+
+    /**
+     * Defaults until the stored values arrive. onCreate() used to block the main thread on two
+     * DataStore reads, inside the five second window startForegroundService() allows.
+     */
+    private var repeat: RepeatState = RepeatState.OFF
+    private var notificationJob: Job? = null
+    private var playerReleased = true
     private var listeners: MutableList<MusicServiceListener> = mutableListOf()
     private var playingList: List<SongModel> = emptyList()
     private var initialized: Boolean = false
@@ -62,11 +84,10 @@ class MusicService : Service() {
 
         isServiceRunning = true
         config = ConfigStore(baseContext)
-        repeat = config.getRepeat()
-        shuffle = config.getShuffle()
         headsetEventReceiver = HeadsetEventReceiver { player.stop() }
 
         registerReceiver(headsetEventReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
+        loadConfig()
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -77,10 +98,14 @@ class MusicService : Service() {
         listeners.remove(listener)
     }
 
+    /**
+     * firstOrNull, not first: retry() swaps playingList for a shorter one while the old player is
+     * still winding down, so the current item briefly belongs to a list this one no longer holds.
+     */
     fun getCurrentSong(): SongModel? {
-        if (player.currentMediaItem == null) return null
+        if (!::player.isInitialized || player.currentMediaItem == null) return null
 
-        return playingList.first { MediaItem.fromUri(it.getMediaUri()) == player.currentMediaItem }
+        return playingList.firstOrNull { MediaItem.fromUri(it.getMediaUri()) == player.currentMediaItem }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
@@ -135,8 +160,10 @@ class MusicService : Service() {
             RepeatState.ALL -> RepeatState.ONE
         }
         setRepeat()
-        config.saveRepeat(repeat)
         onChange()
+        // Reads the field at execution time rather than capturing it, so rapid taps all persist
+        // the state the user actually ended on.
+        serviceScope.launch { config.saveRepeat(repeat) }
     }
 
     fun getShuffle(): Boolean {
@@ -146,8 +173,8 @@ class MusicService : Service() {
     fun changeShuffle() {
         shuffle = !shuffle
         setShuffle()
-        config.saveShuffle(shuffle)
         onChange()
+        serviceScope.launch { config.saveShuffle(shuffle) }
     }
 
     fun seekTo(ms: Long) {
@@ -184,17 +211,38 @@ class MusicService : Service() {
         player.seekTo(index, 0)
         playerEventListener = PlayerEventListener()
         player.addListener(playerEventListener)
+        playerReleased = false
     }
 
     private fun startFirstService() {
         if (initialized) return
 
-        val notification = createNotification()
-
         LocalNotificationHelper.createNotificationChannel(applicationContext)
-        startForeground(NotificationConstant.NOTIFICATION_ID, notification)
+        // Posted without art so startForeground() lands well inside the five second deadline
+        // startForegroundService() sets. buildNotification() never returns null, which the
+        // previous code could when the current song was not resolvable yet.
+        startForeground(NotificationConstant.NOTIFICATION_ID, buildNotification(getCurrentSong(), null))
 
         initialized = true
+
+        notification()
+    }
+
+    /**
+     * The stored values arrive after onCreate() has returned. If the player already exists by
+     * then they are applied straight away; otherwise setPlayer() reads the fields when it runs.
+     */
+    private fun loadConfig() {
+        serviceScope.launch {
+            repeat = config.getRepeat()
+            shuffle = config.getShuffle()
+
+            if (!::player.isInitialized) return@launch
+
+            setRepeat()
+            setShuffle()
+            onChange()
+        }
     }
 
     private fun setRepeat() {
@@ -225,25 +273,50 @@ class MusicService : Service() {
         player.seekTo(player.mediaItemCount - 1, 0)
     }
 
-    private fun createNotification(): Notification? {
-        val song = getCurrentSong() ?: return null
-        var albumArtBitmap: Bitmap? = null
+    /** Pure assembly, no I/O, so it is safe to call while holding up the main thread. */
+    private fun buildNotification(song: SongModel?, albumArt: Bitmap?): Notification {
+        return LocalNotificationHelper.createNotification(
+            applicationContext, mediaStyle, song?.name ?: "", song?.artistName ?: "", albumArt
+        )
+    }
 
+    /**
+     * Embedded album art is regularly several megapixels and this used to be decoded at full size
+     * on the main thread, once per track change. The notification only ever shows a small icon.
+     */
+    private suspend fun decodeAlbumArt(song: SongModel): Bitmap? = withContext(Dispatchers.IO) {
         try {
             val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
 
-            albumArtBitmap = ImageDecoder.decodeBitmap(source)
+            ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
+                decoder.setTargetSampleSize(sampleSize(info.size))
+            }
         } catch (_: IOException) {
+            null
         }
-
-        return LocalNotificationHelper.createNotification(applicationContext, mediaStyle, song.name, song.artistName, albumArtBitmap)
     }
 
-    private fun notification() {
-        val notification = createNotification()
+    private fun sampleSize(size: Size): Int {
+        val longestEdge = maxOf(size.width, size.height)
+        var sampleSize = 1
 
-        if (notification != null) {
-            LocalNotificationHelper.notify(notification, applicationContext)
+        while (longestEdge / (sampleSize * 2) >= ALBUM_ART_MAX_PX) {
+            sampleSize *= 2
+        }
+
+        return sampleSize
+    }
+
+    /** Re-posts the notification once the art for [song] is decoded. A track change cancels the
+     * decode still in flight, so the art can never belong to the previous song. */
+    private fun notification() {
+        val song = getCurrentSong() ?: return
+
+        notificationJob?.cancel()
+        notificationJob = serviceScope.launch {
+            val albumArt = decodeAlbumArt(song)
+
+            LocalNotificationHelper.notify(buildNotification(song, albumArt), applicationContext)
         }
     }
 
@@ -278,8 +351,14 @@ class MusicService : Service() {
         }
     }
 
+    /**
+     * Guarded on the player rather than on `initialized`, which is only set once startForeground
+     * has run: between setPlayer() and startFirstService() a player exists that the old guard
+     * would have skipped. The flag also makes this idempotent, so retry() calling release() and
+     * then start() calling it again no longer reaches into an already released ExoPlayer.
+     */
     private fun release() {
-        if (!initialized) return
+        if (playerReleased) return
 
         if (isPlaying) {
             player.stop()
@@ -288,6 +367,7 @@ class MusicService : Service() {
         player.removeListener(playerEventListener)
         player.release()
         mediaSession.release()
+        playerReleased = true
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -300,13 +380,10 @@ class MusicService : Service() {
 
     @SuppressLint("ServiceCast")
     override fun onDestroy() {
-        if (isPlaying) {
-            player.stop()
-        }
-
-        player.removeListener(playerEventListener)
-        player.release()
-        mediaSession.release()
+        // Was a copy of release() without its guard, so a service destroyed before start() ever
+        // ran crashed on the uninitialised player.
+        serviceJob.cancel()
+        release()
         LocalNotificationHelper.cancelAll(applicationContext)
         unregisterReceiver(headsetEventReceiver)
         stopForeground(STOP_FOREGROUND_DETACH)

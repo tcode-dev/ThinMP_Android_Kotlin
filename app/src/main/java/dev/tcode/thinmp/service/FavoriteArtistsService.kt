@@ -11,26 +11,22 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
         val artistIds = favoriteArtistRepository.findAll()
         val artistRepository = ArtistRepository(context)
         val artists = artistRepository.findByIds(artistIds)
-
-        if (!validation(artistIds, artists)) {
-            fix(artistIds, artists)
-
-            return findAll()
-        }
-
-        return artistIds.mapNotNull { id ->
+        val found = artistIds.mapNotNull { id ->
             artists.find { it.artistId == id }
         }
+
+        removeMissing(artistIds, artists)
+
+        return found
     }
 
-    private fun validation(artistIds: List<ArtistId>, artists: List<ArtistModel>): Boolean {
-        return artistIds.count() == artists.count()
-    }
-
-    private suspend fun fix(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
+    /** See FavoriteSongsService.removeMissing() for why this no longer re-reads. */
+    private suspend fun removeMissing(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
         val deleteIds = artistIds.filter { id ->
             artists.none { it.artistId == id }
         }
+
+        if (deleteIds.isEmpty()) return
 
         favoriteArtistRepository.deleteByIds(deleteIds)
     }

@@ -75,23 +75,18 @@ class ShortcutService(
             map[shortcut.type]?.firstOrNull { item -> item.itemId.toId(item.type) == shortcut.itemId }
         }
 
-        if (!validation(shortcutEntities, shortcutModels)) {
-            fix(shortcutEntities, shortcutModels)
-
-            return findAll()
-        }
+        removeMissing(shortcutEntities, shortcutModels)
 
         return shortcutModels
     }
 
-    private fun validation(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>): Boolean {
-        return shortcutEntities.count() == shortcutModels.count()
-    }
-
-    private suspend fun fix(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
+    /** See FavoriteSongsService.removeMissing() for why this no longer re-reads. */
+    private suspend fun removeMissing(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->
             shortcutModels.none { it.itemId.toId(it.type) == shortcutEntity.itemId }
         }.map { it.id }
+
+        if (deleteShortcutIds.isEmpty()) return
 
         shortcutRepository.deleteByIds(deleteShortcutIds)
     }

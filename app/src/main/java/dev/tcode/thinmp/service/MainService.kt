@@ -8,20 +8,16 @@ import dev.tcode.thinmp.constant.RecentlyAlbumConstant
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.repository.AlbumRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class MainService(val context: Context) {
-    fun getMenu(): List<MainMenuItem> {
+    suspend fun getMenu(): List<MainMenuItem> {
         return MainMenuEnum.getList(context)
     }
 
-    // TODO: ConfigStore reads block on runBlocking internally; drop the wrapper once
-    // ConfigStore exposes suspend accessors and MusicService no longer needs them synchronously.
-    suspend fun getRecentlyAlbumsVisibility(): Boolean = withContext(Dispatchers.IO) {
+    suspend fun getRecentlyAlbumsVisibility(): Boolean {
         val config = ConfigStore(context)
 
-        config.getRecentlyAlbumsVisibility()
+        return config.getRecentlyAlbumsVisibility()
     }
 
     suspend fun getRecentlyAlbums(): List<AlbumModel> {
@@ -30,11 +26,10 @@ class MainService(val context: Context) {
         return repository.findRecentlyAdded(RecentlyAlbumConstant.DISPLAY_COUNT)
     }
 
-    // TODO: see getRecentlyAlbumsVisibility().
-    suspend fun getShortcutVisibility(): Boolean = withContext(Dispatchers.IO) {
+    suspend fun getShortcutVisibility(): Boolean {
         val config = ConfigStore(context)
 
-        config.getShortcutVisibility()
+        return config.getShortcutVisibility()
     }
 
     suspend fun getShortcuts(): List<ShortcutModel> {

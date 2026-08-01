@@ -23,23 +23,27 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
         }
         val imageUri = if (sortedSongs.isNotEmpty()) sortedSongs.first().getImageUri() else Uri.EMPTY
 
-        if (!validation(songIds, songs)) {
-            fix(playlistId, songIds, songs)
-
-            return findById(playlistId)
-        }
+        removeMissing(playlistId, songIds, songs)
 
         return PlaylistDetailModel(playlistId, playlist.name, resources.getString(R.string.playlist), imageUri, sortedSongs)
     }
 
-    private fun validation(songIds: List<SongId>, songs: List<SongModel>): Boolean {
-        return songIds.count() == songs.count()
-    }
-
-    private suspend fun fix(playlistId: PlaylistId, songIds: List<SongId>, songs: List<SongModel>) {
+    /**
+     * Drops entries whose file has left MediaStore. This used to compare songIds.count() with
+     * songs.count() and re-enter findById() on a mismatch, which never terminated for a playlist
+     * holding the same song twice: SQL IN collapses the duplicate so songs is one shorter, yet
+     * the id is present and nothing gets deleted. Adding a song to a playlist twice is an
+     * ordinary thing to do, so that hung the detail screen for good.
+     *
+     * sortedSongs maps per id rather than per MediaStore row, so a song listed twice still shows
+     * up twice, which is what the playlist says.
+     */
+    private suspend fun removeMissing(playlistId: PlaylistId, songIds: List<SongId>, songs: List<SongModel>) {
         val deleteIds = songIds.filter { id ->
             songs.none { it.songId == id }
         }
+
+        if (deleteIds.isEmpty()) return
 
         playlistRepository.delete(playlistId, deleteIds)
     }

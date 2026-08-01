@@ -14,14 +14,13 @@ class ShortcutViewModel : ViewModel(), ShortcutRegister {
     /**
      * Runs in viewModelScope rather than the caller's scope: the menu closes as soon as this is
      * invoked, so a composition-scoped coroutine would be cancelled before the write lands.
+     *
+     * The current state is decided inside the transaction rather than passed in from the menu
+     * label, so a stale label cannot turn an add into a second add.
      */
-    fun toggle(shortcutItemId: ShortcutItemId, isShortcut: Boolean) {
+    fun toggle(shortcutItemId: ShortcutItemId) {
         viewModelScope.launch {
-            if (isShortcut) {
-                delete(shortcutItemId)
-            } else {
-                add(shortcutItemId)
-            }
+            toggleShortcut(shortcutItemId)
         }
     }
 }

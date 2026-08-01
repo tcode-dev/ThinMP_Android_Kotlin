@@ -9,10 +9,8 @@ import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.MainService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -97,18 +95,14 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         if (saveJob?.isActive == true) return
 
         saveJob = viewModelScope.launch {
-            // TODO: ConfigStore blocks internally on runBlocking; drop the withContext once it
-            // exposes suspend accessors.
-            withContext(Dispatchers.IO) {
-                val config = ConfigStore(getApplication())
+            val config = ConfigStore(getApplication())
 
-                uiState.value.menu.forEach {
-                    config.saveMainMenuVisibility(it.key, it.visibility)
-                }
-
-                config.saveShortcutVisibility(uiState.value.shortcutVisibility)
-                config.saveRecentlyAlbumsVisibility(uiState.value.recentlyAlbumsVisibility)
+            uiState.value.menu.forEach {
+                config.saveMainMenuVisibility(it.key, it.visibility)
             }
+
+            config.saveShortcutVisibility(uiState.value.shortcutVisibility)
+            config.saveRecentlyAlbumsVisibility(uiState.value.recentlyAlbumsVisibility)
 
             reorderShortcuts(uiState.value.shortcuts.map { it.id })
             saved.emit(Unit)

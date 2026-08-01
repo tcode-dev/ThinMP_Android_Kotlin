@@ -105,12 +105,20 @@ class MusicPlayer(var listener: MusicPlayerListener) {
         )
     }
 
+    /**
+     * Also unbinds while a bind is still in flight. Guarding on `bound` alone leaked the
+     * ServiceConnection whenever a screen was left between bindService() and onServiceConnected(),
+     * and let the connection go on to register a listener for a view model that had already
+     * stopped. Both flags being false means bindService() was never called, so `connection` is
+     * still unassigned and must not be touched.
+     */
     private fun unbindService(context: Context) {
-        if (!bound) return
+        if (!isServiceBinding && !bound) return
 
         context.unbindService(connection)
         musicService = null
         bound = false
+        isServiceBinding = false
     }
 
     private fun createConnection(callback: () -> Unit? = {}): ServiceConnection {

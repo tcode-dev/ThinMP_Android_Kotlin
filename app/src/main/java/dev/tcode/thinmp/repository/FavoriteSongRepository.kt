@@ -12,8 +12,12 @@ class FavoriteSongRepository(
         return dao.exists(songId.id)
     }
 
+    /**
+     * distinct() because no unique index forbids a duplicate row. toggle() clears any it meets,
+     * but a device that accumulated one before toggle existed should not list the song twice.
+     */
     suspend fun findAll(): List<SongId> {
-        return dao.findAll().map { SongId(it.songId) }
+        return dao.findAll().map { SongId(it.songId) }.distinct()
     }
 
     suspend fun add(_songId: SongId) {

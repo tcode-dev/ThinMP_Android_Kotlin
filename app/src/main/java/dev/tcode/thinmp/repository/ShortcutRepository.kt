@@ -33,6 +33,15 @@ class ShortcutRepository(
         }
     }
 
+    suspend fun toggle(shortcutItemId: ShortcutItemId) {
+        when (shortcutItemId) {
+            is ArtistId -> dao.toggle(shortcutItemId.id, ItemType.ARTIST.ordinal)
+            is AlbumId -> dao.toggle(shortcutItemId.id, ItemType.ALBUM.ordinal)
+            is PlaylistId -> dao.toggle(shortcutItemId.id, ItemType.PLAYLIST.ordinal)
+            else -> throw IllegalArgumentException("Unknown expression")
+        }
+    }
+
     suspend fun delete(shortcutItemId: ShortcutItemId) {
         when (shortcutItemId) {
             is ArtistId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ARTIST.ordinal)

@@ -39,4 +39,15 @@ interface ShortcutDao {
     suspend fun insertAtEnd(itemId: String, type: Int) {
         insert(ShortcutEntity(itemId = itemId, type = type, order = getMaxOrder() + 1))
     }
+
+    /** Reads the current state and writes as one unit; separately they race and two concurrent
+     * toggles can both see "not a shortcut" and insert a second row for the same item. */
+    @Transaction
+    suspend fun toggle(itemId: String, type: Int) {
+        if (exists(itemId, type)) {
+            deleteByItemIdAndType(itemId, type)
+        } else {
+            insert(ShortcutEntity(itemId = itemId, type = type, order = getMaxOrder() + 1))
+        }
+    }
 }
