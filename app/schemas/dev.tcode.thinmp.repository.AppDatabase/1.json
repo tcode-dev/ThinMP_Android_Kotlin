@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "3d9d66bb40b84c48565e978b9e99d568",
+    "identityHash": "fa98f445440264abfbd0e16c40366083",
     "entities": [
       {
         "tableName": "favorite_songs",
@@ -27,7 +27,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_favorite_songs_songId",
+            "unique": false,
+            "columnNames": [
+              "songId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_favorite_songs_songId` ON `${TABLE_NAME}` (`songId`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -53,7 +63,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_favorite_artists_artistId",
+            "unique": false,
+            "columnNames": [
+              "artistId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_favorite_artists_artistId` ON `${TABLE_NAME}` (`artistId`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -117,7 +137,17 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_playlist_songs_playlistId",
+            "unique": false,
+            "columnNames": [
+              "playlistId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playlist_songs_playlistId` ON `${TABLE_NAME}` (`playlistId`)"
+          }
+        ],
         "foreignKeys": []
       },
       {
@@ -155,14 +185,25 @@
             "id"
           ]
         },
-        "indices": [],
+        "indices": [
+          {
+            "name": "index_shortcuts_itemId_type",
+            "unique": false,
+            "columnNames": [
+              "itemId",
+              "type"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_shortcuts_itemId_type` ON `${TABLE_NAME}` (`itemId`, `type`)"
+          }
+        ],
         "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '3d9d66bb40b84c48565e978b9e99d568')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'fa98f445440264abfbd0e16c40366083')"
     ]
   }
 }
