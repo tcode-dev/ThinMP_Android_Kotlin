@@ -3,9 +3,11 @@ package dev.tcode.thinmp.repository
 import dev.tcode.thinmp.application.MainApplication
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.room.FavoriteSongEntity
+import dev.tcode.thinmp.repository.dao.FavoriteSongDao
 
-class FavoriteSongRepository {
-    private val dao = AppDatabase.getDatabase(MainApplication.appContext).favoriteSongDao()
+class FavoriteSongRepository(
+    private val dao: FavoriteSongDao = AppDatabase.getDatabase(MainApplication.appContext).favoriteSongDao()
+) {
 
     fun exists(songId: SongId): Boolean {
         return dao.exists(songId.id)

@@ -9,8 +9,10 @@ import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.constant.ItemType
 import dev.tcode.thinmp.model.room.ShortcutEntity
 
-class ShortcutRepository {
-    private val dao = AppDatabase.getDatabase(MainApplication.appContext).shortcutDao()
+class ShortcutRepository(
+    private val db: AppDatabase = AppDatabase.getDatabase(MainApplication.appContext)
+) {
+    private val dao = db.shortcutDao()
 
     fun exists(shortcutItemId: ShortcutItemId): Boolean {
         return when (shortcutItemId) {

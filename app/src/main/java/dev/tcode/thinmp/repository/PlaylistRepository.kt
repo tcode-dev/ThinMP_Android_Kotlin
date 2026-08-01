@@ -6,8 +6,9 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.room.PlaylistEntity
 import dev.tcode.thinmp.model.room.PlaylistSongEntity
 
-class PlaylistRepository {
-    private val db = AppDatabase.getDatabase(MainApplication.appContext)
+class PlaylistRepository(
+    private val db: AppDatabase = AppDatabase.getDatabase(MainApplication.appContext)
+) {
     private val playlistDao = db.playlistDao()
     private val playlistSongDao = db.playlistSongDao()
 
