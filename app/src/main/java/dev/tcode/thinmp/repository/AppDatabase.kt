@@ -44,7 +44,6 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "thinmp_database"
                 )
-                    .allowMainThreadQueries()
                     .build()
                     .also { INSTANCE = it }
             }

@@ -28,8 +28,10 @@ class PlaylistDetailEditViewModel @Inject constructor(
 ) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
+    private var saveJob: Job? = null
     private val _uiState = MutableStateFlow(PlaylistDetailEditUiState())
     val uiState: StateFlow<PlaylistDetailEditUiState> = _uiState.asStateFlow()
+    val saved = OneShotEvent<Unit>()
     val id: PlaylistId
 
     init {
@@ -59,9 +61,12 @@ class PlaylistDetailEditViewModel @Inject constructor(
     }
 
     fun save() {
-        val songIds = uiState.value.songs.map { it.songId }
+        if (saveJob?.isActive == true) return
 
-        updatePlaylist(id, uiState.value.primaryText, songIds)
+        saveJob = viewModelScope.launch {
+            updatePlaylist(id, uiState.value.primaryText, uiState.value.songs.map { it.songId })
+            saved.emit(Unit)
+        }
     }
 
     override fun onResume() {

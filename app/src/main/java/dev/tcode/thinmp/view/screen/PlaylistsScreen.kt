@@ -36,8 +36,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
             items(uiState.playlists) { playlist ->
                 DropdownMenuView(dropdownContent = { callback ->
                     val callbackPlaylist = {
-                        viewModel.deletePlaylist(playlist.id)
-                        viewModel.load()
+                        viewModel.delete(playlist.id)
                         callback()
                     }
                     PlaylistRemoveDropdownMenuItemView(callbackPlaylist)

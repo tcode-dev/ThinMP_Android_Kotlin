@@ -4,6 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.PlaylistModel
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -47,6 +49,23 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
                     playlists = playlists
                 )
             }
+        }
+    }
+
+    // The popup and the dropdown close as soon as these are invoked, so the writes run in
+    // viewModelScope rather than in the caller's composition scope.
+    fun create(songId: SongId, name: String) {
+        viewModelScope.launch { createPlaylist(songId, name) }
+    }
+
+    fun addSong(playlistId: PlaylistId, songId: SongId) {
+        viewModelScope.launch { addSongToPlaylist(playlistId, songId) }
+    }
+
+    fun delete(playlistId: PlaylistId) {
+        viewModelScope.launch {
+            deletePlaylist(playlistId)
+            load()
         }
     }
 }

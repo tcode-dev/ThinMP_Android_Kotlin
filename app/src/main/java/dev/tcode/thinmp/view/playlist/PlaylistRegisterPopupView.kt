@@ -102,7 +102,7 @@ fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: P
                 ) {
                     OutlinedButton(
                         onClick = {
-                            viewModel.createPlaylist(songId, name)
+                            viewModel.create(songId, name)
                             callback()
                         },
                     ) {

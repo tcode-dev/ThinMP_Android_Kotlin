@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.repository
 
+import androidx.room.withTransaction
 import dev.tcode.thinmp.application.MainApplication
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
@@ -12,7 +13,7 @@ class PlaylistRepository(
     private val playlistDao = db.playlistDao()
     private val playlistSongDao = db.playlistSongDao()
 
-    fun create(songId: SongId, name: String) {
+    suspend fun create(songId: SongId, name: String) = db.withTransaction {
         val playlist = PlaylistEntity(name = name, order = increment())
         val song = PlaylistSongEntity(playlistId = playlist.id, songId = songId.id)
 
@@ -20,17 +21,17 @@ class PlaylistRepository(
         playlistSongDao.insert(song)
     }
 
-    fun add(playlistId: PlaylistId, songId: SongId) {
+    suspend fun add(playlistId: PlaylistId, songId: SongId) {
         val song = PlaylistSongEntity(playlistId = playlistId.id, songId = songId.id)
         playlistSongDao.insert(song)
     }
 
-    fun delete(playlistId: PlaylistId, songIds: List<SongId>) {
+    suspend fun delete(playlistId: PlaylistId, songIds: List<SongId>) {
         playlistSongDao.deleteByPlaylistIdAndSongIds(playlistId.id, songIds.map { it.id })
     }
 
-    fun updatePlaylist(playlistId: PlaylistId, name: String, songIds: List<SongId>) {
-        val playlist = playlistDao.findById(playlistId.id) ?: return
+    suspend fun updatePlaylist(playlistId: PlaylistId, name: String, songIds: List<SongId>) = db.withTransaction {
+        val playlist = playlistDao.findById(playlistId.id) ?: return@withTransaction
 
         playlistDao.update(playlist.copy(name = name))
         playlistSongDao.deleteByPlaylistId(playlistId.id)
@@ -40,7 +41,7 @@ class PlaylistRepository(
         playlistSongDao.insertAll(songs)
     }
 
-    fun reorder(playlistIds: List<PlaylistId>) {
+    suspend fun reorder(playlistIds: List<PlaylistId>) = db.withTransaction {
         val playlists = findAll()
         val group = playlists.groupBy { playlist -> playlistIds.any { it.id == playlist.id } }
         val deletePlaylists = group[false] ?: emptyList()
@@ -60,28 +61,28 @@ class PlaylistRepository(
         }
     }
 
-    fun findAll(): List<PlaylistEntity> {
+    suspend fun findAll(): List<PlaylistEntity> {
         return playlistDao.findAll()
     }
 
-    fun findById(playlistId: PlaylistId): PlaylistEntity? {
+    suspend fun findById(playlistId: PlaylistId): PlaylistEntity? {
         return playlistDao.findById(playlistId.id)
     }
 
-    fun findByIds(playlistIds: List<PlaylistId>): List<PlaylistEntity> {
+    suspend fun findByIds(playlistIds: List<PlaylistId>): List<PlaylistEntity> {
         return playlistDao.findByIds(playlistIds.map { it.id })
     }
 
-    fun findSongsByPlaylistId(playlistId: PlaylistId): List<PlaylistSongEntity> {
+    suspend fun findSongsByPlaylistId(playlistId: PlaylistId): List<PlaylistSongEntity> {
         return playlistSongDao.findByPlaylistId(playlistId.id)
     }
 
-    fun delete(playlistId: PlaylistId) {
+    suspend fun delete(playlistId: PlaylistId) = db.withTransaction {
         playlistSongDao.deleteByPlaylistId(playlistId.id)
         playlistDao.deleteById(playlistId.id)
     }
 
-    private fun increment(): Int {
+    private suspend fun increment(): Int {
         return playlistDao.getMaxOrder() + 1
     }
 }

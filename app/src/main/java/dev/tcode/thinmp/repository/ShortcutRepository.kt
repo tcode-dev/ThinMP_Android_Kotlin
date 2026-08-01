@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.repository
 
+import androidx.room.withTransaction
 import dev.tcode.thinmp.application.MainApplication
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -14,7 +15,7 @@ class ShortcutRepository(
 ) {
     private val dao = db.shortcutDao()
 
-    fun exists(shortcutItemId: ShortcutItemId): Boolean {
+    suspend fun exists(shortcutItemId: ShortcutItemId): Boolean {
         return when (shortcutItemId) {
             is ArtistId -> dao.exists(shortcutItemId.id, ItemType.ARTIST.ordinal)
             is AlbumId -> dao.exists(shortcutItemId.id, ItemType.ALBUM.ordinal)
@@ -23,7 +24,7 @@ class ShortcutRepository(
         }
     }
 
-    fun add(shortcutItemId: ShortcutItemId) {
+    suspend fun add(shortcutItemId: ShortcutItemId) {
         when (shortcutItemId) {
             is ArtistId -> add(shortcutItemId.id, ItemType.ARTIST)
             is AlbumId -> add(shortcutItemId.id, ItemType.ALBUM)
@@ -32,7 +33,7 @@ class ShortcutRepository(
         }
     }
 
-    fun delete(shortcutItemId: ShortcutItemId) {
+    suspend fun delete(shortcutItemId: ShortcutItemId) {
         when (shortcutItemId) {
             is ArtistId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ARTIST.ordinal)
             is AlbumId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ALBUM.ordinal)
@@ -41,11 +42,11 @@ class ShortcutRepository(
         }
     }
 
-    fun findAll(): List<ShortcutEntity> {
+    suspend fun findAll(): List<ShortcutEntity> {
         return dao.findAll()
     }
 
-    fun reorder(shortcutIds: List<ShortcutId>) {
+    suspend fun reorder(shortcutIds: List<ShortcutId>) = db.withTransaction {
         val shortcuts = findAll()
         val group = shortcuts.groupBy { shortcut -> shortcutIds.any { it.id == shortcut.id } }
         val deleteShortcuts = group[false] ?: emptyList()
@@ -64,21 +65,11 @@ class ShortcutRepository(
         }
     }
 
-    fun deleteByIds(ids: List<String>) {
+    suspend fun deleteByIds(ids: List<String>) {
         dao.deleteByIds(ids)
     }
 
-    private fun add(itemId: String, itemType: ItemType) {
-        dao.insert(
-            ShortcutEntity(
-                itemId = itemId,
-                type = itemType.ordinal,
-                order = increment()
-            )
-        )
-    }
-
-    private fun increment(): Int {
-        return dao.getMaxOrder() + 1
+    private suspend fun add(itemId: String, itemType: ItemType) {
+        dao.insertAtEnd(itemId, itemType.ordinal)
     }
 }

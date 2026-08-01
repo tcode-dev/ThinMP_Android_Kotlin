@@ -21,8 +21,10 @@ data class PlaylistsEditUiState(
 class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
+    private var saveJob: Job? = null
     private val _uiState = MutableStateFlow(PlaylistsEditUiState())
     val uiState: StateFlow<PlaylistsEditUiState> = _uiState.asStateFlow()
+    val saved = OneShotEvent<Unit>()
 
     init {
         load()
@@ -63,8 +65,11 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
     }
 
     fun save() {
-        val playlistIds = uiState.value.playlists.map { it.id }
+        if (saveJob?.isActive == true) return
 
-        reorderPlaylists(playlistIds)
+        saveJob = viewModelScope.launch {
+            reorderPlaylists(uiState.value.playlists.map { it.id })
+            saved.emit(Unit)
+        }
     }
 }
