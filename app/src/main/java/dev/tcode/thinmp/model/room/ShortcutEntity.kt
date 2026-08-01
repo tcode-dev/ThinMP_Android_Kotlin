@@ -1,10 +1,15 @@
 package dev.tcode.thinmp.model.room
 
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-@Entity(tableName = "shortcuts")
+/** Every shortcut lookup keys on the (itemId, type) pair, so one composite index covers them all. */
+@Entity(
+    tableName = "shortcuts",
+    indices = [Index(value = ["itemId", "type"])]
+)
 data class ShortcutEntity(
     @PrimaryKey
     val id: String = UUID.randomUUID().toString(),

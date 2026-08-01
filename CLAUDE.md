@@ -39,7 +39,7 @@ View → ViewModel → Register → Repository  (for domain operations like favo
 - **UI**: Jetpack Compose + Material 3, Coil for images, Accompanist for insets/permissions
 - **Playback**: MediaPlayer3 (ExoPlayer) 1.4.0, MusicService (foreground service), MediaSession
 - **DI**: Hilt
-- **Database**: Room (favorites, playlists, shortcuts), AppDatabase singleton via `MainApplication.appContext`. Schemas exported to `app/schemas/`
+- **Database**: Room (favorites, playlists, shortcuts), AppDatabase singleton via `MainApplication.appContext`. Schemas exported to `app/schemas/`. There is no `fallbackToDestructiveMigration()`, so every schema change needs a `Migration` in `AppDatabase` plus a case in `MigrationTest`, which validates it against the exported schema
 - **Preferences**: DataStore Preferences (repeat, shuffle, menu visibility)
 - **Async**: Kotlin Coroutines. All Room and MediaStore I/O is off the main thread
 
@@ -69,6 +69,11 @@ app/src/main/java/dev/tcode/thinmp/
 - Type-safe value objects for IDs (never raw strings/longs for entity IDs)
 - Each screen has a dedicated ViewModel
 - Room for user-created data; MediaStore for device audio
+- Every non-primary-key column a DAO query filters on carries an `@Index`, and nothing more:
+  composite only where every query filters on the whole pair (`shortcuts(itemId, type)`), not where
+  a leading column already narrows the scan to a handful of rows (`playlist_songs(playlistId)`).
+  The indexes are not `UNIQUE`: pre-`toggle` installs can hold duplicate favourites, which is what
+  `DuplicateEntryServiceTest` covers, and a unique index would fail the migration on them
 - Room repositories default to `MainApplication.appContext` for DB access but take the DAO or `AppDatabase` as a constructor argument, so tests can supply an in-memory database
 - Register interfaces create repository instances on-demand in each method
 - No ProGuard/R8 minification enabled
