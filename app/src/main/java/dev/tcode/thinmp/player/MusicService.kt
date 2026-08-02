@@ -333,6 +333,16 @@ class MusicService : Service() {
         }
     }
 
+    /**
+     * Drops the song that failed and starts again on the next one.
+     *
+     * The start this is recovering from is over before we get here: playback never began, so the
+     * EVENT_IS_PLAYING_CHANGED that would have cleared isStarting is never coming. Clearing it
+     * here rather than only on the empty-list path is what lets the start() below run at all -
+     * it returns immediately while the flag is set, which left the service holding a released
+     * player and a flag nothing would ever clear again, so every later start() returned too and
+     * playback was dead until the service was destroyed.
+     */
     private fun retry() {
         val count = playingList.count()
         val currentIndex = player.currentMediaItemIndex
@@ -341,14 +351,13 @@ class MusicService : Service() {
         list.removeAt(currentIndex)
 
         release()
+        isStarting = false
 
-        if (list.isNotEmpty()) {
-            val nextIndex = if (count == currentIndex + 1) currentIndex -1 else currentIndex
+        if (list.isEmpty()) return
 
-            start(list, nextIndex)
-        } else {
-            isStarting = false
-        }
+        val nextIndex = if (count == currentIndex + 1) currentIndex - 1 else currentIndex
+
+        start(list, nextIndex)
     }
 
     /**
