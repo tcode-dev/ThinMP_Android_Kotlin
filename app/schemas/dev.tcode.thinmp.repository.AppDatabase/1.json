@@ -2,15 +2,15 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "c4a7b3116c2289d955c4c1503da00988",
+    "identityHash": "65a086cc868d32f0cd8f20dafed7e33d",
     "entities": [
       {
         "tableName": "favorite_songs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`songId` TEXT NOT NULL, PRIMARY KEY(`songId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`song_id` TEXT NOT NULL, PRIMARY KEY(`song_id`))",
         "fields": [
           {
             "fieldPath": "songId",
-            "columnName": "songId",
+            "columnName": "song_id",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -18,7 +18,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "songId"
+            "song_id"
           ]
         },
         "indices": [],
@@ -26,11 +26,11 @@
       },
       {
         "tableName": "favorite_artists",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artistId` TEXT NOT NULL, PRIMARY KEY(`artistId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`artist_id` TEXT NOT NULL, PRIMARY KEY(`artist_id`))",
         "fields": [
           {
             "fieldPath": "artistId",
-            "columnName": "artistId",
+            "columnName": "artist_id",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -38,7 +38,7 @@
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "artistId"
+            "artist_id"
           ]
         },
         "indices": [],
@@ -78,7 +78,7 @@
       },
       {
         "tableName": "playlist_songs",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playlistId` TEXT NOT NULL, `songId` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `playlist_id` TEXT NOT NULL, `song_id` TEXT NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -88,13 +88,13 @@
           },
           {
             "fieldPath": "playlistId",
-            "columnName": "playlistId",
+            "columnName": "playlist_id",
             "affinity": "TEXT",
             "notNull": true
           },
           {
             "fieldPath": "songId",
-            "columnName": "songId",
+            "columnName": "song_id",
             "affinity": "TEXT",
             "notNull": true
           }
@@ -107,20 +107,20 @@
         },
         "indices": [
           {
-            "name": "index_playlist_songs_playlistId",
+            "name": "index_playlist_songs_playlist_id",
             "unique": false,
             "columnNames": [
-              "playlistId"
+              "playlist_id"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_playlist_songs_playlistId` ON `${TABLE_NAME}` (`playlistId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_playlist_songs_playlist_id` ON `${TABLE_NAME}` (`playlist_id`)"
           }
         ],
         "foreignKeys": []
       },
       {
         "tableName": "shortcuts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `itemId` TEXT NOT NULL, `type` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `item_id` TEXT NOT NULL, `type` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -130,7 +130,7 @@
           },
           {
             "fieldPath": "itemId",
-            "columnName": "itemId",
+            "columnName": "item_id",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -155,14 +155,14 @@
         },
         "indices": [
           {
-            "name": "index_shortcuts_itemId_type",
+            "name": "index_shortcuts_item_id_type",
             "unique": false,
             "columnNames": [
-              "itemId",
+              "item_id",
               "type"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_shortcuts_itemId_type` ON `${TABLE_NAME}` (`itemId`, `type`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_shortcuts_item_id_type` ON `${TABLE_NAME}` (`item_id`, `type`)"
           }
         ],
         "foreignKeys": []
@@ -171,7 +171,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c4a7b3116c2289d955c4c1503da00988')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '65a086cc868d32f0cd8f20dafed7e33d')"
     ]
   }
 }

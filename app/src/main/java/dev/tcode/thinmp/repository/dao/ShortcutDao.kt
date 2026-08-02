@@ -12,10 +12,10 @@ interface ShortcutDao {
     @Query("SELECT * FROM shortcuts ORDER BY `order` DESC")
     suspend fun findAll(): List<ShortcutEntity>
 
-    @Query("SELECT * FROM shortcuts WHERE itemId = :itemId AND type = :type")
+    @Query("SELECT * FROM shortcuts WHERE item_id = :itemId AND type = :type")
     suspend fun findByItemIdAndType(itemId: String, type: Int): List<ShortcutEntity>
 
-    @Query("SELECT COUNT(*) > 0 FROM shortcuts WHERE itemId = :itemId AND type = :type")
+    @Query("SELECT COUNT(*) > 0 FROM shortcuts WHERE item_id = :itemId AND type = :type")
     suspend fun exists(itemId: String, type: Int): Boolean
 
     @Query("SELECT COALESCE(MAX(`order`), 0) FROM shortcuts")
@@ -27,7 +27,7 @@ interface ShortcutDao {
     @Update
     suspend fun update(entity: ShortcutEntity)
 
-    @Query("DELETE FROM shortcuts WHERE itemId = :itemId AND type = :type")
+    @Query("DELETE FROM shortcuts WHERE item_id = :itemId AND type = :type")
     suspend fun deleteByItemIdAndType(itemId: String, type: Int)
 
     @Query("DELETE FROM shortcuts WHERE id IN (:ids)")

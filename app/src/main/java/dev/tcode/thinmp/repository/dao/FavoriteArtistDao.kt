@@ -11,10 +11,10 @@ interface FavoriteArtistDao {
     @Query("SELECT * FROM favorite_artists")
     suspend fun findAll(): List<FavoriteArtistEntity>
 
-    @Query("SELECT * FROM favorite_artists WHERE artistId = :artistId")
+    @Query("SELECT * FROM favorite_artists WHERE artist_id = :artistId")
     suspend fun findByArtistId(artistId: String): List<FavoriteArtistEntity>
 
-    @Query("SELECT COUNT(*) > 0 FROM favorite_artists WHERE artistId = :artistId")
+    @Query("SELECT COUNT(*) > 0 FROM favorite_artists WHERE artist_id = :artistId")
     suspend fun exists(artistId: String): Boolean
 
     @Insert
@@ -26,10 +26,10 @@ interface FavoriteArtistDao {
     @Query("DELETE FROM favorite_artists")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM favorite_artists WHERE artistId = :artistId")
+    @Query("DELETE FROM favorite_artists WHERE artist_id = :artistId")
     suspend fun deleteByArtistId(artistId: String)
 
-    @Query("DELETE FROM favorite_artists WHERE artistId IN (:artistIds)")
+    @Query("DELETE FROM favorite_artists WHERE artist_id IN (:artistIds)")
     suspend fun deleteByArtistIds(artistIds: List<String>)
 
     @Transaction

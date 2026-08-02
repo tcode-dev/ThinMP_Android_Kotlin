@@ -1,5 +1,6 @@
 package dev.tcode.thinmp.model.room
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
@@ -11,5 +12,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "favorite_songs")
 data class FavoriteSongEntity(
     @PrimaryKey
+    @ColumnInfo(name = "song_id")
     val songId: String = ""
 )
