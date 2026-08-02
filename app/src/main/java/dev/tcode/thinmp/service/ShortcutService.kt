@@ -38,7 +38,11 @@ class ShortcutService(
             map[ItemType.ARTIST.ordinal] = artists.map { artist ->
                 val albums = albumRepository.findByArtistId(artist.id)
                 val sortedAlbums = albums.sortedBy { it.name }
-                val imageUri = sortedAlbums.first().getImageUri()
+                // An artist can resolve to no album at all: the albums collection carries the
+                // album's artist, so an artist who only appears on a compilation is not the
+                // artist of any album row. first() threw there, and this runs while the main
+                // screen is loading, so it took the whole screen with it.
+                val imageUri = sortedAlbums.firstOrNull()?.getImageUri() ?: Uri.EMPTY
                 val id = group[ItemType.ARTIST.ordinal]!!.first { shortcut -> shortcut.itemId == artist.id }.id
 
                 ShortcutModel(ShortcutId(id), artist.artistId, artist.name, resources.getString(R.string.artist), imageUri, ItemType.ARTIST)
