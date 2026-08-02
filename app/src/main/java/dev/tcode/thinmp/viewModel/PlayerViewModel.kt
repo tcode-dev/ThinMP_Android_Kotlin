@@ -20,7 +20,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-const val TIME_FORMAT = "%1\$tM:%1\$tS"
 const val START_TIME = "00:00"
 
 data class PlayerUiState(
@@ -140,7 +139,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         _uiState.update { currentState ->
             currentState.copy(
                 sliderPosition = getSliderPosition(),
-                currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition()),
+                currentTime = formatTime(musicPlayer.getCurrentPosition()),
             )
         }
     }
@@ -171,8 +170,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
                 secondaryText = song.artistName,
                 imageUri = song.getImageUri(),
                 sliderPosition = getSliderPosition(),
-                currentTime = String.format(TIME_FORMAT, musicPlayer.getCurrentPosition().toLong()),
-                durationTime = String.format(TIME_FORMAT, song.duration.toLong()),
+                currentTime = formatTime(musicPlayer.getCurrentPosition()),
+                durationTime = formatTime(song.duration.toLong()),
                 isPlaying = musicPlayer.isPlaying(),
                 repeat = musicPlayer.getRepeat(),
                 shuffle = musicPlayer.getShuffle()
