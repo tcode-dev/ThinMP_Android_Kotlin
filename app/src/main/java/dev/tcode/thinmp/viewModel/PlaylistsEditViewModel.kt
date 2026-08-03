@@ -22,6 +22,16 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
+    /**
+     * Whether load() has put real data in _uiState. save() applies uiState as it stands, and its
+     * initial state is empty, so a done tap that beat the load used to write that emptiness back:
+     * reorder and replaceAll both take "not in the list" to mean "delete", which is how a list
+     * emptied by swiping is saved. Joining the load is not enough on its own - load() can return
+     * without populating anything - so the write is guarded on this as well.
+     */
+    private var loaded = false
+
     private val _uiState = MutableStateFlow(PlaylistsEditUiState())
     val uiState: StateFlow<PlaylistsEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -49,6 +59,7 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
                     playlists = playlists
                 )
             }
+            loaded = true
         }
     }
 
@@ -68,7 +79,12 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
         if (saveJob?.isActive == true) return
 
         saveJob = viewModelScope.launch {
-            reorderPlaylists(uiState.value.playlists.map { it.id })
+            loadJob?.join()
+
+            if (loaded) {
+                reorderPlaylists(uiState.value.playlists.map { it.id })
+            }
+
             saved.emit(Unit)
         }
     }

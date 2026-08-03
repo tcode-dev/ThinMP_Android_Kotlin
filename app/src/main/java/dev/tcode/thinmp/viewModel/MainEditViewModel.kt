@@ -23,6 +23,10 @@ data class MainEditUiState(
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
+    /** See PlaylistsEditViewModel.loaded. */
+    private var loaded = false
+
     private val _uiState = MutableStateFlow(MainEditUiState())
     val uiState: StateFlow<MainEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -45,6 +49,7 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
                     menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
                 )
             }
+            loaded = true
         }
     }
 
@@ -95,16 +100,21 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         if (saveJob?.isActive == true) return
 
         saveJob = viewModelScope.launch {
-            val config = ConfigStore(getApplication())
+            loadJob?.join()
 
-            uiState.value.menu.forEach {
-                config.saveMainMenuVisibility(it.key, it.visibility)
+            if (loaded) {
+                val config = ConfigStore(getApplication())
+
+                uiState.value.menu.forEach {
+                    config.saveMainMenuVisibility(it.key, it.visibility)
+                }
+
+                config.saveShortcutVisibility(uiState.value.shortcutVisibility)
+                config.saveRecentlyAlbumsVisibility(uiState.value.recentlyAlbumsVisibility)
+
+                reorderShortcuts(uiState.value.shortcuts.map { it.id })
             }
 
-            config.saveShortcutVisibility(uiState.value.shortcutVisibility)
-            config.saveRecentlyAlbumsVisibility(uiState.value.recentlyAlbumsVisibility)
-
-            reorderShortcuts(uiState.value.shortcuts.map { it.id })
             saved.emit(Unit)
         }
     }

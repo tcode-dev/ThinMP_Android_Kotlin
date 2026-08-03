@@ -29,6 +29,10 @@ class PlaylistDetailEditViewModel @Inject constructor(
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
+    /** See PlaylistsEditViewModel.loaded. */
+    private var loaded = false
+
     private val _uiState = MutableStateFlow(PlaylistDetailEditUiState())
     val uiState: StateFlow<PlaylistDetailEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -64,7 +68,12 @@ class PlaylistDetailEditViewModel @Inject constructor(
         if (saveJob?.isActive == true) return
 
         saveJob = viewModelScope.launch {
-            updatePlaylist(id, uiState.value.primaryText, uiState.value.songs.map { it.songId })
+            loadJob?.join()
+
+            if (loaded) {
+                updatePlaylist(id, uiState.value.primaryText, uiState.value.songs.map { it.songId })
+            }
+
             saved.emit(Unit)
         }
     }
@@ -88,6 +97,7 @@ class PlaylistDetailEditViewModel @Inject constructor(
                     primaryText = playlist.primaryText, songs = playlist.songs
                 )
             }
+            loaded = true
         }
     }
 }

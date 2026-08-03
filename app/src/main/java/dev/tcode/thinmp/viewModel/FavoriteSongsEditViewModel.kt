@@ -22,6 +22,10 @@ class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(ap
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
+    /** See PlaylistsEditViewModel.loaded. */
+    private var loaded = false
+
     private val _uiState = MutableStateFlow(FavoriteSongsEditUiState())
     val uiState: StateFlow<FavoriteSongsEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -41,6 +45,7 @@ class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(ap
                     songs = songs
                 )
             }
+            loaded = true
         }
     }
 
@@ -60,7 +65,12 @@ class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(ap
         if (saveJob?.isActive == true) return
 
         saveJob = viewModelScope.launch {
-            replaceFavoriteSongs(uiState.value.songs.map { it.songId })
+            loadJob?.join()
+
+            if (loaded) {
+                replaceFavoriteSongs(uiState.value.songs.map { it.songId })
+            }
+
             saved.emit(Unit)
         }
     }
