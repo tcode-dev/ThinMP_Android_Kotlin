@@ -54,7 +54,6 @@ app/src/main/java/dev/tcode/thinmp/
 ├── model/             # Data models, value objects, Room entities
 ├── notification/      # Playback notification helper
 ├── player/            # MusicPlayer, MusicService
-├── receiver/          # HeadsetEventReceiver
 ├── register/          # Domain logic interfaces (favorites, playlists)
 ├── repository/        # MediaStore and Room data access, dao/ subdirectory for Room DAOs
 ├── service/           # Business logic services
