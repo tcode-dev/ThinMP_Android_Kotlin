@@ -59,11 +59,8 @@ class ShortcutRepository(
         val shortcuts = findAll()
         val group = shortcuts.groupBy { shortcut -> shortcutIds.any { it.id == shortcut.id } }
         val deleteShortcuts = group[false] ?: emptyList()
-        val sortedShortcuts = if (group[true] != null) {
-            shortcutIds.mapNotNull { shortcutId -> group[true]?.first { it.id == shortcutId.id } }
-        } else {
-            emptyList()
-        }
+        // See PlaylistRepository.reorder() for why this is firstOrNull.
+        val sortedShortcuts = shortcutIds.mapNotNull { shortcutId -> group[true]?.firstOrNull { it.id == shortcutId.id } }
 
         if (deleteShortcuts.isNotEmpty()) {
             dao.deleteByIds(deleteShortcuts.map { it.id })

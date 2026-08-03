@@ -79,6 +79,22 @@ class ShortcutRepositoryTest {
         assertEquals(listOf(2, 1), shortcuts.map { it.order })
     }
 
+    /** See PlaylistRepositoryTest.reorderIgnoresAnIdThatIsNoLongerThere. */
+    @Test
+    fun reorderIgnoresAnIdThatIsNoLongerThere() = runTest {
+        repository.add(ArtistId("1"))
+        repository.add(ArtistId("2"))
+        val ids = repository.findAll().map { ShortcutId(it.id) }
+
+        repository.reorder(listOf(ids[0], ShortcutId("gone"), ids[1]))
+
+        val shortcuts = repository.findAll()
+
+        assertEquals(2, shortcuts.size)
+        assertEquals(listOf(ids[1].id, ids[0].id), shortcuts.map { it.id })
+        assertEquals(listOf(2, 1), shortcuts.map { it.order })
+    }
+
     @Test
     fun toggleAddsWhenAbsentAndRemovesWhenPresent() = runTest {
         repository.toggle(ArtistId("1"))
