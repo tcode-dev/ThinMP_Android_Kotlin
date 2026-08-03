@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.Service
 import android.content.Intent
-import android.content.IntentFilter
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Binder
@@ -24,7 +23,6 @@ import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.NotificationConstant
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.notification.LocalNotificationHelper
-import dev.tcode.thinmp.receiver.HeadsetEventReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -46,7 +44,6 @@ class MusicService : Service() {
     private lateinit var mediaSession: MediaSession
     @SuppressLint("UnsafeOptInUsageError")
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
-    private lateinit var headsetEventReceiver: HeadsetEventReceiver
     private lateinit var playerEventListener: PlayerEventListener
     private lateinit var config: ConfigStore
 
@@ -84,9 +81,7 @@ class MusicService : Service() {
 
         isServiceRunning = true
         config = ConfigStore(baseContext)
-        headsetEventReceiver = HeadsetEventReceiver { player.stop() }
 
-        registerReceiver(headsetEventReceiver, IntentFilter(Intent.ACTION_HEADSET_PLUG))
         loadConfig()
     }
 
@@ -193,9 +188,20 @@ class MusicService : Service() {
         return player.currentPosition
     }
 
+    /**
+     * setHandleAudioBecomingNoisy replaces a HEADSET_PLUG receiver this service used to register in
+     * onCreate(). That receiver called player.stop() on a lateinit player that onCreate() has not
+     * assigned yet and that release() may already have freed, it stopped rather than paused - which
+     * leaves ExoPlayer idle, so the play button afterwards did nothing until the queue was rebuilt -
+     * and it read the wired headset's state extra with AudioManager's Bluetooth SCO constants, which
+     * only lined up because both happen to be 0. ACTION_AUDIO_BECOMING_NOISY is the intent meant for
+     * this, it covers Bluetooth going away as well as the wired jack, and the player enables and
+     * disables its own receiver around playback, so there is no window where a released player is
+     * reachable.
+     */
     @OptIn(UnstableApi::class)
     private fun setPlayer(index: Int) {
-        player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).build()
+        player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
         mediaSession = MediaSession.Builder(applicationContext, player).build()
         mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
 
@@ -394,7 +400,6 @@ class MusicService : Service() {
         serviceJob.cancel()
         release()
         LocalNotificationHelper.cancelAll(applicationContext)
-        unregisterReceiver(headsetEventReceiver)
         stopForeground(STOP_FOREGROUND_DETACH)
         isServiceRunning = false
     }
