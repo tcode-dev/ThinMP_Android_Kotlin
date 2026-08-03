@@ -26,7 +26,7 @@ fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = viewMode
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        EditCollapsingTopAppBarView(callback) {
+        EditCollapsingTopAppBarView(uiState.loaded, callback) {
             itemsIndexed(uiState.artists) { index, artist ->
                 SwipeToDismissView(callback = { viewModel.removeArtist(index) }) {
                     PlainRowView(artist.name)

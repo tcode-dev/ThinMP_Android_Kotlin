@@ -14,23 +14,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/**
+ * `loaded` is false until load() has put real data here. The done button is disabled while it is,
+ * because save() writes this state as it stands and reorder/replaceAll both read "not in the list"
+ * as "delete" - which is how a list emptied by swiping is saved, and what turned a tap that beat
+ * the load into a wipe of the whole table. It cannot be inferred from the list being empty: an
+ * empty list is also what the user leaves behind after swiping everything away.
+ */
 data class PlaylistsEditUiState(
-    var playlists: List<PlaylistModel> = emptyList()
+    var playlists: List<PlaylistModel> = emptyList(), var loaded: Boolean = false
 )
 
 class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private var saveJob: Job? = null
-
-    /**
-     * Whether load() has put real data in _uiState. save() applies uiState as it stands, and its
-     * initial state is empty, so a done tap that beat the load used to write that emptiness back:
-     * reorder and replaceAll both take "not in the list" to mean "delete", which is how a list
-     * emptied by swiping is saved. Joining the load is not enough on its own - load() can return
-     * without populating anything - so the write is guarded on this as well.
-     */
-    private var loaded = false
 
     private val _uiState = MutableStateFlow(PlaylistsEditUiState())
     val uiState: StateFlow<PlaylistsEditUiState> = _uiState.asStateFlow()
@@ -56,10 +54,9 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    playlists = playlists
+                    playlists = playlists, loaded = true
                 )
             }
-            loaded = true
         }
     }
 
@@ -75,16 +72,18 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    /**
+     * The done button is disabled until the load lands, so this guard is only reached if a tap
+     * slips through before the state reaches the screen. Nothing happens then - no write, and no
+     * saved event either, because navigating away from a tap the user cannot see the effect of is
+     * worse than the tap appearing to do nothing.
+     */
     fun save() {
         if (saveJob?.isActive == true) return
+        if (!uiState.value.loaded) return
 
         saveJob = viewModelScope.launch {
-            loadJob?.join()
-
-            if (loaded) {
-                reorderPlaylists(uiState.value.playlists.map { it.id })
-            }
-
+            reorderPlaylists(uiState.value.playlists.map { it.id })
             saved.emit(Unit)
         }
     }
