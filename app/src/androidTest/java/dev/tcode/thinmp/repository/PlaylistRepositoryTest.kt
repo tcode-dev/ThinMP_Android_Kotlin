@@ -86,4 +86,23 @@ class PlaylistRepositoryTest {
         assertEquals(listOf(1, 2), playlists.map { it.order })
         assertTrue(repository.findSongsByPlaylistId(ids[1]).isEmpty())
     }
+
+    /**
+     * The caller works from a list it read earlier, so an id in it can be gone by the time the
+     * order is saved. Skipping it is what the reorder was written to do; it used to throw
+     * NoSuchElementException out of the transaction instead, leaving nothing renumbered.
+     */
+    @Test
+    fun reorderIgnoresAnIdThatIsNoLongerThere() = runTest {
+        repository.create(SongId("1"), "first")
+        repository.create(SongId("2"), "second")
+        val ids = repository.findAll().map { PlaylistId(it.id) }
+
+        repository.reorder(listOf(ids[1], PlaylistId("gone"), ids[0]))
+
+        val playlists = repository.findAll()
+
+        assertEquals(listOf("second", "first"), playlists.map { it.name })
+        assertEquals(listOf(1, 2), playlists.map { it.order })
+    }
 }
