@@ -29,13 +29,14 @@ class MainService(val context: Context) {
      * album and add it back and it returns with the id it had before, so the order it produces has
      * nothing to do with when anything was added.
      *
-     * findByIds cannot preserve an order, so the ids drive it afterwards, the way the favourites
-     * and shortcuts services do.
+     * The tracks come back one per album and already cut to the display count, so there is nothing
+     * to whittle down here. findByIds cannot preserve an order, so the ids drive it afterwards, the
+     * way the favourites and shortcuts services do.
      */
     suspend fun getRecentlyAlbums(): List<AlbumModel> {
         val songRepository = SongRepository(context)
         val albumRepository = AlbumRepository(context)
-        val albumIds = songRepository.findRecentlyAdded().map { it.albumId }.distinct().take(RecentlyAlbumConstant.DISPLAY_COUNT)
+        val albumIds = songRepository.findRecentlyAddedByAlbum(RecentlyAlbumConstant.DISPLAY_COUNT).map { it.albumId }
         val albums = albumRepository.findByIds(albumIds)
 
         return albumIds.mapNotNull { id -> albums.find { it.albumId == id } }

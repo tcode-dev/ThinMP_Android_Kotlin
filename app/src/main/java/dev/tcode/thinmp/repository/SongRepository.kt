@@ -1,6 +1,8 @@
 package dev.tcode.thinmp.repository
 
+import android.content.ContentResolver
 import android.content.Context
+import android.os.Bundle
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
@@ -61,16 +63,27 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
     }
 
     /**
-     * Newest first. The albums collection has no date of its own - it carries numsongs, artist,
-     * the two year columns and nothing else - so when an album was added is only knowable from the
-     * tracks in it.
+     * One track per album, the album with the most recently added track first, at most [limit] of
+     * them. The albums collection has no date of its own - it carries numsongs, artist, the two
+     * year columns and nothing else - so when an album was added is only knowable from its tracks.
+     *
+     * The grouping and the limit are SQL rather than Kotlin: MediaStore honours
+     * QUERY_ARG_SQL_GROUP_BY, so this returns one row per album instead of every track on the
+     * device for the main screen to whittle down.
+     *
+     * MAX(), because under a GROUP BY a bare date_added is taken from whichever row of the group
+     * SQLite happened to keep, which for an album whose tracks were added at different times is
+     * not the one that decides how recent the album is.
      */
-    suspend fun findRecentlyAdded(): List<SongModel> {
-        selection = MediaStore.Audio.Media.IS_MUSIC + " = 1"
-        selectionArgs = null
-        sortOrder = MediaStore.Audio.Media.DATE_ADDED + " DESC"
+    suspend fun findRecentlyAddedByAlbum(limit: Int): List<SongModel> {
+        val bundle = Bundle().apply {
+            putString(ContentResolver.QUERY_ARG_SQL_SELECTION, MediaStore.Audio.Media.IS_MUSIC + " = 1")
+            putString(ContentResolver.QUERY_ARG_SQL_GROUP_BY, MediaStore.Audio.Media.ALBUM_ID)
+            putString(ContentResolver.QUERY_ARG_SQL_SORT_ORDER, "MAX(${MediaStore.Audio.Media.DATE_ADDED}) DESC")
+            putInt(ContentResolver.QUERY_ARG_LIMIT, limit)
+        }
 
-        return getList()
+        return getList(bundle)
     }
 
     suspend fun findAll(): List<SongModel> {

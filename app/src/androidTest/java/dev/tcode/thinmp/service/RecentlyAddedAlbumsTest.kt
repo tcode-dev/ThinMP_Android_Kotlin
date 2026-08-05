@@ -58,17 +58,34 @@ class RecentlyAddedAlbumsTest {
     }
 
     /**
+     * An album is as recent as its newest track, and it appears once however many tracks it has.
+     * The grouping is SQL, so this is also the check that MediaStore honoured it: without it the
+     * album with two tracks comes back twice.
+     */
+    @Test
+    fun anAlbumIsAsRecentAsItsNewestTrack() = runBlocking {
+        insertTrack("a")
+        insertTrack("b")
+        insertTrack("a", suffix = "2")
+        assumeTrue("MediaStore gave the three tracks the same date_added", addedDates().distinct().size == 3)
+
+        val albums = MainService(context).getRecentlyAlbums().filter { it.name.startsWith(ALBUM_PREFIX) }
+
+        assertEquals(listOf("${ALBUM_PREFIX}a", "${ALBUM_PREFIX}b"), albums.map { it.name })
+    }
+
+    /**
      * date_added counts in seconds, so the tracks have to be spaced out to be ordered at all. The
      * test asserts they came out distinct rather than trusting the sleep.
      */
-    private fun insertTrack(suffix: String) {
+    private fun insertTrack(album: String, suffix: String = "") {
         val values = ContentValues().apply {
-            put(MediaStore.Audio.Media.DISPLAY_NAME, "$TITLE_PREFIX$suffix.mp3")
+            put(MediaStore.Audio.Media.DISPLAY_NAME, "$TITLE_PREFIX$album$suffix.mp3")
             put(MediaStore.Audio.Media.RELATIVE_PATH, "Music/")
             put(MediaStore.Audio.Media.MIME_TYPE, "audio/mpeg")
-            put(MediaStore.Audio.Media.TITLE, "$TITLE_PREFIX$suffix")
+            put(MediaStore.Audio.Media.TITLE, "$TITLE_PREFIX$album$suffix")
             put(MediaStore.Audio.Media.ARTIST, "thinmp_test_recent_artist")
-            put(MediaStore.Audio.Media.ALBUM, "$ALBUM_PREFIX$suffix")
+            put(MediaStore.Audio.Media.ALBUM, "$ALBUM_PREFIX$album")
             put(MediaStore.Audio.Media.IS_MUSIC, 1)
         }
 

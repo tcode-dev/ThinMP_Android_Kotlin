@@ -3,6 +3,7 @@ package dev.tcode.thinmp.repository
 import android.content.Context
 import android.database.Cursor
 import android.net.Uri
+import android.os.Bundle
 import android.text.TextUtils
 import dev.tcode.thinmp.model.media.Music
 import kotlinx.coroutines.Dispatchers
@@ -14,14 +15,14 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     var selectionArgs: Array<String>? = null
     var sortOrder: String? = null
 
-    private fun initialize() {
-        cursor = createCursor()
+    private fun initialize(bundle: Bundle?) {
+        cursor = createCursor(bundle)
     }
 
     abstract fun fetch(): T
 
     protected suspend fun get(): T? = withContext(Dispatchers.IO) {
-        initialize()
+        initialize(null)
 
         try {
             if (cursor?.moveToNext() != true) return@withContext null
@@ -32,8 +33,14 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         }
     }
 
-    protected suspend fun getList(): List<T> = withContext(Dispatchers.IO) {
-        initialize()
+    /**
+     * [bundle] is for queries the selection/sortOrder fields cannot express - a SQL GROUP BY, or a
+     * LIMIT. It is a parameter rather than another field beside them because it replaces all three:
+     * a field would have to be cleared by every other query on the way past, and forgetting once
+     * would silently apply the previous call's grouping.
+     */
+    protected suspend fun getList(bundle: Bundle? = null): List<T> = withContext(Dispatchers.IO) {
+        initialize(bundle)
 
         try {
             val list: MutableList<T> = ArrayList()
@@ -56,7 +63,11 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         return TextUtils.join(",", IntArray(size).map { "?" })
     }
 
-    private fun createCursor(): Cursor? {
+    private fun createCursor(bundle: Bundle?): Cursor? {
+        if (bundle != null) {
+            return context.contentResolver.query(uri, projection, bundle, null)
+        }
+
         return context.contentResolver.query(
             uri,
             projection,
