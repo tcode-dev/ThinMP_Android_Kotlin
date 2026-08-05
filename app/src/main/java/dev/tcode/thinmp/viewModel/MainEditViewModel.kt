@@ -16,13 +16,15 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
 data class MainEditUiState(
-    var menu: List<MainMenuItem> = emptyList(), var shortcuts: List<ShortcutModel> = emptyList(), var recentlyAlbumsVisibility: Boolean = true, var shortcutVisibility: Boolean = true
+    var menu: List<MainMenuItem> = emptyList(), var shortcuts: List<ShortcutModel> = emptyList(), var recentlyAlbumsVisibility: Boolean = true, var shortcutVisibility: Boolean = true, var loaded: Boolean = false
 )
 
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
     private val _uiState = MutableStateFlow(MainEditUiState())
     val uiState: StateFlow<MainEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -42,7 +44,7 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility
+                    menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility, loaded = true
                 )
             }
         }
@@ -91,8 +93,10 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    /** See PlaylistsEditViewModel.save(). */
     fun save() {
         if (saveJob?.isActive == true) return
+        if (!uiState.value.loaded) return
 
         saveJob = viewModelScope.launch {
             val config = ConfigStore(getApplication())

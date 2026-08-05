@@ -26,7 +26,7 @@ fun FavoriteSongsEditScreen(viewModel: FavoriteSongsEditViewModel = viewModel())
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        EditCollapsingTopAppBarView(callback) {
+        EditCollapsingTopAppBarView(uiState.loaded, callback) {
             itemsIndexed(uiState.songs) { index, song ->
                 SwipeToDismissView(callback = { viewModel.removeSong(index) }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())

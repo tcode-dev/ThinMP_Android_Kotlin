@@ -18,8 +18,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+/** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
 data class PlaylistDetailEditUiState(
-    var primaryText: String = "", var songs: List<SongModel> = emptyList()
+    var primaryText: String = "", var songs: List<SongModel> = emptyList(), var loaded: Boolean = false
 )
 
 @HiltViewModel
@@ -29,6 +30,7 @@ class PlaylistDetailEditViewModel @Inject constructor(
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
     private val _uiState = MutableStateFlow(PlaylistDetailEditUiState())
     val uiState: StateFlow<PlaylistDetailEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -60,8 +62,10 @@ class PlaylistDetailEditViewModel @Inject constructor(
         }
     }
 
+    /** See PlaylistsEditViewModel.save(). */
     fun save() {
         if (saveJob?.isActive == true) return
+        if (!uiState.value.loaded) return
 
         saveJob = viewModelScope.launch {
             updatePlaylist(id, uiState.value.primaryText, uiState.value.songs.map { it.songId })
@@ -85,7 +89,7 @@ class PlaylistDetailEditViewModel @Inject constructor(
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = playlist.primaryText, songs = playlist.songs
+                    primaryText = playlist.primaryText, songs = playlist.songs, loaded = true
                 )
             }
         }

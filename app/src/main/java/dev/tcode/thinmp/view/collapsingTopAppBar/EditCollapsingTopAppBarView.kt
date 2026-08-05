@@ -13,12 +13,12 @@ import dev.tcode.thinmp.view.topAppBar.EditTopAppBarView
 import dev.tcode.thinmp.view.util.EmptyTopAppBarView
 
 @Composable
-fun EditCollapsingTopAppBarView(callback: () -> Unit, content: LazyListScope.() -> Unit) {
+fun EditCollapsingTopAppBarView(enabled: Boolean, callback: () -> Unit, content: LazyListScope.() -> Unit) {
     val lazyListState = rememberLazyListState()
     val scrollOffset = remember { derivedStateOf { lazyListState.firstVisibleItemScrollOffset } }
 
     Box(Modifier.zIndex(1F)) {
-        EditTopAppBarView(visible = scrollOffset.value > 1, callback)
+        EditTopAppBarView(visible = scrollOffset.value > 1, enabled = enabled, callback)
     }
     LazyColumn(state = lazyListState) {
         item {

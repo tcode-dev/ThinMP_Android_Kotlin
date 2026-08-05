@@ -14,14 +14,16 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
 data class FavoriteArtistsEditUiState(
-    var artists: List<ArtistModel> = emptyList()
+    var artists: List<ArtistModel> = emptyList(), var loaded: Boolean = false
 )
 
 class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private var saveJob: Job? = null
+
     private val _uiState = MutableStateFlow(FavoriteArtistsEditUiState())
     val uiState: StateFlow<FavoriteArtistsEditUiState> = _uiState.asStateFlow()
     val saved = OneShotEvent<Unit>()
@@ -38,7 +40,7 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    artists = artists
+                    artists = artists, loaded = true
                 )
             }
         }
@@ -56,8 +58,10 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
         }
     }
 
+    /** See PlaylistsEditViewModel.save(). */
     fun save() {
         if (saveJob?.isActive == true) return
+        if (!uiState.value.loaded) return
 
         saveJob = viewModelScope.launch {
             replaceFavoriteArtists(uiState.value.artists.map { it.artistId })

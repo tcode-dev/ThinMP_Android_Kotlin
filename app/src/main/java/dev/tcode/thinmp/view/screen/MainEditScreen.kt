@@ -32,7 +32,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        EditCollapsingTopAppBarView(callback) {
+        EditCollapsingTopAppBarView(uiState.loaded, callback) {
             items(uiState.menu) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })
             }

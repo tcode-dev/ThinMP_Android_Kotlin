@@ -24,8 +24,17 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 
+/** Material's disabled content alpha, the same one the player's inactive icons use. */
+private const val DISABLED_ALPHA = 0.38F
+
+/**
+ * [visible] fades the bar's background in as the list scrolls under it; the row of buttons is
+ * outside that and always on screen. [enabled] is the done button on its own: the list arrives
+ * asynchronously and saving before it does would write an empty list back over the stored one, so
+ * the button stays inert - and looks it - until the screen has something real to save.
+ */
 @Composable
-fun EditTopAppBarView(visible: Boolean, callback: () -> Unit) {
+fun EditTopAppBarView(visible: Boolean, enabled: Boolean, callback: () -> Unit) {
     val navigator = LocalNavigator.current
 
     Box {
@@ -61,10 +70,13 @@ fun EditTopAppBarView(visible: Boolean, callback: () -> Unit) {
             Box(contentAlignment = Alignment.Center, modifier = Modifier
                 .align(alignment = Alignment.CenterEnd)
                 .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
-                .clickable {
+                .clickable(enabled = enabled) {
                     callback()
                 }) {
-                Text(stringResource(R.string.done), color = MaterialTheme.colorScheme.primary)
+                Text(
+                    stringResource(R.string.done),
+                    color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = DISABLED_ALPHA)
+                )
             }
         }
     }

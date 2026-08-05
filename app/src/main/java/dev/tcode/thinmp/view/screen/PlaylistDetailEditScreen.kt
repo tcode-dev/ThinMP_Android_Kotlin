@@ -31,7 +31,7 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
     CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
-        EditCollapsingTopAppBarView(doneCallback) {
+        EditCollapsingTopAppBarView(uiState.loaded, doneCallback) {
             item {
                 OutlinedTextField(
                     value = uiState.primaryText,
