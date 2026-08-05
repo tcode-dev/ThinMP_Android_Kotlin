@@ -60,6 +60,19 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList()
     }
 
+    /**
+     * Newest first. The albums collection has no date of its own - it carries numsongs, artist,
+     * the two year columns and nothing else - so when an album was added is only knowable from the
+     * tracks in it.
+     */
+    suspend fun findRecentlyAdded(): List<SongModel> {
+        selection = MediaStore.Audio.Media.IS_MUSIC + " = 1"
+        selectionArgs = null
+        sortOrder = MediaStore.Audio.Media.DATE_ADDED + " DESC"
+
+        return getList()
+    }
+
     suspend fun findAll(): List<SongModel> {
         selection = MediaStore.Audio.Media.IS_MUSIC + " = 1"
         selectionArgs = null
