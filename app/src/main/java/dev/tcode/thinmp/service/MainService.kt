@@ -8,6 +8,7 @@ import dev.tcode.thinmp.constant.RecentlyAlbumConstant
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.repository.AlbumRepository
+import dev.tcode.thinmp.repository.SongRepository
 
 class MainService(val context: Context) {
     suspend fun getMenu(): List<MainMenuItem> {
@@ -20,10 +21,25 @@ class MainService(val context: Context) {
         return config.getRecentlyAlbumsVisibility()
     }
 
+    /**
+     * The albums an album's tracks were added most recently first.
+     *
+     * This used to sort the albums collection by its own _id, on the assumption that a larger id
+     * means a newer album. MediaStore computes that id from the album's name instead: delete an
+     * album and add it back and it returns with the id it had before, so the order it produces has
+     * nothing to do with when anything was added.
+     *
+     * The tracks come back one per album and already cut to the display count, so there is nothing
+     * to whittle down here. findByIds cannot preserve an order, so the ids drive it afterwards, the
+     * way the favourites and shortcuts services do.
+     */
     suspend fun getRecentlyAlbums(): List<AlbumModel> {
-        val repository = AlbumRepository(context)
+        val songRepository = SongRepository(context)
+        val albumRepository = AlbumRepository(context)
+        val albumIds = songRepository.findRecentlyAddedByAlbum(RecentlyAlbumConstant.DISPLAY_COUNT).map { it.albumId }
+        val albums = albumRepository.findByIds(albumIds)
 
-        return repository.findRecentlyAdded(RecentlyAlbumConstant.DISPLAY_COUNT)
+        return albumIds.mapNotNull { id -> albums.find { it.albumId == id } }
     }
 
     suspend fun getShortcutVisibility(): Boolean {
