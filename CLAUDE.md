@@ -18,6 +18,27 @@ ThinMP is a lightweight Android music player built in Kotlin. It plays audio fro
 - Java target: JDK 17
 - Kotlin with KAPT (for Hilt and Room)
 
+### Running the instrumented tests
+
+`JAVA_HOME` comes from `env` in `.claude/settings.json`, so `./gradlew` needs no prefix. The Android
+SDK is not on `PATH`, so the emulator and adb are addressed by full path:
+
+```bash
+~/Library/Android/sdk/emulator/emulator -avd Medium_Phone_API_36.1 -no-boot-anim
+```
+
+- `tools/push-test-audio.sh` puts audio on the device. Without it the MediaStore-backed tests skip
+  themselves. `tools/push-compilation-audio.sh` builds the artist-with-no-album state by hand
+- A freshly booted emulator can report `Starting 0 tests` → `Process crashed`. That means the APKs
+  are not installed (`adb logcat` shows `Unable to find instrumentation info`), not a flaky
+  emulator. `adb install -r -t` both `app-debug.apk` and `app-debug-androidTest.apk`, then re-run
+- Shut the emulator down when finished (`adb emu kill`). A leftover instance blocks the next launch
+  of the same AVD
+- Anything that depends on the audio route changing cannot be tested on the emulator:
+  `ACTION_HEADSET_PLUG` and `ACTION_AUDIO_BECOMING_NOISY` are protected broadcasts, and with no
+  headset hardware `HEADSET_PLUG` never reaches the sticky list. Ask for a check on a real device
+  rather than trying to fake it
+
 ## Architecture
 
 Layered architecture with MVVM:
@@ -124,3 +145,30 @@ app/src/main/java/dev/tcode/thinmp/
   already mapped**. Do not re-enter the function after the cleanup: a duplicated id makes an id
   count and a MediaStore row count disagree forever, and the old re-read spun instead of
   converging
+
+## Working agreements
+
+- **Pull requests are written in Japanese** — the title, the commit message and the body alike.
+  The body opens with `## 概要`, then `## 理由`, then topic-specific sections, and closes with
+  `## 動作確認`. PRs #4 through #12 predate this and stay as they are
+- **A title says what the change makes true**, in terms visible from outside the code —
+  `編集画面で、存在しない id があっても並び替えを保存できるようにする`, not the name of the
+  function that changed and not a `〜を修正` suffix, which carries no information because every
+  commit is a change. Never name a symptom that was not actually verified: a title claiming a crash
+  the body admits was never reproduced contradicts its own body. What was broken goes in `## 概要`
+- Merges are **squash**, and this repository's `squash_merge_commit_title` is `COMMIT_OR_PR_TITLE`,
+  so a single-commit PR lands on main under the *commit's* subject rather than the PR title — write
+  the subject as if it were the title. Branches are kept after merging, so no `--delete-branch`
+- **Never force-push**, in any form, on any branch. `--amend` is only for commits that have not been
+  pushed; once a commit is on the remote a correction goes in a follow-up commit, and wording that
+  no longer matches gets fixed in the PR body instead
+- The bar for `## 動作確認` is unit tests, the instrumented suite with its count, and a **negative
+  control** — revert the fix, show the new tests fail, restore it. State plainly what was not
+  verified rather than leaving it implied
+- **A PR describes its own change and nothing else.** Other bugs noticed on the way, and any request
+  for the reviewer to go and check something on a device, belong in the report after the work, not
+  in the body — they make the PR bigger than the change it is asking to merge. "This was not
+  verified on Android 13" is part of `## 動作確認` and stays; "please confirm it on your device"
+  does not
+- When reporting that a command passed, keep the result off the command line itself. `./gradlew test
+  — pass` gets copy-pasted verbatim and Gradle then fails on `—` as a task name

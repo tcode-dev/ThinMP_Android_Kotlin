@@ -1,0 +1,43 @@
+{
+  "env": {
+    "JAVA_HOME": "/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(./gradlew *)",
+      "Bash(adb *)",
+      "Bash(~/Library/Android/sdk/platform-tools/adb *)",
+      "Bash(~/Library/Android/sdk/emulator/emulator *)",
+      "Bash(./tools/*)",
+
+      "Edit",
+      "Write",
+      "Bash(mkdir *)",
+      "Bash(cp *)",
+      "Bash(find *)",
+      "Bash(sed -n *)",
+      "Bash(sleep *)",
+
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git switch*)",
+      "Bash(git restore*)",
+      "Bash(git stash*)"
+    ],
+    "ask": [
+      "Bash(git push*)",
+      "Bash(git fetch*)",
+      "Bash(git pull*)",
+      "Bash(git clone*)",
+      "Bash(gh *)",
+      "Bash(curl *)",
+      "Bash(wget *)",
+      "Bash(ssh *)",
+      "Bash(scp *)",
+      "WebFetch",
+      "WebSearch"
+    ]
+  }
+}
