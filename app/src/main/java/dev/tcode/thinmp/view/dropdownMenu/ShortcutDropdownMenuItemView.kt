@@ -16,6 +16,8 @@ import dev.tcode.thinmp.viewModel.ShortcutViewModel
 fun ShortcutDropdownMenuItemView(id: ShortcutItemId, callback: () -> Unit, viewModel: ShortcutViewModel = viewModel()) {
     // Keyed by id so the row that opened the menu is the row this reflects. Until the query
     // returns the item stays in place but disabled, so the menu does not change height.
+    // See FavoriteArtistDropdownMenuItemView for why this is suppressed.
+    @Suppress("ProduceStateDoesNotAssignValue")
     val isShortcut by produceState<Boolean?>(initialValue = null, id) { value = viewModel.isShortcut(id) }
 
     DropdownMenuItem(
