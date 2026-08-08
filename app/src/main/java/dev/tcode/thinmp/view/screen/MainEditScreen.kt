@@ -36,14 +36,21 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
             items(uiState.menu) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })
             }
-            item {
-                EditRowView(stringResource(R.string.shortcut), uiState.shortcutVisibility, Modifier.clickable { viewModel.setShortcutVisibility() })
-            }
-            item {
-                EditRowView(stringResource(R.string.recently_added), uiState.recentlyAlbumsVisibility, Modifier.clickable { viewModel.setRecentlyAlbumsVisibility() })
-            }
-            item {
-                SectionTitleView(stringResource(R.string.shortcut))
+            // The menu rows above and the shortcuts below are lists, so they simply are not there
+            // until the load fills them. These three are written out, so without the guard they
+            // are on screen from the first frame: the two checkboxes showing their default of on
+            // whatever is actually stored, and taking taps that load() then overwrites when it
+            // lands. The section title is here for the same reason - a heading over nothing.
+            if (uiState.loaded) {
+                item {
+                    EditRowView(stringResource(R.string.shortcut), uiState.shortcutVisibility, Modifier.clickable { viewModel.setShortcutVisibility() })
+                }
+                item {
+                    EditRowView(stringResource(R.string.recently_added), uiState.recentlyAlbumsVisibility, Modifier.clickable { viewModel.setRecentlyAlbumsVisibility() })
+                }
+                item {
+                    SectionTitleView(stringResource(R.string.shortcut))
+                }
             }
             itemsIndexed(uiState.shortcuts) { index, shortcut ->
                 SwipeToDismissView(callback = { viewModel.removeShortcut(index) }) {
