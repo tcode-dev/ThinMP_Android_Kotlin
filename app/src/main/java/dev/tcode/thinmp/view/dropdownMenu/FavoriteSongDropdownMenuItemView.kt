@@ -16,6 +16,8 @@ import dev.tcode.thinmp.viewModel.FavoriteSongRegisterViewModel
 fun FavoriteSongDropdownMenuItemView(id: SongId, callback: () -> Unit, viewModel: FavoriteSongRegisterViewModel = viewModel()) {
     // Keyed by id so the row that opened the menu is the row this reflects. Until the query
     // returns the item stays in place but disabled, so the menu does not change height.
+    // See FavoriteArtistDropdownMenuItemView for why this is suppressed.
+    @Suppress("ProduceStateDoesNotAssignValue")
     val isFavorite by produceState<Boolean?>(initialValue = null, id) { value = viewModel.isFavorite(id) }
 
     DropdownMenuItem(
