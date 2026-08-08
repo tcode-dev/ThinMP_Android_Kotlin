@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -9,12 +10,14 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.FavoriteSongRepository
 import dev.tcode.thinmp.repository.PlaylistRepository
 import dev.tcode.thinmp.repository.SongRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withTimeout
 import kotlinx.coroutines.withTimeoutOrNull
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -31,9 +34,13 @@ import org.junit.runner.RunWith
  * The button is disabled until the load lands, and save() refuses on its own as well, which is what
  * these tests drive: they call save() directly, the way a tap that slipped through would.
  *
- * Calling save() in the same main-thread block as the constructor is what makes this deterministic
- * rather than a race: viewModelScope dispatches with Dispatchers.Main.immediate, so load() runs
- * inline until its first database call suspends, and save() then runs while uiState is still empty.
+ * Calling save() in the same main-thread block as the constructor gets close to a cold start but
+ * does not pin the ordering: withContext returns without suspending at all when the work on the
+ * other dispatcher finishes before the caller reaches its suspension check, so with the database
+ * warm and the table tiny the whole load can land inside the constructor. The two tests below
+ * assert the invariant that holds either way - opening the screen and pressing done immediately
+ * never destroys anything - and savingWithoutLoadedStateReportsNothing pins the guard itself on a
+ * load that cannot finish, rather than on winning a race.
  *
  * Unlike the repository tests these view models build their own repositories, so this exercises the
  * app's real database on the device rather than an in-memory one. Every test clears what it touches
@@ -89,13 +96,19 @@ class EditSaveBeforeLoadTest {
     /**
      * The tap does nothing at all. Reporting saved would take the user back to the previous screen
      * off a tap whose effect they cannot see, which reads as "saved" when nothing was.
+     *
+     * A playlist id that resolves to nothing gives a load that runs to completion without ever
+     * filling uiState - findById returns null and load() returns early - so `loaded` stays false
+     * however long this waits. That is the state the guard exists for, held still.
      */
     @Test
-    fun savingBeforeTheListLoadsReportsNothing() = runBlocking {
-        val repository = PlaylistRepository()
-        repository.create(SongId(songIdValue), "first")
+    fun savingWithoutLoadedStateReportsNothing() = runBlocking {
+        val viewModel = onMain { PlaylistDetailEditViewModel(application, SavedStateHandle(mapOf("id" to "gone"))) }
 
-        val viewModel = onMain { PlaylistsEditViewModel(application).also { it.save() } }
+        delay(quietMs)
+        assertFalse(viewModel.uiState.value.loaded)
+
+        onMain { viewModel.save() }
 
         assertNull(withTimeoutOrNull(quietMs) { viewModel.saved.flow.first() })
     }
@@ -140,9 +153,9 @@ class EditSaveBeforeLoadTest {
     }
 
     /**
-     * The constructor and the save have to happen on the main thread and in one block, or
-     * Dispatchers.Main.immediate posts them instead of running them inline and the ordering the
-     * test depends on is gone.
+     * Everything that touches a view model goes through here: viewModelScope dispatches with
+     * Dispatchers.Main.immediate, so calling from anywhere else posts the work instead of running
+     * it, and the constructor would return before load() had even started.
      */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
