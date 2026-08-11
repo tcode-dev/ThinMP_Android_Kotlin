@@ -40,7 +40,14 @@ class MusicService : Service() {
     private val PREV_MS = 3000
     private val ALBUM_ART_MAX_PX = 512
     private val binder = MusicBinder()
-    private lateinit var player: ExoPlayer
+
+    /**
+     * Null until start() builds one and again from release() on, so "never started" and "already
+     * released" are the same state rather than a lateinit check and a flag that each covered only
+     * one of them. Every caller has to go through `?.` or an early return, which is what keeps the
+     * transport controls from reaching a player that is not there.
+     */
+    private var player: ExoPlayer? = null
     private lateinit var mediaSession: MediaSession
     @SuppressLint("UnsafeOptInUsageError")
     private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
@@ -60,7 +67,6 @@ class MusicService : Service() {
      */
     private var repeat: RepeatState = RepeatState.OFF
     private var notificationJob: Job? = null
-    private var playerReleased = true
     private var listeners: MutableList<MusicServiceListener> = mutableListOf()
     private var playingList: List<SongModel> = emptyList()
     private var initialized: Boolean = false
@@ -98,9 +104,9 @@ class MusicService : Service() {
      * still winding down, so the current item briefly belongs to a list this one no longer holds.
      */
     fun getCurrentSong(): SongModel? {
-        if (!::player.isInitialized || player.currentMediaItem == null) return null
+        val currentMediaItem = player?.currentMediaItem ?: return null
 
-        return playingList.firstOrNull { MediaItem.fromUri(it.getMediaUri()) == player.currentMediaItem }
+        return playingList.firstOrNull { MediaItem.fromUri(it.getMediaUri()) == currentMediaItem }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
@@ -116,17 +122,19 @@ class MusicService : Service() {
     }
 
     fun play() {
-        player.play()
+        player?.play()
     }
 
     fun pause() {
-        player.pause()
+        player?.pause()
     }
 
     fun prev() {
-        if (getCurrentPosition() <= PREV_MS) {
-            if (isFirstSong()) {
-                seekToLast()
+        val player = this.player ?: return
+
+        if (player.currentPosition <= PREV_MS) {
+            if (isFirstSong(player)) {
+                seekToLast(player)
             } else {
                 player.seekToPrevious()
             }
@@ -137,8 +145,10 @@ class MusicService : Service() {
     }
 
     fun next() {
-        if (isLastSong()) {
-            seekToFirst()
+        val player = this.player ?: return
+
+        if (isLastSong(player)) {
+            seekToFirst(player)
         } else {
             player.seekToNext()
         }
@@ -154,7 +164,7 @@ class MusicService : Service() {
             RepeatState.ONE -> RepeatState.OFF
             RepeatState.ALL -> RepeatState.ONE
         }
-        setRepeat()
+        player?.let { setRepeat(it) }
         onChange()
         // Reads the field at execution time rather than capturing it, so rapid taps all persist
         // the state the user actually ended on.
@@ -167,12 +177,14 @@ class MusicService : Service() {
 
     fun changeShuffle() {
         shuffle = !shuffle
-        setShuffle()
+        player?.let { setShuffle(it) }
         onChange()
         serviceScope.launch { config.saveShuffle(shuffle) }
     }
 
     fun seekTo(ms: Long) {
+        val player = this.player ?: return
+
         try {
             player.seekTo(ms)
         } catch (e: Exception) {
@@ -185,15 +197,15 @@ class MusicService : Service() {
     }
 
     fun getCurrentPosition(): Long {
-        return player.currentPosition
+        return player?.currentPosition ?: 0
     }
 
     /**
      * setHandleAudioBecomingNoisy replaces a HEADSET_PLUG receiver this service used to register in
-     * onCreate(). That receiver called player.stop() on a lateinit player that onCreate() has not
-     * assigned yet and that release() may already have freed, it stopped rather than paused - which
-     * leaves ExoPlayer idle, so the play button afterwards did nothing until the queue was rebuilt -
-     * and it read the wired headset's state extra with AudioManager's Bluetooth SCO constants, which
+     * onCreate(). That receiver called player.stop() on a player that onCreate() has not built yet
+     * and that release() may already have freed, it stopped rather than paused - which leaves
+     * ExoPlayer idle, so the play button afterwards did nothing until the queue was rebuilt - and
+     * it read the wired headset's state extra with AudioManager's Bluetooth SCO constants, which
      * only lined up because both happen to be 0. ACTION_AUDIO_BECOMING_NOISY is the intent meant for
      * this, it covers Bluetooth going away as well as the wired jack, and the player enables and
      * disables its own receiver around playback, so there is no window where a released player is
@@ -201,12 +213,14 @@ class MusicService : Service() {
      */
     @OptIn(UnstableApi::class)
     private fun setPlayer(index: Int) {
-        player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
+        val player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
+
+        this.player = player
         mediaSession = MediaSession.Builder(applicationContext, player).build()
         mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
 
-        setRepeat()
-        setShuffle()
+        setRepeat(player)
+        setShuffle(player)
 
         val mediaItems = playingList.map {
             MediaItem.fromUri(it.getMediaUri())
@@ -217,7 +231,6 @@ class MusicService : Service() {
         player.seekTo(index, 0)
         playerEventListener = PlayerEventListener()
         player.addListener(playerEventListener)
-        playerReleased = false
     }
 
     private fun startFirstService() {
@@ -243,15 +256,15 @@ class MusicService : Service() {
             repeat = config.getRepeat()
             shuffle = config.getShuffle()
 
-            if (!::player.isInitialized) return@launch
+            val player = this@MusicService.player ?: return@launch
 
-            setRepeat()
-            setShuffle()
+            setRepeat(player)
+            setShuffle(player)
             onChange()
         }
     }
 
-    private fun setRepeat() {
+    private fun setRepeat(player: ExoPlayer) {
         player.repeatMode = when (repeat) {
             RepeatState.OFF -> Player.REPEAT_MODE_OFF
             RepeatState.ONE -> Player.REPEAT_MODE_ONE
@@ -259,23 +272,23 @@ class MusicService : Service() {
         }
     }
 
-    private fun setShuffle() {
+    private fun setShuffle(player: ExoPlayer) {
         player.shuffleModeEnabled = shuffle
     }
 
-    private fun isFirstSong(): Boolean {
+    private fun isFirstSong(player: ExoPlayer): Boolean {
         return player.currentMediaItemIndex == 0
     }
 
-    private fun isLastSong(): Boolean {
+    private fun isLastSong(player: ExoPlayer): Boolean {
         return player.currentMediaItemIndex == player.mediaItemCount - 1
     }
 
-    private fun seekToFirst() {
+    private fun seekToFirst(player: ExoPlayer) {
         player.seekTo(0, 0)
     }
 
-    private fun seekToLast() {
+    private fun seekToLast(player: ExoPlayer) {
         player.seekTo(player.mediaItemCount - 1, 0)
     }
 
@@ -350,6 +363,7 @@ class MusicService : Service() {
      * playback was dead until the service was destroyed.
      */
     private fun retry() {
+        val player = this.player ?: return
         val count = playingList.count()
         val currentIndex = player.currentMediaItemIndex
         val list = playingList.toMutableList()
@@ -369,11 +383,11 @@ class MusicService : Service() {
     /**
      * Guarded on the player rather than on `initialized`, which is only set once startForeground
      * has run: between setPlayer() and startFirstService() a player exists that the old guard
-     * would have skipped. The flag also makes this idempotent, so retry() calling release() and
-     * then start() calling it again no longer reaches into an already released ExoPlayer.
+     * would have skipped. Clearing the field makes this idempotent, so retry() calling release()
+     * and then start() calling it again no longer reaches into an already released ExoPlayer.
      */
     private fun release() {
-        if (playerReleased) return
+        val player = this.player ?: return
 
         if (isPlaying) {
             player.stop()
@@ -382,7 +396,7 @@ class MusicService : Service() {
         player.removeListener(playerEventListener)
         player.release()
         mediaSession.release()
-        playerReleased = true
+        this.player = null
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -424,9 +438,11 @@ class MusicService : Service() {
             // ループ再生していない場合最後の曲の再生が終了すると呼ばれる
             // 曲が1曲の場合、onMediaItemTransition、events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
             if (playbackState == Player.STATE_ENDED) {
+                val player = this@MusicService.player ?: return
+
                 isPlaying = false
                 player.pause()
-                seekToFirst()
+                seekToFirst(player)
                 onChange()
             }
         }
