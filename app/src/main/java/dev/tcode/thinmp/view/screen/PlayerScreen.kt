@@ -41,10 +41,12 @@ import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.image.ImageView
+import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.playlist.PlaylistRegisterPopupView
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 import dev.tcode.thinmp.view.title.SecondaryTitleView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
+import dev.tcode.thinmp.view.util.OnEvent
 import dev.tcode.thinmp.view.util.isHeightMedium
 import dev.tcode.thinmp.view.util.maxSize
 import dev.tcode.thinmp.view.util.minSize
@@ -54,6 +56,7 @@ import dev.tcode.thinmp.viewModel.PlayerViewModel
 @Composable
 fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val navigator = LocalNavigator.current
     val visiblePopup = remember { mutableStateOf(false) }
     val minSize = minSize()
     val maxSize = maxSize()
@@ -64,6 +67,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
     CustomLifecycleEventObserver(viewModel)
+    OnEvent(viewModel.queueEmptied) { navigator.back() }
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (player, img) = createRefs()

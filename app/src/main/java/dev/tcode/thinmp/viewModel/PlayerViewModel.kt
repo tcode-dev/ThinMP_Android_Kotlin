@@ -45,6 +45,7 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private var seekBarJob: Job? = null
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
+    val queueEmptied = OneShotEvent<Unit>()
 
     init {
         bindService()
@@ -114,6 +115,23 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     override fun onChange() {
         cancelSeekBarProgressTask()
         update()
+    }
+
+    /**
+     * The queue emptied out under the screen: retry() dropped the song that failed, found nothing
+     * left to play and released the player. Every control here still reaches the service, which
+     * silently ignores all of it, so the screen stays up looking alive and does nothing. Leaving is
+     * what the mini player already does for the same state - it hides itself in its own onError().
+     *
+     * When retry() did find another song it has already started it by the time this runs, so
+     * getCurrentSong() is the new song and the screen stays where it is.
+     */
+    override fun onError() {
+        if (musicPlayer.getCurrentSong() != null) return
+
+        cancelSeekBarProgressTask()
+
+        viewModelScope.launch { queueEmptied.emit(Unit) }
     }
 
     override fun onResume() {
