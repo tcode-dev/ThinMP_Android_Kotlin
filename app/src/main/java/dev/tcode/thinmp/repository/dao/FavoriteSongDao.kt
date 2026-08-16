@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import dev.tcode.thinmp.constant.SqliteConstant
 import dev.tcode.thinmp.model.room.FavoriteSongEntity
 
 @Dao
@@ -30,7 +31,15 @@ interface FavoriteSongDao {
     suspend fun deleteBySongId(songId: String)
 
     @Query("DELETE FROM favorite_songs WHERE song_id IN (:songIds)")
-    suspend fun deleteBySongIds(songIds: List<String>)
+    suspend fun deleteBySongIdsChunk(songIds: List<String>)
+
+    /** Splits the list so the statement stays under [SqliteConstant.MAX_VARIABLES], and runs the
+     * chunks as one unit so a caller cleaning up ids that have left MediaStore either drops all of
+     * them or none. */
+    @Transaction
+    suspend fun deleteBySongIds(songIds: List<String>) {
+        songIds.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteBySongIdsChunk(it) }
+    }
 
     @Transaction
     suspend fun replaceAll(entities: List<FavoriteSongEntity>) {

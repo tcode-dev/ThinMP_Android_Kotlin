@@ -37,13 +37,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
     }
 
     suspend fun findByIds(songIds: List<SongId>): List<SongModel> {
-        val ids = songIds.map { it.id }
-
-        selection = MediaStore.Audio.Media._ID + " IN (" + makePlaceholders(ids.size) + ") " + "AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
-        selectionArgs = toStringArray(ids)
-        sortOrder = null
-
-        return getList()
+        return getListByIds(MediaStore.Audio.Media._ID, songIds.map { it.id }, MediaStore.Audio.Media.IS_MUSIC + " = 1")
     }
 
     suspend fun findByArtistId(artistId: String): List<SongModel> {

@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import dev.tcode.thinmp.constant.SqliteConstant
 import dev.tcode.thinmp.model.room.ShortcutEntity
 
 @Dao
@@ -31,7 +32,13 @@ interface ShortcutDao {
     suspend fun deleteByItemIdAndType(itemId: String, type: Int)
 
     @Query("DELETE FROM shortcuts WHERE id IN (:ids)")
-    suspend fun deleteByIds(ids: List<String>)
+    suspend fun deleteByIdsChunk(ids: List<String>)
+
+    /** See FavoriteSongDao.deleteBySongIds. */
+    @Transaction
+    suspend fun deleteByIds(ids: List<String>) {
+        ids.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteByIdsChunk(it) }
+    }
 
     /** Reads the current maximum order and inserts as one unit; separately they race and two
      * concurrent adds can be assigned the same order. */
