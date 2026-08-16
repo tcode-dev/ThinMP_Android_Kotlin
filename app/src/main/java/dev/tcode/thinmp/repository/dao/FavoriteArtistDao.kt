@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
+import dev.tcode.thinmp.constant.SqliteConstant
 import dev.tcode.thinmp.model.room.FavoriteArtistEntity
 
 @Dao
@@ -30,7 +31,13 @@ interface FavoriteArtistDao {
     suspend fun deleteByArtistId(artistId: String)
 
     @Query("DELETE FROM favorite_artists WHERE artist_id IN (:artistIds)")
-    suspend fun deleteByArtistIds(artistIds: List<String>)
+    suspend fun deleteByArtistIdsChunk(artistIds: List<String>)
+
+    /** See FavoriteSongDao.deleteBySongIds. */
+    @Transaction
+    suspend fun deleteByArtistIds(artistIds: List<String>) {
+        artistIds.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteByArtistIdsChunk(it) }
+    }
 
     @Transaction
     suspend fun replaceAll(entities: List<FavoriteArtistEntity>) {
