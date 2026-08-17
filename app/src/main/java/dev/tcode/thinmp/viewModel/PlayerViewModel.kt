@@ -225,6 +225,6 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     private fun getSliderPosition(): Float {
         val song = musicPlayer.getCurrentSong() ?: return 0f
 
-        return (musicPlayer.getCurrentPosition().toFloat() / song.duration.toFloat())
+        return sliderPosition(musicPlayer.getCurrentPosition(), song.duration.toLong())
     }
 }
