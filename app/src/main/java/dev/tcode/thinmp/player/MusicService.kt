@@ -64,13 +64,19 @@ class MusicService : Service() {
     /**
      * Defaults until the stored values arrive. onCreate() used to block the main thread on two
      * DataStore reads, inside the five second window startForegroundService() allows.
+     *
+     * The buttons are live during that window, so each of the two carries a flag saying the user
+     * has already worked it. loadConfig() skips the ones that are set: what the user just chose is
+     * newer than what was on disk, and changeRepeat() / changeShuffle() have saved it themselves.
      */
     private var repeat: RepeatState = RepeatState.OFF
+    private var repeatChangedByUser = false
     private var notificationJob: Job? = null
     private var listeners: MutableList<MusicServiceListener> = mutableListOf()
     private var playingList: List<SongModel> = emptyList()
     private var initialized: Boolean = false
     private var shuffle = false
+    private var shuffleChangedByUser = false
     private var isPlaying = false
     private var isStarting = false
 
@@ -159,6 +165,7 @@ class MusicService : Service() {
     }
 
     fun changeRepeat() {
+        repeatChangedByUser = true
         repeat = when (repeat) {
             RepeatState.OFF -> RepeatState.ALL
             RepeatState.ONE -> RepeatState.OFF
@@ -176,6 +183,7 @@ class MusicService : Service() {
     }
 
     fun changeShuffle() {
+        shuffleChangedByUser = true
         shuffle = !shuffle
         player?.let { setShuffle(it) }
         onChange()
@@ -250,11 +258,19 @@ class MusicService : Service() {
     /**
      * The stored values arrive after onCreate() has returned. If the player already exists by
      * then they are applied straight away; otherwise setPlayer() reads the fields when it runs.
+     *
+     * Both are read before either is applied, so nothing suspends between the two flag checks and
+     * the fields they guard: a tap either lands before this whole block, and is kept, or after it,
+     * and wins on its own. Assigning as each read returned left a gap between them where a tap on
+     * shuffle was still overwritten however the repeat flag came out.
      */
     private fun loadConfig() {
         serviceScope.launch {
-            repeat = config.getRepeat()
-            shuffle = config.getShuffle()
+            val storedRepeat = config.getRepeat()
+            val storedShuffle = config.getShuffle()
+
+            if (!repeatChangedByUser) repeat = storedRepeat
+            if (!shuffleChangedByUser) shuffle = storedShuffle
 
             val player = this@MusicService.player ?: return@launch
 
