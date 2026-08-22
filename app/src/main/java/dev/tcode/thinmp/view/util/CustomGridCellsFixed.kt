@@ -5,11 +5,11 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
-import okhttp3.internal.toImmutableList
 
 /**
  * GridCellsを拡張してLazyVerticalGridの各行の最初と最後の要素の幅を変更する
  * GridCells.Fixedの代わりに使う
+ * 最初と最後を区別するため2列以上でのみ使える
  */
 class CustomGridCellsFixed(
     private val count: Int,
@@ -17,19 +17,19 @@ class CustomGridCellsFixed(
 ) : GridCells {
 
     init {
-        require(count > 0)
+        require(count > 1)
     }
 
     override fun Density.calculateCrossAxisCellSizes(availableSize: Int, spacing: Int): List<Int> {
-        val contentSize = availableSize - (edgeSpace.roundToPx() * 2)
+        val edge = edgeSpace.roundToPx()
+        val contentSize = availableSize - (spacing * (count - 1)) - (edge * 2)
         val baseSize = contentSize / count
-        val edgeSize = baseSize + edgeSpace.roundToPx()
-        val baseCount = count - 2
-        val list = MutableList(baseCount) { baseSize }
+        val remainder = contentSize % count
 
-        list.add(0, edgeSize)
-        list.add(edgeSize)
+        return List(count) { index ->
+            val extra = if (index == 0 || index == count - 1) edge else 0
 
-        return list.toImmutableList()
+            baseSize + (if (index < remainder) 1 else 0) + extra
+        }
     }
 }
