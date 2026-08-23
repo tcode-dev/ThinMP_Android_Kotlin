@@ -32,4 +32,16 @@ class CustomGridCellsFixed(
             baseSize + (if (index < remainder) 1 else 0) + extra
         }
     }
+
+    /**
+     * LazyVerticalGridは列幅の計算結果をremember(columns, ...)で保持するため、同じ列数・同じ余白なら
+     * 等しいインスタンスとして扱われなければ、recompositionのたびにキャッシュごと作り直される
+     */
+    override fun equals(other: Any?): Boolean {
+        return other is CustomGridCellsFixed && count == other.count && edgeSpace == other.edgeSpace
+    }
+
+    override fun hashCode(): Int {
+        return 31 * count + edgeSpace.hashCode()
+    }
 }
