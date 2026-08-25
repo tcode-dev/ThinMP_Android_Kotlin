@@ -1,8 +1,10 @@
 package dev.tcode.thinmp.view.util
 
+import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertThrows
 import org.junit.Test
 
@@ -60,6 +62,25 @@ class CustomGridCellsFixedTest {
         assertThrows(IllegalArgumentException::class.java) { CustomGridCellsFixed(1) }
         assertThrows(IllegalArgumentException::class.java) { CustomGridCellsFixed(0) }
         assertThrows(IllegalArgumentException::class.java) { CustomGridCellsFixed(-1) }
+    }
+
+    /**
+     * 各画面はrecompositionのたびにインスタンスを生成し直すため、ここが等しくないと
+     * remember(columns, ...)が持つ列幅のキャッシュが毎回作り直される。
+     */
+    @Test
+    fun treatsTheSameColumnCountAndEdgeSpaceAsEqual() {
+        assertEquals(CustomGridCellsFixed(2, edge.dp), CustomGridCellsFixed(2, edge.dp))
+        assertEquals(CustomGridCellsFixed(2, edge.dp).hashCode(), CustomGridCellsFixed(2, edge.dp).hashCode())
+        assertEquals(CustomGridCellsFixed(3), CustomGridCellsFixed(3))
+    }
+
+    /** 列数か余白が変われば幅も変わるので、キャッシュを引き継いではいけない。 */
+    @Test
+    fun treatsDifferentColumnCountOrEdgeSpaceAsNotEqual() {
+        assertNotEquals(CustomGridCellsFixed(2, edge.dp), CustomGridCellsFixed(3, edge.dp))
+        assertNotEquals(CustomGridCellsFixed(2, edge.dp), CustomGridCellsFixed(2, (edge + 1).dp))
+        assertNotEquals(CustomGridCellsFixed(2, edge.dp), GridCells.Fixed(2))
     }
 
     private fun calculate(count: Int, availableSize: Int, spacing: Int = 0, density: Float = 1f): List<Int> {
