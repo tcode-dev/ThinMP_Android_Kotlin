@@ -2,6 +2,7 @@ package dev.tcode.thinmp.repository
 
 import android.content.ContentResolver
 import android.content.Context
+import android.database.Cursor
 import android.os.Bundle
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.SongModel
@@ -29,11 +30,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
             "END ASC"
 
     suspend fun findById(songId: String): SongModel? {
-        selection = MediaStore.Audio.Media._ID + " = ?"
-        selectionArgs = arrayOf(songId)
-        sortOrder = null
-
-        return get()
+        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(songId))
     }
 
     suspend fun findByIds(songIds: List<SongId>): List<SongModel> {
@@ -41,19 +38,19 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
     }
 
     suspend fun findByArtistId(artistId: String): List<SongModel> {
-        selection = MediaStore.Audio.Media.ARTIST_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
-        selectionArgs = arrayOf(artistId)
-        sortOrder = "${MediaStore.Audio.Media.ALBUM} ASC, $trackNumberSortOrder"
-
-        return getList()
+        return getList(
+            MediaStore.Audio.Media.ARTIST_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1",
+            arrayOf(artistId),
+            "${MediaStore.Audio.Media.ALBUM} ASC, $trackNumberSortOrder"
+        )
     }
 
     suspend fun findByAlbumId(albumId: String): List<SongModel> {
-        selection = MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1"
-        selectionArgs = arrayOf(albumId)
-        sortOrder = trackNumberSortOrder
-
-        return getList()
+        return getList(
+            MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1",
+            arrayOf(albumId),
+            trackNumberSortOrder
+        )
     }
 
     /**
@@ -81,58 +78,65 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
     }
 
     suspend fun findAll(): List<SongModel> {
-        selection = MediaStore.Audio.Media.IS_MUSIC + " = 1"
-        selectionArgs = null
-        sortOrder = MediaStore.Audio.Media.TITLE + " ASC"
-
-        return getList()
+        return getList(
+            MediaStore.Audio.Media.IS_MUSIC + " = 1",
+            null,
+            MediaStore.Audio.Media.TITLE + " ASC"
+        )
     }
 
-    private fun getId(): SongId {
-        val id = cursor?.getColumnIndex(MediaStore.Audio.Media._ID)?.let { cursor?.getString(it) } ?: ""
+    private fun getId(cursor: Cursor): SongId {
+        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)) ?: ""
 
         return SongId(id)
     }
 
-    private fun getTitle(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.TITLE)?.let { cursor?.getString(it) } ?: ""
+    private fun getTitle(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)) ?: ""
     }
 
-    private fun getArtistId(): ArtistId {
-        val id = cursor?.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)?.let { cursor?.getString(it) } ?: ""
+    private fun getArtistId(cursor: Cursor): ArtistId {
+        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
 
         return ArtistId(id)
     }
 
-    private fun getArtistName(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.ARTIST)?.let { cursor?.getString(it) } ?: ""
+    private fun getArtistName(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) ?: ""
     }
 
-    private fun getAlbumId(): AlbumId {
-        val id = cursor?.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)?.let { cursor?.getString(it) } ?: ""
+    private fun getAlbumId(cursor: Cursor): AlbumId {
+        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)) ?: ""
 
         return AlbumId(id)
     }
 
-    private fun getAlbumName(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.ALBUM)?.let { cursor?.getString(it) } ?: ""
+    private fun getAlbumName(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)) ?: ""
     }
 
-    private fun getDuration(): Int {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.DURATION)?.let { cursor?.getInt(it) } ?: 0
+    private fun getDuration(cursor: Cursor): Int {
+        return cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
     }
 
-    private fun getTrackNumber(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.CD_TRACK_NUMBER)?.let { cursor?.getString(it) } ?: ""
+    private fun getTrackNumber(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.CD_TRACK_NUMBER)) ?: ""
     }
 
-    private fun getSong(): SongModel {
+    private fun getSong(cursor: Cursor): SongModel {
         return SongModel(
-            getId(), getTitle(), getArtistId(), getArtistName(), getAlbumId(), getAlbumName(), getDuration(), getTrackNumber()
+            getId(cursor),
+            getTitle(cursor),
+            getArtistId(cursor),
+            getArtistName(cursor),
+            getAlbumId(cursor),
+            getAlbumName(cursor),
+            getDuration(cursor),
+            getTrackNumber(cursor)
         )
     }
 
-    override fun fetch(): SongModel {
-        return getSong()
+    override fun fetch(cursor: Cursor): SongModel {
+        return getSong(cursor)
     }
 }

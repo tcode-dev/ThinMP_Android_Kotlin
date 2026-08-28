@@ -10,50 +10,34 @@ import dev.tcode.thinmp.model.media.Music
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * The query and the cursor it opens are arguments and locals, never fields. As fields they were
+ * shared by every caller of the same instance: two coroutines querying one repository would
+ * overwrite each other's selection between the assignment and the query, and close each other's
+ * cursor mid-iteration. Nothing here is scoped to the instance, so the instance holds nothing.
+ */
 abstract class MediaStoreRepository<T : Music>(private val context: Context, private val uri: Uri, private val projection: Array<String>) {
-    protected var cursor: Cursor? = null
-    var selection: String? = null
-    var selectionArgs: Array<String>? = null
-    var sortOrder: String? = null
+    abstract fun fetch(cursor: Cursor): T
 
-    private fun initialize(bundle: Bundle?) {
-        cursor = createCursor(bundle)
-    }
-
-    abstract fun fetch(): T
-
-    protected suspend fun get(): T? = withContext(Dispatchers.IO) {
-        initialize(null)
-
-        try {
-            if (cursor?.moveToNext() != true) return@withContext null
-
-            fetch()
-        } finally {
-            destroy()
+    protected suspend fun get(selection: String? = null, selectionArgs: Array<String>? = null): T? = withContext(Dispatchers.IO) {
+        createCursor(selection, selectionArgs, null)?.use { cursor ->
+            if (cursor.moveToNext()) fetch(cursor) else null
         }
     }
+
+    protected suspend fun getList(selection: String? = null, selectionArgs: Array<String>? = null, sortOrder: String? = null): List<T> =
+        withContext(Dispatchers.IO) {
+            toList(createCursor(selection, selectionArgs, sortOrder))
+        }
 
     /**
-     * [bundle] is for queries the selection/sortOrder fields cannot express - a SQL GROUP BY, or a
-     * LIMIT. It is a parameter rather than another field beside them because it replaces all three:
-     * a field would have to be cleared by every other query on the way past, and forgetting once
-     * would silently apply the previous call's grouping.
+     * [bundle] is for queries the selection/sortOrder arguments cannot express - a SQL GROUP BY, or
+     * a LIMIT. It is an overload rather than a fourth argument beside them because it carries its
+     * own selection and sort order: ContentResolver.query() takes either the three arguments or the
+     * bundle, never both.
      */
-    protected suspend fun getList(bundle: Bundle? = null): List<T> = withContext(Dispatchers.IO) {
-        initialize(bundle)
-
-        try {
-            val list: MutableList<T> = ArrayList()
-
-            while (cursor?.moveToNext() == true) {
-                list.add(fetch())
-            }
-
-            list
-        } finally {
-            destroy()
-        }
+    protected suspend fun getList(bundle: Bundle): List<T> = withContext(Dispatchers.IO) {
+        toList(context.contentResolver.query(uri, projection, bundle, null))
     }
 
     /**
@@ -73,12 +57,20 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         val suffix = if (condition == null) "" else " AND $condition"
 
         return ids.distinct().chunked(SqliteConstant.MAX_VARIABLES).flatMap { chunk ->
-            selection = "$idColumn IN (${makePlaceholders(chunk.size)})$suffix"
-            selectionArgs = toStringArray(chunk)
-            sortOrder = null
-
-            getList()
+            getList("$idColumn IN (${makePlaceholders(chunk.size)})$suffix", toStringArray(chunk))
         }
+    }
+
+    private fun toList(cursor: Cursor?): List<T> {
+        val list: MutableList<T> = ArrayList()
+
+        cursor?.use {
+            while (it.moveToNext()) {
+                list.add(fetch(it))
+            }
+        }
+
+        return list
     }
 
     private fun toStringArray(list: List<String>): Array<String> {
@@ -89,11 +81,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         return TextUtils.join(",", IntArray(size).map { "?" })
     }
 
-    private fun createCursor(bundle: Bundle?): Cursor? {
-        if (bundle != null) {
-            return context.contentResolver.query(uri, projection, bundle, null)
-        }
-
+    private fun createCursor(selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
         return context.contentResolver.query(
             uri,
             projection,
@@ -101,10 +89,5 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
             selectionArgs,
             sortOrder
         )
-    }
-
-    private fun destroy() {
-        cursor?.close()
-        cursor = null
     }
 }

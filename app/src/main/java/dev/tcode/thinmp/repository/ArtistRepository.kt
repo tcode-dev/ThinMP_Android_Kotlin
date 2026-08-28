@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.repository
 
 import android.content.Context
+import android.database.Cursor
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -14,57 +15,45 @@ class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
     )
 ) {
     suspend fun findAll(): List<ArtistModel> {
-        selection = null
-        selectionArgs = null
-        sortOrder = MediaStore.Audio.Artists.ARTIST + " ASC"
-
-        return getList();
+        return getList(sortOrder = MediaStore.Audio.Artists.ARTIST + " ASC")
     }
 
     suspend fun findById(artistId: String): ArtistModel? {
-        selection = MediaStore.Audio.Media._ID + " = ?"
-        selectionArgs = arrayOf(artistId)
-        sortOrder = null
-
-        return get()
+        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(artistId))
     }
 
     suspend fun findByIds(artistIds: List<ArtistId>): List<ArtistModel> {
         return getListByIds(MediaStore.Audio.Media._ID, artistIds.map { it.id })
     }
 
-    private fun getId(): ArtistId {
-        val id = cursor?.getColumnIndex(MediaStore.Audio.Artists._ID)?.let { cursor?.getString(it) }
-            ?: ""
+    private fun getId(cursor: Cursor): ArtistId {
+        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists._ID)) ?: ""
 
         return ArtistId(id)
     }
 
-    private fun getArtistName(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Media.ARTIST)?.let { cursor?.getString(it) }
-            ?: ""
+    private fun getArtistName(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) ?: ""
     }
 
-    private fun getNumberOfAlbums(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)?.let { cursor?.getString(it) }
-            ?: ""
+    private fun getNumberOfAlbums(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)) ?: ""
     }
 
-    private fun getNumberOfTracks(): String {
-        return cursor?.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)?.let { cursor?.getString(it) }
-            ?: ""
+    private fun getNumberOfTracks(cursor: Cursor): String {
+        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)) ?: ""
     }
 
-    private fun getArtist(): ArtistModel {
+    private fun getArtist(cursor: Cursor): ArtistModel {
         return ArtistModel(
-            getId(),
-            getArtistName(),
-            getNumberOfAlbums(),
-            getNumberOfTracks(),
+            getId(cursor),
+            getArtistName(cursor),
+            getNumberOfAlbums(cursor),
+            getNumberOfTracks(cursor),
         )
     }
 
-    override fun fetch(): ArtistModel {
-        return getArtist()
+    override fun fetch(cursor: Cursor): ArtistModel {
+        return getArtist(cursor)
     }
 }
