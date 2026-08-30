@@ -59,6 +59,42 @@ class PlaylistRepositoryTest {
         assertEquals(listOf("2", "3"), repository.findSongsByPlaylistId(id).map { it.songId })
     }
 
+    /** The same song cannot be registered to a playlist twice: the primary key rejects the second
+     * row and the first one stays where it is. */
+    @Test
+    fun addIgnoresASongAlreadyInThePlaylist() = runTest {
+        repository.create(SongId("1"), "first")
+        val id = PlaylistId(repository.findAll().first().id)
+
+        repository.add(id, SongId("2"))
+        repository.add(id, SongId("1"))
+
+        assertEquals(listOf("1", "2"), repository.findSongsByPlaylistId(id).map { it.songId })
+    }
+
+    @Test
+    fun updatePlaylistStoresARepeatedIdOnce() = runTest {
+        repository.create(SongId("1"), "first")
+        val id = PlaylistId(repository.findAll().first().id)
+
+        repository.updatePlaylist(id, "renamed", listOf(SongId("2"), SongId("3"), SongId("2")))
+
+        assertEquals(listOf("2", "3"), repository.findSongsByPlaylistId(id).map { it.songId })
+    }
+
+    /** The order of a playlist is the order the songs were added in, not the order of their ids:
+     * sorted as text these come back "1", "10", "5". */
+    @Test
+    fun songsComeBackInTheOrderTheyWereAdded() = runTest {
+        repository.create(SongId("5"), "first")
+        val id = PlaylistId(repository.findAll().first().id)
+
+        repository.add(id, SongId("10"))
+        repository.add(id, SongId("1"))
+
+        assertEquals(listOf("5", "10", "1"), repository.findSongsByPlaylistId(id).map { it.songId })
+    }
+
     @Test
     fun deleteRemovesThePlaylistAndItsSongs() = runTest {
         repository.create(SongId("1"), "first")

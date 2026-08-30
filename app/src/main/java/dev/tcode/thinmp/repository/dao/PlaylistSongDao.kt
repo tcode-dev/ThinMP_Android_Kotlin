@@ -2,6 +2,7 @@ package dev.tcode.thinmp.repository.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import dev.tcode.thinmp.constant.SqliteConstant
@@ -9,13 +10,17 @@ import dev.tcode.thinmp.model.room.PlaylistSongEntity
 
 @Dao
 interface PlaylistSongDao {
-    @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId")
+    /** rowid is the insertion order, which is the order of the playlist. Without it the rows come
+     * back in whatever order the index SQLite chose happens to hold them in. */
+    @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId ORDER BY rowid")
     suspend fun findByPlaylistId(playlistId: String): List<PlaylistSongEntity>
 
-    @Insert
+    /** A song already in the playlist is left where it is: the primary key rejects the duplicate
+     * and IGNORE turns that into a no-op rather than a SQLiteConstraintException on a second tap. */
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: PlaylistSongEntity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(entities: List<PlaylistSongEntity>)
 
     @Query("DELETE FROM playlist_songs WHERE playlist_id = :playlistId AND song_id IN (:songIds)")

@@ -90,13 +90,18 @@ app/src/main/java/dev/tcode/thinmp/
 - Each screen has a dedicated ViewModel
 - Room for user-created data; MediaStore for device audio
 - A surrogate `id` only exists where something reads it. The favourite tables are keyed by the
-  MediaStore id itself (`favorite_songs(song_id)`, `favorite_artists(artist_id)`), which is what
-  forbids the duplicate rows `toggle` was written to avoid and indexes the column at the same time.
-  `shortcuts` keeps its `id` because `ShortcutService` carries it into `ShortcutModel`, and
-  `playlist_songs` keeps its own because the same song may legitimately appear in a playlist twice
+  MediaStore id itself (`favorite_songs(song_id)`, `favorite_artists(artist_id)`), and
+  `playlist_songs` by the pair (`playlist_id`, `song_id`), which is what forbids the duplicate rows
+  (the ones `toggle` was written to avoid; the same song registered to one playlist twice) and
+  indexes the columns the queries filter on at the same time.
+  `shortcuts` keeps its `id` because `ShortcutService` carries it into `ShortcutModel`
 - Every non-primary-key column a DAO query filters on carries an `@Index`, and nothing more:
-  composite only where every query filters on the whole pair (`shortcuts(item_id, type)`), not where
-  a leading column already narrows the scan to a handful of rows (`playlist_songs(playlist_id)`)
+  composite only where every query filters on the whole pair (`shortcuts(item_id, type)`), and
+  nothing at all where the primary key's own index already leads with the column the query filters
+  on (`playlist_songs(playlist_id, song_id)` serves the queries that name only `playlist_id`)
+- The order of a playlist is the order its rows were inserted in. `findByPlaylistId` therefore says
+  `ORDER BY rowid` rather than trusting whichever index SQLite picks, and a write that has to keep
+  the order (`updatePlaylist`) deletes the playlist's rows and re-inserts them in the new order
 - Column names are `snake_case`, set with `@ColumnInfo(name = ...)` where the Kotlin property is
   camelCase. Without it Room names the column after the property, which is how the schema ended up
   mixing snake_case tables with camelCase columns. SQLite identifiers are case-insensitive, so
