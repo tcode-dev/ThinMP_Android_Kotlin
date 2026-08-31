@@ -27,7 +27,8 @@ import org.junit.runner.RunWith
  * These services used to compare an id count against a MediaStore row count and re-enter
  * themselves whenever the two disagreed. A duplicated id makes them disagree permanently - SQL IN
  * collapses the duplicate - so the cleanup deleted nothing and the call never converged. It did
- * not crash, it span, which is why the screen simply never finished loading.
+ * not crash, it span, which is why the screen simply never finished loading. The duplicate is now
+ * a state neither schema allows, and the services return the list they already mapped either way.
  *
  * Needs at least one audio file on the device; skipped otherwise.
  */
@@ -57,23 +58,29 @@ class DuplicateEntryServiceTest {
         db.close()
     }
 
-    /** Adding the same song to a playlist twice is an ordinary thing to do. */
+    /**
+     * A song is either in a playlist or it is not, so (playlist_id, song_id) is the primary key and
+     * the duplicate this test used to construct is no longer a state the schema allows: the second
+     * add is ignored rather than written.
+     */
     @Test
-    fun playlistHoldingTheSameSongTwiceStillLoads() = runBlocking {
+    fun duplicatePlaylistSongRowCannotBeCreated() = runBlocking {
         val repository = PlaylistRepository(db)
         repository.create(realSongId, "duplicate")
         val playlistId = PlaylistId(repository.findAll().first().id)
+
         repository.add(playlistId, realSongId)
+
+        assertEquals(1, repository.findSongsByPlaylistId(playlistId).size)
 
         val playlist = withTimeout(timeoutMs) { PlaylistDetailService(context, repository).findById(playlistId) }
 
-        // The playlist says the song is in it twice, so the detail screen shows it twice.
-        assertEquals(2, playlist?.songs?.size)
+        assertEquals(1, playlist?.songs?.size)
     }
 
     /**
-     * Unlike a playlist, a song is either a favourite or it is not, so the songId is the primary
-     * key and the duplicate this test used to construct is no longer a state the schema allows.
+     * The same, one table over: the songId is the primary key, so the duplicate this test used to
+     * construct is no longer a state the schema allows.
      */
     @Test
     fun duplicateFavouriteRowCannotBeCreated() = runBlocking {

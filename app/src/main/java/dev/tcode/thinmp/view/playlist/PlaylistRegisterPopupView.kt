@@ -12,6 +12,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,7 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.view.row.PlainRowView
+import dev.tcode.thinmp.view.row.PlaylistRegisterRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
@@ -40,6 +41,9 @@ fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: P
     var name by remember { mutableStateOf("") }
 
     CustomLifecycleEventObserver(viewModel)
+
+    // The list is per song: it marks the playlists this song is already in.
+    LaunchedEffect(songId) { viewModel.load(songId) }
 
     Popup(
         alignment = Alignment.Center, onDismissRequest = { callback() }, properties = PopupProperties(focusable = true)
@@ -70,10 +74,13 @@ fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: P
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
-                        PlainRowView(playlist.primaryText,
+                        val registered = uiState.registeredPlaylistIds.contains(playlist.id)
+
+                        PlaylistRegisterRowView(playlist.primaryText,
+                            registered,
                             Modifier
                                 .padding(end = StyleConstant.PADDING_LARGE.dp)
-                                .clickable {
+                                .clickable(enabled = !registered) {
                                     viewModel.addSong(playlist.id, songId)
                                     callback()
                                 })

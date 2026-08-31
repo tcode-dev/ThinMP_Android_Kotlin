@@ -11,10 +11,11 @@ interface PlaylistRegister {
         repository.create(songId, text)
     }
 
-    suspend fun addSongToPlaylist(playlistId: PlaylistId, songId: SongId) {
+    /** false when the song is already in the playlist. */
+    suspend fun addSongToPlaylist(playlistId: PlaylistId, songId: SongId): Boolean {
         val repository = PlaylistRepository()
 
-        repository.add(playlistId, songId)
+        return repository.add(playlistId, songId)
     }
 
     suspend fun deletePlaylist(playlistId: PlaylistId) {
