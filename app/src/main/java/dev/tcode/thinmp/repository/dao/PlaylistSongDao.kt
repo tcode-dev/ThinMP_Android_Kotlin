@@ -15,6 +15,11 @@ interface PlaylistSongDao {
     @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId ORDER BY rowid")
     suspend fun findByPlaylistId(playlistId: String): List<PlaylistSongEntity>
 
+    /** The playlists one song is already registered to. Filters on song_id alone, which is why
+     * playlist_songs carries an index on that column. */
+    @Query("SELECT playlist_id FROM playlist_songs WHERE song_id = :songId")
+    suspend fun findPlaylistIdsBySongId(songId: String): List<String>
+
     /** A song already in the playlist is left where it is: the primary key rejects the duplicate
      * and IGNORE turns that into a no-op rather than a SQLiteConstraintException on a second tap.
      * Returns the new rowid, or -1 when the row was already there - with IGNORE there is no

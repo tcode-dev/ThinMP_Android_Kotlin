@@ -76,6 +76,10 @@ class PlaylistRepository(
         return playlistDao.findByIds(playlistIds.map { it.id })
     }
 
+    suspend fun findPlaylistIdsBySongId(songId: SongId): List<PlaylistId> {
+        return playlistSongDao.findPlaylistIdsBySongId(songId.id).map { PlaylistId(it) }
+    }
+
     suspend fun findSongsByPlaylistId(playlistId: PlaylistId): List<PlaylistSongEntity> {
         return playlistSongDao.findByPlaylistId(playlistId.id)
     }

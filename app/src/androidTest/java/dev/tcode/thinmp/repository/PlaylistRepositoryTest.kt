@@ -73,6 +73,19 @@ class PlaylistRepositoryTest {
         assertEquals(listOf("1", "2"), repository.findSongsByPlaylistId(id).map { it.songId })
     }
 
+    /** What the register popup greys out: the playlists the song is already in, and only those. */
+    @Test
+    fun findPlaylistIdsBySongIdReturnsThePlaylistsHoldingTheSong() = runTest {
+        repository.create(SongId("1"), "first")
+        repository.create(SongId("2"), "second")
+        repository.create(SongId("1"), "third")
+        val ids = repository.findAll().map { PlaylistId(it.id) }
+
+        assertEquals(listOf(ids[0], ids[2]).sortedBy { it.id }, repository.findPlaylistIdsBySongId(SongId("1")).sortedBy { it.id })
+        assertEquals(listOf(ids[1]), repository.findPlaylistIdsBySongId(SongId("2")))
+        assertTrue(repository.findPlaylistIdsBySongId(SongId("3")).isEmpty())
+    }
+
     @Test
     fun updatePlaylistStoresARepeatedIdOnce() = runTest {
         repository.create(SongId("1"), "first")

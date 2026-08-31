@@ -23,6 +23,7 @@
     <string name="add_playlist">Add to a playlist</string>
     <string name="create_playlist">New playlist</string>
     <string name="remove_playlist">Remove playlist</string>
+    <string name="already_added">Added</string>
     <string name="already_added_to_playlist">Already added to this playlist</string>
     <string name="add_shortcut">Add to a shortcut</string>
     <string name="remove_shortcut">Remove from shortcut</string>

@@ -19,12 +19,17 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class PlaylistsUiState(
-    var playlists: List<PlaylistModel> = emptyList()
+    var playlists: List<PlaylistModel> = emptyList(),
+    /** Playlists the popup's song is already in. Empty until a song is named. */
+    var registeredPlaylistIds: Set<PlaylistId> = emptySet()
 )
 
 class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
+    // The register popup is opened for one song, and the list has to mark the playlists that song
+    // is already in. onResume reloads without being told the song again, so it is kept here.
+    private var songId: SongId? = null
     private val _uiState = MutableStateFlow(PlaylistsUiState())
     val uiState: StateFlow<PlaylistsUiState> = _uiState.asStateFlow()
 
@@ -40,15 +45,20 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    fun load() {
+    fun load(songId: SongId? = null) {
+        if (songId != null) {
+            this.songId = songId
+        }
+
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = PlaylistsService(getApplication())
             val playlists = service.findAll()
+            val registeredPlaylistIds = this@PlaylistsViewModel.songId?.let { service.findRegisteredPlaylistIds(it) } ?: emptySet()
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    playlists = playlists
+                    playlists = playlists, registeredPlaylistIds = registeredPlaylistIds
                 )
             }
         }
