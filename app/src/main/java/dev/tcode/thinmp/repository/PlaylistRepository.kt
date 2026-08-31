@@ -13,17 +13,21 @@ class PlaylistRepository(
     private val playlistDao = db.playlistDao()
     private val playlistSongDao = db.playlistSongDao()
 
-    suspend fun create(songId: SongId, name: String) = db.withTransaction {
-        val playlist = PlaylistEntity(name = name, order = increment())
-        val song = PlaylistSongEntity(playlistId = playlist.id, songId = songId.id)
+    suspend fun create(songId: SongId, name: String) {
+        db.withTransaction {
+            val playlist = PlaylistEntity(name = name, order = increment())
+            val song = PlaylistSongEntity(playlistId = playlist.id, songId = songId.id)
 
-        playlistDao.insert(playlist)
-        playlistSongDao.insert(song)
+            playlistDao.insert(playlist)
+            playlistSongDao.insert(song)
+        }
     }
 
-    suspend fun add(playlistId: PlaylistId, songId: SongId) {
+    /** false when the song is already in the playlist and nothing was written. */
+    suspend fun add(playlistId: PlaylistId, songId: SongId): Boolean {
         val song = PlaylistSongEntity(playlistId = playlistId.id, songId = songId.id)
-        playlistSongDao.insert(song)
+
+        return playlistSongDao.insert(song) != IGNORED
     }
 
     suspend fun delete(playlistId: PlaylistId, songIds: List<SongId>) {
@@ -83,5 +87,10 @@ class PlaylistRepository(
 
     private suspend fun increment(): Int {
         return playlistDao.getMaxOrder() + 1
+    }
+
+    companion object {
+        /** What an INSERT OR IGNORE returns when the row was already there. */
+        private const val IGNORED = -1L
     }
 }

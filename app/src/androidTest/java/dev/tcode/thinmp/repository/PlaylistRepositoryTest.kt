@@ -6,6 +6,7 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -60,14 +61,14 @@ class PlaylistRepositoryTest {
     }
 
     /** The same song cannot be registered to a playlist twice: the primary key rejects the second
-     * row and the first one stays where it is. */
+     * row and the first one stays where it is. add() reports that so the popup can say so. */
     @Test
     fun addIgnoresASongAlreadyInThePlaylist() = runTest {
         repository.create(SongId("1"), "first")
         val id = PlaylistId(repository.findAll().first().id)
 
-        repository.add(id, SongId("2"))
-        repository.add(id, SongId("1"))
+        assertTrue(repository.add(id, SongId("2")))
+        assertFalse(repository.add(id, SongId("1")))
 
         assertEquals(listOf("1", "2"), repository.findSongsByPlaylistId(id).map { it.songId })
     }

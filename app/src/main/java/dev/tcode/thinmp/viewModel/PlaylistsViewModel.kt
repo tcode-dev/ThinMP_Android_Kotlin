@@ -1,8 +1,10 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
@@ -59,7 +61,14 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun addSong(playlistId: PlaylistId, songId: SongId) {
-        viewModelScope.launch { addSongToPlaylist(playlistId, songId) }
+        viewModelScope.launch {
+            if (addSongToPlaylist(playlistId, songId)) return@launch
+
+            // The popup is gone by the time the write reports back, so there is no composition
+            // left to raise this from. viewModelScope runs on the main thread, which is where a
+            // Toast has to be shown.
+            Toast.makeText(getApplication(), R.string.already_added_to_playlist, Toast.LENGTH_SHORT).show()
+        }
     }
 
     fun delete(playlistId: PlaylistId) {

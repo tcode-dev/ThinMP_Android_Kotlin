@@ -16,9 +16,11 @@ interface PlaylistSongDao {
     suspend fun findByPlaylistId(playlistId: String): List<PlaylistSongEntity>
 
     /** A song already in the playlist is left where it is: the primary key rejects the duplicate
-     * and IGNORE turns that into a no-op rather than a SQLiteConstraintException on a second tap. */
+     * and IGNORE turns that into a no-op rather than a SQLiteConstraintException on a second tap.
+     * Returns the new rowid, or -1 when the row was already there - with IGNORE there is no
+     * exception to catch, so the return value is the only report that nothing was written. */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(entity: PlaylistSongEntity)
+    suspend fun insert(entity: PlaylistSongEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(entities: List<PlaylistSongEntity>)
