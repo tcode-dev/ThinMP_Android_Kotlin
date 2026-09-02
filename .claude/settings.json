@@ -11,6 +11,8 @@
       "Bash(~/Library/Android/sdk/emulator/emulator *)",
       "Bash(./tools/*)",
 
+      "mcp__context7",
+
       "Edit",
       "Write",
       "Bash(mkdir *)",
