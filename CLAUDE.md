@@ -64,6 +64,19 @@ View → ViewModel → Register → Repository  (for domain operations like favo
 - **Preferences**: DataStore Preferences (repeat, shuffle, menu visibility)
 - **Async**: Kotlin Coroutines. All Room and MediaStore I/O is off the main thread
 
+### Looking up library APIs
+
+The Context7 MCP server (`.mcp.json`) serves version-pinned documentation for the libraries above.
+Use it **without being asked** — `resolve-library-id`, then `query-docs` — before writing or
+changing code that calls a third-party API, and before answering a question about one. Model
+training data lags behind Media3, Compose and Room, and a plausible-looking call that no longer
+exists costs more than the lookup does. Pass the version this project actually pins, not the
+latest.
+
+Do not use it for anything answerable from this repository: the project's own classes, Gradle
+tasks, git, the emulator workflow, or a library this codebase already calls in a way you can read.
+Reading the existing call site is faster and it is the version that is really in use.
+
 ## Key Directories
 
 ```
