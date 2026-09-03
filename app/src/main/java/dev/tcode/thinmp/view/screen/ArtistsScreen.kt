@@ -30,11 +30,11 @@ fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
     MiniPlayerLayoutView {
         ColumnCollapsingTopAppBarView(stringResource(R.string.artists)) {
             items(uiState.artists) { artist ->
-                DropdownMenuView(dropdownContent = { callback ->
+                DropdownMenuView(id = artist.id, dropdownContent = { callback ->
                     FavoriteArtistDropdownMenuItemView(artist.artistId, callback)
                     ShortcutDropdownMenuItemView(artist.artistId, callback)
                 }) { callback ->
-                    PlainRowView(artist.name, Modifier.pointerInput(artist.url) {
+                    PlainRowView(artist.name, Modifier.pointerInput(artist.id) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { navigator.artistDetail(artist.id) })
                     })
                 }
