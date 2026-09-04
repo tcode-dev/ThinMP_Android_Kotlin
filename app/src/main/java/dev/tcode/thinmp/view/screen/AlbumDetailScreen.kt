@@ -103,7 +103,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                 }
             }
             itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
-                DropdownMenuView(dropdownContent = { callback ->
+                DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
                         callback()
@@ -112,7 +112,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     FavoriteSongDropdownMenuItemView(song.songId, callback)
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
                     })
                 }

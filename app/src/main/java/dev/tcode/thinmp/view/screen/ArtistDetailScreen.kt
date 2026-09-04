@@ -142,11 +142,11 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     SectionTitleView(stringResource(R.string.albums))
                 }
                 itemsIndexed(items = uiState.albums) { index, album ->
-                    DropdownMenuView(dropdownContent = { callback ->
+                    DropdownMenuView(id = album.id, dropdownContent = { callback ->
                         ShortcutDropdownMenuItemView(album.albumId, callback)
                     }) { callback ->
                         GridCellView(index, spanCount) {
-                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
+                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.id) {
                                 detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
                             })
                         }
@@ -158,7 +158,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                     SectionTitleView(stringResource(R.string.songs))
                 }
                 itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
-                    DropdownMenuView(dropdownContent = { callback ->
+                    DropdownMenuView(id = song.id, dropdownContent = { callback ->
                         val callbackPlaylist = {
                             showPlaylistRegisterPopup(song.songId)
                             callback()
@@ -167,7 +167,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                         FavoriteSongDropdownMenuItemView(song.songId, callback)
                         PlaylistDropdownMenuItemView(callbackPlaylist)
                     }) { callback ->
-                        MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(index) {
+                        MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
                             detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
                         })
                     }

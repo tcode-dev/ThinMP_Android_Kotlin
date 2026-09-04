@@ -33,11 +33,11 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
     MiniPlayerLayoutView {
         GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount), spanCount) {
             itemsIndexed(uiState.albums) { index, album ->
-                DropdownMenuView(dropdownContent = { callback ->
+                DropdownMenuView(id = album.id, dropdownContent = { callback ->
                     ShortcutDropdownMenuItemView(album.albumId, callback)
                 }) { callback ->
                     GridCellView(index, spanCount) {
-                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.url) {
+                        AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.id) {
                             detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
                         })
                     }

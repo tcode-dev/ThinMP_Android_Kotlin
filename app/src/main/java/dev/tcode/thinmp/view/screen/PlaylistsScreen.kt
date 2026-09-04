@@ -34,7 +34,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.playlistsEdit() })
         }) {
             items(uiState.playlists) { playlist ->
-                DropdownMenuView(dropdownContent = { callback ->
+                DropdownMenuView(id = playlist.id.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         viewModel.delete(playlist.id)
                         callback()
@@ -42,7 +42,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
                     PlaylistRemoveDropdownMenuItemView(callbackPlaylist)
                     ShortcutDropdownMenuItemView(playlist.id, callback)
                 }) { callback ->
-                    PlainRowView(playlist.primaryText, Modifier.pointerInput(playlist.url) {
+                    PlainRowView(playlist.primaryText, Modifier.pointerInput(playlist.id.id) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { navigator.playlistDetail(playlist.id.id) })
                     })
                 }

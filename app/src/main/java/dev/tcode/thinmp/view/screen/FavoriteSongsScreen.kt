@@ -21,7 +21,6 @@ import dev.tcode.thinmp.view.row.DropdownMenuView
 import dev.tcode.thinmp.view.row.MediaRowView
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
-import java.util.UUID
 
 @Composable
 fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
@@ -35,7 +34,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
             itemsIndexed(uiState.songs) { index, song ->
-                DropdownMenuView(dropdownContent = { callback ->
+                DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackFavorite = {
                         callback()
                         viewModel.load()
@@ -47,7 +46,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
                     FavoriteSongDropdownMenuItemView(song.songId, callbackFavorite)
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(UUID.randomUUID()) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
                     })
                 }

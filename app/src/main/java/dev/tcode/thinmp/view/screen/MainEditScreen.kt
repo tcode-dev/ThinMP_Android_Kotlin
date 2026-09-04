@@ -53,7 +53,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
                 }
             }
             itemsIndexed(uiState.shortcuts) { index, shortcut ->
-                SwipeToDismissView(callback = { viewModel.removeShortcut(index) }) {
+                SwipeToDismissView(shortcut.id.id, callback = { viewModel.removeShortcut(index) }) {
                     PlainRowView(shortcut.primaryText)
                 }
             }
