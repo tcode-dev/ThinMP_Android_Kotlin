@@ -5,7 +5,7 @@ import android.Manifest.permission.READ_MEDIA_AUDIO
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,7 +43,7 @@ fun PermissionView(content: @Composable BoxScope.() -> Unit) {
         }
 
         else -> {
-            SideEffect {
+            LaunchedEffect(Unit) {
                 permissionState.launchMultiplePermissionRequest()
             }
             if (initialized.value) {
