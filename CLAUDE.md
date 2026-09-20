@@ -131,6 +131,13 @@ app/src/main/java/dev/tcode/thinmp/
   closure reads only the row's identity (`songId`, `album.id`, `shortcut.url`), never a display
   field a reload could change. A value that must track a change goes through
   `rememberUpdatedState`, not a `pointerInput` key
+- A `catch` exists only where one specific exception has one specific recovery: `MusicService`
+  turns a `seekTo` failure on a deleted file into `onError()` and a missing album art into no
+  icon. The view model load paths have none on purpose. Permission is gated in `PermissionView`
+  before any screen composes, `ContentResolver.query()` reports a provider failure as `null`,
+  which `?.use` turns into an empty list, and what remains — a malformed selection or sort
+  order, a Room `SQLiteException` — is a programming error or unrecoverable, and a blanket
+  `catch` would show it as an empty screen instead of a crash
 
 ### Threading
 
