@@ -21,12 +21,12 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class ArtistDetailUiState(
-    var primaryText: String = "",
-    var secondaryText: String = "",
-    var imageUri: Uri = Uri.EMPTY,
-    var albums: List<AlbumModel> = emptyList(),
-    var songs: List<SongModel> = emptyList(),
-    var isVisiblePlayer: Boolean = false
+    val primaryText: String = "",
+    val secondaryText: String = "",
+    val imageUri: Uri = Uri.EMPTY,
+    val albums: List<AlbumModel> = emptyList(),
+    val songs: List<SongModel> = emptyList(),
+    val isVisiblePlayer: Boolean = false
 )
 
 @HiltViewModel
@@ -34,7 +34,7 @@ class ArtistDetailViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer = MusicPlayer(this)
+    private val musicPlayer: MusicPlayer = MusicPlayer(this)
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(ArtistDetailUiState())
     val uiState: StateFlow<ArtistDetailUiState> = _uiState.asStateFlow()

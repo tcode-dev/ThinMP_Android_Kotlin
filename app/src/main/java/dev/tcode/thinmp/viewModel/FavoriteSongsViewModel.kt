@@ -16,12 +16,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class FavoriteSongsUiState(
-    var songs: List<SongModel> = emptyList(), var isVisiblePlayer: Boolean = false
+    val songs: List<SongModel> = emptyList(), val isVisiblePlayer: Boolean = false
 )
 
 class FavoriteSongsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
     private var initialized: Boolean = false
-    private var musicPlayer: MusicPlayer = MusicPlayer(this)
+    private val musicPlayer: MusicPlayer = MusicPlayer(this)
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(FavoriteSongsUiState())
     val uiState: StateFlow<FavoriteSongsUiState> = _uiState.asStateFlow()

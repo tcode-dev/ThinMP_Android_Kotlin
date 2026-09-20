@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class ArtistsUiState(
-    var artists: List<ArtistModel> = emptyList()
+    val artists: List<ArtistModel> = emptyList()
 )
 
 class ArtistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {

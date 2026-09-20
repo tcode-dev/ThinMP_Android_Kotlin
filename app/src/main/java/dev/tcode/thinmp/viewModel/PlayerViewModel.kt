@@ -23,18 +23,18 @@ import kotlinx.coroutines.flow.update
 const val START_TIME = "00:00"
 
 data class PlayerUiState(
-    var songId: SongId = SongId(""),
-    var primaryText: String = "",
-    var secondaryText: String = "",
-    var imageUri: Uri = Uri.EMPTY,
-    var sliderPosition: Float = 0f,
-    var currentTime: String = START_TIME,
-    var durationTime: String = START_TIME,
-    var isPlaying: Boolean = false,
-    var repeat: RepeatState = RepeatState.OFF,
-    var shuffle: Boolean = false,
-    var isFavoriteArtist: Boolean = false,
-    var isFavoriteSong: Boolean = false,
+    val songId: SongId = SongId(""),
+    val primaryText: String = "",
+    val secondaryText: String = "",
+    val imageUri: Uri = Uri.EMPTY,
+    val sliderPosition: Float = 0f,
+    val currentTime: String = START_TIME,
+    val durationTime: String = START_TIME,
+    val isPlaying: Boolean = false,
+    val repeat: RepeatState = RepeatState.OFF,
+    val shuffle: Boolean = false,
+    val isFavoriteArtist: Boolean = false,
+    val isFavoriteSong: Boolean = false,
 )
 
 class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteArtistRegister, FavoriteSongRegister {

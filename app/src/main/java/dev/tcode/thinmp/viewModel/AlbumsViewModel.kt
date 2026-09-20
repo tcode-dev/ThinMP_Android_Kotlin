@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class AlbumsUiState(
-    var albums: List<AlbumModel> = emptyList()
+    val albums: List<AlbumModel> = emptyList()
 )
 
 class AlbumsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {

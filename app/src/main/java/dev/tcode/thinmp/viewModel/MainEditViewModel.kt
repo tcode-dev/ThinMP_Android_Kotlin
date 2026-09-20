@@ -18,7 +18,7 @@ import kotlinx.coroutines.flow.update
 
 /** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
 data class MainEditUiState(
-    var menu: List<MainMenuItem> = emptyList(), var shortcuts: List<ShortcutModel> = emptyList(), var recentlyAlbumsVisibility: Boolean = true, var shortcutVisibility: Boolean = true, var loaded: Boolean = false
+    val menu: List<MainMenuItem> = emptyList(), val shortcuts: List<ShortcutModel> = emptyList(), val recentlyAlbumsVisibility: Boolean = true, val shortcutVisibility: Boolean = true, val loaded: Boolean = false
 )
 
 class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {

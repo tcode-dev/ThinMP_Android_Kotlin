@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 /** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
 data class PlaylistDetailEditUiState(
-    var primaryText: String = "", var songs: List<SongModel> = emptyList(), var loaded: Boolean = false
+    val primaryText: String = "", val songs: List<SongModel> = emptyList(), val loaded: Boolean = false
 )
 
 @HiltViewModel

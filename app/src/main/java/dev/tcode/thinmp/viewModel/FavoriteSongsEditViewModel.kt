@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.update
 
 /** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
 data class FavoriteSongsEditUiState(
-    var songs: List<SongModel> = emptyList(), var loaded: Boolean = false
+    val songs: List<SongModel> = emptyList(), val loaded: Boolean = false
 )
 
 class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteSongRegister {

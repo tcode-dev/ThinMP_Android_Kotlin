@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class AlbumDetailUiState(
-    var primaryText: String = "", var secondaryText: String = "", var imageUri: Uri = Uri.EMPTY, var songs: List<SongModel> = emptyList(), var isVisiblePlayer: Boolean = false
+    val primaryText: String = "", val secondaryText: String = "", val imageUri: Uri = Uri.EMPTY, val songs: List<SongModel> = emptyList(), val isVisiblePlayer: Boolean = false
 )
 
 @HiltViewModel

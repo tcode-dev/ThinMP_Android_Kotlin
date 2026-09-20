@@ -16,11 +16,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class MainUiState(
-    var menu: List<MainMenuItem> = emptyList(),
-    var shortcutVisibility: Boolean = true,
-    var shortcuts: List<ShortcutModel> = emptyList(),
-    var recentlyAlbumsVisibility: Boolean = true,
-    var albums: List<AlbumModel> = emptyList()
+    val menu: List<MainMenuItem> = emptyList(),
+    val shortcutVisibility: Boolean = true,
+    val shortcuts: List<ShortcutModel> = emptyList(),
+    val recentlyAlbumsVisibility: Boolean = true,
+    val albums: List<AlbumModel> = emptyList()
 )
 
 class MainViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {

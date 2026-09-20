@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.update
  * empty list is also what the user leaves behind after swiping everything away.
  */
 data class PlaylistsEditUiState(
-    var playlists: List<PlaylistModel> = emptyList(), var loaded: Boolean = false
+    val playlists: List<PlaylistModel> = emptyList(), val loaded: Boolean = false
 )
 
 class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {

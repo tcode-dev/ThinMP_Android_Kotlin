@@ -19,9 +19,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class PlaylistsUiState(
-    var playlists: List<PlaylistModel> = emptyList(),
+    val playlists: List<PlaylistModel> = emptyList(),
     /** Playlists the popup's song is already in. Empty until a song is named. */
-    var registeredPlaylistIds: Set<PlaylistId> = emptySet()
+    val registeredPlaylistIds: Set<PlaylistId> = emptySet()
 )
 
 class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
