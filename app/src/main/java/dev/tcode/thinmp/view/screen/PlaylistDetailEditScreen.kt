@@ -42,7 +42,7 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
                     onValueChange = { viewModel.changeName(it) })
             }
             itemsIndexed(uiState.songs, key = { _, song -> song.id }) { index, song ->
-                SwipeToDismissView(song.id, callback = { viewModel.removeSong(index) }) {
+                SwipeToDismissView(callback = { viewModel.removeSong(index) }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
                 }
             }

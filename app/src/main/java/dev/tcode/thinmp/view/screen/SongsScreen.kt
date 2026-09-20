@@ -29,7 +29,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             items(uiState.songs, key = { it.id }) { song ->
-                DropdownMenuView(id = song.id, dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
                         callback()
@@ -37,7 +37,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
                     FavoriteSongDropdownMenuItemView(song.songId, callback)
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(song.songId) })
                     })
                 }

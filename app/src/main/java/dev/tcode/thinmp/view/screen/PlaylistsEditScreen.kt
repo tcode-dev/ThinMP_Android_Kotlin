@@ -28,7 +28,7 @@ fun PlaylistsEditScreen(viewModel: PlaylistsEditViewModel = viewModel()) {
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, doneCallback) {
             itemsIndexed(uiState.playlists, key = { _, playlist -> playlist.id.id }) { index, playlist ->
-                SwipeToDismissView(playlist.id.id, callback = { viewModel.removePlaylist(index) }) {
+                SwipeToDismissView(callback = { viewModel.removePlaylist(index) }) {
                     PlainRowView(playlist.primaryText)
                 }
             }

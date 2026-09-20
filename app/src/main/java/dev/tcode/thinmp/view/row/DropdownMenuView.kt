@@ -19,32 +19,23 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 /**
- * `id` is the row's identity, and it keys both the gesture detector and the open/closed state, so
- * that they are thrown away when the slot starts showing a different row and only then. The lists
- * key their items by the same id, so a row keeps its composition and a removed row takes its open
- * menu away with it; keying on the id here as well is what keeps this view right on its own, in a
- * list without an item key, where a list that loses an entry leaves the next row in the slot the
- * old one had, reusing the composition - and a menu left open from the old row then stands over
- * whatever moved up into it.
- *
- * Passing the id as an ordinary parameter is half of what makes that work. The row arrives here as
- * a composable lambda, and a change to what that lambda captures recomposes the lambda without
- * recomposing this view around it, so the new row alone would never reach the state held here.
- *
- * The key it replaces was a fresh UUID, which says nothing about the row: it discards the detector
- * whenever this view happens to recompose, and never when the row behind it changed.
+ * The lists key their items by the row's id, so this composition belongs to one row and is
+ * disposed of with it: the open/closed state and the gesture detector need no key of their own.
+ * Without the item key a list that lost an entry left the next row in the slot the old one had,
+ * reusing the composition - and a menu left open from the old row then stood over whatever moved
+ * up into it.
  */
 @Composable
-fun DropdownMenuView(id: String, dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable BoxScope.(callback: () -> Unit) -> Unit) {
+fun DropdownMenuView(dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable BoxScope.(callback: () -> Unit) -> Unit) {
     Box(
         modifier = Modifier
             .fillMaxSize()
             .wrapContentSize(Alignment.TopStart)
     ) {
-        val expanded = remember(id) { mutableStateOf(false) }
+        val expanded = remember { mutableStateOf(false) }
         val callback = { expanded.value = !expanded.value }
 
-        Box(Modifier.pointerInput(id) {
+        Box(Modifier.pointerInput(Unit) {
             detectTapGestures(onLongPress = { callback() }, onTap = { callback() })
         }) {
             content(callback)

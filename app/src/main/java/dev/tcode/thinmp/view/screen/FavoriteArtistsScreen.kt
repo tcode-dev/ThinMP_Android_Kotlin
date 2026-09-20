@@ -34,7 +34,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteArtistsEdit() })
         }) {
             items(uiState.artists, key = { it.id }) { artist ->
-                DropdownMenuView(id = artist.id, dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val close = {
                         callback()
                         viewModel.load()
@@ -42,7 +42,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
                     FavoriteArtistDropdownMenuItemView(artist.artistId, close)
                     ShortcutDropdownMenuItemView(artist.artistId, callback)
                 }) { callback ->
-                    PlainRowView(artist.name, Modifier.pointerInput(artist.id) {
+                    PlainRowView(artist.name, Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { navigator.artistDetail(artist.id) })
                     })
                 }

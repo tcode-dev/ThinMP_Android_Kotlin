@@ -127,7 +127,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
                 itemsIndexed(items = uiState.shortcuts, key = { _, shortcut -> shortcut.id.id }) { index, shortcut ->
-                    DropdownMenuView(id = shortcut.id.id, dropdownContent = { callback ->
+                    DropdownMenuView(dropdownContent = { callback ->
                         val callbackShortcut = {
                             callback()
                             viewModel.load()
@@ -135,7 +135,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         ShortcutDropdownMenuItemView(shortcut.itemId, callbackShortcut)
                     }) { callback ->
                         GridCellView(index, spanCount) {
-                            ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(shortcut.id.id) {
+                            ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
                                 detectTapGestures(onLongPress = { callback() }, onTap = { navController.navigate(shortcut.url) })
                             })
                         }
@@ -147,7 +147,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     SectionTitleView(stringResource(R.string.recently_added))
                 }
                 itemsIndexed(items = uiState.albums, key = { _, album -> album.id }) { index, album ->
-                    DropdownMenuView(id = album.id, dropdownContent = { callback ->
+                    DropdownMenuView(dropdownContent = { callback ->
                         val callbackAlbum = {
                             callback()
                             viewModel.load()
@@ -155,7 +155,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                         ShortcutDropdownMenuItemView(album.albumId, callbackAlbum)
                     }) { callback ->
                         GridCellView(index, spanCount) {
-                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(album.id) {
+                            AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
                                 detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
                             })
                         }

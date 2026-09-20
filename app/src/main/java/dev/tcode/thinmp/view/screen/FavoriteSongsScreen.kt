@@ -35,7 +35,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
             items(uiState.songs, key = { it.id }) { song ->
-                DropdownMenuView(id = song.id, dropdownContent = { callback ->
+                DropdownMenuView(dropdownContent = { callback ->
                     val callbackFavorite = {
                         callback()
                         viewModel.load()
@@ -47,7 +47,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
                     FavoriteSongDropdownMenuItemView(song.songId, callbackFavorite)
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
-                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
+                    MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {
                         detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(song.songId) })
                     })
                 }

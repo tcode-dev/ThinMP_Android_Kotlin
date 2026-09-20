@@ -1,7 +1,9 @@
 package dev.tcode.thinmp.view.swipe
 
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
@@ -19,18 +21,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A dismissed row is removed from the list, and the row below it takes over the slot - and the
- * composition in it, the dismiss state included. Left at DismissedToStart, that state draws the new
- * row already swiped off the screen. The id is what resets it: the state belongs to the row rather
- * than to the position.
+ * A dismissed row is removed from the list. Without an item key the row below it took over the
+ * slot - and the composition in it, the dismiss state included - and, left at DismissedToStart,
+ * that state drew the new row already swiped off the screen. The item key is what keeps the
+ * composition with the row: the dismissed row's state is disposed of with it, and the row that
+ * moves up keeps its own.
  *
- * The edit screens key their lists by the same id now, so the slot never changes row there; this
- * is what the view guarantees on its own, and the harness is built to exercise exactly that. Both
- * halves of it matter. The rows are a plain Column, so a row is identified by its position exactly
- * as it is in a list with no item key. The callback closes over the index and nothing else, so it
- * is the same lambda before and after the removal - one that closed over the id instead would
- * recompose the view on its own and hide what the id is being passed for. The row is given the
- * full width because a swipe has to cross half of it to dismiss it.
+ * The harness is built the way the edit screens are: a list keyed by the row's id, callbacks that
+ * close over the index and nothing else, and rows given the full width because a swipe has to
+ * cross half of it to dismiss it.
  */
 @RunWith(AndroidJUnit4::class)
 class SwipeToDismissViewRowChangeTest {
@@ -43,11 +42,11 @@ class SwipeToDismissViewRowChangeTest {
     private val rows = mutableStateListOf("1" to "a", "2" to "b")
 
     @Test
-    fun resetsTheStateWhenTheRowIsReplaced() {
+    fun keepsTheNextRowInPlaceWhenARowIsDismissed() {
         composeTestRule.setContent {
-            Column {
-                rows.forEachIndexed { index, row ->
-                    SwipeToDismissView(row.first, callback = { rows.removeAt(index) }) {
+            LazyColumn(Modifier.fillMaxSize()) {
+                itemsIndexed(rows) { index, row ->
+                    SwipeToDismissView(callback = { rows.removeAt(index) }) {
                         Text(row.second, Modifier
                             .fillMaxWidth()
                             .testTag(row.second))

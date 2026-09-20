@@ -44,7 +44,7 @@ class SwipeToDismissViewIndexChangeTest {
         composeTestRule.setContent {
             LazyColumn(Modifier.fillMaxSize()) {
                 itemsIndexed(rows, key = { _, row -> row.first }) { index, row ->
-                    SwipeToDismissView(row.first, callback = { rows.removeAt(index) }) {
+                    SwipeToDismissView(callback = { rows.removeAt(index) }) {
                         Text(row.second, Modifier
                             .fillMaxWidth()
                             .testTag(row.second))
