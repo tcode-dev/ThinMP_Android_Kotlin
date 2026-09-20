@@ -27,12 +27,4 @@ class SongModel(
     fun getMediaUri(): Uri {
         return Uri.parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${id}")
     }
-
-    fun getTrackNumber(): Int {
-        // "15"、"15/30" → 15
-        val regex = Regex("""\d{1,}""")
-        val match = regex.find(trackNumber) ?: return 0
-
-        return match.value.toInt()
-    }
 }
