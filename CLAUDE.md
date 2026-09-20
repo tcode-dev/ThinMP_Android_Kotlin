@@ -122,6 +122,15 @@ app/src/main/java/dev/tcode/thinmp/
 - Room repositories default to `MainApplication.appContext` for DB access but take the DAO or `AppDatabase` as a constructor argument, so tests can supply an in-memory database
 - Register interfaces create repository instances on-demand in each method
 - No ProGuard/R8 minification enabled
+- Every list is keyed by the row's id (`items(key = …)`), so a row's composition is never reused
+  for another row. That is why the screens' `Modifier.pointerInput(Unit)` and the `remember { }`
+  in `DropdownMenuView` carry no key: a key of the row's id can never change inside its own
+  composition, so it is the same as `Unit`. **Do not change `pointerInput(Unit)` to
+  `pointerInput(id)`** — it was that way until `853a6e9`, as a workaround for the missing item
+  key, and was removed once the key made it redundant. What keeps this correct is that a tap
+  closure reads only the row's identity (`songId`, `album.id`, `shortcut.url`), never a display
+  field a reload could change. A value that must track a change goes through
+  `rememberUpdatedState`, not a `pointerInput` key
 
 ### Threading
 
