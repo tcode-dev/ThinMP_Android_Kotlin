@@ -61,6 +61,7 @@ import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 @Composable
 fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val spanCount: Int = gridSpanCount()
     val navigator = LocalNavigator.current
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
@@ -69,7 +70,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
+    CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
             FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
             ShortcutDropdownMenuItemView(ArtistId(id), callback)

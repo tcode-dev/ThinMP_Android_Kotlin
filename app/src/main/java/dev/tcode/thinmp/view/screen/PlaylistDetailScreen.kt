@@ -49,13 +49,14 @@ import dev.tcode.thinmp.viewModel.PlaylistDetailViewModel
 @Composable
 fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val navigator = LocalNavigator.current
     val spanCount: Int = gridSpanCount()
     val (size, gradientHeight, primaryTitlePosition, secondaryTitlePosition) = detailSize()
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
+    CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
             DropdownMenuItem(text = { Text(stringResource(R.string.edit), color = MaterialTheme.colorScheme.primary) }, onClick = { navigator.playlistDetailEdit(id) })
             ShortcutDropdownMenuItemView(PlaylistId(id), callback)

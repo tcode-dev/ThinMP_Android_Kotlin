@@ -2,16 +2,12 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
-import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -37,19 +33,13 @@ data class PlayerUiState(
     val isFavoriteSong: Boolean = false,
 )
 
-class PlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener, FavoriteArtistRegister, FavoriteSongRegister {
+class PlayerViewModel(application: Application) : MusicPlayerViewModel(application), FavoriteArtistRegister, FavoriteSongRegister {
     private val INTERVAL_MS = 1000L
-    private val musicPlayer: MusicPlayer = MusicPlayer(this)
-    private var initialized: Boolean = false
     private var favoriteJob: Job? = null
     private var seekBarJob: Job? = null
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     val queueEmptied = OneShotEvent<Unit>()
-
-    init {
-        bindService()
-    }
 
     fun toggle() {
         if (musicPlayer.isPlaying()) {
@@ -134,23 +124,9 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
         viewModelScope.launch { queueEmptied.emit(Unit) }
     }
 
-    override fun onResume() {
-        if (initialized) {
-            bindService()
-        } else {
-            initialized = true
-        }
-    }
-
     override fun onStop() {
-        musicPlayer.destroy(getApplication())
+        super.onStop()
         cancelSeekBarProgressTask()
-    }
-
-    private fun bindService() {
-        if (musicPlayer.isServiceRunning()) {
-            musicPlayer.bindService(getApplication())
-        }
     }
 
     private fun seekBarProgress() {

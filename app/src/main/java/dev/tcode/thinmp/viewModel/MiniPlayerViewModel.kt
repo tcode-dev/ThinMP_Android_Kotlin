@@ -2,10 +2,6 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
-import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.player.MusicPlayerListener
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,15 +11,9 @@ data class MiniPlayerUiState(
     val primaryText: String = "", val imageUri: Uri = Uri.EMPTY, val isVisible: Boolean = false, val isPlaying: Boolean = false
 )
 
-class MiniPlayerViewModel(application: Application) : AndroidViewModel(application), MusicPlayerListener, CustomLifecycleEventObserverListener {
-    private val musicPlayer: MusicPlayer = MusicPlayer(this)
-    private var initialized: Boolean = false
+class MiniPlayerViewModel(application: Application) : MusicPlayerViewModel(application) {
     private val _uiState = MutableStateFlow(MiniPlayerUiState())
     val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
-
-    init {
-        bindService()
-    }
 
     fun toggle() {
         if (musicPlayer.isPlaying()) {
@@ -45,29 +35,11 @@ class MiniPlayerViewModel(application: Application) : AndroidViewModel(applicati
         update()
     }
 
-    override fun onStop() {
-        musicPlayer.destroy(getApplication())
-    }
-
-    override fun onResume() {
-        if (initialized) {
-            bindService()
-        } else {
-            initialized = true
-        }
-    }
-
     override fun onError() {
         _uiState.update { currentState ->
             currentState.copy(
                 isVisible = false
             )
-        }
-    }
-
-    private fun bindService() {
-        if (musicPlayer.isServiceRunning()) {
-            musicPlayer.bindService(getApplication())
         }
     }
 

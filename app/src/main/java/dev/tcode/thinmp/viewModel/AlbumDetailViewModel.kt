@@ -2,15 +2,11 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import android.net.Uri
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.AlbumDetailService
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,59 +16,28 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 data class AlbumDetailUiState(
-    val primaryText: String = "", val secondaryText: String = "", val imageUri: Uri = Uri.EMPTY, val songs: List<SongModel> = emptyList(), val isVisiblePlayer: Boolean = false
+    val primaryText: String = "", val secondaryText: String = "", val imageUri: Uri = Uri.EMPTY, val songs: List<SongModel> = emptyList()
 )
 
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
-    private var initialized: Boolean = false
-    private val musicPlayer: MusicPlayer = MusicPlayer(this)
+) : SongListViewModel(application) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
     val id: String
 
+    override val songs: List<SongModel>
+        get() = uiState.value.songs
+
     init {
         id = savedStateHandle.get<String>("id").toString()
 
         load()
-        bindService()
     }
 
-    fun start(index: Int) {
-        musicPlayer.start(getApplication(), uiState.value.songs, index)
-    }
-
-    override fun onStop() {
-        musicPlayer.destroy(getApplication())
-    }
-
-    override fun onResume() {
-        if (initialized) {
-            load()
-            bindService()
-        } else {
-            initialized = true
-        }
-    }
-
-    override fun onBind() {
-        updateIsVisiblePlayer()
-    }
-
-    override fun onError() {
-        load()
-    }
-
-    private fun bindService() {
-        if (musicPlayer.isServiceRunning()) {
-            musicPlayer.bindService(getApplication())
-        }
-    }
-
-    private fun load() {
+    override fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = AlbumDetailService(getApplication())
@@ -80,17 +45,9 @@ class AlbumDetailViewModel @Inject constructor(
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs, isVisiblePlayer = musicPlayer.isServiceRunning()
+                    primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs
                 )
             }
-        }
-    }
-
-    private fun updateIsVisiblePlayer() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isVisiblePlayer = musicPlayer.isServiceRunning()
-            )
         }
     }
 }

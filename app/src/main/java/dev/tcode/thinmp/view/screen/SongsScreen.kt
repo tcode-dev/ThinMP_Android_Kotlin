@@ -22,10 +22,11 @@ import dev.tcode.thinmp.viewModel.SongsViewModel
 @Composable
 fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
+    CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
             itemsIndexed(uiState.songs) { index, song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->

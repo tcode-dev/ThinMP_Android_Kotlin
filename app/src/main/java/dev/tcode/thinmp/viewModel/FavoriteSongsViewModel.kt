@@ -1,13 +1,9 @@
 package dev.tcode.thinmp.viewModel
 
 import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.player.MusicPlayer
-import dev.tcode.thinmp.player.MusicPlayerListener
 import dev.tcode.thinmp.service.FavoriteSongsService
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,22 +12,22 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 data class FavoriteSongsUiState(
-    val songs: List<SongModel> = emptyList(), val isVisiblePlayer: Boolean = false
+    val songs: List<SongModel> = emptyList()
 )
 
-class FavoriteSongsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, MusicPlayerListener {
-    private var initialized: Boolean = false
-    private val musicPlayer: MusicPlayer = MusicPlayer(this)
+class FavoriteSongsViewModel(application: Application) : SongListViewModel(application) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(FavoriteSongsUiState())
     val uiState: StateFlow<FavoriteSongsUiState> = _uiState.asStateFlow()
 
+    override val songs: List<SongModel>
+        get() = uiState.value.songs
+
     init {
         load()
-        bindService()
     }
 
-    fun load() {
+    public override fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = FavoriteSongsService(getApplication())
@@ -39,48 +35,9 @@ class FavoriteSongsViewModel(application: Application) : AndroidViewModel(applic
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    songs = songs, isVisiblePlayer = musicPlayer.isServiceRunning()
+                    songs = songs
                 )
             }
-        }
-    }
-
-    fun start(index: Int) {
-        musicPlayer.start(getApplication(), uiState.value.songs, index)
-    }
-
-    override fun onStop() {
-        musicPlayer.destroy(getApplication())
-    }
-
-    override fun onResume() {
-        if (initialized) {
-            load()
-            bindService()
-        } else {
-            initialized = true
-        }
-    }
-
-    override fun onBind() {
-        updateIsVisiblePlayer()
-    }
-
-    override fun onError() {
-        load()
-    }
-
-    private fun bindService() {
-        if (musicPlayer.isServiceRunning()) {
-            musicPlayer.bindService(getApplication())
-        }
-    }
-
-    private fun updateIsVisiblePlayer() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isVisiblePlayer = musicPlayer.isServiceRunning()
-            )
         }
     }
 }

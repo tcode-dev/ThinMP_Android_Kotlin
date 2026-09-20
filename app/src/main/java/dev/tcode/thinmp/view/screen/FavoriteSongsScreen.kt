@@ -25,11 +25,12 @@ import dev.tcode.thinmp.viewModel.FavoriteSongsViewModel
 @Composable
 fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
+    val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val navigator = LocalNavigator.current
 
     CustomLifecycleEventObserver(viewModel)
 
-    CommonLayoutView(uiState.isVisiblePlayer) { showPlaylistRegisterPopup ->
+    CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_songs), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
