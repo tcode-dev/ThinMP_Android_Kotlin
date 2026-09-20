@@ -45,7 +45,7 @@ class SwipeToDismissViewRowChangeTest {
     fun keepsTheNextRowInPlaceWhenARowIsDismissed() {
         composeTestRule.setContent {
             LazyColumn(Modifier.fillMaxSize()) {
-                itemsIndexed(rows) { index, row ->
+                itemsIndexed(rows, key = { _, row -> row.first }) { index, row ->
                     SwipeToDismissView(callback = { rows.removeAt(index) }) {
                         Text(row.second, Modifier
                             .fillMaxWidth()

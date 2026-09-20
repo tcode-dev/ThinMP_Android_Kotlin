@@ -1,17 +1,20 @@
 package dev.tcode.thinmp.view.row
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.longClick
 import androidx.compose.ui.test.onNodeWithText
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import org.junit.Rule
 import org.junit.Test
@@ -23,7 +26,8 @@ import org.junit.runner.RunWith
  * standing over whatever moved up into it. The item key keeps the composition with the row, so
  * the open menu is disposed of together with the row it was opened on.
  *
- * The harness is a list keyed by the row's id, as the screens are.
+ * The harness is built the way the screens are: a list keyed by the row's id, and rows that open
+ * the menu from their own gesture detector on a long press.
  */
 @RunWith(AndroidJUnit4::class)
 class DropdownMenuViewRowChangeTest {
@@ -38,15 +42,17 @@ class DropdownMenuViewRowChangeTest {
     fun closesTheMenuWhenItsRowIsRemoved() {
         composeTestRule.setContent {
             LazyColumn(Modifier.fillMaxSize()) {
-                items(rows) { row ->
-                    DropdownMenuView(dropdownContent = { Text(menuText) }) {
-                        Text(row.second, Modifier.testTag(row.second))
+                items(rows, key = { it.first }) { row ->
+                    DropdownMenuView(dropdownContent = { Text(menuText) }) { callback ->
+                        Text(row.second, Modifier
+                            .testTag(row.second)
+                            .pointerInput(Unit) { detectTapGestures(onLongPress = { callback() }) })
                     }
                 }
             }
         }
 
-        composeTestRule.onNodeWithTag("a").performClick()
+        composeTestRule.onNodeWithTag("a").performTouchInput { longClick() }
         composeTestRule.onNodeWithText(menuText).assertIsDisplayed()
 
         // The row the menu was opened on is gone and the next one has moved up.
