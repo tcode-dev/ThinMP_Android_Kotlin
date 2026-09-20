@@ -115,7 +115,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                     DividerView()
                 }
             }
-            items(items = uiState.menu, span = { GridItemSpan(spanCount) }) { item ->
+            items(items = uiState.menu, key = { it.key }, span = { GridItemSpan(spanCount) }) { item ->
                 if (item.visibility) {
                     PlainRowView(stringResource(item.id), modifier = Modifier.clickable {
                         navController.navigate(item.key)
@@ -126,7 +126,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
-                itemsIndexed(items = uiState.shortcuts) { index, shortcut ->
+                itemsIndexed(items = uiState.shortcuts, key = { _, shortcut -> shortcut.id.id }) { index, shortcut ->
                     DropdownMenuView(id = shortcut.id.id, dropdownContent = { callback ->
                         val callbackShortcut = {
                             callback()
@@ -146,7 +146,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = viewMode
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.recently_added))
                 }
-                itemsIndexed(items = uiState.albums) { index, album ->
+                itemsIndexed(items = uiState.albums, key = { _, album -> album.id }) { index, album ->
                     DropdownMenuView(id = album.id, dropdownContent = { callback ->
                         val callbackAlbum = {
                             callback()

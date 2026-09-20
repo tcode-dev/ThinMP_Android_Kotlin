@@ -34,7 +34,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_songs), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
-            items(uiState.songs) { song ->
+            items(uiState.songs, key = { it.id }) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackFavorite = {
                         callback()

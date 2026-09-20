@@ -24,12 +24,13 @@ import org.junit.runner.RunWith
  * row already swiped off the screen. The id is what resets it: the state belongs to the row rather
  * than to the position.
  *
- * The harness is built the way the edit screens are, and both halves of that matter. The rows are a
- * plain Column, so a row is identified by its position exactly as it is in a list with no item key.
- * The callback closes over the index and nothing else, so it is the same lambda before and after
- * the removal - one that closed over the id instead would recompose the view on its own and hide
- * what the id is being passed for. The row is given the full width because a swipe has to cross
- * half of it to dismiss it.
+ * The edit screens key their lists by the same id now, so the slot never changes row there; this
+ * is what the view guarantees on its own, and the harness is built to exercise exactly that. Both
+ * halves of it matter. The rows are a plain Column, so a row is identified by its position exactly
+ * as it is in a list with no item key. The callback closes over the index and nothing else, so it
+ * is the same lambda before and after the removal - one that closed over the id instead would
+ * recompose the view on its own and hide what the id is being passed for. The row is given the
+ * full width because a swipe has to cross half of it to dismiss it.
  */
 @RunWith(AndroidJUnit4::class)
 class SwipeToDismissViewRowChangeTest {

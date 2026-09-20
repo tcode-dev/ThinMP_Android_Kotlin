@@ -102,7 +102,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     }
                 }
             }
-            items(uiState.songs, span = { GridItemSpan(spanCount) }) { song ->
+            items(uiState.songs, key = { it.id }, span = { GridItemSpan(spanCount) }) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)

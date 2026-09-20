@@ -33,7 +33,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_artists), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteArtistsEdit() })
         }) {
-            items(uiState.artists) { artist ->
+            items(uiState.artists, key = { it.id }) { artist ->
                 DropdownMenuView(id = artist.id, dropdownContent = { callback ->
                     val close = {
                         callback()

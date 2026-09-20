@@ -32,7 +32,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
 
     MiniPlayerLayoutView {
         GridCollapsingTopAppBarView(title = stringResource(R.string.albums), columns = CustomGridCellsFixed(spanCount), spanCount) {
-            itemsIndexed(uiState.albums) { index, album ->
+            itemsIndexed(uiState.albums, key = { _, album -> album.id }) { index, album ->
                 DropdownMenuView(id = album.id, dropdownContent = { callback ->
                     ShortcutDropdownMenuItemView(album.albumId, callback)
                 }) { callback ->

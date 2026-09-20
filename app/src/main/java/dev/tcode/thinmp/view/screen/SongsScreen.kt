@@ -28,7 +28,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
 
     CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
-            items(uiState.songs) { song ->
+            items(uiState.songs, key = { it.id }) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)

@@ -15,10 +15,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The lists have no item key, so a row is identified by its position: a list that loses an entry
+ * In a list without an item key a row is identified by its position: a list that loses an entry
  * leaves the next row in that slot, reusing the composition. The open/closed state has to go with
  * the row it was opened on rather than with the slot, or the menu is left standing over whatever
- * moved up into it - and it is the id that says which of the two happened.
+ * moved up into it - and it is the id that says which of the two happened. The screens key their
+ * lists by the same id now, so the slot never changes row there; this is what the view guarantees
+ * on its own.
  *
  * Changing the row's content alone is not enough to make this test say anything: the content
  * reaches the view as a composable lambda, and a change to what it captures recomposes the lambda

@@ -33,7 +33,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.playlists), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.playlistsEdit() })
         }) {
-            items(uiState.playlists) { playlist ->
+            items(uiState.playlists, key = { it.id.id }) { playlist ->
                 DropdownMenuView(id = playlist.id.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         viewModel.delete(playlist.id)

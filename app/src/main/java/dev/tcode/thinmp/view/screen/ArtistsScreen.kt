@@ -29,7 +29,7 @@ fun ArtistsScreen(viewModel: ArtistsViewModel = viewModel()) {
 
     MiniPlayerLayoutView {
         ColumnCollapsingTopAppBarView(stringResource(R.string.artists)) {
-            items(uiState.artists) { artist ->
+            items(uiState.artists, key = { it.id }) { artist ->
                 DropdownMenuView(id = artist.id, dropdownContent = { callback ->
                     FavoriteArtistDropdownMenuItemView(artist.artistId, callback)
                     ShortcutDropdownMenuItemView(artist.artistId, callback)

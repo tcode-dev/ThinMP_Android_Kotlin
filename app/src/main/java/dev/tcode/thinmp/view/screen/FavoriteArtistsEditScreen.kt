@@ -27,7 +27,7 @@ fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = viewMode
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, callback) {
-            itemsIndexed(uiState.artists) { index, artist ->
+            itemsIndexed(uiState.artists, key = { _, artist -> artist.id }) { index, artist ->
                 SwipeToDismissView(artist.id, callback = { viewModel.removeArtist(index) }) {
                     PlainRowView(artist.name)
                 }

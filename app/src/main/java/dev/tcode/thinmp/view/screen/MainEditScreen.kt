@@ -33,7 +33,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, callback) {
-            items(uiState.menu) { item ->
+            items(uiState.menu, key = { it.key }) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })
             }
             // The menu rows above and the shortcuts below are lists, so they simply are not there
@@ -52,7 +52,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
             }
-            itemsIndexed(uiState.shortcuts) { index, shortcut ->
+            itemsIndexed(uiState.shortcuts, key = { _, shortcut -> shortcut.id.id }) { index, shortcut ->
                 SwipeToDismissView(shortcut.id.id, callback = { viewModel.removeShortcut(index) }) {
                     PlainRowView(shortcut.primaryText)
                 }

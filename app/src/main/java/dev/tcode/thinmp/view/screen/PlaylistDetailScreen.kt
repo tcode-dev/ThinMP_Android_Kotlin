@@ -111,7 +111,7 @@ fun PlaylistDetailScreen(id: String, viewModel: PlaylistDetailViewModel = viewMo
                     }
                 }
             }
-            items(uiState.songs, span = { GridItemSpan(spanCount) }) { song ->
+            items(uiState.songs, key = { it.id }, span = { GridItemSpan(spanCount) }) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)

@@ -142,7 +142,9 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.albums))
                 }
-                itemsIndexed(items = uiState.albums) { index, album ->
+                // Albums and songs share this grid, and both ids are MediaStore _IDs from
+                // different tables, so an album and a song can carry the same number.
+                itemsIndexed(items = uiState.albums, key = { _, album -> "album:${album.id}" }) { index, album ->
                     DropdownMenuView(id = album.id, dropdownContent = { callback ->
                         ShortcutDropdownMenuItemView(album.albumId, callback)
                     }) { callback ->
@@ -158,7 +160,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.songs))
                 }
-                items(uiState.songs, span = { GridItemSpan(spanCount) }) { song ->
+                items(uiState.songs, key = { "song:${it.id}" }, span = { GridItemSpan(spanCount) }) { song ->
                     DropdownMenuView(id = song.id, dropdownContent = { callback ->
                         val callbackPlaylist = {
                             showPlaylistRegisterPopup(song.songId)
