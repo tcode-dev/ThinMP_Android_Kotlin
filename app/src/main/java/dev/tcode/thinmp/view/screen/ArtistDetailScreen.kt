@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +34,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
@@ -158,7 +158,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.songs))
                 }
-                itemsIndexed(items = uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
+                items(uiState.songs, span = { GridItemSpan(spanCount) }) { song ->
                     DropdownMenuView(id = song.id, dropdownContent = { callback ->
                         val callbackPlaylist = {
                             showPlaylistRegisterPopup(song.songId)
@@ -169,7 +169,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                         PlaylistDropdownMenuItemView(callbackPlaylist)
                     }) { callback ->
                         MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
-                            detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
+                            detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(song.songId) })
                         })
                     }
                 }

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.constant.StyleConstant
-import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
 import dev.tcode.thinmp.view.collapsingTopAppBar.detailSize
@@ -103,7 +102,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     }
                 }
             }
-            itemsIndexed(uiState.songs, span = { _: Int, _: SongModel -> GridItemSpan(spanCount) }) { index, song ->
+            items(uiState.songs, span = { GridItemSpan(spanCount) }) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
@@ -114,7 +113,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel())
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
-                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
+                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(song.songId) })
                     })
                 }
             }

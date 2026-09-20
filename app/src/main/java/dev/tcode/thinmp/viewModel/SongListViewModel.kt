@@ -2,6 +2,7 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,16 @@ abstract class SongListViewModel(application: Application) : MusicPlayerViewMode
 
     protected abstract fun load()
 
-    fun start(index: Int) {
+    /**
+     * Takes the id rather than the row's position. The list is reloaded on every return to the
+     * screen and after a playback error, so a position taken when the row was composed can name a
+     * different song, or none at all, by the time the tap arrives. A song the list no longer holds
+     * is ignored.
+     */
+    fun start(songId: SongId) {
+        val songs = this.songs
+        val index = indexOfSong(songs, songId) ?: return
+
         musicPlayer.start(getApplication(), songs, index)
     }
 
@@ -40,4 +50,11 @@ abstract class SongListViewModel(application: Application) : MusicPlayerViewMode
     private fun updateIsVisiblePlayer() {
         _isVisiblePlayer.value = musicPlayer.isServiceRunning()
     }
+}
+
+/** Where [songId] sits in [songs], or null once the list no longer holds it. */
+fun indexOfSong(songs: List<SongModel>, songId: SongId): Int? {
+    val index = songs.indexOfFirst { it.songId == songId }
+
+    return if (index < 0) null else index
 }

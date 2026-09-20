@@ -1,7 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -28,7 +28,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
 
     CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         ColumnCollapsingTopAppBarView(stringResource(R.string.songs)) {
-            itemsIndexed(uiState.songs) { index, song ->
+            items(uiState.songs) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
@@ -38,7 +38,7 @@ fun SongsScreen(viewModel: SongsViewModel = viewModel()) {
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
-                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
+                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(song.songId) })
                     })
                 }
             }

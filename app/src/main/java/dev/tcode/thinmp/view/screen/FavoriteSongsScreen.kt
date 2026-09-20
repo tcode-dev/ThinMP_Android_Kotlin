@@ -1,7 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,7 +34,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
         MenuCollapsingTopAppBarView(title = stringResource(R.string.favorite_songs), dropdownMenus = {
             DropdownMenuItem(text = { Text(stringResource(R.string.edit)) }, onClick = { navigator.favoriteSongsEdit() })
         }) {
-            itemsIndexed(uiState.songs) { index, song ->
+            items(uiState.songs) { song ->
                 DropdownMenuView(id = song.id, dropdownContent = { callback ->
                     val callbackFavorite = {
                         callback()
@@ -48,7 +48,7 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = viewModel()) {
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(song.id) {
-                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(index) })
+                        detectTapGestures(onLongPress = { callback() }, onTap = { viewModel.start(song.songId) })
                     })
                 }
             }
