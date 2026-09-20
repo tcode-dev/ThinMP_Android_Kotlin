@@ -157,7 +157,11 @@ app/src/main/java/dev/tcode/thinmp/
   read-modify-write belongs in one `@Transaction` DAO method (`toggle`, `insertAtEnd`,
   `replaceAll`). This is not hypothetical: it is why `FavoriteSongDao.toggle` exists
 - ViewModel `load()` runs in `viewModelScope` and cancels the previous job first
-  (`loadJob?.cancel()`); `onResume` and `MusicPlayerListener.onError()` can both trigger it
+  (`loadJob?.cancel()`); `onResume` and `MusicPlayerListener.onError()` can both trigger it. The
+  three lines are repeated in every view model on purpose: only 5 of the 15 share
+  `SongListViewModel`, the other 10 sit directly on `AndroidViewModel` (4 of them Hilt-injected),
+  so a shared helper would mean a new base class across every hierarchy to hide one `cancel()`,
+  and would not stop anyone calling `viewModelScope.launch` directly. Do not pull `loadJob` up
 - Edit screens save via `OneShotEvent` / `OnEvent` and navigate away only after the write
   completes. Writes triggered by something that closes immediately (dropdown menus, the playlist
   popup) run in `viewModelScope`, never `rememberCoroutineScope()`
