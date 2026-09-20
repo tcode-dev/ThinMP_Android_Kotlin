@@ -14,17 +14,24 @@ interface CustomLifecycleEventObserverListener {
     fun onDestroy() {}
 }
 
+/**
+ * The observer is registered once per lifecycle and reads the listener through
+ * rememberUpdatedState, so a recomposition that passes a different listener swaps the target
+ * without re-registering. Re-registering is not a no-op: a LifecycleRegistry replays ON_CREATE,
+ * ON_START and ON_RESUME to every observer it adds, so an effect keyed on the listener would hand
+ * a resumed screen a second ON_RESUME whenever the listener changed.
+ */
 @Composable
 fun CustomLifecycleEventObserver(listener: CustomLifecycleEventObserverListener) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val currentOnEvent by rememberUpdatedState(listener)
+    val currentListener by rememberUpdatedState(listener)
 
-    DisposableEffect(key1 = lifecycle, key2 = currentOnEvent) {
+    DisposableEffect(lifecycle) {
         val lifecycleObserver = LifecycleEventObserver { _, event ->
             when (event) {
-                Lifecycle.Event.ON_RESUME -> listener.onResume()
-                Lifecycle.Event.ON_STOP -> listener.onStop()
-                Lifecycle.Event.ON_DESTROY -> listener.onDestroy()
+                Lifecycle.Event.ON_RESUME -> currentListener.onResume()
+                Lifecycle.Event.ON_STOP -> currentListener.onStop()
+                Lifecycle.Event.ON_DESTROY -> currentListener.onDestroy()
                 else -> {}
             }
         }
