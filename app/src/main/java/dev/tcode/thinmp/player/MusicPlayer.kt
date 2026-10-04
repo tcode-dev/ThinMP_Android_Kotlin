@@ -10,39 +10,40 @@ import dev.tcode.thinmp.model.media.SongModel
 
 interface MusicPlayerListener : MusicServiceListener {
     fun onBind() {}
+
+    /** The service went away while bound. Not called for an unbind of our own. */
+    fun onDisconnect() {}
 }
 
 class MusicPlayer(var listener: MusicPlayerListener) {
     private var musicService: MusicService? = null
-    private lateinit var connection: ServiceConnection
-    private var isServiceBinding = false
-    private var bound = false
-
-    fun isServiceRunning(): Boolean {
-        return MusicService.isServiceRunning
-    }
+    private var connection: ServiceConnection? = null
+    private var isCreatingService = false
 
     fun isPlaying(): Boolean {
         return musicService?.isPlaying() == true
     }
 
+    /**
+     * A screen only ever binds to a service that is already running; start() is what creates it.
+     * When it is not running, bindService() waits, and connects only if something starts it.
+     */
     fun start(context: Context, songs: List<SongModel>, index: Int) {
-        if (isServiceBinding) return
+        val musicService = this.musicService
 
-        if (!isServiceRunning()) {
-            context.startForegroundService(Intent(context, MusicService::class.java))
-            bindService(context) { musicService?.start(songs, index) }
-
-            return
-        }
-
-        if (!bound) {
-            bindService(context) { musicService?.start(songs, index) }
+        if (musicService != null) {
+            musicService.start(songs, index)
 
             return
         }
 
-        musicService?.start(songs, index)
+        if (isCreatingService) return
+
+        // A binding still waiting for the service would never connect, since nothing else is going
+        // to start it, so it is replaced by one that creates it.
+        unbindService(context)
+        isCreatingService = true
+        bind(context, Context.BIND_AUTO_CREATE) { it.start(songs, index) }
     }
 
     fun play() {
@@ -95,45 +96,66 @@ class MusicPlayer(var listener: MusicPlayerListener) {
         unbindService(context)
     }
 
-    fun bindService(context: Context, callback: () -> Unit? = {}) {
-        if (isServiceBinding || bound) return
+    /**
+     * Binds without BIND_AUTO_CREATE, which is how the running service is found without asking
+     * whether it runs: the connection arrives straight away when it does, and otherwise once it is
+     * started. A screen binding this way never brings up a service of its own, which used to leave
+     * a fresh MusicService that start() had never run on behind a mini player still on screen.
+     */
+    fun bindService(context: Context) {
+        if (connection != null) return
 
-        isServiceBinding = true
-        connection = createConnection(callback)
-        context.bindService(
-            Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE
-        )
+        bind(context, 0) {}
+    }
+
+    private fun bind(context: Context, flags: Int, callback: (MusicService) -> Unit) {
+        val connection = createConnection(context, callback)
+
+        this.connection = connection
+        context.bindService(Intent(context, MusicService::class.java), connection, flags)
     }
 
     /**
-     * Also unbinds while a bind is still in flight. Guarding on `bound` alone leaked the
-     * ServiceConnection whenever a screen was left between bindService() and onServiceConnected(),
-     * and let the connection go on to register a listener for a view model that had already
-     * stopped. Both flags being false means bindService() was never called, so `connection` is
-     * still unassigned and must not be touched.
+     * Also unbinds while a bind is still in flight. Guarding on a completed connection alone leaked
+     * the ServiceConnection whenever a screen was left between bindService() and
+     * onServiceConnected(), and let the connection go on to register a listener for a view model
+     * that had already stopped.
      */
     private fun unbindService(context: Context) {
-        if (!isServiceBinding && !bound) return
+        val connection = this.connection ?: return
 
         context.unbindService(connection)
+        this.connection = null
         musicService = null
-        bound = false
-        isServiceBinding = false
+        isCreatingService = false
     }
 
-    private fun createConnection(callback: () -> Unit? = {}): ServiceConnection {
+    private fun createConnection(context: Context, callback: (MusicService) -> Unit): ServiceConnection {
         return object : ServiceConnection {
             override fun onServiceConnected(name: ComponentName, service: IBinder) {
                 val binder: MusicService.MusicBinder = service as MusicService.MusicBinder
-                musicService = binder.getService()
-                musicService!!.addEventListener(listener)
-                callback()
+                val musicService = binder.getService()
+
+                this@MusicPlayer.musicService = musicService
+                musicService.addEventListener(listener)
+                callback(musicService)
                 listener.onBind()
-                isServiceBinding = false
-                bound = true
+                isCreatingService = false
             }
 
-            override fun onServiceDisconnected(name: ComponentName) {}
+            override fun onServiceDisconnected(name: ComponentName) {
+                musicService = null
+                listener.onDisconnect()
+            }
+
+            /**
+             * A binding without BIND_AUTO_CREATE dies with the service it was connected to and
+             * never connects again, so it is dropped. The next bindService() or start() makes a
+             * new one.
+             */
+            override fun onBindingDied(name: ComponentName) {
+                unbindService(context)
+            }
         }
     }
 }

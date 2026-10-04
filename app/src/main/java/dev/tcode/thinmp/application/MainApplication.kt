@@ -46,8 +46,7 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onActivityDestroyed(activity: Activity) {
         if (activity.isChangingConfigurations) return
 
-        if (!MusicService.isServiceRunning) return
-
+        // Does nothing when the service is not running, so there is nothing to check first.
         val musicServiceIntent = Intent(applicationContext, MusicService::class.java)
 
         applicationContext.stopService(musicServiceIntent)

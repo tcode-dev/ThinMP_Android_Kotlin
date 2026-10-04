@@ -9,7 +9,8 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 /**
  * Owns a [MusicPlayer] and binds it to [dev.tcode.thinmp.player.MusicService] for as long as the
  * screen is in the foreground: bound on construction and on every return to the screen, unbound
- * on ON_STOP. Whether the service is running decides whether there is anything to bind to.
+ * on ON_STOP. The binding connects only while the service is running, so a screen opened before
+ * anything has played waits for the first start rather than creating the service itself.
  *
  * The first ON_RESUME follows straight after init, which has already bound, so it is skipped.
  */
@@ -18,7 +19,7 @@ abstract class MusicPlayerViewModel(application: Application) : AndroidViewModel
     private var initialized: Boolean = false
 
     init {
-        bindService()
+        musicPlayer.bindService(getApplication())
     }
 
     override fun onResume() {
@@ -29,7 +30,7 @@ abstract class MusicPlayerViewModel(application: Application) : AndroidViewModel
         }
 
         onReturn()
-        bindService()
+        musicPlayer.bindService(getApplication())
     }
 
     override fun onStop() {
@@ -47,10 +48,4 @@ abstract class MusicPlayerViewModel(application: Application) : AndroidViewModel
 
     /** Runs on every ON_RESUME but the first, before the service is bound again. */
     protected open fun onReturn() {}
-
-    private fun bindService() {
-        if (musicPlayer.isServiceRunning()) {
-            musicPlayer.bindService(getApplication())
-        }
-    }
 }
