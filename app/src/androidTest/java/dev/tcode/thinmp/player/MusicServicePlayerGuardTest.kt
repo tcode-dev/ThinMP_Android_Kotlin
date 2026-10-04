@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit
  * The controls stay live in two states where there is no player to drive: before start() has built
  * one, and after the queue emptied out and release() freed it. The first one crashed on the
  * lateinit - a config change destroys the activity, MainApplication stops the service, and the
- * retained view models rebind while isServiceRunning is still set, which creates a fresh service
+ * retained view models rebind while the service still looks running, which creates a fresh service
  * that start() never ran on. The mini player is still on screen from the state it kept, so its play
  * button reaches a service holding no player at all.
  *

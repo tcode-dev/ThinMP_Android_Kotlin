@@ -11,6 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.MainActivity
 import dev.tcode.thinmp.player.MusicService
+import dev.tcode.thinmp.player.MusicServiceWatcher
 import org.junit.After
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
@@ -30,10 +31,9 @@ import java.util.concurrent.TimeUnit
  * onDestroy(). A binding held across the check would keep the service alive on its own and the
  * test would pass either way.
  *
- * What it compares is the service instance, not MusicService.isServiceRunning. The recreated
- * screen binds with BIND_AUTO_CREATE as soon as it sees the flag, so a service that was stopped is
- * replaced by a fresh one and the flag reads true again either way - only the player the old
- * instance held is gone.
+ * What it compares is the service instance, not whether some instance is running. The recreated
+ * screen used to bind with BIND_AUTO_CREATE, so a service that was stopped was replaced by a fresh
+ * one and looked running either way - only the player the old instance held was gone.
  *
  * Nothing here plays audio, so no MediaStore content is needed and the test never skips itself.
  */
@@ -73,12 +73,13 @@ class MainApplicationConfigChangeTest {
     /** The other direction: leaving the app for real still has to stop it. */
     @Test
     fun theServiceStopsWhenTheActivityGoesAway() {
-        currentService()
+        val watcher = MusicServiceWatcher.attach(context, timeoutMs)
 
         scenario!!.close()
         scenario = null
 
-        assertTrue("the service outlived the activity", awaitServiceStopped())
+        // stopService() is asynchronous, so onDestroy() lands after close() has returned.
+        assertTrue("the service outlived the activity", watcher.awaitDestroyed(timeoutMs))
     }
 
     /**
@@ -102,19 +103,6 @@ class MainApplicationConfigChangeTest {
         context.unbindService(connection)
 
         return bound!!
-    }
-
-    /** stopService() is asynchronous, so onDestroy() lands after close() has returned. */
-    private fun awaitServiceStopped(): Boolean {
-        val deadline = System.currentTimeMillis() + timeoutMs
-
-        while (System.currentTimeMillis() < deadline) {
-            if (!MusicService.isServiceRunning) return true
-
-            Thread.sleep(50)
-        }
-
-        return !MusicService.isServiceRunning
     }
 
     private fun grantPermission(permission: String) {

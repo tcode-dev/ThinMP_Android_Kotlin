@@ -80,18 +80,9 @@ class MusicService : Service() {
     private var isPlaying = false
     private var isStarting = false
 
-    // Serviceの起動状態を確認する必要がある
-    // Android13以降を対象にしているのでgetRunningServicesやLocalBroadcastManagerは使用できない
-    // そのためcompanion objectでServiceの起動状態を管理する
-    // アプリを再起動してもisServiceRunningは前回起動時の値のままなのでonDestroyで初期化する
-    companion object {
-        var isServiceRunning = false
-    }
-
     override fun onCreate() {
         super.onCreate()
 
-        isServiceRunning = true
         config = ConfigStore(baseContext)
 
         loadConfig()
@@ -241,9 +232,16 @@ class MusicService : Service() {
         player.addListener(playerEventListener)
     }
 
+    /**
+     * The service is reached by binding, so it starts itself here: a started service outlives the
+     * screens unbinding from it, a merely bound one is destroyed with the last of them. MusicPlayer
+     * used to call startForegroundService() beforehand, which meant deciding from outside whether
+     * the service was already running.
+     */
     private fun startFirstService() {
         if (initialized) return
 
+        startForegroundService(Intent(applicationContext, MusicService::class.java))
         LocalNotificationHelper.createNotificationChannel(applicationContext)
         // Posted without art so startForeground() lands well inside the five second deadline
         // startForegroundService() sets. buildNotification() never returns null, which the
@@ -431,7 +429,6 @@ class MusicService : Service() {
         release()
         LocalNotificationHelper.cancelAll(applicationContext)
         stopForeground(STOP_FOREGROUND_DETACH)
-        isServiceRunning = false
     }
 
     inner class PlayerEventListener : Player.Listener {

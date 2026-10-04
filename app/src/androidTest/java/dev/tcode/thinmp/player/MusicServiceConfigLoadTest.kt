@@ -51,7 +51,7 @@ class MusicServiceConfigLoadTest {
         context = ApplicationProvider.getApplicationContext()
         config = ConfigStore(context)
 
-        awaitServiceGone()
+        MusicServiceWatcher.stopAndAwait(context, timeoutMs)
         resetConfig()
     }
 
@@ -133,17 +133,12 @@ class MusicServiceConfigLoadTest {
      * next bind would otherwise be answered by the instance this one is still tearing down, which
      * has loaded its config long ago.
      */
-    private suspend fun unbind() {
+    private fun unbind() {
         val connection = this.connection ?: return
 
         this.connection = null
         context.unbindService(connection)
-        context.stopService(Intent(context, MusicService::class.java))
-        awaitServiceGone()
-    }
-
-    private suspend fun awaitServiceGone() {
-        await("the previous service is still running") { !MusicService.isServiceRunning }
+        MusicServiceWatcher.stopAndAwait(context, timeoutMs)
     }
 
     private suspend fun await(message: String, condition: () -> Boolean) {

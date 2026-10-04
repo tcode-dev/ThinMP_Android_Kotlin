@@ -10,10 +10,15 @@ import kotlinx.coroutines.flow.asStateFlow
 /**
  * A screen that lists songs and starts playback from one of them. The list is reloaded on every
  * return to the screen and whenever the service drops a song it could not play, and the mini
- * player is shown once the service is running.
+ * player is shown while the screen is connected to the running service.
+ *
+ * ON_STOP unbinds and ON_RESUME binds again, and the mini player is left as it was in between, so a
+ * return to the screen does not flash it off and on. Only the service going away while bound hides
+ * it. The app stops the service only when the activity is finishing, which clears this view model
+ * too, so a service stopped while the screen sat unbound is not a state left to handle.
  */
 abstract class SongListViewModel(application: Application) : MusicPlayerViewModel(application) {
-    private val _isVisiblePlayer = MutableStateFlow(musicPlayer.isServiceRunning())
+    private val _isVisiblePlayer = MutableStateFlow(false)
     val isVisiblePlayer: StateFlow<Boolean> = _isVisiblePlayer.asStateFlow()
 
     /** The list [start] plays from. */
@@ -36,19 +41,18 @@ abstract class SongListViewModel(application: Application) : MusicPlayerViewMode
 
     override fun onReturn() {
         load()
-        updateIsVisiblePlayer()
     }
 
     override fun onBind() {
-        updateIsVisiblePlayer()
+        _isVisiblePlayer.value = true
+    }
+
+    override fun onDisconnect() {
+        _isVisiblePlayer.value = false
     }
 
     override fun onError() {
         load()
-    }
-
-    private fun updateIsVisiblePlayer() {
-        _isVisiblePlayer.value = musicPlayer.isServiceRunning()
     }
 }
 
