@@ -86,8 +86,7 @@ app/src/main/java/dev/tcode/thinmp/
 ├── config/            # ConfigStore (DataStore preferences)
 ├── constant/          # Navigation routes, style, notification constants
 ├── model/             # Data models, value objects, Room entities
-├── notification/      # Playback notification helper
-├── player/            # MusicPlayer, MusicService
+├── player/            # MusicPlayer, MusicService (MediaSessionService), WrapAroundPlayer
 ├── register/          # Domain logic interfaces (favorites, playlists)
 ├── repository/        # MediaStore and Room data access, dao/ subdirectory for Room DAOs
 ├── service/           # Business logic services
@@ -132,12 +131,12 @@ app/src/main/java/dev/tcode/thinmp/
   field a reload could change. A value that must track a change goes through
   `rememberUpdatedState`, not a `pointerInput` key
 - A `catch` exists only where one specific exception has one specific recovery: `MusicService`
-  turns a `seekTo` failure on a deleted file into `onError()` and a missing album art into no
-  icon. The view model load paths have none on purpose. Permission is gated in `PermissionView`
-  before any screen composes, `ContentResolver.query()` reports a provider failure as `null`,
-  which `?.use` turns into an empty list, and what remains — a malformed selection or sort
-  order, a Room `SQLiteException` — is a programming error or unrecoverable, and a blanket
-  `catch` would show it as an empty screen instead of a crash
+  turns a `seekTo` failure on a deleted file into `onError()`. The view model load paths have
+  none on purpose. Permission is gated in `PermissionView` before any screen composes,
+  `ContentResolver.query()` reports a provider failure as `null`, which `?.use` turns into an
+  empty list, and what remains — a malformed selection or sort order, a Room `SQLiteException` —
+  is a programming error or unrecoverable, and a blanket `catch` would show it as an empty screen
+  instead of a crash
 
 ### Threading
 
@@ -153,9 +152,9 @@ app/src/main/java/dev/tcode/thinmp/
   dispatcher. `ConfigStore` used to hide `runBlocking` inside every getter and setter, which is
   how blocking reads ended up in `MusicService.onCreate()` and a blocking fsync ended up behind
   the repeat and shuffle buttons
-- `withContext(Dispatchers.IO)` belongs in exactly two places: `MediaStoreRepository.get()` /
-  `getList()` (plain blocking `ContentResolver.query()`), and `MusicService.decodeAlbumArt()`
-  (`ImageDecoder`)
+- `withContext(Dispatchers.IO)` belongs in exactly one place: `MediaStoreRepository.get()` /
+  `getList()` (plain blocking `ContentResolver.query()`). The notification's album art is loaded
+  by Media3's own bitmap loader from `MediaMetadata.artworkUri`
 - Transactions: work expressible in one DAO gets `@Transaction` on a DAO method; work spanning
   DAOs or interleaved with Kotlin logic gets `db.withTransaction { }` in the repository
 - **Never read a row and then write it from two separate calls.** Every suspend DAO call is a
@@ -175,9 +174,8 @@ app/src/main/java/dev/tcode/thinmp/
 - Dropdown menu items read their state with `produceState(initialValue, id)` so effect and state
   share one key. They pass only the id to the write — never the state they displayed, which may
   have gone stale while the menu was open
-- `MusicService` owns a `serviceScope` (cancelled in `onDestroy`) for its `ConfigStore` access and
-  the album art decode. It is a `Service`, not a `ViewModel`, so there is no `viewModelScope` to
-  lean on
+- `MusicService` owns a `serviceScope` (cancelled in `onDestroy`) for its `ConfigStore` access.
+  It is a `Service`, not a `ViewModel`, so there is no `viewModelScope` to lean on
 - Services that reconcile Room ids against MediaStore (`FavoriteSongsService`, `ShortcutService`,
   `PlaylistDetailService`, …) delete the ids that resolved to nothing and **return the list they
   already mapped**. Do not re-enter the function after the cleanup: a duplicated id makes an id

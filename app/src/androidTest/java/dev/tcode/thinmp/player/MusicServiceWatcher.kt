@@ -47,7 +47,7 @@ class MusicServiceWatcher private constructor(private val context: Context) {
         fun attach(context: Context, timeoutMs: Long): MusicServiceWatcher {
             val watcher = MusicServiceWatcher(context)
 
-            context.bindService(Intent(context, MusicService::class.java), watcher.connection, 0)
+            context.bindService(MusicService.bindIntent(context), watcher.connection, 0)
             assertTrue("the service is not running", watcher.connected.await(timeoutMs, TimeUnit.MILLISECONDS))
 
             return watcher
@@ -67,7 +67,7 @@ class MusicServiceWatcher private constructor(private val context: Context) {
                 override fun onServiceDisconnected(name: ComponentName) {}
             }
 
-            context.bindService(Intent(context, MusicService::class.java), creator, Context.BIND_AUTO_CREATE)
+            context.bindService(MusicService.bindIntent(context), creator, Context.BIND_AUTO_CREATE)
             assertTrue("the service did not bind", created.await(timeoutMs, TimeUnit.MILLISECONDS))
 
             val watcher = attach(context, timeoutMs)

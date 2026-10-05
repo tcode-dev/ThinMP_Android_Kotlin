@@ -2,7 +2,6 @@ package dev.tcode.thinmp.player
 
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import dev.tcode.thinmp.config.RepeatState
@@ -112,7 +111,7 @@ class MusicPlayer(var listener: MusicPlayerListener) {
         val connection = createConnection(context, callback)
 
         this.connection = connection
-        context.bindService(Intent(context, MusicService::class.java), connection, flags)
+        context.bindService(MusicService.bindIntent(context), connection, flags)
     }
 
     /**

@@ -2,7 +2,6 @@ package dev.tcode.thinmp.player
 
 import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.test.core.app.ApplicationProvider
@@ -122,7 +121,7 @@ class MusicServiceConfigLoadTest {
         }
 
         this.connection = connection
-        context.bindService(Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE)
+        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
         assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
 
         return bound!!

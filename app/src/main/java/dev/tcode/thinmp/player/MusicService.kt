@@ -1,62 +1,74 @@
 package dev.tcode.thinmp.player
 
-import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.Service
+import android.app.PendingIntent
+import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
 import android.os.Binder
 import android.os.IBinder
 import android.os.Looper
-import android.util.Size
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
-import androidx.media3.session.MediaStyleNotificationHelper
+import androidx.media3.session.MediaSessionService
+import dev.tcode.thinmp.R
+import dev.tcode.thinmp.activity.MainActivity
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.NotificationConstant
 import dev.tcode.thinmp.model.media.SongModel
-import dev.tcode.thinmp.notification.LocalNotificationHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import java.io.IOException
 
 interface MusicServiceListener {
     fun onChange() {}
     fun onError() {}
 }
 
-class MusicService : Service() {
-    private val PREV_MS = 3000
-    private val ALBUM_ART_MAX_PX = 512
+/**
+ * Owns the one ExoPlayer and the one MediaSession for the life of the service. The notification,
+ * the lock screen and the foreground state are MediaSessionService's: it starts the service in the
+ * foreground when playback starts and drops back out when it stops.
+ *
+ * The screens still reach the service through [MusicBinder], bound with [bindIntent]'s own action.
+ * Every other bind - a MediaController, the system - goes to MediaSessionService.
+ */
+@OptIn(UnstableApi::class)
+class MusicService : MediaSessionService() {
+    companion object {
+        private const val ACTION_BIND_MUSIC_PLAYER = "dev.tcode.thinmp.player.BIND_MUSIC_PLAYER"
+
+        /** The intent that binds to [MusicBinder]. A plain intent reaches MediaSessionService instead, which answers it with nothing. */
+        fun bindIntent(context: Context): Intent {
+            return Intent(context, MusicService::class.java).setAction(ACTION_BIND_MUSIC_PLAYER)
+        }
+    }
+
     private val binder = MusicBinder()
 
     /**
-     * Null until start() builds one and again from release() on, so "never started" and "already
-     * released" are the same state rather than a lateinit check and a flag that each covered only
-     * one of them. Every caller has to go through `?.` or an early return, which is what keeps the
-     * transport controls from reaching a player that is not there.
+     * Built once in onCreate() and kept until onDestroy(). A new song replaces the queue with
+     * setMediaItems() rather than building a new player, so an empty queue - before the first
+     * start(), or after retry() dropped the last song - is the state the controls have to tolerate,
+     * not a missing player.
      */
-    private var player: ExoPlayer? = null
+    private lateinit var exoPlayer: ExoPlayer
+
+    /** What the session is given, so its controls go back and forward the way the app's do. */
+    private lateinit var player: WrapAroundPlayer
     private lateinit var mediaSession: MediaSession
-    @SuppressLint("UnsafeOptInUsageError")
-    private lateinit var mediaStyle: MediaStyleNotificationHelper.MediaStyle
-    private lateinit var playerEventListener: PlayerEventListener
     private lateinit var config: ConfigStore
 
     /**
-     * Owns the ConfigStore reads and writes and the album art decode, so none of them run on the
-     * main thread. Cancelled in onDestroy().
+     * Owns the ConfigStore reads and writes, so none of them run on the main thread. Cancelled in
+     * onDestroy().
      */
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(serviceJob + Dispatchers.Main.immediate)
@@ -67,25 +79,50 @@ class MusicService : Service() {
      *
      * The buttons are live during that window, so each of the two carries a flag saying the user
      * has already worked it. loadConfig() skips the ones that are set: what the user just chose is
-     * newer than what was on disk, and changeRepeat() / changeShuffle() have saved it themselves.
+     * newer than what was on disk, and the player listener has saved it already.
      */
     private var repeat: RepeatState = RepeatState.OFF
     private var repeatChangedByUser = false
-    private var notificationJob: Job? = null
-    private var listeners: MutableList<MusicServiceListener> = mutableListOf()
-    private var playingList: List<SongModel> = emptyList()
-    private var initialized: Boolean = false
     private var shuffle = false
     private var shuffleChangedByUser = false
-    private var isPlaying = false
-    private var isStarting = false
 
+    /** Set while loadConfig() applies the stored values, so the listener does not save them back. */
+    private var applyingStoredConfig = false
+    private var listeners: MutableList<MusicServiceListener> = mutableListOf()
+
+    /** In the same order as the player's media items, so an item index is also an index here. */
+    private var playingList: List<SongModel> = emptyList()
+    private var isPlaying = false
+
+    /**
+     * setHandleAudioBecomingNoisy replaces a HEADSET_PLUG receiver this service used to register in
+     * onCreate(). That receiver stopped rather than paused - which leaves ExoPlayer idle, so the play
+     * button afterwards did nothing until the queue was rebuilt - and it read the wired headset's
+     * state extra with AudioManager's Bluetooth SCO constants, which only lined up because both
+     * happen to be 0. ACTION_AUDIO_BECOMING_NOISY is the intent meant for this, it covers Bluetooth
+     * going away as well as the wired jack, and the player enables and disables its own receiver
+     * around playback.
+     */
     override fun onCreate() {
         super.onCreate()
 
         config = ConfigStore(baseContext)
+        exoPlayer = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
+        exoPlayer.addListener(PlayerEventListener())
+        player = WrapAroundPlayer(exoPlayer)
+        mediaSession = MediaSession.Builder(this, player).setSessionActivity(sessionActivity()).build()
+
+        setMediaNotificationProvider(notificationProvider())
+        // The screens reach the service through the binder, not through a MediaController, so
+        // nothing would add the session through onGetSession(). Without this the service never
+        // learns about it and posts no notification.
+        addSession(mediaSession)
 
         loadConfig()
+    }
+
+    override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession {
+        return mediaSession
     }
 
     fun addEventListener(listener: MusicServiceListener) {
@@ -97,64 +134,56 @@ class MusicService : Service() {
     }
 
     /**
-     * firstOrNull, not first: retry() swaps playingList for a shorter one while the old player is
-     * still winding down, so the current item briefly belongs to a list this one no longer holds.
+     * firstOrNull, not first: the current item can only come from playingList, but a lookup that
+     * misses should leave the mini player as it is rather than take the app down.
      */
     fun getCurrentSong(): SongModel? {
-        val currentMediaItem = player?.currentMediaItem ?: return null
+        val mediaId = exoPlayer.currentMediaItem?.mediaId ?: return null
 
-        return playingList.firstOrNull { MediaItem.fromUri(it.getMediaUri()) == currentMediaItem }
+        return playingList.firstOrNull { it.id == mediaId }
     }
 
     fun start(songs: List<SongModel>, index: Int) {
-        if (isStarting) return
+        if (songs.isEmpty()) return
 
-        isStarting = true
+        // MediaSessionService starts itself only once playback is under way. Until then the service
+        // is merely bound and goes away with the last screen unbinding - before the song has even
+        // loaded, or for good when it fails to load.
+        startService(Intent(this, MusicService::class.java))
         playingList = songs
-
-        release()
-        setPlayer(index)
-        play()
-        startFirstService()
+        exoPlayer.setMediaItems(songs.map { toMediaItem(it) }, index, 0)
+        exoPlayer.prepare()
+        exoPlayer.play()
     }
 
     fun play() {
-        player?.play()
+        if (exoPlayer.mediaItemCount == 0) return
+
+        exoPlayer.play()
     }
 
     fun pause() {
-        player?.pause()
+        exoPlayer.pause()
     }
 
+    /**
+     * A seek back to the start of the same song is not a media item transition, so nothing else
+     * would tell the screens about it.
+     */
     fun prev() {
-        val player = this.player ?: return
-
-        if (player.currentPosition <= PREV_MS) {
-            if (isFirstSong(player)) {
-                seekToLast(player)
-            } else {
-                player.seekToPrevious()
-            }
-        } else {
-            player.seekTo(0)
-            onChange()
-        }
+        player.seekToPrevious()
+        onChange()
     }
 
     fun next() {
-        val player = this.player ?: return
-
-        if (isLastSong(player)) {
-            seekToFirst(player)
-        } else {
-            player.seekToNext()
-        }
+        player.seekToNext()
     }
 
     fun getRepeat(): RepeatState {
         return repeat
     }
 
+    /** The player listener saves the new value; see onRepeatModeChanged(). */
     fun changeRepeat() {
         repeatChangedByUser = true
         repeat = when (repeat) {
@@ -162,30 +191,25 @@ class MusicService : Service() {
             RepeatState.ONE -> RepeatState.OFF
             RepeatState.ALL -> RepeatState.ONE
         }
-        player?.let { setRepeat(it) }
-        onChange()
-        // Reads the field at execution time rather than capturing it, so rapid taps all persist
-        // the state the user actually ended on.
-        serviceScope.launch { config.saveRepeat(repeat) }
+        exoPlayer.repeatMode = toRepeatMode(repeat)
     }
 
     fun getShuffle(): Boolean {
         return shuffle
     }
 
+    /** The player listener saves the new value; see onShuffleModeEnabledChanged(). */
     fun changeShuffle() {
         shuffleChangedByUser = true
         shuffle = !shuffle
-        player?.let { setShuffle(it) }
-        onChange()
-        serviceScope.launch { config.saveShuffle(shuffle) }
+        exoPlayer.shuffleModeEnabled = shuffle
     }
 
     fun seekTo(ms: Long) {
-        val player = this.player ?: return
+        if (exoPlayer.mediaItemCount == 0) return
 
         try {
-            player.seekTo(ms)
+            exoPlayer.seekTo(ms)
         } catch (e: Exception) {
             onError()
         }
@@ -196,66 +220,43 @@ class MusicService : Service() {
     }
 
     fun getCurrentPosition(): Long {
-        return player?.currentPosition ?: 0
+        if (exoPlayer.mediaItemCount == 0) return 0
+
+        return exoPlayer.currentPosition
+    }
+
+    private fun toMediaItem(song: SongModel): MediaItem {
+        val metadata = MediaMetadata.Builder().setTitle(song.name).setArtist(song.artistName).setAlbumTitle(song.albumName).setArtworkUri(song.getImageUri()).build()
+
+        return MediaItem.Builder().setMediaId(song.id).setUri(song.getMediaUri()).setMediaMetadata(metadata).build()
     }
 
     /**
-     * setHandleAudioBecomingNoisy replaces a HEADSET_PLUG receiver this service used to register in
-     * onCreate(). That receiver called player.stop() on a player that onCreate() has not built yet
-     * and that release() may already have freed, it stopped rather than paused - which leaves
-     * ExoPlayer idle, so the play button afterwards did nothing until the queue was rebuilt - and
-     * it read the wired headset's state extra with AudioManager's Bluetooth SCO constants, which
-     * only lined up because both happen to be 0. ACTION_AUDIO_BECOMING_NOISY is the intent meant for
-     * this, it covers Bluetooth going away as well as the wired jack, and the player enables and
-     * disables its own receiver around playback, so there is no window where a released player is
-     * reachable.
+     * Brings the app back the way the launcher does. An intent naming MainActivity alone would
+     * stack a second instance on top of the one already in the task.
      */
-    @OptIn(UnstableApi::class)
-    private fun setPlayer(index: Int) {
-        val player = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
+    private fun sessionActivity(): PendingIntent {
+        val intent = packageManager.getLaunchIntentForPackage(packageName) ?: Intent(this, MainActivity::class.java)
 
-        this.player = player
-        mediaSession = MediaSession.Builder(applicationContext, player).build()
-        mediaStyle = MediaStyleNotificationHelper.MediaStyle(mediaSession)
+        return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+    }
 
-        setRepeat(player)
-        setShuffle(player)
+    /** Keeps the channel the app's own notification used, so its name and the user's settings for it carry over. */
+    private fun notificationProvider(): DefaultMediaNotificationProvider {
+        val provider = DefaultMediaNotificationProvider.Builder(this)
+            .setChannelId(NotificationConstant.CHANNEL_ID)
+            .setChannelName(R.string.channel_name)
+            .setNotificationId(NotificationConstant.NOTIFICATION_ID)
+            .build()
 
-        val mediaItems = playingList.map {
-            MediaItem.fromUri(it.getMediaUri())
-        }
+        provider.setSmallIcon(R.drawable.round_audiotrack_24)
 
-        player.setMediaItems(mediaItems)
-        player.prepare()
-        player.seekTo(index, 0)
-        playerEventListener = PlayerEventListener()
-        player.addListener(playerEventListener)
+        return provider
     }
 
     /**
-     * The service is reached by binding, so it starts itself here: a started service outlives the
-     * screens unbinding from it, a merely bound one is destroyed with the last of them. MusicPlayer
-     * used to call startForegroundService() beforehand, which meant deciding from outside whether
-     * the service was already running.
-     */
-    private fun startFirstService() {
-        if (initialized) return
-
-        startForegroundService(Intent(applicationContext, MusicService::class.java))
-        LocalNotificationHelper.createNotificationChannel(applicationContext)
-        // Posted without art so startForeground() lands well inside the five second deadline
-        // startForegroundService() sets. buildNotification() never returns null, which the
-        // previous code could when the current song was not resolvable yet.
-        startForeground(NotificationConstant.NOTIFICATION_ID, buildNotification(getCurrentSong(), null))
-
-        initialized = true
-
-        notification()
-    }
-
-    /**
-     * The stored values arrive after onCreate() has returned. If the player already exists by
-     * then they are applied straight away; otherwise setPlayer() reads the fields when it runs.
+     * The stored values arrive after onCreate() has returned and are applied to the player as they
+     * come, unless the user has changed that setting in the meantime.
      *
      * Both are read before either is applied, so nothing suspends between the two flag checks and
      * the fields they guard: a tap either lands before this whole block, and is kept, or after it,
@@ -267,89 +268,36 @@ class MusicService : Service() {
             val storedRepeat = config.getRepeat()
             val storedShuffle = config.getShuffle()
 
-            if (!repeatChangedByUser) repeat = storedRepeat
-            if (!shuffleChangedByUser) shuffle = storedShuffle
+            applyingStoredConfig = true
 
-            val player = this@MusicService.player ?: return@launch
+            if (!repeatChangedByUser) {
+                repeat = storedRepeat
+                exoPlayer.repeatMode = toRepeatMode(storedRepeat)
+            }
 
-            setRepeat(player)
-            setShuffle(player)
+            if (!shuffleChangedByUser) {
+                shuffle = storedShuffle
+                exoPlayer.shuffleModeEnabled = storedShuffle
+            }
+
+            applyingStoredConfig = false
             onChange()
         }
     }
 
-    private fun setRepeat(player: ExoPlayer) {
-        player.repeatMode = when (repeat) {
+    private fun toRepeatMode(repeat: RepeatState): Int {
+        return when (repeat) {
             RepeatState.OFF -> Player.REPEAT_MODE_OFF
             RepeatState.ONE -> Player.REPEAT_MODE_ONE
             RepeatState.ALL -> Player.REPEAT_MODE_ALL
         }
     }
 
-    private fun setShuffle(player: ExoPlayer) {
-        player.shuffleModeEnabled = shuffle
-    }
-
-    private fun isFirstSong(player: ExoPlayer): Boolean {
-        return player.currentMediaItemIndex == 0
-    }
-
-    private fun isLastSong(player: ExoPlayer): Boolean {
-        return player.currentMediaItemIndex == player.mediaItemCount - 1
-    }
-
-    private fun seekToFirst(player: ExoPlayer) {
-        player.seekTo(0, 0)
-    }
-
-    private fun seekToLast(player: ExoPlayer) {
-        player.seekTo(player.mediaItemCount - 1, 0)
-    }
-
-    /** Pure assembly, no I/O, so it is safe to call while holding up the main thread. */
-    private fun buildNotification(song: SongModel?, albumArt: Bitmap?): Notification {
-        return LocalNotificationHelper.createNotification(
-            applicationContext, mediaStyle, song?.name ?: "", song?.artistName ?: "", albumArt
-        )
-    }
-
-    /**
-     * Embedded album art is regularly several megapixels and this used to be decoded at full size
-     * on the main thread, once per track change. The notification only ever shows a small icon.
-     */
-    private suspend fun decodeAlbumArt(song: SongModel): Bitmap? = withContext(Dispatchers.IO) {
-        try {
-            val source = ImageDecoder.createSource(contentResolver, song.getImageUri())
-
-            ImageDecoder.decodeBitmap(source) { decoder, info, _ ->
-                decoder.setTargetSampleSize(sampleSize(info.size))
-            }
-        } catch (_: IOException) {
-            null
-        }
-    }
-
-    private fun sampleSize(size: Size): Int {
-        val longestEdge = maxOf(size.width, size.height)
-        var sampleSize = 1
-
-        while (longestEdge / (sampleSize * 2) >= ALBUM_ART_MAX_PX) {
-            sampleSize *= 2
-        }
-
-        return sampleSize
-    }
-
-    /** Re-posts the notification once the art for [song] is decoded. A track change cancels the
-     * decode still in flight, so the art can never belong to the previous song. */
-    private fun notification() {
-        val song = getCurrentSong() ?: return
-
-        notificationJob?.cancel()
-        notificationJob = serviceScope.launch {
-            val albumArt = decodeAlbumArt(song)
-
-            LocalNotificationHelper.notify(buildNotification(song, albumArt), applicationContext)
+    private fun toRepeatState(repeatMode: Int): RepeatState {
+        return when (repeatMode) {
+            Player.REPEAT_MODE_ONE -> RepeatState.ONE
+            Player.REPEAT_MODE_ALL -> RepeatState.ALL
+            else -> RepeatState.OFF
         }
     }
 
@@ -367,68 +315,64 @@ class MusicService : Service() {
     }
 
     /**
-     * Drops the song that failed and starts again on the next one.
+     * Drops the song that failed and carries on with the one that took its place, or with the one
+     * before it when the failed song was the last. An empty queue stops there.
      *
-     * The start this is recovering from is over before we get here: playback never began, so the
-     * EVENT_IS_PLAYING_CHANGED that would have cleared isStarting is never coming. Clearing it
-     * here rather than only on the empty-list path is what lets the start() below run at all -
-     * it returns immediately while the flag is set, which left the service holding a released
-     * player and a flag nothing would ever clear again, so every later start() returned too and
-     * playback was dead until the service was destroyed.
+     * The player has gone idle with the error, so it has to be prepared again before it plays.
      */
     private fun retry() {
-        val player = this.player ?: return
-        val count = playingList.count()
-        val currentIndex = player.currentMediaItemIndex
-        val list = playingList.toMutableList()
+        val count = exoPlayer.mediaItemCount
 
-        list.removeAt(currentIndex)
+        if (count == 0) return
 
-        release()
-        isStarting = false
+        val currentIndex = exoPlayer.currentMediaItemIndex
 
-        if (list.isEmpty()) return
+        playingList = playingList.toMutableList().apply { removeAt(currentIndex) }
+        exoPlayer.removeMediaItem(currentIndex)
+
+        if (exoPlayer.mediaItemCount == 0) {
+            exoPlayer.stop()
+
+            return
+        }
 
         val nextIndex = if (count == currentIndex + 1) currentIndex - 1 else currentIndex
 
-        start(list, nextIndex)
+        exoPlayer.seekTo(nextIndex, 0)
+        exoPlayer.prepare()
+        exoPlayer.play()
+    }
+
+    override fun onBind(intent: Intent?): IBinder? {
+        if (intent?.action == ACTION_BIND_MUSIC_PLAYER) return binder
+
+        return super.onBind(intent)
     }
 
     /**
-     * Guarded on the player rather than on `initialized`, which is only set once startForeground
-     * has run: between setPlayer() and startFirstService() a player exists that the old guard
-     * would have skipped. Clearing the field makes this idempotent, so retry() calling release()
-     * and then start() calling it again no longer reaches into an already released ExoPlayer.
+     * MediaSessionService asks to be restarted after the process is killed, which would bring back
+     * a service with an empty queue and nothing to show. super still has to run: it is what
+     * delivers the notification's media button intents.
      */
-    private fun release() {
-        val player = this.player ?: return
-
-        if (isPlaying) {
-            player.stop()
-        }
-
-        player.removeListener(playerEventListener)
-        player.release()
-        mediaSession.release()
-        this.player = null
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        return binder
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
+
         return START_NOT_STICKY
     }
 
-    @SuppressLint("ServiceCast")
+    /**
+     * Swiping the app away stops playback, as closing the app always has. MediaSessionService's own
+     * default keeps the service running while it plays.
+     */
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        pauseAllPlayersAndStopSelf()
+    }
+
     override fun onDestroy() {
-        // Was a copy of release() without its guard, so a service destroyed before start() ever
-        // ran crashed on the uninitialised player.
         serviceJob.cancel()
-        release()
-        LocalNotificationHelper.cancelAll(applicationContext)
-        stopForeground(STOP_FOREGROUND_DETACH)
+        mediaSession.release()
+        exoPlayer.release()
+        super.onDestroy()
     }
 
     inner class PlayerEventListener : Player.Listener {
@@ -438,34 +382,55 @@ class MusicService : Service() {
             if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
                 isPlaying = player.isPlaying
                 onChange()
-                isStarting = false
             }
         }
 
         override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
             onChange()
-            notification()
         }
 
         override fun onPlaybackStateChanged(playbackState: Int) {
             // ループ再生していない場合最後の曲の再生が終了すると呼ばれる
             // 曲が1曲の場合、onMediaItemTransition、events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
             if (playbackState == Player.STATE_ENDED) {
-                val player = this@MusicService.player ?: return
-
                 isPlaying = false
-                player.pause()
-                seekToFirst(player)
+                exoPlayer.pause()
+                exoPlayer.seekTo(0, 0)
                 onChange()
             }
+        }
+
+        /**
+         * Saved here rather than in changeRepeat(), so a change from the lock screen or any other
+         * controller is saved too. The save reads the field when it runs rather than capturing it,
+         * so rapid taps all persist the state the user actually ended on.
+         */
+        override fun onRepeatModeChanged(repeatMode: Int) {
+            repeat = toRepeatState(repeatMode)
+
+            if (!applyingStoredConfig) {
+                repeatChangedByUser = true
+                serviceScope.launch { config.saveRepeat(repeat) }
+            }
+
+            onChange()
+        }
+
+        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
+            shuffle = shuffleModeEnabled
+
+            if (!applyingStoredConfig) {
+                shuffleChangedByUser = true
+                serviceScope.launch { config.saveShuffle(shuffle) }
+            }
+
+            onChange()
         }
 
         override fun onPlayerError(error: PlaybackException) {
             // 曲が削除されている場合
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
                 onError()
-            } else {
-                isStarting = false
             }
         }
     }
