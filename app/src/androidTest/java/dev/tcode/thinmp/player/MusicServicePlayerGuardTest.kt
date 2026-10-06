@@ -25,12 +25,12 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
- * The controls stay live in two states where there is no player to drive: before start() has built
- * one, and after the queue emptied out and release() freed it. The first one crashed on the
- * lateinit - a config change destroys the activity, MainApplication stops the service, and the
- * retained view models rebind while the service still looks running, which creates a fresh service
- * that start() never ran on. The mini player is still on screen from the state it kept, so its play
- * button reaches a service holding no player at all.
+ * The controls stay live in two states where there is nothing to play: before start() has given the
+ * player a queue, and after retry() emptied it. When the service still built its player in start(),
+ * the first one crashed on the lateinit - a config change destroys the activity, MainApplication
+ * stops the service, and the retained view models rebind while the service still looks running,
+ * which creates a fresh service that start() never ran on. The mini player is still on screen from
+ * the state it kept, so its play button reaches a service with nothing to play.
  *
  * Nothing here plays audio, so no MediaStore content is needed and the test never skips itself.
  */
@@ -69,7 +69,7 @@ class MusicServicePlayerGuardTest {
     }
 
     /**
-     * The only song fails, so retry() empties the list and returns after release(). getCurrentSong()
+     * The only song fails, so retry() empties the queue and stops the player. getCurrentSong()
      * was already guarded and keeps the mini player from repainting, but the buttons it left on
      * screen still reach the service.
      */
@@ -147,7 +147,7 @@ class MusicServicePlayerGuardTest {
             override fun onServiceDisconnected(name: ComponentName) {}
         }
 
-        context.bindService(Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE)
+        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
         assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
 
         return bound!!

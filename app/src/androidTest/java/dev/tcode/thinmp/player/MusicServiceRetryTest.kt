@@ -134,7 +134,7 @@ class MusicServiceRetryTest {
             override fun onServiceDisconnected(name: ComponentName) {}
         }
 
-        context.bindService(Intent(context, MusicService::class.java), connection, Context.BIND_AUTO_CREATE)
+        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
         assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
 
         return bound!!
