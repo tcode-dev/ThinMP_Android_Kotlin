@@ -2,54 +2,47 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import android.net.Uri
-import kotlinx.coroutines.flow.MutableStateFlow
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import dev.tcode.thinmp.player.PlaybackController
+import dev.tcode.thinmp.player.PlaybackState
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 data class MiniPlayerUiState(
     val primaryText: String = "", val imageUri: Uri = Uri.EMPTY, val isVisible: Boolean = false, val isPlaying: Boolean = false
 )
 
-class MiniPlayerViewModel(application: Application) : MusicPlayerViewModel(application) {
-    private val _uiState = MutableStateFlow(MiniPlayerUiState())
-    val uiState: StateFlow<MiniPlayerUiState> = _uiState.asStateFlow()
+/**
+ * A projection of PlaybackController.state, starting from its current value, so a mini player on a
+ * screen opened just now shows the current song from its first frame instead of after a bind.
+ * Shown exactly while the queue has a song, which also hides it once retry() has emptied the queue.
+ */
+class MiniPlayerViewModel(application: Application) : AndroidViewModel(application) {
+    private val playbackController = PlaybackController.from(application)
+
+    val uiState: StateFlow<MiniPlayerUiState> =
+        playbackController.state.map { toUiState(it) }.stateIn(viewModelScope, SharingStarted.Eagerly, toUiState(playbackController.state.value))
 
     fun toggle() {
-        if (musicPlayer.isPlaying()) {
-            musicPlayer.pause()
+        if (playbackController.state.value.isPlaying) {
+            playbackController.pause()
         } else {
-            musicPlayer.play()
+            playbackController.play()
         }
     }
 
     fun next() {
-        musicPlayer.next()
+        playbackController.next()
     }
 
-    override fun onBind() {
-        update()
-    }
+    private fun toUiState(state: PlaybackState): MiniPlayerUiState {
+        val song = state.currentSong
 
-    override fun onChange() {
-        update()
-    }
+        if (!state.hasQueue || song == null) return MiniPlayerUiState()
 
-    override fun onError() {
-        _uiState.update { currentState ->
-            currentState.copy(
-                isVisible = false
-            )
-        }
-    }
-
-    private fun update() {
-        val song = musicPlayer.getCurrentSong() ?: return
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = musicPlayer.isPlaying()
-            )
-        }
+        return MiniPlayerUiState(primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = state.isPlaying)
     }
 }

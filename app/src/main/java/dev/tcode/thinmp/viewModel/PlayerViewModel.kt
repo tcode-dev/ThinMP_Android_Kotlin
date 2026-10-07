@@ -2,12 +2,16 @@ package dev.tcode.thinmp.viewModel
 
 import android.app.Application
 import android.net.Uri
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.player.PlaybackController
+import dev.tcode.thinmp.player.PlaybackState
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.register.FavoriteSongRegister
+import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -33,37 +37,56 @@ data class PlayerUiState(
     val isFavoriteSong: Boolean = false,
 )
 
-class PlayerViewModel(application: Application) : MusicPlayerViewModel(application), FavoriteArtistRegister, FavoriteSongRegister {
+/**
+ * Follows PlaybackController.state. The seek bar is the one thing state does not carry: it is read
+ * from currentPosition() once a second while playing, and again whenever the position jumps.
+ */
+class PlayerViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister,
+    FavoriteSongRegister {
     private val INTERVAL_MS = 1000L
+    private val playbackController = PlaybackController.from(application)
     private var favoriteJob: Job? = null
     private var seekBarJob: Job? = null
+    private var hadQueue = false
+    private var isStopped = false
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     val queueEmptied = OneShotEvent<Unit>()
 
+    init {
+        // Collected from the current value on, which viewModelScope's immediate dispatcher delivers
+        // before the constructor returns, so the first frame already has the song.
+        viewModelScope.launch {
+            playbackController.state.collect { onState(it) }
+        }
+        viewModelScope.launch {
+            playbackController.positionDiscontinuity.collect { seekBarProgress() }
+        }
+    }
+
     fun toggle() {
-        if (musicPlayer.isPlaying()) {
-            musicPlayer.pause()
+        if (playbackController.state.value.isPlaying) {
+            playbackController.pause()
         } else {
-            musicPlayer.play()
+            playbackController.play()
         }
     }
 
     fun prev() {
-        musicPlayer.prev()
+        playbackController.prev()
     }
 
     fun next() {
-        musicPlayer.next()
+        playbackController.next()
     }
 
     fun seek(value: Float) {
         cancelSeekBarProgressTask()
 
-        val song = musicPlayer.getCurrentSong() ?: return
+        val song = currentSong() ?: return
         val ms = (song.duration.toFloat() * value).toLong()
 
-        musicPlayer.seekTo(ms)
+        playbackController.seekTo(ms)
 
         seekBarProgress()
     }
@@ -73,15 +96,15 @@ class PlayerViewModel(application: Application) : MusicPlayerViewModel(applicati
     }
 
     fun changeRepeat() {
-        musicPlayer.changeRepeat()
+        playbackController.changeRepeat()
     }
 
     fun changeShuffle() {
-        musicPlayer.changeShuffle()
+        playbackController.changeShuffle()
     }
 
     fun favoriteArtist() {
-        val song = musicPlayer.getCurrentSong() ?: return
+        val song = currentSong() ?: return
 
         viewModelScope.launch {
             toggleFavoriteArtist(song.artistId)
@@ -90,7 +113,7 @@ class PlayerViewModel(application: Application) : MusicPlayerViewModel(applicati
     }
 
     fun favoriteSong() {
-        val song = musicPlayer.getCurrentSong() ?: return
+        val song = currentSong() ?: return
 
         viewModelScope.launch {
             toggleFavoriteSong(song.songId)
@@ -98,48 +121,66 @@ class PlayerViewModel(application: Application) : MusicPlayerViewModel(applicati
         }
     }
 
-    override fun onBind() {
-        update()
-    }
-
-    override fun onChange() {
-        cancelSeekBarProgressTask()
-        update()
-    }
-
-    /**
-     * The queue emptied out under the screen: retry() dropped the song that failed, found nothing
-     * left to play and released the player. Every control here still reaches the service, which
-     * silently ignores all of it, so the screen stays up looking alive and does nothing. Leaving is
-     * what the mini player already does for the same state - it hides itself in its own onError().
-     *
-     * When retry() did find another song it has already started it by the time this runs, so
-     * getCurrentSong() is the new song and the screen stays where it is.
-     */
-    override fun onError() {
-        if (musicPlayer.getCurrentSong() != null) return
-
-        cancelSeekBarProgressTask()
-
-        viewModelScope.launch { queueEmptied.emit(Unit) }
+    override fun onResume() {
+        isStopped = false
+        setSeekBarProgressTask()
     }
 
     override fun onStop() {
-        super.onStop()
+        isStopped = true
         cancelSeekBarProgressTask()
     }
+
+    /**
+     * The queue emptying out under the screen - retry() dropped the song that failed and found
+     * nothing left to play - leaves the screen, which is what the mini player does for the same
+     * state. Every control here would otherwise reach an empty player and do nothing.
+     *
+     * When retry() did find another song the queue never empties, and the screen stays.
+     */
+    private fun onState(state: PlaybackState) {
+        cancelSeekBarProgressTask()
+
+        if (hadQueue && !state.hasQueue) {
+            viewModelScope.launch { queueEmptied.emit(Unit) }
+        }
+
+        hadQueue = state.hasQueue
+
+        val song = state.currentSong ?: return
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                songId = song.songId,
+                primaryText = song.name,
+                secondaryText = song.artistName,
+                imageUri = song.getImageUri(),
+                sliderPosition = getSliderPosition(),
+                currentTime = formatTime(playbackController.currentPosition()),
+                durationTime = formatTime(song.duration.toLong()),
+                isPlaying = state.isPlaying,
+                repeat = state.repeat,
+                shuffle = state.shuffle
+            )
+        }
+
+        updateFavorites(song.artistId, song.songId)
+        setSeekBarProgressTask()
+    }
+
+    private fun currentSong() = playbackController.state.value.currentSong
 
     private fun seekBarProgress() {
         _uiState.update { currentState ->
             currentState.copy(
                 sliderPosition = getSliderPosition(),
-                currentTime = formatTime(musicPlayer.getCurrentPosition()),
+                currentTime = formatTime(playbackController.currentPosition()),
             )
         }
     }
 
     private fun setSeekBarProgressTask() {
-        if (!musicPlayer.isPlaying()) return
+        if (isStopped || !playbackController.state.value.isPlaying) return
 
         cancelSeekBarProgressTask()
         seekBarJob = viewModelScope.launch {
@@ -154,35 +195,13 @@ class PlayerViewModel(application: Application) : MusicPlayerViewModel(applicati
         seekBarJob?.cancel()
     }
 
-    private fun update() {
-        val song = musicPlayer.getCurrentSong() ?: return
-
-        _uiState.update { currentState ->
-            currentState.copy(
-                songId = song.songId,
-                primaryText = song.name,
-                secondaryText = song.artistName,
-                imageUri = song.getImageUri(),
-                sliderPosition = getSliderPosition(),
-                currentTime = formatTime(musicPlayer.getCurrentPosition()),
-                durationTime = formatTime(song.duration.toLong()),
-                isPlaying = musicPlayer.isPlaying(),
-                repeat = musicPlayer.getRepeat(),
-                shuffle = musicPlayer.getShuffle()
-            )
-        }
-
-        updateFavorites(song.artistId, song.songId)
-        setSeekBarProgressTask()
-    }
-
     /**
      * Kept out of the _uiState.update lambda above: update re-runs its lambda when the compare-
      * and-set loses, which would re-issue the queries.
      *
-     * Cancelling the previous job matters while skipping tracks, where onMediaItemTransition and
-     * EVENT_IS_PLAYING_CHANGED call onChange() back to back. Without it two in-flight queries can
-     * complete out of order and paint the previous track's favourite state.
+     * Cancelling the previous job matters while skipping tracks, where the song and the playing
+     * state change in quick succession. Without it two in-flight queries can complete out of order
+     * and paint the previous track's favourite state.
      */
     private fun updateFavorites(artistId: ArtistId, songId: SongId) {
         favoriteJob?.cancel()
@@ -199,8 +218,8 @@ class PlayerViewModel(application: Application) : MusicPlayerViewModel(applicati
     }
 
     private fun getSliderPosition(): Float {
-        val song = musicPlayer.getCurrentSong() ?: return 0f
+        val song = currentSong() ?: return 0f
 
-        return sliderPosition(musicPlayer.getCurrentPosition(), song.duration.toLong())
+        return sliderPosition(playbackController.currentPosition(), song.duration.toLong())
     }
 }

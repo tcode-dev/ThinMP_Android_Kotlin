@@ -8,7 +8,6 @@ import android.os.IBinder
 import android.os.Looper
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
-import androidx.media3.common.MediaMetadata
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -16,6 +15,8 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import com.google.common.util.concurrent.Futures
+import com.google.common.util.concurrent.ListenableFuture
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.activity.MainActivity
 import dev.tcode.thinmp.config.ConfigStore
@@ -89,9 +90,6 @@ class MusicService : MediaSessionService() {
     /** Set while loadConfig() applies the stored values, so the listener does not save them back. */
     private var applyingStoredConfig = false
     private var listeners: MutableList<MusicServiceListener> = mutableListOf()
-
-    /** In the same order as the player's media items, so an item index is also an index here. */
-    private var playingList: List<SongModel> = emptyList()
     private var isPlaying = false
 
     /**
@@ -110,7 +108,7 @@ class MusicService : MediaSessionService() {
         exoPlayer = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
         exoPlayer.addListener(PlayerEventListener())
         player = WrapAroundPlayer(exoPlayer)
-        mediaSession = MediaSession.Builder(this, player).setSessionActivity(sessionActivity()).build()
+        mediaSession = MediaSession.Builder(this, player).setSessionActivity(sessionActivity()).setCallback(SessionCallback()).build()
 
         setMediaNotificationProvider(notificationProvider())
         // The screens reach the service through the binder, not through a MediaController, so
@@ -133,14 +131,9 @@ class MusicService : MediaSessionService() {
         listeners.remove(listener)
     }
 
-    /**
-     * firstOrNull, not first: the current item can only come from playingList, but a lookup that
-     * misses should leave the mini player as it is rather than take the app down.
-     */
+    /** Read back from the item itself, so a queue a MediaController set is as readable as one set here. */
     fun getCurrentSong(): SongModel? {
-        val mediaId = exoPlayer.currentMediaItem?.mediaId ?: return null
-
-        return playingList.firstOrNull { it.id == mediaId }
+        return exoPlayer.currentMediaItem?.toSongModel()
     }
 
     fun start(songs: List<SongModel>, index: Int) {
@@ -150,8 +143,7 @@ class MusicService : MediaSessionService() {
         // is merely bound and goes away with the last screen unbinding - before the song has even
         // loaded, or for good when it fails to load.
         startService(Intent(this, MusicService::class.java))
-        playingList = songs
-        exoPlayer.setMediaItems(songs.map { toMediaItem(it) }, index, 0)
+        exoPlayer.setMediaItems(songs.map { it.toMediaItem(withUri = true) }, index, 0)
         exoPlayer.prepare()
         exoPlayer.play()
     }
@@ -186,12 +178,8 @@ class MusicService : MediaSessionService() {
     /** The player listener saves the new value; see onRepeatModeChanged(). */
     fun changeRepeat() {
         repeatChangedByUser = true
-        repeat = when (repeat) {
-            RepeatState.OFF -> RepeatState.ALL
-            RepeatState.ONE -> RepeatState.OFF
-            RepeatState.ALL -> RepeatState.ONE
-        }
-        exoPlayer.repeatMode = toRepeatMode(repeat)
+        repeat = repeat.next()
+        exoPlayer.repeatMode = repeat.toRepeatMode()
     }
 
     fun getShuffle(): Boolean {
@@ -223,12 +211,6 @@ class MusicService : MediaSessionService() {
         if (exoPlayer.mediaItemCount == 0) return 0
 
         return exoPlayer.currentPosition
-    }
-
-    private fun toMediaItem(song: SongModel): MediaItem {
-        val metadata = MediaMetadata.Builder().setTitle(song.name).setArtist(song.artistName).setAlbumTitle(song.albumName).setArtworkUri(song.getImageUri()).build()
-
-        return MediaItem.Builder().setMediaId(song.id).setUri(song.getMediaUri()).setMediaMetadata(metadata).build()
     }
 
     /**
@@ -272,7 +254,7 @@ class MusicService : MediaSessionService() {
 
             if (!repeatChangedByUser) {
                 repeat = storedRepeat
-                exoPlayer.repeatMode = toRepeatMode(storedRepeat)
+                exoPlayer.repeatMode = storedRepeat.toRepeatMode()
             }
 
             if (!shuffleChangedByUser) {
@@ -282,22 +264,6 @@ class MusicService : MediaSessionService() {
 
             applyingStoredConfig = false
             onChange()
-        }
-    }
-
-    private fun toRepeatMode(repeat: RepeatState): Int {
-        return when (repeat) {
-            RepeatState.OFF -> Player.REPEAT_MODE_OFF
-            RepeatState.ONE -> Player.REPEAT_MODE_ONE
-            RepeatState.ALL -> Player.REPEAT_MODE_ALL
-        }
-    }
-
-    private fun toRepeatState(repeatMode: Int): RepeatState {
-        return when (repeatMode) {
-            Player.REPEAT_MODE_ONE -> RepeatState.ONE
-            Player.REPEAT_MODE_ALL -> RepeatState.ALL
-            else -> RepeatState.OFF
         }
     }
 
@@ -327,7 +293,6 @@ class MusicService : MediaSessionService() {
 
         val currentIndex = exoPlayer.currentMediaItemIndex
 
-        playingList = playingList.toMutableList().apply { removeAt(currentIndex) }
         exoPlayer.removeMediaItem(currentIndex)
 
         if (exoPlayer.mediaItemCount == 0) {
@@ -406,7 +371,7 @@ class MusicService : MediaSessionService() {
          * so rapid taps all persist the state the user actually ended on.
          */
         override fun onRepeatModeChanged(repeatMode: Int) {
-            repeat = toRepeatState(repeatMode)
+            repeat = repeatStateOf(repeatMode)
 
             if (!applyingStoredConfig) {
                 repeatChangedByUser = true
@@ -432,6 +397,23 @@ class MusicService : MediaSessionService() {
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
                 onError()
             }
+        }
+    }
+
+    /**
+     * PlaybackController sends only each song's media id and metadata, and an item from outside the
+     * app - a car, a watch - may carry nothing but the id, so the playable URI is rebuilt from the id
+     * here. The service is started for the same reason start() starts it.
+     */
+    private inner class SessionCallback : MediaSession.Callback {
+        override fun onAddMediaItems(
+            mediaSession: MediaSession, controller: MediaSession.ControllerInfo, mediaItems: MutableList<MediaItem>
+        ): ListenableFuture<MutableList<MediaItem>> {
+            startService(Intent(this@MusicService, MusicService::class.java))
+
+            val items = mediaItems.map { it.buildUpon().setUri(songMediaUri(it.mediaId)).build() }
+
+            return Futures.immediateFuture(items.toMutableList())
         }
     }
 

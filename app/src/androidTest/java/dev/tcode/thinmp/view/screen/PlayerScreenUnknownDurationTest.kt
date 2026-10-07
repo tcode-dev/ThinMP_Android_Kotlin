@@ -18,6 +18,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicService
+import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.repository.SongRepository
 import dev.tcode.thinmp.view.nav.INavigator
 import dev.tcode.thinmp.view.nav.LocalNavigator
@@ -72,10 +73,16 @@ class PlayerScreenUnknownDurationTest {
         // The screen only binds while the service is already running, so it has to exist before
         // the composition starts.
         service = bindService()
+
+        // The screen reads PlaybackController, which MainActivity connects in the app. There is no
+        // MainActivity here. Waited for, so the screen starts from this service's state rather than
+        // from whatever the previous test left in the singleton.
+        awaitControllerConnected()
     }
 
     @After
     fun tearDown() {
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { PlaybackController.from(context).release() }
         context.unbindService(connection)
         context.stopService(Intent(context, MusicService::class.java))
     }
@@ -172,6 +179,20 @@ class PlayerScreenUnknownDurationTest {
         assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
 
         return bound!!
+    }
+
+    private fun awaitControllerConnected() {
+        val controller = PlaybackController.from(context)
+        var connected = false
+        val deadline = SystemClock.uptimeMillis() + timeoutMs
+
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { controller.connect() }
+
+        while (!connected) {
+            assertTrue("the controller never connected", SystemClock.uptimeMillis() < deadline)
+            Thread.sleep(pollMs)
+            InstrumentationRegistry.getInstrumentation().runOnMainSync { connected = controller.isConnected() }
+        }
     }
 
     private fun grantPermission(permission: String) {
