@@ -86,7 +86,7 @@ app/src/main/java/dev/tcode/thinmp/
 ├── config/            # ConfigStore (DataStore preferences)
 ├── constant/          # Navigation routes, style, notification constants
 ├── model/             # Data models, value objects, Room entities
-├── player/            # MusicPlayer, MusicService (MediaSessionService), WrapAroundPlayer
+├── player/            # PlaybackController (the screens' MediaController), MusicService (MediaSessionService), WrapAroundPlayer, MusicPlayer
 ├── register/          # Domain logic interfaces (favorites, playlists)
 ├── repository/        # MediaStore and Room data access, dao/ subdirectory for Room DAOs
 ├── service/           # Business logic services

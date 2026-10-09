@@ -11,12 +11,17 @@ import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
+import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.ui.theme.ThinMPTheme
 import dev.tcode.thinmp.view.nav.ThinMPNavHost
 import dev.tcode.thinmp.view.permission.PermissionView
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @Inject
+    lateinit var playbackController: PlaybackController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -39,5 +44,16 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    /** Connected while the activity is visible, the way Media3 recommends; see PlaybackController. */
+    override fun onStart() {
+        super.onStart()
+        playbackController.connect()
+    }
+
+    override fun onStop() {
+        playbackController.release()
+        super.onStop()
     }
 }

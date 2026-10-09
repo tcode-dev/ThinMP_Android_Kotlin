@@ -25,15 +25,12 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.text.PrimaryTextView
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
 @Composable
 fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
-
-    CustomLifecycleEventObserver(viewModel)
 
     if (!uiState.isVisible) {
         return

@@ -57,6 +57,12 @@ class MusicPlayerBindTest {
         // and startForeground(), are refused while the app is in the background.
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
         scenario = ActivityScenario.launch(MainActivity::class.java)
+
+        // The activity's PlaybackController binds the service into existence as soon as it starts.
+        // What is under test here is MusicPlayer's own binding, so that connection is let go and
+        // the service it created is stopped before the test begins.
+        onMain { PlaybackController.from(context).release() }
+        MusicServiceWatcher.stopAndAwait(context, timeoutMs)
     }
 
     @After
