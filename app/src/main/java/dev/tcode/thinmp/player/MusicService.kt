@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Binder
+import android.os.Bundle
 import android.os.IBinder
 import android.os.Looper
 import androidx.annotation.OptIn
@@ -15,6 +16,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.DefaultMediaNotificationProvider
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.media3.session.SessionCommand
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dev.tcode.thinmp.R
@@ -45,6 +47,13 @@ interface MusicServiceListener {
 class MusicService : MediaSessionService() {
     companion object {
         private const val ACTION_BIND_MUSIC_PLAYER = "dev.tcode.thinmp.player.BIND_MUSIC_PLAYER"
+
+        /**
+         * Sent to every connected controller once retry() has dropped a song it could not play, so
+         * the song lists can reload without it. The queue changing is not enough to tell: it also
+         * changes whenever a new list is started.
+         */
+        val SONG_REMOVED = SessionCommand("dev.tcode.thinmp.player.SONG_REMOVED", Bundle.EMPTY)
 
         /** The intent that binds to [MusicBinder]. A plain intent reaches MediaSessionService instead, which answers it with nothing. */
         fun bindIntent(context: Context): Intent {
@@ -275,6 +284,7 @@ class MusicService : MediaSessionService() {
 
     private fun onError() {
         retry()
+        mediaSession.broadcastCustomCommand(SONG_REMOVED, Bundle.EMPTY)
         listeners.forEach {
             it.onError()
         }

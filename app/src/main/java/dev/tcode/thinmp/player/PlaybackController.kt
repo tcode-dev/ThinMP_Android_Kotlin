@@ -2,10 +2,14 @@ package dev.tcode.thinmp.player
 
 import android.content.ComponentName
 import android.content.Context
+import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
+import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionResult
 import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
@@ -54,6 +58,13 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     private val _positionDiscontinuity = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val positionDiscontinuity: SharedFlow<Unit> = _positionDiscontinuity.asSharedFlow()
 
+    /**
+     * The service dropped a song it could not play - its file is gone - and the song lists reload
+     * without it. Only heard while connected, which is while the screens are visible.
+     */
+    private val _songRemoved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+    val songRemoved: SharedFlow<Unit> = _songRemoved.asSharedFlow()
+
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
 
@@ -72,11 +83,23 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         }
     }
 
+    private val controllerListener = object : MediaController.Listener {
+        override fun onCustomCommand(controller: MediaController, command: SessionCommand, args: Bundle): ListenableFuture<SessionResult> {
+            if (command.customAction != MusicService.SONG_REMOVED.customAction) {
+                return Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_NOT_SUPPORTED))
+            }
+
+            _songRemoved.tryEmit(Unit)
+
+            return Futures.immediateFuture(SessionResult(SessionResult.RESULT_SUCCESS))
+        }
+    }
+
     fun connect() {
         if (controllerFuture != null) return
 
         val token = SessionToken(context, ComponentName(context, MusicService::class.java))
-        val future = MediaController.Builder(context, token).buildAsync()
+        val future = MediaController.Builder(context, token).setListener(controllerListener).buildAsync()
 
         controllerFuture = future
         future.addListener({ onConnected(future) }, ContextCompat.getMainExecutor(context))
