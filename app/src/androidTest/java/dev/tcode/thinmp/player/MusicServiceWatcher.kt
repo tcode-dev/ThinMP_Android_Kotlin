@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
+import androidx.media3.session.MediaSessionService
 import org.junit.Assert.assertTrue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -44,10 +45,19 @@ class MusicServiceWatcher private constructor(private val context: Context) {
     }
 
     companion object {
+        /**
+         * The action a MediaController binds with. MusicService answers it with its session binder,
+         * which is all a watcher needs: a connection that exists exactly while the service does.
+         * A plain intent is answered with no binder, and its connection never reports anything.
+         */
+        private fun serviceIntent(context: Context): Intent {
+            return Intent(MediaSessionService.SERVICE_INTERFACE).setComponent(ComponentName(context, MusicService::class.java))
+        }
+
         fun attach(context: Context, timeoutMs: Long): MusicServiceWatcher {
             val watcher = MusicServiceWatcher(context)
 
-            context.bindService(MusicService.bindIntent(context), watcher.connection, 0)
+            context.bindService(serviceIntent(context), watcher.connection, 0)
             assertTrue("the service is not running", watcher.connected.await(timeoutMs, TimeUnit.MILLISECONDS))
 
             return watcher
@@ -67,7 +77,7 @@ class MusicServiceWatcher private constructor(private val context: Context) {
                 override fun onServiceDisconnected(name: ComponentName) {}
             }
 
-            context.bindService(MusicService.bindIntent(context), creator, Context.BIND_AUTO_CREATE)
+            context.bindService(serviceIntent(context), creator, Context.BIND_AUTO_CREATE)
             assertTrue("the service did not bind", created.await(timeoutMs, TimeUnit.MILLISECONDS))
 
             val watcher = attach(context, timeoutMs)

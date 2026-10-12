@@ -35,6 +35,10 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
     /**
+     * Leaving the app stops playback, as swiping it away does in MusicService.onTaskRemoved().
+     * MainActivity has released PlaybackController's connection in onStop() by the time it is
+     * destroyed, so nothing else is holding the service.
+     *
      * A destroyed activity only means the app is going away when it is not coming straight back.
      * A configuration change - dark mode, font size, locale - destroys and recreates the activity,
      * and stopping the service there ended playback while the app was still on screen. The mini

@@ -86,7 +86,7 @@ app/src/main/java/dev/tcode/thinmp/
 ├── config/            # ConfigStore (DataStore preferences)
 ├── constant/          # Navigation routes, style, notification constants
 ├── model/             # Data models, value objects, Room entities
-├── player/            # PlaybackController (the screens' MediaController), MusicService (MediaSessionService), WrapAroundPlayer, MusicPlayer
+├── player/            # PlaybackController (the screens' MediaController), MusicService (MediaSessionService), WrapAroundPlayer
 ├── register/          # Domain logic interfaces (favorites, playlists)
 ├── repository/        # MediaStore and Room data access, dao/ subdirectory for Room DAOs
 ├── service/           # Business logic services
@@ -130,13 +130,13 @@ app/src/main/java/dev/tcode/thinmp/
   closure reads only the row's identity (`songId`, `album.id`, `shortcut.url`), never a display
   field a reload could change. A value that must track a change goes through
   `rememberUpdatedState`, not a `pointerInput` key
-- A `catch` exists only where one specific exception has one specific recovery: `MusicService`
-  turns a `seekTo` failure on a deleted file into `onError()`. The view model load paths have
-  none on purpose. Permission is gated in `PermissionView` before any screen composes,
-  `ContentResolver.query()` reports a provider failure as `null`, which `?.use` turns into an
-  empty list, and what remains — a malformed selection or sort order, a Room `SQLiteException` —
-  is a programming error or unrecoverable, and a blanket `catch` would show it as an empty screen
-  instead of a crash
+- A `catch` exists only where one specific exception has one specific recovery, and there is
+  currently none: a deleted file reaches `MusicService` as `ERROR_CODE_IO_FILE_NOT_FOUND` in
+  `onPlayerError()`, not as an exception. The view model load paths have none on purpose.
+  Permission is gated in `PermissionView` before any screen composes, `ContentResolver.query()`
+  reports a provider failure as `null`, which `?.use` turns into an empty list, and what remains —
+  a malformed selection or sort order, a Room `SQLiteException` — is a programming error or
+  unrecoverable, and a blanket `catch` would show it as an empty screen instead of a crash
 
 ### Threading
 

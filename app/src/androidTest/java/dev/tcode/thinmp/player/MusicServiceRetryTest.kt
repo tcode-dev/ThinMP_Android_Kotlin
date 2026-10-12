@@ -1,11 +1,9 @@
 package dev.tcode.thinmp.player
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.os.SystemClock
+import androidx.media3.session.MediaController
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,14 +17,11 @@ import dev.tcode.thinmp.repository.SongRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 /**
  * A song whose file has gone missing raises ERROR_CODE_IO_FILE_NOT_FOUND, and the service drops it
@@ -47,8 +42,7 @@ class MusicServiceRetryTest {
 
     private lateinit var context: Context
     private lateinit var scenario: ActivityScenario<MainActivity>
-    private lateinit var connection: ServiceConnection
-    private lateinit var service: MusicService
+    private lateinit var controller: MediaController
     private lateinit var realSong: SongModel
 
     @Before
@@ -61,15 +55,15 @@ class MusicServiceRetryTest {
         assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
         realSong = songs.first()
 
-        // start() calls startForeground(), which the platform refuses while the app is in the
-        // background, so the app has to actually be on screen for this to be testable at all.
+        // Playback puts the service in the foreground, which the platform refuses while the app is
+        // in the background, so the app has to actually be on screen for this to be testable at all.
         scenario = ActivityScenario.launch(MainActivity::class.java)
-        service = bindService()
+        controller = connectController(context, timeoutMs)
     }
 
     @After
     fun tearDown() {
-        context.unbindService(connection)
+        runOnMain { controller.release() }
         context.stopService(Intent(context, MusicService::class.java))
         scenario.close()
     }
@@ -77,67 +71,35 @@ class MusicServiceRetryTest {
     /** The failed song is dropped and the one after it plays. */
     @Test
     fun playsTheNextSongWhenTheFirstOneIsMissing() {
-        start(listOf(missingSong("999999998"), realSong), 0)
+        startOnController(controller, listOf(missingSong("999999998"), realSong), 0)
 
         waitUntilPlaying()
-        assertEquals(realSong.id, currentSongId())
+        assertEquals(realSong.id, runOnMain { controller.currentMediaItem?.mediaId })
     }
 
     /** The retry chain has to keep going, not just survive one failure. */
     @Test
     fun playsTheFirstSongThatIsStillThere() {
-        start(listOf(missingSong("999999998"), missingSong("999999997"), realSong), 0)
+        startOnController(controller, listOf(missingSong("999999998"), missingSong("999999997"), realSong), 0)
 
         waitUntilPlaying()
-        assertEquals(realSong.id, currentSongId())
+        assertEquals(realSong.id, runOnMain { controller.currentMediaItem?.mediaId })
     }
 
     private fun missingSong(id: String): SongModel {
         return SongModel(SongId(id), "missing", ArtistId(""), "", AlbumId(""), "", 0, "")
     }
 
-    /** ExoPlayer is built on the main looper, so everything that touches it has to go there. */
-    private fun start(songs: List<SongModel>, index: Int) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync { service.start(songs, index) }
-    }
-
-    private fun currentSongId(): String? {
-        var id: String? = null
-
-        InstrumentationRegistry.getInstrumentation().runOnMainSync { id = service.getCurrentSong()?.id }
-
-        return id
-    }
-
     private fun waitUntilPlaying() {
         val deadline = SystemClock.uptimeMillis() + timeoutMs
 
         while (SystemClock.uptimeMillis() < deadline) {
-            if (service.isPlaying()) return
+            if (runOnMain { controller.isPlaying }) return
 
             Thread.sleep(pollMs)
         }
 
         fail("playback never started: the service is still holding the failed start")
-    }
-
-    private fun bindService(): MusicService {
-        val latch = CountDownLatch(1)
-        var bound: MusicService? = null
-
-        connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                bound = (binder as MusicService.MusicBinder).getService()
-                latch.countDown()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {}
-        }
-
-        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
-        assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
-
-        return bound!!
     }
 
     private fun grantPermission(permission: String) {
