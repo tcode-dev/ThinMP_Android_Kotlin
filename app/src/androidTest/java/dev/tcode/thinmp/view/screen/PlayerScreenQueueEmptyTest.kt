@@ -1,10 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.os.SystemClock
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.test.junit4.createComposeRule
@@ -18,10 +15,16 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.player.MusicService
 import dev.tcode.thinmp.player.PlaybackController
-import dev.tcode.thinmp.player.MusicServiceListener
 import dev.tcode.thinmp.repository.SongRepository
 import dev.tcode.thinmp.view.nav.INavigator
 import dev.tcode.thinmp.view.nav.LocalNavigator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -36,15 +39,15 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
 
 /**
- * When the song that failed was the only one left, retry() releases the player and returns, and the
- * player screen is then sitting on top of a service with nothing to drive: every button still
- * reaches it and media3 ignores all of it without so much as an exception. The mini player hides
- * itself in that state, so the two used to disagree about whether there is anything playing.
+ * When the song that failed was the only one left, retry() empties the queue, and the player screen
+ * is then sitting on top of a service with nothing to drive: every button still reaches it and
+ * media3 ignores all of it without so much as an exception. The mini player hides itself in that
+ * state, so the two used to disagree about whether there is anything playing.
  *
- * Both tests start on a real song first: the screen registers its listener from a bind that
- * completes on its own schedule, and a title on screen is the only proof from out here that the
- * listener is in place before the failing start goes in. That needs an audio file on the device;
- * skipped otherwise (tools/push-test-audio.sh).
+ * Both tests start on a real song first: the screen leaves only when the queue goes from having a
+ * song to having none, and a title on screen is the only proof from out here that it has seen the
+ * first state before the failing start goes in. That needs an audio file on the device; skipped
+ * otherwise (tools/push-test-audio.sh).
  */
 @RunWith(AndroidJUnit4::class)
 class PlayerScreenQueueEmptyTest {
@@ -59,9 +62,8 @@ class PlayerScreenQueueEmptyTest {
     private val navigator = RecordingNavigator()
 
     private lateinit var context: Context
-    private lateinit var connection: ServiceConnection
-    private lateinit var service: MusicService
     private lateinit var realSong: SongModel
+    private val errorScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     @Before
     fun setUp() {
@@ -75,20 +77,17 @@ class PlayerScreenQueueEmptyTest {
         assumeTrue("needs at least one audio file in MediaStore", song != null)
         realSong = song!!
 
-        // The screen only binds while the service is already running, so it has to exist before the
-        // composition starts. Binding is also what keeps it alive between the two starts below.
-        service = bindService()
-
         // The screen reads PlaybackController, which MainActivity connects in the app. There is no
         // MainActivity here. Waited for, so the screen starts from this service's state rather than
-        // from whatever the previous test left in the singleton.
+        // from whatever the previous test left in the singleton. Its connection is also what keeps
+        // the service alive between the starts below.
         awaitControllerConnected()
     }
 
     @After
     fun tearDown() {
+        errorScope.cancel()
         InstrumentationRegistry.getInstrumentation().runOnMainSync { PlaybackController.from(context).release() }
-        context.unbindService(connection)
         context.stopService(Intent(context, MusicService::class.java))
     }
 
@@ -144,18 +143,21 @@ class PlayerScreenQueueEmptyTest {
     private fun errorLatch(): CountDownLatch {
         val latch = CountDownLatch(1)
 
-        service.addEventListener(object : MusicServiceListener {
-            override fun onError() {
+        // Subscribed on the main thread, undispatched, so the subscription is in place before the
+        // start that follows: songRemoved keeps nothing for a late subscriber.
+        InstrumentationRegistry.getInstrumentation().runOnMainSync {
+            errorScope.launch(start = CoroutineStart.UNDISPATCHED) {
+                PlaybackController.from(context).songRemoved.first()
                 latch.countDown()
             }
-        })
+        }
 
         return latch
     }
 
     /** ExoPlayer is built on the main looper, so everything that touches it has to go there. */
     private fun start(songs: List<SongModel>) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync { service.start(songs, 0) }
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { PlaybackController.from(context).start(songs, 0) }
     }
 
     /** How many times the screen asked to be closed, within [timeout]. Returns early on the first. */
@@ -177,31 +179,12 @@ class PlayerScreenQueueEmptyTest {
         val deadline = SystemClock.uptimeMillis() + timeoutMs
 
         while (SystemClock.uptimeMillis() < deadline) {
-            if (service.isPlaying()) return
+            if (PlaybackController.from(context).state.value.isPlaying) return
 
             Thread.sleep(pollMs)
         }
 
         throw AssertionError("the retry never started the song that is still there")
-    }
-
-    private fun bindService(): MusicService {
-        val latch = CountDownLatch(1)
-        var bound: MusicService? = null
-
-        connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                bound = (binder as MusicService.MusicBinder).getService()
-                latch.countDown()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {}
-        }
-
-        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
-        assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
-
-        return bound!!
     }
 
     private fun awaitControllerConnected() {

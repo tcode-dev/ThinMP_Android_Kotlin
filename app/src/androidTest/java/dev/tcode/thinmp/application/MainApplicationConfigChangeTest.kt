@@ -1,10 +1,7 @@
 package dev.tcode.thinmp.application
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -13,13 +10,11 @@ import dev.tcode.thinmp.activity.MainActivity
 import dev.tcode.thinmp.player.MusicService
 import dev.tcode.thinmp.player.MusicServiceWatcher
 import org.junit.After
-import org.junit.Assert.assertSame
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 /**
  * MainApplication.onActivityDestroyed() stops the service when the activity goes away. A
@@ -27,19 +22,23 @@ import java.util.concurrent.TimeUnit
  * that used to reach the same stopService(): playback stopped while the app was still on screen.
  *
  * The service is started but not bound while the configuration change runs, which is the state the
- * app is in by the time the activity is destroyed - every view model unbinds in onStop(), before
- * onDestroy(). A binding held across the check would keep the service alive on its own and the
- * test would pass either way.
+ * app is in by the time the activity is destroyed - PlaybackController's connection is released in
+ * onStop(), before onDestroy(). A binding held across the check would keep the service alive on its
+ * own and the test would pass either way.
  *
- * What it compares is the service instance, not whether some instance is running. The recreated
- * screen used to bind with BIND_AUTO_CREATE, so a service that was stopped was replaced by a fresh
- * one and looked running either way - only the player the old instance held was gone.
+ * What it watches is the instance going away, not whether some instance is running afterwards. The
+ * recreated activity connects again with BIND_AUTO_CREATE, so a service that was stopped is
+ * replaced by a fresh one and looks running either way - only the queue the old instance held is
+ * gone. The watcher's own binding does not keep the service alive.
  *
  * Nothing here plays audio, so no MediaStore content is needed and the test never skips itself.
  */
 @RunWith(AndroidJUnit4::class)
 class MainApplicationConfigChangeTest {
     private val timeoutMs = 15_000L
+
+    /** How long a destruction that must not happen is given to happen anyway. */
+    private val quietMs = 1_000L
 
     private lateinit var context: Context
     private var scenario: ActivityScenario<MainActivity>? = null
@@ -63,11 +62,11 @@ class MainApplicationConfigChangeTest {
 
     @Test
     fun theServiceSurvivesAConfigurationChange() {
-        val before = currentService()
+        val watcher = MusicServiceWatcher.attach(context, timeoutMs)
 
         scenario!!.recreate()
 
-        assertSame("the configuration change replaced the service", before, currentService())
+        assertFalse("the configuration change stopped the service", watcher.awaitDestroyed(quietMs))
     }
 
     /** The other direction: leaving the app for real still has to stop it. */
@@ -80,29 +79,6 @@ class MainApplicationConfigChangeTest {
 
         // stopService() is asynchronous, so onDestroy() lands after close() has returned.
         assertTrue("the service outlived the activity", watcher.awaitDestroyed(timeoutMs))
-    }
-
-    /**
-     * Binds only long enough to read which instance is there, so nothing is holding the service
-     * when the activity is destroyed.
-     */
-    private fun currentService(): MusicService {
-        val latch = CountDownLatch(1)
-        var bound: MusicService? = null
-        val connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                bound = (binder as MusicService.MusicBinder).getService()
-                latch.countDown()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {}
-        }
-
-        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
-        assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
-        context.unbindService(connection)
-
-        return bound!!
     }
 
     private fun grantPermission(permission: String) {

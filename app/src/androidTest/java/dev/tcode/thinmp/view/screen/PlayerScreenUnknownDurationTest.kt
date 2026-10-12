@@ -1,10 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.os.SystemClock
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
@@ -30,8 +27,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 /**
  * MediaStore reports duration 0 for a file whose metadata could not be read, and the player screen
@@ -56,8 +51,6 @@ class PlayerScreenUnknownDurationTest {
     val composeTestRule = createComposeRule()
 
     private lateinit var context: Context
-    private lateinit var connection: ServiceConnection
-    private lateinit var service: MusicService
     private lateinit var untaggedSong: SongModel
 
     @Before
@@ -70,20 +63,16 @@ class PlayerScreenUnknownDurationTest {
         assumeTrue("needs at least one audio file in MediaStore", song != null)
         untaggedSong = withoutDuration(song!!)
 
-        // The screen only binds while the service is already running, so it has to exist before
-        // the composition starts.
-        service = bindService()
-
         // The screen reads PlaybackController, which MainActivity connects in the app. There is no
         // MainActivity here. Waited for, so the screen starts from this service's state rather than
-        // from whatever the previous test left in the singleton.
+        // from whatever the previous test left in the singleton. Its connection is also what keeps
+        // the service alive between the starts below.
         awaitControllerConnected()
     }
 
     @After
     fun tearDown() {
         InstrumentationRegistry.getInstrumentation().runOnMainSync { PlaybackController.from(context).release() }
-        context.unbindService(connection)
         context.stopService(Intent(context, MusicService::class.java))
     }
 
@@ -97,8 +86,8 @@ class PlayerScreenUnknownDurationTest {
         start(listOf(untaggedSong))
         awaitPlaying()
         onMain {
-            service.pause()
-            service.seekTo(0)
+            PlaybackController.from(context).pause()
+            PlaybackController.from(context).seekTo(0)
         }
 
         showPlayerScreen()
@@ -142,7 +131,7 @@ class PlayerScreenUnknownDurationTest {
     }
 
     private fun start(songs: List<SongModel>) {
-        onMain { service.start(songs, 0) }
+        onMain { PlaybackController.from(context).start(songs, 0) }
     }
 
     /** ExoPlayer is built on the main looper, so everything that touches it has to go there. */
@@ -154,31 +143,12 @@ class PlayerScreenUnknownDurationTest {
         val deadline = SystemClock.uptimeMillis() + timeoutMs
 
         while (SystemClock.uptimeMillis() < deadline) {
-            if (service.isPlaying()) return
+            if (PlaybackController.from(context).state.value.isPlaying) return
 
             Thread.sleep(pollMs)
         }
 
         throw AssertionError("the song never started playing")
-    }
-
-    private fun bindService(): MusicService {
-        val latch = CountDownLatch(1)
-        var bound: MusicService? = null
-
-        connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                bound = (binder as MusicService.MusicBinder).getService()
-                latch.countDown()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {}
-        }
-
-        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
-        assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
-
-        return bound!!
     }
 
     private fun awaitControllerConnected() {

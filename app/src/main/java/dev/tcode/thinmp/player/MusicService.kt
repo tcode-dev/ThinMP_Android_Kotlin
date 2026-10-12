@@ -1,11 +1,8 @@
 package dev.tcode.thinmp.player
 
 import android.app.PendingIntent
-import android.content.Context
 import android.content.Intent
-import android.os.Binder
 import android.os.Bundle
-import android.os.IBinder
 import android.os.Looper
 import androidx.annotation.OptIn
 import androidx.media3.common.MediaItem
@@ -22,46 +19,30 @@ import com.google.common.util.concurrent.ListenableFuture
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.activity.MainActivity
 import dev.tcode.thinmp.config.ConfigStore
-import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.NotificationConstant
-import dev.tcode.thinmp.model.media.SongModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-
-interface MusicServiceListener {
-    fun onChange() {}
-    fun onError() {}
-}
 
 /**
  * Owns the one ExoPlayer and the one MediaSession for the life of the service. The notification,
  * the lock screen and the foreground state are MediaSessionService's: it starts the service in the
  * foreground when playback starts and drops back out when it stops.
  *
- * The screens still reach the service through [MusicBinder], bound with [bindIntent]'s own action.
- * Every other bind - a MediaController, the system - goes to MediaSessionService.
+ * Everything reaches it through the session: the app through PlaybackController's MediaController,
+ * and the notification, the lock screen and a headset through the system's.
  */
 @OptIn(UnstableApi::class)
 class MusicService : MediaSessionService() {
     companion object {
-        private const val ACTION_BIND_MUSIC_PLAYER = "dev.tcode.thinmp.player.BIND_MUSIC_PLAYER"
-
         /**
          * Sent to every connected controller once retry() has dropped a song it could not play, so
          * the song lists can reload without it. The queue changing is not enough to tell: it also
          * changes whenever a new list is started.
          */
         val SONG_REMOVED = SessionCommand("dev.tcode.thinmp.player.SONG_REMOVED", Bundle.EMPTY)
-
-        /** The intent that binds to [MusicBinder]. A plain intent reaches MediaSessionService instead, which answers it with nothing. */
-        fun bindIntent(context: Context): Intent {
-            return Intent(context, MusicService::class.java).setAction(ACTION_BIND_MUSIC_PLAYER)
-        }
     }
-
-    private val binder = MusicBinder()
 
     /**
      * Built once in onCreate() and kept until onDestroy(). A new song replaces the queue with
@@ -84,22 +65,19 @@ class MusicService : MediaSessionService() {
     private val serviceScope = CoroutineScope(serviceJob + Dispatchers.Main.immediate)
 
     /**
-     * Defaults until the stored values arrive. onCreate() used to block the main thread on two
-     * DataStore reads, inside the five second window startForegroundService() allows.
+     * The player keeps its defaults until the stored values arrive. onCreate() used to block the
+     * main thread on two DataStore reads, inside the five second window startForegroundService()
+     * allows.
      *
-     * The buttons are live during that window, so each of the two carries a flag saying the user
-     * has already worked it. loadConfig() skips the ones that are set: what the user just chose is
-     * newer than what was on disk, and the player listener has saved it already.
+     * The buttons are live during that window, so each of the two settings carries a flag saying
+     * the user has already worked it. loadConfig() skips the ones that are set: what the user just
+     * chose is newer than what was on disk, and the player listener has saved it already.
      */
-    private var repeat: RepeatState = RepeatState.OFF
     private var repeatChangedByUser = false
-    private var shuffle = false
     private var shuffleChangedByUser = false
 
     /** Set while loadConfig() applies the stored values, so the listener does not save them back. */
     private var applyingStoredConfig = false
-    private var listeners: MutableList<MusicServiceListener> = mutableListOf()
-    private var isPlaying = false
 
     /**
      * setHandleAudioBecomingNoisy replaces a HEADSET_PLUG receiver this service used to register in
@@ -120,9 +98,8 @@ class MusicService : MediaSessionService() {
         mediaSession = MediaSession.Builder(this, player).setSessionActivity(sessionActivity()).setCallback(SessionCallback()).build()
 
         setMediaNotificationProvider(notificationProvider())
-        // The screens reach the service through the binder, not through a MediaController, so
-        // nothing would add the session through onGetSession(). Without this the service never
-        // learns about it and posts no notification.
+        // Added here rather than left to the first onGetSession(), so a service brought up by
+        // something other than a controller - a media button - knows its session too.
         addSession(mediaSession)
 
         loadConfig()
@@ -130,96 +107,6 @@ class MusicService : MediaSessionService() {
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession {
         return mediaSession
-    }
-
-    fun addEventListener(listener: MusicServiceListener) {
-        listeners.add(listener)
-    }
-
-    fun removeEventListener(listener: MusicServiceListener) {
-        listeners.remove(listener)
-    }
-
-    /** Read back from the item itself, so a queue a MediaController set is as readable as one set here. */
-    fun getCurrentSong(): SongModel? {
-        return exoPlayer.currentMediaItem?.toSongModel()
-    }
-
-    fun start(songs: List<SongModel>, index: Int) {
-        if (songs.isEmpty()) return
-
-        // MediaSessionService starts itself only once playback is under way. Until then the service
-        // is merely bound and goes away with the last screen unbinding - before the song has even
-        // loaded, or for good when it fails to load.
-        startService(Intent(this, MusicService::class.java))
-        exoPlayer.setMediaItems(songs.map { it.toMediaItem(withUri = true) }, index, 0)
-        exoPlayer.prepare()
-        exoPlayer.play()
-    }
-
-    fun play() {
-        if (exoPlayer.mediaItemCount == 0) return
-
-        exoPlayer.play()
-    }
-
-    fun pause() {
-        exoPlayer.pause()
-    }
-
-    /**
-     * A seek back to the start of the same song is not a media item transition, so nothing else
-     * would tell the screens about it.
-     */
-    fun prev() {
-        player.seekToPrevious()
-        onChange()
-    }
-
-    fun next() {
-        player.seekToNext()
-    }
-
-    fun getRepeat(): RepeatState {
-        return repeat
-    }
-
-    /** The player listener saves the new value; see onRepeatModeChanged(). */
-    fun changeRepeat() {
-        repeatChangedByUser = true
-        repeat = repeat.next()
-        exoPlayer.repeatMode = repeat.toRepeatMode()
-    }
-
-    fun getShuffle(): Boolean {
-        return shuffle
-    }
-
-    /** The player listener saves the new value; see onShuffleModeEnabledChanged(). */
-    fun changeShuffle() {
-        shuffleChangedByUser = true
-        shuffle = !shuffle
-        exoPlayer.shuffleModeEnabled = shuffle
-    }
-
-    fun seekTo(ms: Long) {
-        if (exoPlayer.mediaItemCount == 0) return
-
-        try {
-            exoPlayer.seekTo(ms)
-        } catch (e: Exception) {
-            onError()
-        }
-    }
-
-    fun isPlaying(): Boolean {
-        return isPlaying
-    }
-
-    fun getCurrentPosition(): Long {
-        if (exoPlayer.mediaItemCount == 0) return 0
-
-        return exoPlayer.currentPosition
     }
 
     /**
@@ -261,33 +148,16 @@ class MusicService : MediaSessionService() {
 
             applyingStoredConfig = true
 
-            if (!repeatChangedByUser) {
-                repeat = storedRepeat
-                exoPlayer.repeatMode = storedRepeat.toRepeatMode()
-            }
-
-            if (!shuffleChangedByUser) {
-                shuffle = storedShuffle
-                exoPlayer.shuffleModeEnabled = storedShuffle
-            }
+            if (!repeatChangedByUser) exoPlayer.repeatMode = storedRepeat.toRepeatMode()
+            if (!shuffleChangedByUser) exoPlayer.shuffleModeEnabled = storedShuffle
 
             applyingStoredConfig = false
-            onChange()
-        }
-    }
-
-    private fun onChange() {
-        listeners.forEach {
-            it.onChange()
         }
     }
 
     private fun onError() {
         retry()
         mediaSession.broadcastCustomCommand(SONG_REMOVED, Bundle.EMPTY)
-        listeners.forEach {
-            it.onError()
-        }
     }
 
     /**
@@ -318,12 +188,6 @@ class MusicService : MediaSessionService() {
         exoPlayer.play()
     }
 
-    override fun onBind(intent: Intent?): IBinder? {
-        if (intent?.action == ACTION_BIND_MUSIC_PLAYER) return binder
-
-        return super.onBind(intent)
-    }
-
     /**
      * MediaSessionService asks to be restarted after the process is killed, which would bring back
      * a service with an empty queue and nothing to show. super still has to run: it is what
@@ -351,55 +215,32 @@ class MusicService : MediaSessionService() {
     }
 
     inner class PlayerEventListener : Player.Listener {
-        override fun onEvents(player: Player, events: Player.Events) {
-            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) return
-
-            if (events.contains(Player.EVENT_IS_PLAYING_CHANGED)) {
-                isPlaying = player.isPlaying
-                onChange()
-            }
-        }
-
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            onChange()
-        }
-
         override fun onPlaybackStateChanged(playbackState: Int) {
             // ループ再生していない場合最後の曲の再生が終了すると呼ばれる
             // 曲が1曲の場合、onMediaItemTransition、events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
             if (playbackState == Player.STATE_ENDED) {
-                isPlaying = false
                 exoPlayer.pause()
                 exoPlayer.seekTo(0, 0)
-                onChange()
             }
         }
 
         /**
-         * Saved here rather than in changeRepeat(), so a change from the lock screen or any other
-         * controller is saved too. The save reads the field when it runs rather than capturing it,
-         * so rapid taps all persist the state the user actually ended on.
+         * Saved here, where a change from the app, the lock screen or any other controller all
+         * arrive. The save reads the player when it runs rather than capturing the value, so rapid
+         * taps all persist the state the user actually ended on.
          */
         override fun onRepeatModeChanged(repeatMode: Int) {
-            repeat = repeatStateOf(repeatMode)
+            if (applyingStoredConfig) return
 
-            if (!applyingStoredConfig) {
-                repeatChangedByUser = true
-                serviceScope.launch { config.saveRepeat(repeat) }
-            }
-
-            onChange()
+            repeatChangedByUser = true
+            serviceScope.launch { config.saveRepeat(repeatStateOf(exoPlayer.repeatMode)) }
         }
 
         override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            shuffle = shuffleModeEnabled
+            if (applyingStoredConfig) return
 
-            if (!applyingStoredConfig) {
-                shuffleChangedByUser = true
-                serviceScope.launch { config.saveShuffle(shuffle) }
-            }
-
-            onChange()
+            shuffleChangedByUser = true
+            serviceScope.launch { config.saveShuffle(exoPlayer.shuffleModeEnabled) }
         }
 
         override fun onPlayerError(error: PlaybackException) {
@@ -413,7 +254,11 @@ class MusicService : MediaSessionService() {
     /**
      * PlaybackController sends only each song's media id and metadata, and an item from outside the
      * app - a car, a watch - may carry nothing but the id, so the playable URI is rebuilt from the id
-     * here. The service is started for the same reason start() starts it.
+     * here.
+     *
+     * The service also starts itself here. MediaSessionService does that only once playback is
+     * under way, and until then the service is merely bound: it would go away with the
+     * controller's connection - before the song has even loaded, or for good when it fails to load.
      */
     private inner class SessionCallback : MediaSession.Callback {
         override fun onAddMediaItems(
@@ -425,9 +270,5 @@ class MusicService : MediaSessionService() {
 
             return Futures.immediateFuture(items.toMutableList())
         }
-    }
-
-    inner class MusicBinder : Binder() {
-        fun getService(): MusicService = this@MusicService
     }
 }

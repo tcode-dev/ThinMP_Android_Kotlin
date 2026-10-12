@@ -1,14 +1,10 @@
 package dev.tcode.thinmp.player
 
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
-import android.os.IBinder
 import android.os.SystemClock
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -26,8 +22,6 @@ import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CountDownLatch
-import java.util.concurrent.TimeUnit
 
 /**
  * What the notification, the lock screen and a headset reach: the service's MediaSession, through a
@@ -48,8 +42,6 @@ class MusicServiceControllerTest {
     private lateinit var context: Context
     private lateinit var config: ConfigStore
     private lateinit var scenario: ActivityScenario<MainActivity>
-    private lateinit var connection: ServiceConnection
-    private lateinit var service: MusicService
     private lateinit var controller: MediaController
 
     @Before
@@ -65,14 +57,12 @@ class MusicServiceControllerTest {
         // Playback puts the service in the foreground, which the platform refuses while the app is
         // in the background.
         scenario = ActivityScenario.launch(MainActivity::class.java)
-        service = bindService()
-        controller = connectController()
+        controller = connectController(context, timeoutMs)
     }
 
     @After
     fun tearDown() = runBlocking {
         onMain { controller.release() }
-        context.unbindService(connection)
         context.stopService(Intent(context, MusicService::class.java))
         scenario.close()
         resetConfig()
@@ -162,7 +152,7 @@ class MusicServiceControllerTest {
         onMain { controller.repeatMode = Player.REPEAT_MODE_ALL }
 
         awaitSuspending("the repeat mode was not saved") { config.getRepeat() == RepeatState.ALL }
-        assertEquals(RepeatState.ALL, onMain { service.getRepeat() })
+        assertEquals(Player.REPEAT_MODE_ALL, onMain { controller.repeatMode })
     }
 
     @Test
@@ -170,7 +160,7 @@ class MusicServiceControllerTest {
         onMain { controller.shuffleModeEnabled = true }
 
         awaitSuspending("the shuffle mode was not saved") { config.getShuffle() }
-        assertTrue(onMain { service.getShuffle() })
+        assertTrue(onMain { controller.shuffleModeEnabled })
     }
 
     private fun twoSongs(): List<SongModel> {
@@ -193,13 +183,13 @@ class MusicServiceControllerTest {
      */
     private fun start(songs: List<SongModel>, index: Int) {
         onMain {
-            service.start(songs, index)
-            service.pause()
+            startOnPlayer(songs, index)
+            controller.pause()
         }
     }
 
     private fun startPlaying(songs: List<SongModel>, index: Int) {
-        onMain { service.start(songs, index) }
+        onMain { startOnPlayer(songs, index) }
     }
 
     private fun awaitIndex(index: Int) {
@@ -234,30 +224,10 @@ class MusicServiceControllerTest {
         return result as T
     }
 
-    private fun connectController(): MediaController {
-        val token = SessionToken(context, ComponentName(context, MusicService::class.java))
-        val future = onMain { MediaController.Builder(context, token).buildAsync() }
-
-        return future.get(timeoutMs, TimeUnit.MILLISECONDS)
-    }
-
-    private fun bindService(): MusicService {
-        val latch = CountDownLatch(1)
-        var bound: MusicService? = null
-
-        connection = object : ServiceConnection {
-            override fun onServiceConnected(name: ComponentName, binder: IBinder) {
-                bound = (binder as MusicService.MusicBinder).getService()
-                latch.countDown()
-            }
-
-            override fun onServiceDisconnected(name: ComponentName) {}
-        }
-
-        context.bindService(MusicService.bindIntent(context), connection, Context.BIND_AUTO_CREATE)
-        assertTrue("the service did not bind", latch.await(timeoutMs, TimeUnit.MILLISECONDS))
-
-        return bound!!
+    private fun startOnPlayer(songs: List<SongModel>, index: Int) {
+        controller.setMediaItems(songs.map { it.toMediaItem(withUri = false) }, index, 0)
+        controller.prepare()
+        controller.play()
     }
 
     private fun grantPermission(permission: String) {
