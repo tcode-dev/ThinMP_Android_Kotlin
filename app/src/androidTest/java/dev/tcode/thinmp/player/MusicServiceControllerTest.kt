@@ -125,8 +125,9 @@ class MusicServiceControllerTest {
 
     /**
      * Past the first three seconds "previous" restarts the song. seekToPrevious() is what the
-     * notification's button and a headset's arrive as, both through KEYCODE_MEDIA_PREVIOUS;
-     * seekToPreviousMediaItem() always moves to the song before.
+     * notification's button and a headset's arrive as, both through KEYCODE_MEDIA_PREVIOUS.
+     * seekToPreviousMediaItem() makes no three-second check: it moves to the song before whenever
+     * there is one.
      */
     @Test
     fun previousAfterThreeSecondsRestartsTheSong() {
