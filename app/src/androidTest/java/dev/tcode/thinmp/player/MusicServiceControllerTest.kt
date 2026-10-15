@@ -27,9 +27,9 @@ import org.junit.runner.RunWith
  * What the notification, the lock screen and a headset reach: the service's MediaSession, through a
  * MediaController, rather than the app's own binder.
  *
- * The back and forward buttons there have to behave the way the app's do, which ExoPlayer on its
- * own does not: it stops at either end of the queue and greys "next" out on the last song. And a
- * repeat or shuffle change made there has to be saved like one made in the app.
+ * The back and forward buttons there are ExoPlayer's own: they stop at either end of the queue
+ * unless repeat is set to all, and "next" is greyed out on the last song otherwise. And a repeat or
+ * shuffle change made there has to be saved like one made in the app.
  *
  * The seek tests need two audio files on the device and skip themselves otherwise
  * (tools/push-test-audio.sh). The config tests play nothing.
@@ -69,9 +69,39 @@ class MusicServiceControllerTest {
     }
 
     @Test
-    fun nextOnTheLastSongGoesToTheFirst() {
+    fun nextIsNotAvailableOnTheLastSong() {
         val songs = twoSongs()
 
+        start(songs, 1)
+        awaitIndex(1)
+
+        await("next is still available on the last song") {
+            onMain { !controller.isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT) && !controller.isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM) }
+        }
+    }
+
+    /** With no song before it, "previous" restarts the first song even inside the first three seconds. */
+    @Test
+    fun previousOnTheFirstSongRestartsIt() {
+        val songs = twoSongs()
+
+        start(songs, 0)
+        awaitIndex(0)
+        await("the song never became ready") { onMain { controller.playbackState } == Player.STATE_READY }
+        onMain { controller.seekTo(1_000) }
+        await("the seek never landed") { onMain { controller.currentPosition } >= 1_000 }
+
+        onMain { controller.seekToPrevious() }
+
+        await("the song was not restarted") { onMain { controller.currentPosition } < 1_000 }
+        assertEquals(0, onMain { controller.currentMediaItemIndex })
+    }
+
+    @Test
+    fun nextOnTheLastSongGoesToTheFirstWithRepeatAll() {
+        val songs = twoSongs()
+
+        onMain { controller.repeatMode = Player.REPEAT_MODE_ALL }
         start(songs, 1)
         awaitIndex(1)
 
@@ -80,36 +110,11 @@ class MusicServiceControllerTest {
         awaitIndex(0)
     }
 
-    /** The media notification's button sends the media item variant. */
     @Test
-    fun nextMediaItemOnTheLastSongGoesToTheFirst() {
+    fun previousOnTheFirstSongGoesToTheLastWithRepeatAll() {
         val songs = twoSongs()
 
-        start(songs, 1)
-        awaitIndex(1)
-
-        onMain { controller.seekToNextMediaItem() }
-
-        awaitIndex(0)
-    }
-
-    /** Without the rewritten commands the button is greyed out here and can never be pressed. */
-    @Test
-    fun nextIsAvailableOnTheLastSong() {
-        val songs = twoSongs()
-
-        start(songs, 1)
-        awaitIndex(1)
-
-        await("next is not available on the last song") {
-            onMain { controller.isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT) && controller.isCommandAvailable(Player.COMMAND_SEEK_TO_NEXT_MEDIA_ITEM) }
-        }
-    }
-
-    @Test
-    fun previousOnTheFirstSongGoesToTheLast() {
-        val songs = twoSongs()
-
+        onMain { controller.repeatMode = Player.REPEAT_MODE_ALL }
         start(songs, 0)
         awaitIndex(0)
 
@@ -118,19 +123,11 @@ class MusicServiceControllerTest {
         awaitIndex(1)
     }
 
-    @Test
-    fun previousMediaItemOnTheFirstSongGoesToTheLast() {
-        val songs = twoSongs()
-
-        start(songs, 0)
-        awaitIndex(0)
-
-        onMain { controller.seekToPreviousMediaItem() }
-
-        awaitIndex(1)
-    }
-
-    /** Past the first three seconds "previous" restarts the song, on the media item variant too. */
+    /**
+     * Past the first three seconds "previous" restarts the song. seekToPrevious() is what the
+     * notification's button and a headset's arrive as, both through KEYCODE_MEDIA_PREVIOUS;
+     * seekToPreviousMediaItem() always moves to the song before.
+     */
     @Test
     fun previousAfterThreeSecondsRestartsTheSong() {
         val songs = twoSongs()
@@ -141,7 +138,7 @@ class MusicServiceControllerTest {
         assumeTrue("needs a song longer than five seconds", onMain { controller.duration } > 5_000)
         await("the song never got past three seconds") { onMain { controller.currentPosition } > 3_500 }
 
-        onMain { controller.seekToPreviousMediaItem() }
+        onMain { controller.seekToPrevious() }
 
         await("the song was not restarted") { onMain { controller.currentPosition } < 3_000 }
         assertEquals(1, onMain { controller.currentMediaItemIndex })

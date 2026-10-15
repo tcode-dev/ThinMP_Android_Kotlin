@@ -51,9 +51,6 @@ class MusicService : MediaSessionService() {
      * not a missing player.
      */
     private lateinit var exoPlayer: ExoPlayer
-
-    /** What the session is given, so its controls go back and forward the way the app's do. */
-    private lateinit var player: WrapAroundPlayer
     private lateinit var mediaSession: MediaSession
     private lateinit var config: ConfigStore
 
@@ -94,8 +91,7 @@ class MusicService : MediaSessionService() {
         config = ConfigStore(baseContext)
         exoPlayer = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
         exoPlayer.addListener(PlayerEventListener())
-        player = WrapAroundPlayer(exoPlayer)
-        mediaSession = MediaSession.Builder(this, player).setSessionActivity(sessionActivity()).setCallback(SessionCallback()).build()
+        mediaSession = MediaSession.Builder(this, exoPlayer).setSessionActivity(sessionActivity()).setCallback(SessionCallback()).build()
 
         setMediaNotificationProvider(notificationProvider())
         // Added here rather than left to the first onGetSession(), so a service brought up by
