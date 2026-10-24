@@ -243,8 +243,8 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * PlaybackControllerはmedia idとメタデータだけを送り、
-     * 車や腕時計などアプリ外からはidしか来ないこともあるので、再生用のURIはここでidから作る。
+     * PlaybackControllerはURIを付けずにmedia idとメタデータだけを送る。
+     * Media3の既定の実装はURIのないMediaItemを拒否するので、ここでidから再生用のURIを作る。
      *
      * ここでサービスをstartもする。
      * MediaSessionServiceがstartするのは再生が始まってからなので、それまではバインドされているだけで、
