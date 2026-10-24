@@ -11,9 +11,9 @@ interface FavoriteArtistRegister {
     }
 
     /**
-     * The only way to flip one artist's favourite state. Deliberately not exposed as separate add
-     * and delete: reading existsFavoriteArtist() and then writing leaves a suspension point
-     * between the two, so a double tap inserts the artist twice.
+     * お気に入りの切り替えはこれだけにし、追加と削除は公開しない。
+     * existsFavoriteArtist()で確かめてから書き込むと間に中断点ができ、
+     * ダブルタップで2回挿入されてしまう。
      */
     suspend fun toggleFavoriteArtist(artistId: ArtistId) {
         val repository = FavoriteArtistRepository()

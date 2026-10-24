@@ -15,11 +15,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 /**
- * `loaded` is false until load() has put real data here. The done button is disabled while it is,
- * because save() writes this state as it stands and reorder/replaceAll both read "not in the list"
- * as "delete" - which is how a list emptied by swiping is saved, and what would turn a tap that
- * beat the load into a wipe of the whole table. It cannot be inferred from the list being empty: an
- * empty list is also what the user leaves behind after swiping everything away.
+ * `loaded`はload()が実際のデータを入れるまでfalseで、その間は完了ボタンを無効にする。
+ * save()はこの状態をそのまま保存し、reorder/replaceAllは一覧にないものを削除するので、
+ * 読み込み前に保存するとテーブルの中身がすべて消えてしまう。
+ *
+ * 一覧が空かどうかでは判断できない。
+ * ユーザーがすべてスワイプで消した場合も一覧は空になる。
  */
 data class PlaylistsEditUiState(
     val playlists: List<PlaylistModel> = emptyList(), val loaded: Boolean = false
@@ -73,10 +74,10 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
     }
 
     /**
-     * The done button is disabled until the load lands, so this guard is only reached if a tap
-     * slips through before the state reaches the screen. Nothing happens then - no write, and no
-     * saved event either, because navigating away from a tap the user cannot see the effect of is
-     * worse than the tap appearing to do nothing.
+     * 完了ボタンは読み込みが終わるまで無効なので、
+     * ここに来るのは状態が画面に反映される前にタップがすり抜けたときだけ。
+     * そのときは保存せず、保存済みの通知も出さない。
+     * 何も保存していないのに画面が閉じるより、タップが効かなかったように見えるほうがよい。
      */
     fun save() {
         if (saveJob?.isActive == true) return

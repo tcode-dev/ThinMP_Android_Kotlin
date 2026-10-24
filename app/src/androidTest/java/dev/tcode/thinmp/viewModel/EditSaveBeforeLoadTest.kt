@@ -25,26 +25,26 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The done button is composed from the first frame - EditTopAppBarView only animates the bar's
- * background, not the row the button sits in - while the list behind it arrives asynchronously.
- * save() applies uiState as it stands, and its initial state is empty, so a tap that beat the load
- * would write that emptiness back. Both reorder() and replaceAll() read "not in the list" as
- * "delete", which is how a list emptied by swiping is saved, so the whole table would go.
+ * 完了ボタンは最初のフレームから表示される(EditTopAppBarViewがアニメーションするのはバーの背景だけ)が、
+ * 一覧は非同期に読み込まれる。
+ * save()はその時点のuiStateを保存し、初期状態は空の一覧なので、
+ * 読み込み前にタップすると空の一覧を保存してしまう。
+ * reorder()もreplaceAll()も一覧にないものは削除する(スワイプで空にした一覧もこうして保存する)ので、
+ * テーブルの中身がすべて消える。
  *
- * The button is disabled until the load lands, and save() refuses on its own as well, which is what
- * these tests drive: they call save() directly, the way a tap that slipped through would.
+ * ボタンは読み込みが終わるまで無効にし、save()自身も読み込み前は何もしない。
+ * このテストは後者を、すり抜けたタップと同じくsave()を直接呼んで確かめる。
  *
- * Calling save() in the same main-thread block as the constructor gets close to a cold start but
- * does not pin the ordering: withContext returns without suspending at all when the work on the
- * other dispatcher finishes before the caller reaches its suspension check, so with the database
- * warm and the table tiny the whole load can land inside the constructor. The two tests below
- * assert the invariant that holds either way - opening the screen and pressing done immediately
- * never destroys anything - and savingWithoutLoadedStateReportsNothing pins the guard itself on a
- * load that cannot finish, rather than on winning a race.
+ * コンストラクター直後にsave()を呼んでも、読み込みより先になるとは限らない。
+ * withContextは処理がすぐ終われば中断せずに戻るので、データベースが温まっていてテーブルが小さいと、
+ * 読み込みがコンストラクターの中で終わることがある。
+ * そのため下の2つのテストは、どちらの順でも成り立つこと(開いてすぐ完了を押しても何も消えない)を
+ * 確かめる。
+ * ガード自体は、終わっても状態を埋めない読み込みを使うsavingWithoutLoadedStateReportsNothingで、
+ * 競争に頼らずに確かめる。
  *
- * Unlike the repository tests these view models build their own repositories, so this exercises the
- * app's real database on the device rather than an in-memory one. Every test clears what it touches
- * before and after itself.
+ * これらのview modelは自分でリポジトリを作るので、インメモリではなく端末のアプリのデータベースを使う。
+ * 各テストは触るデータを前後で消す。
  */
 @RunWith(AndroidJUnit4::class)
 class EditSaveBeforeLoadTest {
@@ -94,12 +94,12 @@ class EditSaveBeforeLoadTest {
     }
 
     /**
-     * The tap does nothing at all. Reporting saved would take the user back to the previous screen
-     * off a tap whose effect they cannot see, which reads as "saved" when nothing was.
+     * 読み込み前のタップは何もしない。
+     * 保存済みと通知すると、何も保存していないのに前の画面に戻り、保存されたように見えてしまう。
      *
-     * A playlist id that resolves to nothing gives a load that runs to completion without ever
-     * filling uiState - findById returns null and load() returns early - so `loaded` stays false
-     * however long this waits. That is the state the guard exists for, held still.
+     * 存在しないプレイリストidでは、findByIdがnullを返してload()が途中で戻るので、
+     * どれだけ待っても`loaded`はfalseのまま。
+     * ガードが必要な状態をそのまま保てる。
      */
     @Test
     fun savingWithoutLoadedStateReportsNothing() = runBlocking {
@@ -113,7 +113,7 @@ class EditSaveBeforeLoadTest {
         assertNull(withTimeoutOrNull(quietMs) { viewModel.saved.flow.first() })
     }
 
-    /** Saving after the load writes the list on screen back. */
+    /** 読み込み後の保存では、画面の一覧が保存される。 */
     @Test
     fun savingAfterTheListLoadsAppliesTheList() = runBlocking {
         val repository = PlaylistRepository()
@@ -129,7 +129,7 @@ class EditSaveBeforeLoadTest {
         assertEquals(listOf("second"), repository.findAll().map { it.name })
     }
 
-    /** An empty list the user made by swiping is still saved: emptying everything must be possible. */
+    /** スワイプで空にした一覧も保存できる。すべて消せなければならない。 */
     @Test
     fun savingAnEmptiedListDeletesEverything() = runBlocking {
         val repository = PlaylistRepository()
@@ -153,9 +153,9 @@ class EditSaveBeforeLoadTest {
     }
 
     /**
-     * Everything that touches a view model goes through here: viewModelScope dispatches with
-     * Dispatchers.Main.immediate, so calling from anywhere else posts the work instead of running
-     * it, and the constructor would return before load() had even started.
+     * view modelの操作はすべてメインスレッドで行う。
+     * viewModelScopeはDispatchers.Main.immediateなので、他のスレッドから作ると処理がpostされ、
+     * load()が始まる前にコンストラクターが戻ってしまう。
      */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null

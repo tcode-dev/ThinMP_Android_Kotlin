@@ -33,9 +33,10 @@ interface FavoriteSongDao {
     @Query("DELETE FROM favorite_songs WHERE song_id IN (:songIds)")
     suspend fun deleteBySongIdsChunk(songIds: List<String>)
 
-    /** Splits the list so the statement stays under [SqliteConstant.MAX_VARIABLES], and runs the
-     * chunks as one unit so a caller cleaning up ids that have left MediaStore either drops all of
-     * them or none. */
+    /**
+     * [SqliteConstant.MAX_VARIABLES]を超えないよう分割して削除する。
+     * トランザクションにするので、すべて消えるか、1件も消えないかのどちらかになる。
+     */
     @Transaction
     suspend fun deleteBySongIds(songIds: List<String>) {
         songIds.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteBySongIdsChunk(it) }
@@ -47,10 +48,11 @@ interface FavoriteSongDao {
         insertAll(entities)
     }
 
-    /** Reads the current state and writes as one unit; separately they race and two concurrent
-     * toggles can both see "not a favourite" and try to insert the song twice. The primary key
-     * rejects that second insert, so the transaction is what keeps it from surfacing as a
-     * SQLiteConstraintException on a double tap. */
+    /**
+     * 状態の確認と書き込みを1つのトランザクションで行う。
+     * 別々にすると、同時に2回toggleしたときに両方が「未登録」と判断して2回挿入し、
+     * 主キーの制約違反(SQLiteConstraintException)になる。
+     */
     @Transaction
     suspend fun toggle(songId: String) {
         if (exists(songId)) {

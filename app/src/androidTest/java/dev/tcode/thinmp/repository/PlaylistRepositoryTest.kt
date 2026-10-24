@@ -60,8 +60,11 @@ class PlaylistRepositoryTest {
         assertEquals(listOf("2", "3"), repository.findSongsByPlaylistId(id).map { it.songId })
     }
 
-    /** The same song cannot be registered to a playlist twice: the primary key rejects the second
-     * row and the first one stays where it is. add() reports that so the popup can say so. */
+    /**
+     * 同じ曲を同じプレイリストに2回は登録できない。
+     * 主キーが2行目を拒否し、1行目はそのまま残る。
+     * add()が結果を返すので、ポップアップはそれを表示できる。
+     */
     @Test
     fun addIgnoresASongAlreadyInThePlaylist() = runTest {
         repository.create(SongId("1"), "first")
@@ -73,7 +76,7 @@ class PlaylistRepositoryTest {
         assertEquals(listOf("1", "2"), repository.findSongsByPlaylistId(id).map { it.songId })
     }
 
-    /** What the register popup greys out: the playlists the song is already in, and only those. */
+    /** 登録ポップアップがグレーアウトする、その曲を含むプレイリストだけを返すこと。 */
     @Test
     fun findPlaylistIdsBySongIdReturnsThePlaylistsHoldingTheSong() = runTest {
         repository.create(SongId("1"), "first")
@@ -96,8 +99,10 @@ class PlaylistRepositoryTest {
         assertEquals(listOf("2", "3"), repository.findSongsByPlaylistId(id).map { it.songId })
     }
 
-    /** The order of a playlist is the order the songs were added in, not the order of their ids:
-     * sorted as text these come back "1", "10", "5". */
+    /**
+     * プレイリストの曲は追加した順で返り、idの順ではない。
+     * 文字列としてソートすると"1"、"10"、"5"になる。
+     */
     @Test
     fun songsComeBackInTheOrderTheyWereAdded() = runTest {
         repository.create(SongId("5"), "first")
@@ -127,7 +132,7 @@ class PlaylistRepositoryTest {
         repository.create(SongId("3"), "third")
         val ids = repository.findAll().map { PlaylistId(it.id) }
 
-        // Keep the third and the first, in that order; the second is dropped.
+        // 3番目と1番目をこの順で残し、2番目は消す。
         repository.reorder(listOf(ids[2], ids[0]))
 
         val playlists = repository.findAll()
@@ -138,9 +143,8 @@ class PlaylistRepositoryTest {
     }
 
     /**
-     * The caller works from a list it read earlier, so an id in it can be gone by the time the
-     * order is saved. It is skipped rather than thrown out of the transaction as a
-     * NoSuchElementException, which would leave nothing renumbered.
+     * 呼び出し側は以前に読んだリストで並び替えるので、保存時にはなくなっているidが含まれうる。
+     * それで例外を投げるとトランザクション全体が戻って何も保存されないので、読み飛ばす。
      */
     @Test
     fun reorderIgnoresAnIdThatIsNoLongerThere() = runTest {

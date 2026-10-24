@@ -5,9 +5,9 @@ import org.junit.Assert.assertFalse
 import org.junit.Test
 
 /**
- * The unknown duration cases are the ones that matter: a Slider handed NaN takes the player
- * screen down while it lays the thumb out, so what matters about them is as much that the answer
- * is a number at all as which number it is.
+ * 重要なのは長さが分からないケース。
+ * SliderにNaNを渡すとプレーヤー画面ごと落ちるので、値が正しいかと同じくらい、
+ * 数値であることが重要になる。
  */
 class SliderUtilTest {
     private val delta = 0.0001f
@@ -19,7 +19,7 @@ class SliderUtilTest {
         assertEquals(1f, sliderPosition(200_000, 200_000), delta)
     }
 
-    /** MediaStore reports 0 for a file whose metadata could not be read. */
+    /** メタデータを読めなかったファイルの長さは、MediaStoreでは0になる。 */
     @Test
     fun treatsAnUnknownDurationAsTheStartOfTheTrack() {
         assertFalse("a NaN reaches the Slider and crashes the layout", sliderPosition(0, 0).isNaN())
@@ -29,7 +29,7 @@ class SliderUtilTest {
         assertEquals(0f, sliderPosition(5_000, 0), delta)
     }
 
-    /** DURATION is an Int column, so a negative is as much a broken tag as a 0. */
+    /** DURATIONはInt列なので、負の値も0と同じく壊れたタグとして扱う。 */
     @Test
     fun treatsANegativeDurationAsTheStartOfTheTrack() {
         assertFalse("an infinity is as unroundable as a NaN", sliderPosition(5_000, -1).isInfinite())
@@ -37,7 +37,7 @@ class SliderUtilTest {
         assertEquals(0f, sliderPosition(5_000, -1), delta)
     }
 
-    /** The duration is the tag; the position is the file, and it can run past what the tag claims. */
+    /** 長さはタグ、位置はファイルから来るので、位置が長さを超えることがある。 */
     @Test
     fun staysWithinTheSlidersRange() {
         assertEquals(1f, sliderPosition(300_000, 200_000), delta)

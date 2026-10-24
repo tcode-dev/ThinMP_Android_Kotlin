@@ -29,19 +29,19 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * CommonLayoutView holds the song id the playlist popup is opened for, and the id has to survive a
- * recomposition of CommonLayoutView. Reset to SongId(""), the popup would write a playlist_songs
- * row that resolves to no song in MediaStore - the song looks added and is gone by the next load.
+ * CommonLayoutViewが持つ「ポップアップを開いた曲のid」は、
+ * CommonLayoutViewが再composeされても失われてはいけない。
+ * SongId("")に戻ると、どの曲にも解決しない行がplaylist_songsに書き込まれ、
+ * 追加したはずの曲が次の読み込みで消える。
  *
- * isVisibleMiniPlayer is the recomposition: it comes from the screen's uiState and flips while the
- * popup is open, for instance when playback starts. The two tests are the same flow with and
- * without that flip, so a failure says whether adding is broken outright or only after a
- * recomposition.
+ * 再composeのきっかけは、ポップアップを開いている間に再生開始などでisVisibleMiniPlayerが切り替わること。
+ * 2つのテストはその切り替えの有無だけが違うので、どちらが失敗したかで、追加そのものが壊れているのか、
+ * 再composeの後だけなのかがわかる。
  *
- * The popup builds its own PlaylistsViewModel, so this runs against the app's real database rather
- * than an in-memory one, and clears the playlists around itself. A real MediaStore song id is used
- * so the row written is one the app would keep; skipped when the device has no audio
- * (tools/push-test-audio.sh).
+ * ポップアップは自分でPlaylistsViewModelを作るので、インメモリではなくアプリのデータベースを使い、
+ * テストの前後でプレイリストを消す。
+ * アプリが削除しない行になるよう、MediaStoreに実在する曲idを使う。
+ * 端末に音声ファイルがなければスキップする(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class PlaylistRegisterPopupSongIdTest {
@@ -82,8 +82,8 @@ class PlaylistRegisterPopupSongIdTest {
     }
 
     /**
-     * Opens the popup for songId on an empty playlist, optionally flips isVisibleMiniPlayer while
-     * it is open, taps the playlist and returns what landed in playlist_songs.
+     * 空のプレイリストを作ってポップアップを開き、[recompose]ならisVisibleMiniPlayerを切り替えてから
+     * プレイリストをタップし、playlist_songsに書き込まれた曲を返す。
      */
     private fun addFromPopup(recompose: Boolean): List<String> {
         val songId = SongId(songIdValue)
@@ -91,8 +91,9 @@ class PlaylistRegisterPopupSongIdTest {
             val repository = PlaylistRepository()
             repository.create(songId, playlistName)
             val playlist = repository.findAll().first { it.name == playlistName }
-            // create() seeds the playlist with the song, which would hide an empty id written on
-            // top of it. The row is removed so the popup's write is the only one left.
+            // create()は曲を1つ入れて作るので、
+            // その行を消してポップアップの書き込みだけが残るようにする。
+            // 残したままだと、空のidが書き込まれても気づけない。
             repository.delete(PlaylistId(playlist.id), listOf(songId))
             PlaylistId(playlist.id)
         }
@@ -119,7 +120,7 @@ class PlaylistRegisterPopupSongIdTest {
         return awaitSongs(playlistId)
     }
 
-    /** addSong() runs in viewModelScope, so the row arrives after the tap returns. */
+    /** addSong()はviewModelScopeで動くので、行はタップの後から書き込まれる。 */
     private fun awaitSongs(playlistId: PlaylistId): List<String> {
         val deadline = System.currentTimeMillis() + timeoutMs
 

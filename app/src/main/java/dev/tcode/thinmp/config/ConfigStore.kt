@@ -22,19 +22,18 @@ enum class RepeatState {
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
 /**
- * Every accessor is suspend, so none of them blocks the thread that calls it. The callers include
- * the main thread - MusicService.onCreate() and the repeat/shuffle buttons - and a save means an
- * fsync.
+ * アクセサーはすべてsuspend。
+ * 呼び出し元にはメインスレッド(MusicService.onCreate()、リピート・シャッフルのボタン)があり、
+ * 保存はfsyncを伴うので、ブロックしてはいけない。
  *
- * Do not add withContext(Dispatchers.IO) around these: DataStore already does its file access on
- * its own dispatcher, for the same reason suspend Room calls are not wrapped either.
+ * withContext(Dispatchers.IO)で囲まないこと。
+ * DataStoreは自前のディスパッチャーでファイルにアクセスする。
  */
 class ConfigStore(private val context: Context) {
     suspend fun getRepeat(): RepeatState {
         val value = getInt(PREFERENCES_REPEAT_KEY) ?: return RepeatState.OFF
 
-        // Stored as an ordinal, so a value left behind by a build with more states than this one
-        // must not index out of bounds.
+        // ordinalで保存しているので、範囲外の値が残っていてもOFFとして扱う。
         return RepeatState.entries.getOrElse(value) { RepeatState.OFF }
     }
 

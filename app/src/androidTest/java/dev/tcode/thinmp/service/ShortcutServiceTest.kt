@@ -29,15 +29,15 @@ private const val TITLE_PREFIX = "thinmp_test_compilation_"
 private const val ALBUM = "thinmp_test_compilation"
 
 /**
- * A shortcut to an artist takes its image from that artist's first album, and there may be none.
- * The albums collection holds one row per album carrying one artist_id, so every artist on a
- * compilation except the one that row happens to name is an artist with no album of their own.
- * They are still listed under Artists, so they can be shortcut like any other. findAll() runs
- * while the main screen loads, so a throw there would take the whole screen.
+ * アーティストのショートカットはそのアーティストの最初のアルバムから画像を取るが、
+ * アルバムがないこともある。
+ * アルバムのテーブルはアルバムごとにartist_idを1つしか持たないので、
+ * コンピレーションの参加アーティストのうち1人以外はアルバムを持たない。
+ * それでもアーティスト一覧には出るのでショートカットにできる。
+ * findAll()はメイン画面の読み込みで呼ばれるので、ここで例外が出ると画面全体が落ちる。
  *
- * The two tracks below build exactly that state in MediaStore rather than standing in for the
- * repository, so the album lookup that comes back empty is the real one. Which of the two artists
- * ends up named by the album row is MediaStore's choice, so the test asks rather than assumes.
+ * リポジトリを差し替えず、MediaStoreに実際にその状態を作って確かめる。
+ * 2人のどちらがアルバムのアーティストになるかはMediaStoreが決めるので、決め打ちせずに問い合わせる。
  */
 @RunWith(AndroidJUnit4::class)
 class ShortcutServiceTest {
@@ -84,7 +84,7 @@ class ShortcutServiceTest {
         assertEquals(Uri.EMPTY, models.first().imageUri)
     }
 
-    /** The shortcut still resolves, so the cleanup must not take it for a stale row. */
+    /** アルバムがなくてもショートカットは有効なので、不要な行として削除されないこと。 */
     @Test
     fun anArtistWithNoAlbumIsKept() = runBlocking {
         shortcuts.add(ArtistId(withoutAlbum))
@@ -94,7 +94,7 @@ class ShortcutServiceTest {
         assertEquals(1, shortcuts.findAll().size)
     }
 
-    /** The image still comes from the artist's album when there is one. */
+    /** アルバムがあるアーティストは、そのアルバムの画像を使うこと。 */
     @Test
     fun anArtistWithAnAlbumKeepsItsImage() = runBlocking {
         shortcuts.add(ArtistId(withAlbum))
@@ -106,9 +106,9 @@ class ShortcutServiceTest {
     }
 
     /**
-     * Both tracks land in the same album, so MediaStore has to pick one of the two artists for
-     * that album's row and the other one is left without an album. The files stay empty: nothing
-     * plays them, and a WAV carries no tag block to put an artist in anyway.
+     * 2曲を同じアルバムに入れるので、アルバムのアーティストは2人のうち1人になり、
+     * もう1人にはアルバムがなくなる。
+     * 再生はしないうえ、WAVにはアーティストのタグも入れられないので、ファイルの中身は空にしている。
      */
     private fun insertTrack(title: String, artist: String) {
         val values = ContentValues().apply {
@@ -124,7 +124,7 @@ class ShortcutServiceTest {
         context.contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
     }
 
-    /** Also runs before the inserts: a run that died before its tearDown must not skip the next. */
+    /** 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。 */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")

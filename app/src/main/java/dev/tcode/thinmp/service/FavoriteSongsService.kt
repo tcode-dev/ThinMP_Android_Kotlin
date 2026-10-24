@@ -21,10 +21,11 @@ class FavoriteSongsService(val context: Context, private val favoriteSongReposit
     }
 
     /**
-     * Drops favourites whose file has left MediaStore, without re-entering findAll(). Deleting rows
-     * that produced no SongModel cannot change `found`, so the caller already has the right answer
-     * before this runs. Re-reading until an id count matches a row count would spin forever on any
-     * mismatch the deletion cannot remove.
+     * MediaStoreから消えた曲のお気に入りを削除する。
+     * findAll()は呼び直さない。
+     * 見つからなかった行を消しても見つかった曲の一覧は変わらないので、
+     * 呼び出し側はすでに正しい結果を持っている。
+     * idの件数と行数が一致するまで取り直すと、削除で解消できないずれがあったときに終わらなくなる。
      */
     private suspend fun removeMissing(songIds: List<SongId>, songs: List<SongModel>) {
         val deleteIds = songIds.filter { id ->

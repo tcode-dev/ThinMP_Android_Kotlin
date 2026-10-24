@@ -24,13 +24,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A song whose file has gone missing raises ERROR_CODE_IO_FILE_NOT_FOUND, and the service drops it
- * and starts again on the next one. That has to hold when the *first* song of the selection is the
- * missing one too, so playback never began before the error arrived.
+ * ファイルが消えた曲はERROR_CODE_IO_FILE_NOT_FOUNDになり、サービスはその曲を外して次の曲を再生する。
+ * 最初の曲が消えていて、エラーの時点で一度も再生が始まっていない場合も同じでなければならない。
  *
- * Both tests here end in "the real song is playing", which is the only observation that
- * distinguishes recovery from a service that stopped starting songs. Needs at least one audio
- * file on the device; skipped otherwise (tools/push-test-audio.sh).
+ * 回復したことは「実在する曲が再生中であること」でしか確かめられないので、
+ * どちらのテストもそれで終わる。
+ * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServiceRetryTest {
@@ -52,8 +51,8 @@ class MusicServiceRetryTest {
         assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
         realSong = songs.first()
 
-        // Playback puts the service in the foreground, which the platform refuses while the app is
-        // in the background, so the app has to actually be on screen for this to be testable at all.
+        // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。
+        // バックグラウンドからのフォアグラウンド化はプラットフォームに拒否される。
         scenario = ActivityScenario.launch(MainActivity::class.java)
         controller = connectController(context, timeoutMs)
     }
@@ -65,7 +64,7 @@ class MusicServiceRetryTest {
         scenario.close()
     }
 
-    /** The failed song is dropped and the one after it plays. */
+    /** 失敗した曲を外し、次の曲を再生する。 */
     @Test
     fun playsTheNextSongWhenTheFirstOneIsMissing() {
         startOnController(controller, listOf(missingSong("999999998"), realSong), 0)
@@ -74,7 +73,7 @@ class MusicServiceRetryTest {
         assertEquals(realSong.id, runOnMain { controller.currentMediaItem?.mediaId })
     }
 
-    /** The retry chain has to keep going, not just survive one failure. */
+    /** 失敗が続いても、再生できる曲まで進み続ける。 */
     @Test
     fun playsTheFirstSongThatIsStillThere() {
         startOnController(controller, listOf(missingSong("999999998"), missingSong("999999997"), realSong), 0)

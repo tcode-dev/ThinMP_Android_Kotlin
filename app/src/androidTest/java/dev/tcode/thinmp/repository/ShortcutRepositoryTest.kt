@@ -39,7 +39,7 @@ class ShortcutRepositoryTest {
         repository.add(ArtistId("1"))
 
         assertTrue(repository.exists(ArtistId("1")))
-        // Same raw id, different type: must not collide.
+        // idが同じでもtypeが違えば別のショートカット。
         assertFalse(repository.exists(AlbumId("1")))
 
         repository.delete(ArtistId("1"))
@@ -67,7 +67,7 @@ class ShortcutRepositoryTest {
         repository.add(ArtistId("1"))
         repository.add(ArtistId("2"))
         repository.add(ArtistId("3"))
-        // findAll is ordered by `order` descending, so this is 3, 2, 1.
+        // findAllは`order`の降順なので3、2、1の順。
         val ids = repository.findAll().map { ShortcutId(it.id) }
 
         repository.reorder(listOf(ids[0], ids[2]))
@@ -79,7 +79,7 @@ class ShortcutRepositoryTest {
         assertEquals(listOf(2, 1), shortcuts.map { it.order })
     }
 
-    /** See PlaylistRepositoryTest.reorderIgnoresAnIdThatIsNoLongerThere. */
+    /** PlaylistRepositoryTest.reorderIgnoresAnIdThatIsNoLongerThereを参照。 */
     @Test
     fun reorderIgnoresAnIdThatIsNoLongerThere() = runTest {
         repository.add(ArtistId("1"))
@@ -115,9 +115,10 @@ class ShortcutRepositoryTest {
     }
 
     /**
-     * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
-     * between the read and the write, so two concurrent toggles can both see "not a shortcut" and
-     * insert a second row; nothing in the schema forbids the duplicate.
+     * exists()とadd()を別々に呼ぶと間に中断点ができ、
+     * 同時に2回toggleすると両方が「未登録」と判断して2行目を挿入してしまう。
+     * shortcutsのスキーマには重複を防ぐ制約がない。
+     * toggleはそれを防ぐためにある。
      */
     @Test
     fun concurrentTogglesNeverInsertTheSameItemTwice() = runBlocking {

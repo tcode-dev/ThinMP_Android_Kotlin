@@ -5,9 +5,9 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 /**
- * A song is either a favourite or it is not, so the MediaStore id is the identity of the row and
- * there is nothing for a surrogate key to add. Making it the primary key is also what forbids the
- * duplicate rows that `toggle` exists to avoid, and it indexes the column every query filters on.
+ * 1曲につきお気に入りは1行なので、MediaStoreのidをそのまま主キーにする。
+ * サロゲートキーは要らない。
+ * 主キーにすることで重複行が防がれ、クエリが絞り込む列にインデックスも付く。
  */
 @Entity(tableName = "favorite_songs")
 data class FavoriteSongEntity(

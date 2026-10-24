@@ -142,8 +142,9 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel(
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.albums))
                 }
-                // Albums and songs share this grid, and both ids are MediaStore _IDs from
-                // different tables, so an album and a song can carry the same number.
+                // アルバムと曲は同じグリッドに並び、どちらのidもMediaStoreの別テーブルの_IDなので、
+                // 番号が重なることがある。
+                // keyに種類を付けて区別する。
                 itemsIndexed(items = uiState.albums, key = { _, album -> "album:${album.id}" }) { index, album ->
                     DropdownMenuView(dropdownContent = { callback ->
                         ShortcutDropdownMenuItemView(album.albumId, callback)

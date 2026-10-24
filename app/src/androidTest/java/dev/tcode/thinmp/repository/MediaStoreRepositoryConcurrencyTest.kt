@@ -20,18 +20,16 @@ import org.junit.runner.RunWith
 
 private const val TITLE_PREFIX = "thinmp_test_concurrent_"
 
-/** Enough rounds that an interleaving has to happen, short enough to stay a fast test. */
+/** 競合が確実に起きる程度に多く、テストが遅くならない程度に少ない回数。 */
 private const val ROUNDS = 20
 
 /**
- * MediaStoreRepository keeps the selection, its arguments, the sort order and the open cursor out
- * of its fields. Kept in fields, two coroutines sharing one instance would share those too: each
- * query would overwrite the other's selection before the cursor was created, and close the other's
- * cursor while it was still being read.
+ * MediaStoreRepositoryはselection、引数、ソート順、カーソルをフィールドに持たない。
+ * フィールドに持つと、1つのインスタンスを使う複数のコルーチンが互いのselectionを上書きしたり、
+ * 読み込み中のカーソルを閉じたりする。
  *
- * Both tests below query one instance from three coroutines at a time. With fields they fail
- * either on the assertion - a coroutine handed another's rows - or on the cursor the other coroutine
- * closed underneath it.
+ * どちらのテストも1つのインスタンスに3つのコルーチンから同時にクエリを投げる。
+ * フィールドに持つ実装なら、他のコルーチンの行が返るか、閉じられたカーソルで例外になって失敗する。
  */
 @RunWith(AndroidJUnit4::class)
 class MediaStoreRepositoryConcurrencyTest {
@@ -81,7 +79,7 @@ class MediaStoreRepositoryConcurrencyTest {
         }
     }
 
-    /** Three tracks, each its own album, so a query by album id has exactly one row to come back with. */
+    /** アルバムが別々の3曲。アルバムidで検索すると必ず1行だけ返る。 */
     private suspend fun insertTracks(): List<SongModel> {
         listOf("a", "b", "c").forEach { name ->
             val values = ContentValues().apply {
@@ -100,7 +98,7 @@ class MediaStoreRepositoryConcurrencyTest {
         return SongRepository(context).findAll().filter { it.name.startsWith(TITLE_PREFIX) }
     }
 
-    /** Also runs before the inserts: a run that died before its tearDown must not skew the next. */
+    /** 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。 */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")

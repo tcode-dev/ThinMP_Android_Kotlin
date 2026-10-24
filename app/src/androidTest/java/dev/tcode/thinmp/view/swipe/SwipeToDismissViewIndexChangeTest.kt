@@ -19,16 +19,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Under an item key a row keeps its composition when a row above it is dismissed, and only its
- * index changes. The edit screens close over that index, so the row's callback is a new lambda
- * after every dismissal above it - but rememberDismissState hands confirmStateChange to the state
- * once, when it is created. Unless the view reads the latest callback, the second swipe runs the
- * lambda from before the first and removes the row that is now at that index.
+ * itemにkeyがあると、上の行を消しても下の行はcompositionを保ち、インデックスだけが変わる。
+ * 編集画面のコールバックはインデックスを取り込んだラムダなので、そのたびに新しくなるが、
+ * rememberDismissStateはconfirmStateChangeを作成時の1回しか受け取らない。
+ * 最新のコールバックを読まないと、2回目のスワイプで古いインデックスの行が消えてしまう。
  *
- * The harness is built the way the edit screens are: a keyed list, callbacks that close over the
- * index and nothing else, and rows given the full width because a swipe has to cross half of it
- * to dismiss it. Three rows, so that the stale index names a row that still exists and the
- * failure is the wrong row going rather than an exception.
+ * 編集画面と同じく、keyを付けた一覧、インデックスだけを取り込むコールバック、
+ * 全幅の行で確かめる(スワイプで消すには幅の半分を超える必要がある)。
+ * 行を3つにして、古いインデックスでも存在する行を指すようにし、
+ * 失敗が例外ではなく「違う行が消える」として現れるようにしている。
  */
 @RunWith(AndroidJUnit4::class)
 class SwipeToDismissViewIndexChangeTest {
@@ -57,7 +56,7 @@ class SwipeToDismissViewIndexChangeTest {
         composeTestRule.waitUntil(timeoutMs) { rows.size == 2 }
         composeTestRule.waitForIdle()
 
-        // b is at index 0 now. A callback kept from its first composition still says 1, which is c.
+        // bはいまインデックス0。最初のcompositionのコールバックのままなら1(=c)を消してしまう。
         composeTestRule.onNodeWithTag("b").performTouchInput { swipeLeft() }
         composeTestRule.waitUntil(timeoutMs) { rows.size == 1 }
         composeTestRule.waitForIdle()

@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
+/** `loaded`が必要な理由はPlaylistsEditUiStateを参照。 */
 data class MainEditUiState(
     val menu: List<MainMenuItem> = emptyList(), val shortcuts: List<ShortcutModel> = emptyList(), val recentlyAlbumsVisibility: Boolean = true, val shortcutVisibility: Boolean = true, val loaded: Boolean = false
 )
@@ -93,7 +93,7 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    /** See PlaylistsEditViewModel.save(). */
+    /** PlaylistsEditViewModel.save()を参照。 */
     fun save() {
         if (saveJob?.isActive == true) return
         if (!uiState.value.loaded) return

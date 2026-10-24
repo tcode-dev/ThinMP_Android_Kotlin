@@ -26,61 +26,56 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 /**
- * Owns the one ExoPlayer and the one MediaSession for the life of the service. The notification,
- * the lock screen and the foreground state are MediaSessionService's: it starts the service in the
- * foreground when playback starts and drops back out when it stops.
+ * ExoPlayerとMediaSessionを1つずつ持つ。
+ * 通知、ロック画面、フォアグラウンド化はMediaSessionServiceに任せる。
+ * 再生が始まるとフォアグラウンドになり、止まると外れる。
  *
- * Everything reaches it through the session: the app through PlaybackController's MediaController,
- * and the notification, the lock screen and a headset through the system's.
+ * 操作はすべてセッション経由で届く。
+ * アプリからはPlaybackControllerのMediaController、
+ * 通知・ロック画面・ヘッドセットからはシステムのMediaControllerを通る。
  */
 @OptIn(UnstableApi::class)
 class MusicService : MediaSessionService() {
     companion object {
         /**
-         * Sent to every connected controller once retry() has dropped a song it could not play, so
-         * the song lists can reload without it. The queue changing is not enough to tell: it also
-         * changes whenever a new list is started.
+         * retry()が再生できない曲を外したときに、接続中のコントローラーへ送る。
+         * 曲リストはこれを受けて再読み込みする。
+         * キューの変化は新しい一覧の再生でも起きるので、それでは判断できない。
          */
         val SONG_REMOVED = SessionCommand("dev.tcode.thinmp.player.SONG_REMOVED", Bundle.EMPTY)
     }
 
     /**
-     * Built once in onCreate() and kept until onDestroy(). A new song replaces the queue with
-     * setMediaItems() rather than building a new player, so an empty queue - before the first
-     * start(), or after retry() dropped the last song - is the state the controls have to tolerate,
-     * not a missing player.
+     * onCreate()で作り、onDestroy()まで使い続ける。
+     * 曲を変えるときはsetMediaItems()でキューを置き換えるので、プレーヤーがないことはないが、
+     * キューが空のこと(最初のstart()の前、retry()が最後の曲を外した後)はある。
+     * 操作はその状態でも動かなければならない。
      */
     private lateinit var exoPlayer: ExoPlayer
     private lateinit var mediaSession: MediaSession
     private lateinit var config: ConfigStore
 
-    /**
-     * Owns the ConfigStore reads and writes, so none of them run on the main thread. Cancelled in
-     * onDestroy().
-     */
+    /** ConfigStoreの読み書きをメインスレッドの外で行うためのスコープ。onDestroy()でキャンセルする。 */
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(serviceJob + Dispatchers.Main.immediate)
 
     /**
-     * The player keeps its defaults until the stored values arrive. onCreate() does not wait for
-     * them: that would block the main thread on two DataStore reads, inside the five second window
-     * startForegroundService() allows.
+     * onCreate()は保存値の読み込みを待たない。
+     * 待つとstartForegroundService()の5秒の制限内でメインスレッドをブロックしてしまう。
+     * そのため読み込みが終わるまでプレーヤーは既定値で動く。
      *
-     * The buttons are live during that window, so each of the two settings carries a flag saying
-     * the user has already worked it. loadConfig() skips the ones that are set: what the user just
-     * chose is newer than what was on disk, and the player listener has saved it already.
+     * その間もボタンは押せるので、ユーザーが操作した設定はフラグを立て、loadConfig()で上書きしない。
+     * ユーザーの操作のほうが新しく、リスナーがすでに保存している。
      */
     private var repeatChangedByUser = false
     private var shuffleChangedByUser = false
 
-    /** Set while loadConfig() applies the stored values, so the listener does not save them back. */
+    /** loadConfig()が保存値を反映している間はtrue。リスナーがそれを保存し直さないようにする。 */
     private var applyingStoredConfig = false
 
     /**
-     * setHandleAudioBecomingNoisy pauses playback on ACTION_AUDIO_BECOMING_NOISY, which covers
-     * Bluetooth going away as well as the wired jack. It pauses rather than stops, so ExoPlayer stays
-     * prepared and the play button works afterwards, and the player enables and disables its own
-     * receiver around playback.
+     * setHandleAudioBecomingNoisyで、有線イヤホンやBluetoothが外れたら一時停止する。
+     * 停止ではなく一時停止なので、そのあと再生ボタンでそのまま再開できる。
      */
     override fun onCreate() {
         super.onCreate()
@@ -91,8 +86,8 @@ class MusicService : MediaSessionService() {
         mediaSession = MediaSession.Builder(this, exoPlayer).setSessionActivity(sessionActivity()).setCallback(SessionCallback()).build()
 
         setMediaNotificationProvider(notificationProvider())
-        // Added here rather than left to the first onGetSession(), so a service brought up by
-        // something other than a controller - a media button - knows its session too.
+        // メディアボタンなど、コントローラー以外から起動された場合もセッションを持つよう、
+        // onGetSession()を待たずに追加する。
         addSession(mediaSession)
 
         loadConfig()
@@ -103,8 +98,8 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * Brings the app back the way the launcher does. An intent naming MainActivity alone would
-     * stack a second instance on top of the one already in the task.
+     * ランチャーと同じIntentでアプリを開く。
+     * MainActivityを直接指定すると、既存のActivityの上にもう1つ積まれてしまう。
      */
     private fun sessionActivity(): PendingIntent {
         val intent = packageManager.getLaunchIntentForPackage(packageName) ?: Intent(this, MainActivity::class.java)
@@ -112,7 +107,7 @@ class MusicService : MediaSessionService() {
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    /** Uses NotificationConstant's channel, so its name and the user's settings for it stay the same. */
+    /** NotificationConstantのチャンネルを使い、チャンネル名とユーザーの通知設定を引き継ぐ。 */
     private fun notificationProvider(): DefaultMediaNotificationProvider {
         val provider = DefaultMediaNotificationProvider.Builder(this)
             .setChannelId(NotificationConstant.CHANNEL_ID)
@@ -126,13 +121,10 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * The stored values arrive after onCreate() has returned and are applied to the player as they
-     * come, unless the user has changed that setting in the meantime.
+     * 保存値はonCreate()の後に届き、その間にユーザーが変えた設定には反映しない。
      *
-     * Both are read before either is applied, so nothing suspends between the two flag checks and
-     * the fields they guard: a tap either lands before this whole block, and is kept, or after it,
-     * and wins on its own. Assigning as each read returns would leave a gap between them where a
-     * tap on shuffle could still be overwritten however the repeat flag came out.
+     * 両方を読み終えてから反映するので、フラグの確認から代入までの間に中断はない。
+     * 読むたびに代入すると、その間にシャッフルのタップが割り込んで上書きされることがある。
      */
     private fun loadConfig() {
         serviceScope.launch {
@@ -154,10 +146,10 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * Drops the song that failed and carries on with the one that took its place, or with the one
-     * before it when the failed song was the last. An empty queue stops there.
+     * 失敗した曲を外し、同じ位置の次の曲を再生する。
+     * 最後の曲だった場合は1つ前の曲を再生し、キューが空になったら止める。
      *
-     * The player has gone idle with the error, so it has to be prepared again before it plays.
+     * エラーでプレーヤーはidleになっているので、prepareし直してから再生する。
      */
     private fun retry() {
         val count = exoPlayer.mediaItemCount
@@ -182,9 +174,8 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * MediaSessionService asks to be restarted after the process is killed, which would bring back
-     * a service with an empty queue and nothing to show. super still has to run: it is what
-     * delivers the notification's media button intents.
+     * プロセスが終了した後に再起動されても、キューが空で何もできないのでSTART_NOT_STICKYにする。
+     * 通知のメディアボタンのIntentはsuperが処理するので、superは呼ぶ。
      */
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
@@ -192,10 +183,7 @@ class MusicService : MediaSessionService() {
         return START_NOT_STICKY
     }
 
-    /**
-     * Swiping the app away stops playback, as closing the app does. MediaSessionService's own
-     * default keeps the service running while it plays.
-     */
+    /** アプリをスワイプで消したら再生を止める。MediaSessionServiceの既定では再生中は動き続ける。 */
     override fun onTaskRemoved(rootIntent: Intent?) {
         pauseAllPlayersAndStopSelf()
     }
@@ -209,8 +197,8 @@ class MusicService : MediaSessionService() {
 
     inner class PlayerEventListener : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
-            // ループ再生していない場合最後の曲の再生が終了すると呼ばれる
-            // 曲が1曲の場合、onMediaItemTransition、events.contains(Player.EVENT_IS_PLAYING_CHANGED)は呼ばれない
+            // リピートがオフで最後の曲が終わるとSTATE_ENDEDになるので、先頭の曲に戻して止める。
+            // 1曲だけのときはonMediaItemTransitionもEVENT_IS_PLAYING_CHANGEDも来ないので、ここで扱う。
             if (playbackState == Player.STATE_ENDED) {
                 exoPlayer.pause()
                 exoPlayer.seekTo(0, 0)
@@ -218,9 +206,8 @@ class MusicService : MediaSessionService() {
         }
 
         /**
-         * Saved here, where a change from the app, the lock screen or any other controller all
-         * arrive. The save reads the player when it runs rather than capturing the value, so rapid
-         * taps all persist the state the user actually ended on.
+         * アプリ、ロック画面など、どのコントローラーからの変更もここに届くので、ここで保存する。
+         * 保存時にプレーヤーの値を読むので、連打しても最後の状態が保存される。
          */
         override fun onRepeatModeChanged(repeatMode: Int) {
             if (applyingStoredConfig) return
@@ -237,7 +224,7 @@ class MusicService : MediaSessionService() {
         }
 
         override fun onPlayerError(error: PlaybackException) {
-            // 曲が削除されている場合
+            // ファイルが削除された曲
             if (error.errorCode == PlaybackException.ERROR_CODE_IO_FILE_NOT_FOUND) {
                 onError()
             }
@@ -245,13 +232,12 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * PlaybackController sends only each song's media id and metadata, and an item from outside the
-     * app - a car, a watch - may carry nothing but the id, so the playable URI is rebuilt from the id
-     * here.
+     * PlaybackControllerはmedia idとメタデータだけを送り、
+     * 車や腕時計などアプリ外からはidしか来ないこともあるので、再生用のURIはここでidから作る。
      *
-     * The service also starts itself here. MediaSessionService does that only once playback is
-     * under way, and until then the service is merely bound: it would go away with the
-     * controller's connection - before the song has even loaded, or for good when it fails to load.
+     * ここでサービスをstartもする。
+     * MediaSessionServiceがstartするのは再生が始まってからなので、それまではバインドされているだけで、
+     * 読み込み中や読み込みに失敗したときに接続が切れるとサービスごと消えてしまう。
      */
     private inner class SessionCallback : MediaSession.Callback {
         override fun onAddMediaItems(

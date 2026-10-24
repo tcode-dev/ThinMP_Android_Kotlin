@@ -36,15 +36,14 @@ data class PlaybackState(
 )
 
 /**
- * The app's one connection to MusicService: a MediaController, connected in MainActivity.onStart()
- * and released in onStop(). Screens read [state] instead of binding the service themselves, so a
- * screen has the current song from the moment it is created, and comes back to the last state seen
- * rather than to whatever it held when it was left.
+ * MusicServiceへのアプリで唯一の接続。
+ * MainActivity.onStart()で接続し、onStop()で解放する。
+ * 画面はサービスにバインドせず[state]を読むので、開いた時点で再生中の曲がわかる。
  *
- * [state] outlives the connection. After the app returns from the background it shows the last
- * state until the new connection replaces it.
+ * [state]は接続が切れても残るので、バックグラウンドから戻ったときは、
+ * 再接続するまで最後の状態を表示する。
  *
- * Everything runs on the main thread, which is the controller's application thread.
+ * MediaControllerのアプリケーションスレッドであるメインスレッドで使う。
  */
 @Singleton
 class PlaybackController @Inject constructor(@ApplicationContext private val context: Context) {
@@ -52,15 +51,16 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     val state: StateFlow<PlaybackState> = _state.asStateFlow()
 
     /**
-     * A seek that keeps the song - "previous" past the first three seconds - changes nothing in
-     * [state], and a paused player screen would go on showing the old position.
+     * 曲が変わらないシーク(3秒を過ぎてからの「前へ」など)では[state]が変わらないので、
+     * 一時停止中のプレーヤー画面が位置を更新できるよう、別に通知する。
      */
     private val _positionDiscontinuity = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val positionDiscontinuity: SharedFlow<Unit> = _positionDiscontinuity.asSharedFlow()
 
     /**
-     * The service dropped a song it could not play - its file is gone - and the song lists reload
-     * without it. Only heard while connected, which is while the screens are visible.
+     * サービスが再生できない曲(ファイルが消えた曲)を外したことの通知。
+     * 曲リストはこれで再読み込みする。
+     * 接続中、つまり画面が見えている間だけ届く。
      */
     private val _songRemoved = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
     val songRemoved: SharedFlow<Unit> = _songRemoved.asSharedFlow()
@@ -68,10 +68,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
 
-    /**
-     * Operations asked for while there is no connection yet. They run in order once it is up rather
-     * than being dropped, so a tap made before the connection is up still takes effect.
-     */
+    /** 未接続の間に呼ばれた操作。捨てずに接続後に順に実行するので、接続前のタップも効く。 */
     private val pending = mutableListOf<(MediaController) -> Unit>()
 
     private val listener = object : Player.Listener {
@@ -104,7 +101,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         future.addListener({ onConnected(future) }, ContextCompat.getMainExecutor(context))
     }
 
-    /** Keeps [state] as it is, and keeps any operation still waiting for the next connection. */
+    /** [state]と、接続待ちの操作はそのまま残す。 */
     fun release() {
         val future = controllerFuture ?: return
 
@@ -148,7 +145,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         whenConnected { it.seekTo(ms) }
     }
 
-    /** Steps from the mode the player has when the change runs, not from a state that may be stale. */
+    /** 古いかもしれない[state]ではなく、実行時のプレーヤーのモードから次へ進める。 */
     fun changeRepeat() {
         whenConnected { it.repeatMode = repeatStateOf(it.repeatMode).next().toRepeatMode() }
     }
@@ -157,7 +154,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         whenConnected { it.shuffleModeEnabled = !it.shuffleModeEnabled }
     }
 
-    /** Not part of [state], which would otherwise change every frame. 0 while there is nothing to read. */
+    /** 毎フレーム変わる値なので[state]には入れない。曲がなければ0。 */
     fun currentPosition(): Long {
         val controller = this.controller ?: return 0
 
@@ -167,10 +164,11 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     }
 
     /**
-     * A future that completes after release() belongs to a connection nobody wants any more. Its
-     * controller is released by releaseFuture() and must not be adopted.
+     * release()の後に完了したfutureは不要になった接続のもので、
+     * コントローラーはreleaseFuture()が解放するので使わない。
      *
-     * get() is not caught: the service is the app's own, and a connection it refuses is a bug.
+     * get()の例外はcatchしない。
+     * 自分のアプリのサービスが接続を拒否するならバグだから。
      */
     private fun onConnected(future: ListenableFuture<MediaController>) {
         if (controllerFuture !== future) return
@@ -215,15 +213,15 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     }
 
     /**
-     * onEvents() fires for loading and buffering too. SongModel has no equality of its own, so the
-     * song is compared by id; without this every one of those events would reach the screens as a
-     * new state and re-run the player screen's favourite queries.
+     * onEvents()は読み込みやバッファリングでも呼ばれる。
+     * SongModelはequalsを持たないのでidで比べ、同じ状態を流さないようにする。
+     * 流すとプレーヤー画面がそのたびにお気に入りを問い合わせ直してしまう。
      */
     private fun isSame(a: PlaybackState, b: PlaybackState): Boolean {
         return a.copy(currentSong = null) == b.copy(currentSong = null) && a.currentSong?.id == b.currentSong?.id
     }
 
-    /** For the view models and tests that are not built by Hilt. */
+    /** Hiltで注入できないview modelやテストから取得するためのもの。 */
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface Accessor {

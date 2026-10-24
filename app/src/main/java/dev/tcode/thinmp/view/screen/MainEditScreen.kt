@@ -36,11 +36,11 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
             items(uiState.menu, key = { it.key }) { item ->
                 EditRowView(stringResource(item.id), item.visibility, Modifier.clickable { viewModel.setMainMenuVisibility(item.key) })
             }
-            // The menu rows above and the shortcuts below are lists, so they simply are not there
-            // until the load fills them. These three are written out, so without the guard they
-            // are on screen from the first frame: the two checkboxes showing their default of on
-            // whatever is actually stored, and taking taps that load() then overwrites when it
-            // lands. The section title is here for the same reason - a heading over nothing.
+            // メニューとショートカットは一覧なので読み込むまで表示されないが、
+            // この3行は固定なので最初から表示されてしまう。
+            // 読み込み前のチェックボックスは保存値ではなく既定のオンを表示し、
+            // タップしてもload()で上書きされる。
+            // 見出しだけが出るのも避けるため、まとめて読み込み後に表示する。
             if (uiState.loaded) {
                 item {
                     EditRowView(stringResource(R.string.shortcut), uiState.shortcutVisibility, Modifier.clickable { viewModel.setShortcutVisibility() })

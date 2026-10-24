@@ -23,17 +23,15 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The popup's done button stays disabled until the name field holds a non-blank name. Without that
- * check, tapping it straight away would create a playlist named "", which every list shows as a
- * blank row.
+ * ポップアップの完了ボタンは、空白以外の文字を含む名前が入力されるまで無効にしている。
+ * そうしないとすぐにタップしたときに名前が""のプレイリストができ、一覧に空の行として出てしまう。
  *
- * The empty name and the spaces-only name are both tried before a real one, and the assertion is
- * that the playlists table holds only the real one: a write from either of the first two taps
- * leaves a row behind that the last create cannot hide.
+ * 空の名前とスペースだけの名前でタップしてから正しい名前で作成し、
+ * テーブルに正しい名前のプレイリストだけがあることを確かめる。
  *
- * The popup builds its own PlaylistsViewModel, so this runs against the app's real database rather
- * than an in-memory one, and clears the playlists around itself. The song id is never resolved
- * against MediaStore here - only the playlist rows are read - so no audio file is needed.
+ * ポップアップは自分でPlaylistsViewModelを作るので、インメモリではなくアプリのデータベースを使い、
+ * テストの前後でプレイリストを消す。
+ * 曲idをMediaStoreで引くことはないので、音声ファイルは要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class PlaylistRegisterPopupNameTest {
@@ -76,7 +74,7 @@ class PlaylistRegisterPopupNameTest {
         assertEquals(listOf(playlistName), awaitPlaylists())
     }
 
-    /** With no playlists in the table the popup opens on the name field rather than the list. */
+    /** プレイリストが1つもなければ、ポップアップは一覧ではなく名前の入力欄を表示する。 */
     private fun showPopup() {
         composeTestRule.setContent {
             PlaylistRegisterPopupView(songId, callback = {})
@@ -85,7 +83,7 @@ class PlaylistRegisterPopupNameTest {
         composeTestRule.waitUntil(timeoutMs) { composeTestRule.onAllNodesWithText(doneText).fetchSemanticsNodes().isNotEmpty() }
     }
 
-    /** create() runs in viewModelScope, so the row arrives after the tap returns. */
+    /** create()はviewModelScopeで動くので、行はタップの後から書き込まれる。 */
     private fun awaitPlaylists(): List<String> {
         val deadline = System.currentTimeMillis() + timeoutMs
 

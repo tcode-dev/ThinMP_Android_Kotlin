@@ -4,8 +4,8 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 
 /**
- * Deliberately built without allowMainThreadQueries(): these tests are also the check that no
- * DAO function is blocking.
+ * あえてallowMainThreadQueries()なしで作る。
+ * これを使うテストは、メインスレッドをブロックするDAO関数がないことの確認も兼ねる。
  */
 fun createTestDatabase(): AppDatabase {
     return Room.inMemoryDatabaseBuilder(

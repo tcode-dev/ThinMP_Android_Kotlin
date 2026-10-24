@@ -29,9 +29,8 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
     }
 
     /**
-     * Drops entries whose file has left MediaStore. See FavoriteSongsService.removeMissing() for why
-     * this does not re-enter findById(): deleting the ids that resolved to nothing and returning
-     * the list already mapped converges in one pass.
+     * MediaStoreから消えた曲をプレイリストから削除する。
+     * findById()を呼び直さない理由はFavoriteSongsService.removeMissing()を参照。
      */
     private suspend fun removeMissing(playlistId: PlaylistId, songIds: List<SongId>, songs: List<SongModel>) {
         val deleteIds = songIds.filter { id ->

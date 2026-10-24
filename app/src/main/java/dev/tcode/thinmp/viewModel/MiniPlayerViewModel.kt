@@ -16,9 +16,9 @@ data class MiniPlayerUiState(
 )
 
 /**
- * A projection of PlaybackController.state, starting from its current value, so a mini player on a
- * screen opened just now shows the current song from its first frame instead of after a bind.
- * Shown exactly while the queue has a song, which also hides it once retry() has emptied the queue.
+ * PlaybackController.stateを現在値から引き継ぐので、
+ * 開いたばかりの画面でも最初のフレームから再生中の曲を表示できる。
+ * キューに曲があるときだけ表示するので、retry()でキューが空になれば消える。
  */
 class MiniPlayerViewModel(application: Application) : AndroidViewModel(application) {
     private val playbackController = PlaybackController.from(application)

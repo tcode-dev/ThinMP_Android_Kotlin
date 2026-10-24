@@ -21,15 +21,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A dismissed row is removed from the list. Without an item key the row below it would take over
- * the slot - and the composition in it, the dismiss state included - and, left at
- * DismissedToStart, that state would draw the new row already swiped off the screen. The item key
- * is what keeps the composition with the row: the dismissed row's state is disposed of with it,
- * and the row that moves up keeps its own.
+ * スワイプで消した行は一覧から取り除かれる。
+ * itemにkeyがないと、下の行がその位置のcompositionをdismissのstateごと引き継ぎ、
+ * DismissedToStartのままのstateのせいで、新しい行が最初から画面外にスワイプされた状態で描かれてしまう。
+ * keyを付ければ、消した行のstateは行と一緒に破棄され、繰り上がった行は自分のstateを保つ。
  *
- * The harness is built the way the edit screens are: a list keyed by the row's id, callbacks that
- * close over the index and nothing else, and rows given the full width because a swipe has to
- * cross half of it to dismiss it.
+ * 編集画面と同じく、行のidをkeyにした一覧、インデックスだけを取り込むコールバック、
+ * 全幅の行で確かめる(スワイプで消すには幅の半分を超える必要がある)。
  */
 @RunWith(AndroidJUnit4::class)
 class SwipeToDismissViewRowChangeTest {

@@ -17,27 +17,26 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * MainApplication.onActivityDestroyed() stops the service when the activity goes away. A
- * configuration change - dark mode, font size, locale - destroys and recreates the activity, and
- * must not reach that stopService(): playback would stop while the app is still on screen.
+ * MainApplication.onActivityDestroyed()はActivityの破棄でサービスを止めるが、
+ * 構成変更(ダークモード、フォントサイズ、ロケール)による再生成では止めてはいけない。
+ * 止めるとアプリを表示したまま再生が止まる。
  *
- * The service is started but not bound while the configuration change runs, which is the state the
- * app is in by the time the activity is destroyed - PlaybackController's connection is released in
- * onStop(), before onDestroy(). A binding held across the check would keep the service alive on its
- * own and the test would pass either way.
+ * 構成変更の時点でPlaybackControllerの接続はonStop()で解放済みなので、サービスはバインドされていない。
+ * テストも同じ状態を作る。
+ * バインドを持ったままだとサービスはそれだけで生き残り、テストが常に通ってしまう。
  *
- * What it watches is the instance going away, not whether some instance is running afterwards. The
- * recreated activity connects again with BIND_AUTO_CREATE, so a service that was stopped is
- * replaced by a fresh one and looks running either way - only the queue the old instance held is
- * gone. The watcher's own binding does not keep the service alive.
+ * 確認するのは「インスタンスが破棄されないこと」。
+ * 再生成されたActivityはBIND_AUTO_CREATEで再接続するので、
+ * 止まったサービスもすぐ新しいインスタンスで起動し、
+ * 動いているかどうかでは区別できない(失われるのは古いインスタンスのキューだけ)。
  *
- * Nothing here plays audio, so no MediaStore content is needed and the test never skips itself.
+ * 再生はしないので、音声ファイルがなくてもスキップしない。
  */
 @RunWith(AndroidJUnit4::class)
 class MainApplicationConfigChangeTest {
     private val timeoutMs = 15_000L
 
-    /** How long a destruction that must not happen is given to happen anyway. */
+    /** 起きてはいけない破棄を待つ時間。 */
     private val quietMs = 1_000L
 
     private lateinit var context: Context
@@ -69,7 +68,7 @@ class MainApplicationConfigChangeTest {
         assertFalse("the configuration change stopped the service", watcher.awaitDestroyed(quietMs))
     }
 
-    /** The other direction: leaving the app for real still has to stop it. */
+    /** 本当にアプリを離れたときは止まること。 */
     @Test
     fun theServiceStopsWhenTheActivityGoesAway() {
         val watcher = MusicServiceWatcher.attach(context, timeoutMs)
@@ -77,7 +76,7 @@ class MainApplicationConfigChangeTest {
         scenario!!.close()
         scenario = null
 
-        // stopService() is asynchronous, so onDestroy() lands after close() has returned.
+        // stopService()は非同期なので、onDestroy()はclose()の後に来る。
         assertTrue("the service outlived the activity", watcher.awaitDestroyed(timeoutMs))
     }
 

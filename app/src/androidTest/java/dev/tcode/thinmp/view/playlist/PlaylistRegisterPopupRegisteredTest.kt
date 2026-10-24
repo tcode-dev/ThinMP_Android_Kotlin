@@ -21,17 +21,17 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A playlist the song is already in cannot be added to, so the popup marks it as registered and
- * stops the row responding. Without that the row would look like every other one and a tap would
- * close the popup having written nothing.
+ * その曲がすでに入っているプレイリストには追加できないので、ポップアップは登録済みと表示し、
+ * タップできないようにする。
+ * そうしないと他の行と同じに見え、タップしても何も起きずに閉じるだけになる。
  *
- * Closing is what the tap is asserted on: the row's click handler adds the song and then invokes
- * the popup's callback, and the write itself is a no-op either way - the primary key already
- * ignores the duplicate - so the callback is the only thing that says whether the row responded.
+ * タップが効いたかどうかはポップアップが閉じるかで判断する。
+ * 行のタップは曲を追加してからコールバックを呼ぶが、重複は主キーで無視されるので、
+ * 書き込みの有無では判断できない。
  *
- * The popup builds its own PlaylistsViewModel, so this runs against the app's real database rather
- * than an in-memory one, and clears the playlists around itself. The song id is never resolved
- * against MediaStore here - only the playlist rows are read - so no audio file is needed.
+ * ポップアップは自分でPlaylistsViewModelを作るので、インメモリではなくアプリのデータベースを使い、
+ * テストの前後でプレイリストを消す。
+ * 曲idをMediaStoreで引くことはないので、音声ファイルは要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class PlaylistRegisterPopupRegisteredTest {
@@ -51,8 +51,7 @@ class PlaylistRegisterPopupRegisteredTest {
         application = ApplicationProvider.getApplicationContext()
         registeredText = application.getString(R.string.already_added)
         clear()
-        // create() seeds the playlist with the song, so the first playlist is one songId is in and
-        // the second is one it is not.
+        // create()は曲を1つ入れて作るので、1つ目はsongIdを含むプレイリスト、2つ目は含まないプレイリストになる。
         val repository = PlaylistRepository()
         repository.create(songId, registeredName)
         repository.create(SongId("2"), otherName)
@@ -107,9 +106,8 @@ class PlaylistRegisterPopupRegisteredTest {
     }
 
     /**
-     * The playlists the song is already in are loaded for the song the popup was opened for, which
-     * is a second load after the one the view model runs on its own - the list is on screen before
-     * the marks are. A tap has to land on a row that has been marked.
+     * 登録済みかどうかは一覧とは別に読み込むので、一覧が先に表示され、印は後から付く。
+     * 印が付いてからタップしなければならない。
      */
     private fun awaitRegisteredMark() {
         composeTestRule.waitUntil(timeoutMs) { composeTestRule.onAllNodesWithText(registeredText).fetchSemanticsNodes().isNotEmpty() }

@@ -23,7 +23,7 @@ class PlaylistRepository(
         }
     }
 
-    /** false when the song is already in the playlist and nothing was written. */
+    /** 曲がすでにプレイリストに入っていて何も書き込まなかった場合はfalse。 */
     suspend fun add(playlistId: PlaylistId, songId: SongId): Boolean {
         val song = PlaylistSongEntity(playlistId = playlistId.id, songId = songId.id)
 
@@ -49,8 +49,7 @@ class PlaylistRepository(
         val playlists = findAll()
         val group = playlists.groupBy { playlist -> playlistIds.any { it.id == playlist.id } }
         val deletePlaylists = group[false] ?: emptyList()
-        // firstOrNull, so an id the caller holds but the table no longer does is skipped rather
-        // than thrown out of the transaction: a caller working from a stale list must not crash.
+        // 呼び出し側の古いリストに、すでに削除されたidが含まれていても落ちないよう、firstOrNullで読み飛ばす。
         val sortedPlaylists = playlistIds.mapNotNull { playlistId -> group[true]?.firstOrNull { it.id == playlistId.id } }
 
         deletePlaylists.forEach { playlist ->
@@ -93,7 +92,7 @@ class PlaylistRepository(
     }
 
     companion object {
-        /** What an INSERT OR IGNORE returns when the row was already there. */
+        /** 行がすでにあったときにINSERT OR IGNOREが返す値。 */
         private const val IGNORED = -1L
     }
 }

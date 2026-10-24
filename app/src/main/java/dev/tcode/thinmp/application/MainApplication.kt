@@ -35,20 +35,18 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
     override fun onActivitySaveInstanceState(p0: Activity, p1: Bundle) {}
 
     /**
-     * Leaving the app stops playback, as swiping it away does in MusicService.onTaskRemoved().
-     * MainActivity has released PlaybackController's connection in onStop() by the time it is
-     * destroyed, so nothing else is holding the service.
+     * アプリを離れたら再生を止める(MusicService.onTaskRemoved()のスワイプで消したときと同じ)。
+     * MainActivityはonStop()でPlaybackControllerの接続を解放しているので、
+     * ここでサービスを止めれば終わる。
      *
-     * A destroyed activity only means the app is going away when it is not coming straight back.
-     * A configuration change - dark mode, font size, locale - destroys and recreates the activity,
-     * and stopping the service there would end playback while the app is still on screen.
-     * MainActivity declares configChanges="orientation|screenSize", so rotation never reaches here;
-     * every other configuration change does.
+     * ダークモード、フォントサイズ、ロケールなどの構成変更でもActivityは破棄されるが、
+     * すぐ作り直されるので止めない。
+     * 回転はconfigChanges="orientation|screenSize"で扱うのでここには来ない。
      */
     override fun onActivityDestroyed(activity: Activity) {
         if (activity.isChangingConfigurations) return
 
-        // Does nothing when the service is not running, so there is nothing to check first.
+        // サービスが動いていなくても問題ないので、事前に確かめない。
         val musicServiceIntent = Intent(applicationContext, MusicService::class.java)
 
         applicationContext.stopService(musicServiceIntent)

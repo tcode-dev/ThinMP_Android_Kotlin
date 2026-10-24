@@ -29,21 +29,20 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
- * The controls stay live in two states where there is nothing to play: before anything has given
- * the player a queue, and after retry() emptied it. A button left on screen can reach the service
- * in either state.
+ * 再生するものがない状態(まだ何もキューに入れていない、またはretry()がキューを空にした)でも、
+ * 画面に残ったボタンからの操作はサービスに届く。
+ * それでクラッシュしないことを確かめる。
  *
- * The buttons reach the player through the session, so a crash would not be thrown back here:
- * it would take the process down, the test runner's included. Each test sends every control, gives
- * the session time to run them, and checks the service is still there to answer.
+ * 操作はセッション経由で届くので、クラッシュはここには投げられず、テストランナーごとプロセスが落ちる。
+ * そのため全操作を送って処理の時間を置き、サービスがまだ応答することで確かめる。
  *
- * Nothing here plays audio, so no MediaStore content is needed and the test never skips itself.
+ * 再生はしないので、音声ファイルがなくてもスキップしない。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServicePlayerGuardTest {
     private val timeoutMs = 15_000L
 
-    /** Long enough for the session to have run every command sent before it. */
+    /** 送ったコマンドをセッションが処理し終えるまで待つ時間。 */
     private val settleMs = 1_000L
 
     private lateinit var context: Context
@@ -57,8 +56,8 @@ class MusicServicePlayerGuardTest {
         grantPermission("android.permission.READ_MEDIA_AUDIO")
         grantPermission("android.permission.POST_NOTIFICATIONS")
 
-        // Playback puts the service in the foreground, which the platform refuses while the app is
-        // in the background, so the app has to actually be on screen for this to be testable at all.
+        // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。
+        // バックグラウンドからのフォアグラウンド化はプラットフォームに拒否される。
         scenario = ActivityScenario.launch(MainActivity::class.java)
         controller = connectController(context, timeoutMs, object : MediaController.Listener {
             override fun onCustomCommand(controller: MediaController, command: SessionCommand, args: Bundle): ListenableFuture<SessionResult> {
@@ -76,15 +75,15 @@ class MusicServicePlayerGuardTest {
         scenario.close()
     }
 
-    /** A service that was brought up without anything ever being queued. */
+    /** 一度もキューを受け取っていないサービス。 */
     @Test
     fun controlsAreIgnoredBeforeTheFirstStart() {
         assertControlsAreIgnored()
     }
 
     /**
-     * The only song fails, so retry() empties the queue and stops the player. The mini player hides
-     * itself, but a button it left on screen can still reach the service.
+     * 唯一の曲が失敗し、retry()がキューを空にしてプレーヤーを止めた状態。
+     * ミニプレーヤーは消えるが、画面に残ったボタンからの操作は届きうる。
      */
     @Test
     fun controlsAreIgnoredAfterTheQueueEmpties() {
@@ -95,7 +94,7 @@ class MusicServicePlayerGuardTest {
         assertControlsAreIgnored()
     }
 
-    /** Every control the player screen and the mini player can send without a current song. */
+    /** プレーヤー画面とミニプレーヤーが、曲がなくても送れる操作のすべて。 */
     private fun assertControlsAreIgnored() {
         runOnMain {
             controller.play()

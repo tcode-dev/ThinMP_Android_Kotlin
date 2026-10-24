@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 
 /**
- * A one-off signal from a view model to its screen, such as "the save finished, you may navigate
- * away". Unlike StateFlow it is not replayed, so a recomposition cannot act on it twice.
+ * 「保存が終わったので画面を閉じてよい」のような、view modelから画面への1回きりの通知。
+ * StateFlowと違って再送されないので、recompositionで2回処理されることはない。
  */
 class OneShotEvent<T> {
     private val channel = Channel<T>(Channel.CONFLATED)

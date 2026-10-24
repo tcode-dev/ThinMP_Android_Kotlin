@@ -23,20 +23,19 @@ import org.junit.runner.RunWith
 import java.util.concurrent.TimeUnit
 
 /**
- * onCreate() does not block on DataStore, so the player's repeat and shuffle modes hold their
- * defaults for as long as the two reads take, and the buttons that drive them are on screen the whole time.
- * A tap in that window must not be undone by the stored value arriving behind it.
+ * onCreate()はDataStoreの読み込みを待たないので、
+ * 読み込みが終わるまでリピートとシャッフルは既定値のまま、ボタンは操作できる状態にある。
+ * その間のタップが、後から届いた保存値で上書きされないことを確かめる。
  *
- * The service is reached through a MediaController and only bound, so nothing here plays audio, needs MediaStore content
- * or reaches startForeground().
+ * MediaControllerでバインドするだけなので、再生もstartForeground()も起きず、音声ファイルも要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServiceConfigLoadTest {
     /**
-     * Whether a tap really lands inside the window is not ours to decide: it is sent from the
-     * controller's connection callback, the earliest point a tap from the app could arrive, and the
-     * DataStore read runs against it. Losing that race only means the attempt proves nothing, never that it fails,
-     * so the test takes several. One is enough to catch the overwrite.
+     * タップが読み込みより先に届くかどうかは制御できない。
+     * アプリからのタップが届きうる最も早い時点(接続コールバック)で送るが、
+     * 読み込みに負けた試行は何も検証できないだけなので、複数回試す。
+     * 上書きのバグは1回でも起きれば検出できる。
      */
     private val attempts = 5
     private val timeoutMs = 15_000L
@@ -61,11 +60,7 @@ class MusicServiceConfigLoadTest {
         resetConfig()
     }
 
-    /**
-     * From the default OFF the first tap gives ALL, and shuffle goes to true, while the stored
-     * values are OFF and false - so the load landing on top of the tap is the one outcome that is
-     * distinguishable from every other ordering.
-     */
+    /** タップ後はALLとtrue、保存値はOFFとfalseなので、読み込みがタップを上書きした場合だけ結果が変わる。 */
     @Test
     fun tappingBeforeTheConfigLoadsKeepsTheTap() = runBlocking {
         for (attempt in 1..attempts) {
@@ -87,7 +82,7 @@ class MusicServiceConfigLoadTest {
         }
     }
 
-    /** The load itself still does its job when there is nothing to protect. */
+    /** タップがなければ保存値が適用されること。 */
     @Test
     fun theStoredValuesAreAppliedWhenNothingIsTapped() = runBlocking {
         config.saveRepeat(RepeatState.ONE)
@@ -104,11 +99,11 @@ class MusicServiceConfigLoadTest {
         config.saveShuffle(false)
     }
 
-    /** [onConnected] runs on the main thread, from inside the connection callback itself. */
+    /** [onConnected]はメインスレッドの接続コールバック内で呼ばれる。 */
     private fun connect(onConnected: (MediaController) -> Unit): MediaController {
         val token = SessionToken(context, ComponentName(context, MusicService::class.java))
-        // Built and listened to in the same main thread turn, so the future cannot complete before
-        // the listener is in place and the listener runs on the main thread that completes it.
+        // 作成とリスナー登録を同じメインスレッドのターンで行うので、
+        // リスナー登録前にfutureが完了することはない。
         val future = onMain {
             MediaController.Builder(context, token).buildAsync().also { future ->
                 future.addListener({ onConnected(future.get()) }, MoreExecutors.directExecutor())
@@ -123,9 +118,8 @@ class MusicServiceConfigLoadTest {
     }
 
     /**
-     * Waits for the service to actually go away, not just for the connection to be let go. The
-     * next connection would otherwise be answered by the instance this one is still tearing down,
-     * which has loaded its config long ago.
+     * 接続の解放だけでなく、サービスの破棄まで待つ。
+     * 待たないと、次の接続に破棄途中の古いインスタンス(設定を読み込み済み)が応答してしまう。
      */
     private fun unbind() {
         val controller = this.controller ?: return
@@ -144,7 +138,7 @@ class MusicServiceConfigLoadTest {
         }
     }
 
-    /** The fields are written from the service's own main thread coroutine, so they are read there. */
+    /** フィールドはサービスのメインスレッドのコルーチンが書くので、読むのもメインスレッドで行う。 */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 

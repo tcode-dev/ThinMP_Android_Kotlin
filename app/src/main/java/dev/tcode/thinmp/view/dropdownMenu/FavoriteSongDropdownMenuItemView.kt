@@ -14,9 +14,9 @@ import dev.tcode.thinmp.viewModel.FavoriteSongRegisterViewModel
 
 @Composable
 fun FavoriteSongDropdownMenuItemView(id: SongId, callback: () -> Unit, viewModel: FavoriteSongRegisterViewModel = viewModel()) {
-    // Keyed by id so the row that opened the menu is the row this reflects. Until the query
-    // returns the item stays in place but disabled, so the menu does not change height.
-    // See FavoriteArtistDropdownMenuItemView for why this is suppressed.
+    // idをkeyにして、メニューを開いた行の状態を表示する。
+    // 結果が返るまでは項目を無効にして残し、メニューの高さが変わらないようにする。
+    // lintを抑制する理由はFavoriteArtistDropdownMenuItemViewを参照。
     @Suppress("ProduceStateDoesNotAssignValue")
     val isFavorite by produceState<Boolean?>(initialValue = null, id) { value = viewModel.isFavorite(id) }
 

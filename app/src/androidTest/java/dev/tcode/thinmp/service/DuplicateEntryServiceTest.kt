@@ -24,12 +24,12 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * These services return the list they already mapped rather than re-entering themselves until an
- * id count matches a MediaStore row count. A duplicated id would make the two disagree permanently
- * - SQL IN collapses the duplicate - so such a loop would never converge. The duplicate is also a
- * state neither schema allows.
+ * これらのサービスは、idの件数とMediaStoreの行数が一致するまで再取得するのではなく、
+ * 変換済みのリストをそのまま返す。
+ * idが重複していると(SQLのINは重複をまとめるので)件数が一致せず、再取得のループは終わらない。
+ * 重複はスキーマでも禁止している。
  *
- * Needs at least one audio file on the device; skipped otherwise.
+ * 端末に音声ファイルが必要で、なければスキップする。
  */
 @RunWith(AndroidJUnit4::class)
 class DuplicateEntryServiceTest {
@@ -57,10 +57,7 @@ class DuplicateEntryServiceTest {
         db.close()
     }
 
-    /**
-     * A song is either in a playlist or it is not, so (playlist_id, song_id) is the primary key and
-     * a duplicate is not a state the schema allows: the second add is ignored rather than written.
-     */
+    /** (playlist_id, song_id)が主キーなので、同じ曲の2回目のaddは無視され、重複行はできない。 */
     @Test
     fun duplicatePlaylistSongRowCannotBeCreated() = runBlocking {
         val repository = PlaylistRepository(db)
@@ -76,10 +73,7 @@ class DuplicateEntryServiceTest {
         assertEquals(1, playlist?.songs?.size)
     }
 
-    /**
-     * The same, one table over: the songId is the primary key, so a duplicate is not a
-     * state the schema allows.
-     */
+    /** お気に入りも同じく、songIdが主キーなので重複行はできない。 */
     @Test
     fun duplicateFavouriteRowCannotBeCreated() = runBlocking {
         db.favoriteSongDao().insert(FavoriteSongEntity(songId = realSongIdValue))
@@ -88,7 +82,7 @@ class DuplicateEntryServiceTest {
             db.favoriteSongDao().insert(FavoriteSongEntity(songId = realSongIdValue))
             throw AssertionError("expected the primary key to reject the duplicate favourite")
         } catch (expected: SQLiteConstraintException) {
-            // Nothing to clean up: the second row was never written.
+            // 2行目は書き込まれていないので、片付けるものはない。
         }
 
         val songs = withTimeout(timeoutMs) {
@@ -98,7 +92,7 @@ class DuplicateEntryServiceTest {
         assertEquals(1, songs.size)
     }
 
-    /** Ids that resolve to nothing are still cleaned up. */
+    /** どの曲にも解決しないidは削除される。 */
     @Test
     fun favouriteWhoseFileIsGoneIsDropped() = runBlocking {
         val repository = FavoriteSongRepository(db.favoriteSongDao())

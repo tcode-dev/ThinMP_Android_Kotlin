@@ -54,17 +54,14 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
     }
 
     /**
-     * One track per album, the album with the most recently added track first, at most [limit] of
-     * them. The albums collection has no date of its own - it carries numsongs, artist, the two
-     * year columns and nothing else - so when an album was added is only knowable from its tracks.
+     * 最近追加された曲を含むアルバムから順に、アルバムごとに1曲ずつ、最大[limit]件返す。
+     * アルバムのテーブルには追加日時がないので、曲の追加日時で判断する。
      *
-     * The grouping and the limit are SQL rather than Kotlin: MediaStore honours
-     * QUERY_ARG_SQL_GROUP_BY, so this returns one row per album instead of every track on the
-     * device for the main screen to whittle down.
+     * グループ化と件数の制限はSQLで行う(MediaStoreはQUERY_ARG_SQL_GROUP_BYに対応している)ので、
+     * 全曲を取得してから絞り込む必要はない。
      *
-     * MAX(), because under a GROUP BY a bare date_added is taken from whichever row of the group
-     * SQLite happened to keep, which for an album whose tracks were added at different times is
-     * not the one that decides how recent the album is.
+     * GROUP BYで素のdate_addedを使うと、グループ内のどの行の値になるかは不定なので、
+     * MAX()でアルバム内で最も新しい曲の日時を使う。
      */
     suspend fun findRecentlyAddedByAlbum(limit: Int): List<SongModel> {
         val bundle = Bundle().apply {

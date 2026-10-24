@@ -1,20 +1,19 @@
 #!/bin/sh
-# Puts a two artist compilation on a connected device or emulator, so that the
-# crash ShortcutServiceTest covers can be walked through by hand.
+# 接続中の端末かエミュレーターに、2人のアーティストによるコンピレーションを入れる。
+# ShortcutServiceTestが確かめている状態を、手で再現するためのもの。
 #
-# The albums collection holds one row per album carrying one artist_id, so of
-# two artists sharing an album only one is the artist of an album. The other is
-# still listed under Artists and can be shortcut like anyone else, and doing
-# that used to take the main screen down: ShortcutService read its image from
-# the first album that artist does not have.
+# アルバムのテーブルはアルバムごとにartist_idを1つしか持たないので、
+# 2人のうち1人はアルバムを持たないアーティストになる。
+# それでもアーティスト一覧に出てショートカットにできるので、
+# そのショートカットでメイン画面が表示できることを確かめる。
 #
-# These rows carry no audio. artist and album are written as MediaStore columns
-# rather than read from a tag block, because a generated WAV has no tag block to
-# put them in - see generate-test-audio.py. Nothing plays them; they exist to be
-# listed.
+# 音声データは入れない。
+# 生成したWAVにはタグを入れられないので(generate-test-audio.pyを参照)、
+# artistとalbumはMediaStoreの列に直接書き込む。
+# 再生はせず、一覧に出すためだけに使う。
 #
-#   tools/push-compilation-audio.sh          add the two tracks
-#   tools/push-compilation-audio.sh remove   take them away again
+#   tools/push-compilation-audio.sh          2曲を追加する
+#   tools/push-compilation-audio.sh remove   追加した2曲を削除する
 set -eu
 
 album=thinmp_test_compilation
@@ -45,7 +44,7 @@ if [ "${1:-}" = remove ]; then
     exit 0
 fi
 
-# Also runs before the inserts, so a second run does not end up with four rows.
+# 2回実行しても4行にならないよう、挿入の前に削除する。
 delete
 insert "${album}_a" "${artist_prefix}_a"
 insert "${album}_b" "${artist_prefix}_b"
@@ -55,8 +54,8 @@ query content://media/external/audio/artists _id:artist "artist LIKE '$artist_pr
 echo "album:"
 query content://media/external/audio/albums _id:album:artist_id "album='$album'"
 
-# Which of the two the album row names is MediaStore's choice, so ask rather
-# than assume: the other one is the artist to shortcut.
+# どちらがアルバムのアーティストになるかはMediaStoreが決めるので、問い合わせて確かめる。
+# もう1人が、ショートカットにするアーティスト。
 album_artist=$(query content://media/external/audio/albums artist_id "album='$album'" | sed -n 's/.*artist_id=\([0-9]*\).*/\1/p')
 orphan=$(query content://media/external/audio/artists _id:artist "artist LIKE '$artist_prefix%'" | grep -v "_id=$album_artist," | sed -n 's/.*artist=\(.*\)$/\1/p')
 

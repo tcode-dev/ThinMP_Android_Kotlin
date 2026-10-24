@@ -29,23 +29,20 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * MediaStore reports duration 0 for a file whose metadata could not be read, and the player screen
- * divides the position by it. The two tests are the two answers that division has: at position 0
- * it is NaN, which Compose cannot round while it lays the thumb out (`Cannot round NaN value`, and
- * the screen goes down with it), and from the next tick on it is +Infinity, which the Slider does
- * clamp - to the end of the track, so a song that has just started would be drawn as a finished
- * one.
+ * メタデータを読めないファイルの長さはMediaStoreでは0になり、プレーヤー画面は再生位置をそれで割る。
+ * 位置が0のときはNaNになり、Composeがつまみの配置で丸められずに落ちる(`Cannot round NaN value`)。
+ * 位置が進むと+Infinityになり、Sliderは末尾に丸めるので、始まったばかりの曲が終わったように見える。
+ * 2つのテストはこの2つのケースに対応する。
  *
- * The song has to be a real one so it plays. Only the duration is replaced, which is what
- * MediaStore itself would have handed over for an untagged file. Needs an audio file on the
- * device; skipped otherwise (tools/push-test-audio.sh).
+ * 再生するので曲は実在するものを使い、長さだけをタグのないファイルと同じ0に差し替える。
+ * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class PlayerScreenUnknownDurationTest {
     private val timeoutMs = 15_000L
     private val pollMs = 50L
 
-    /** One seek bar interval and then some, so the periodic update is included in the assertion. */
+    /** シークバーの更新間隔(1秒)より長くして、定期更新を少なくとも1回含める。 */
     private val tickMs = 1_500L
 
     @get:Rule
@@ -64,10 +61,9 @@ class PlayerScreenUnknownDurationTest {
         assumeTrue("needs at least one audio file in MediaStore", song != null)
         untaggedSong = withoutDuration(song!!)
 
-        // The screen reads PlaybackController, which MainActivity connects in the app. There is no
-        // MainActivity here. Waited for, so the screen starts from this service's state rather than
-        // from whatever the previous test left in the singleton. Its connection is also what keeps
-        // the service alive between the starts below.
+        // 画面が読むPlaybackControllerは、アプリではMainActivityが接続するが、ここにはない。
+        // 接続を待って、前のテストの状態ではなくこのサービスの状態から始める。
+        // この接続が、下のstartの間でサービスを生かしておく役目も持つ。
         awaitControllerConnected()
     }
 
@@ -78,9 +74,9 @@ class PlayerScreenUnknownDurationTest {
     }
 
     /**
-     * The screen painting while the position is still 0 is the NaN, and that is the state a song
-     * is in for the first moments after it is tapped. Paused and sought back to the start rather
-     * than raced against real playback, which passes 0 in a few milliseconds.
+     * 位置が0のまま画面を描画するケース(NaN)。
+     * 曲をタップした直後はこの状態になる。
+     * 実際の再生では数ミリ秒で0を過ぎてしまうので、一時停止して先頭にシークしておく。
      */
     @Test
     fun opensOnASongOfUnknownDurationWithTheSliderAtTheStart() {
@@ -96,7 +92,7 @@ class PlayerScreenUnknownDurationTest {
         assertSliderAtTheStart()
     }
 
-    /** Playing, so the periodic seek bar update runs: the second place the fraction is computed. */
+    /** 再生中なので定期的なシークバーの更新が走る。割合を計算するもう1つの場所。 */
     @Test
     fun playsASongOfUnknownDurationWithTheSliderAtTheStart() {
         start(listOf(untaggedSong))
@@ -110,12 +106,12 @@ class PlayerScreenUnknownDurationTest {
         assertSliderAtTheStart()
     }
 
-    /** The Slider is the only node on the screen carrying a range, so it needs no other selector. */
+    /** 範囲を持つノードは画面にSliderしかないので、他の条件で絞り込まない。 */
     private fun assertSliderAtTheStart() {
         composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo)).assertRangeInfoEquals(ProgressBarRangeInfo(0f, 0f..1f))
     }
 
-    /** The title is the only proof from out here that the screen has bound and painted the song. */
+    /** 画面が曲を受け取って描画したことは、タイトルでしか確かめられない。 */
     private fun showPlayerScreen() {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalNavigator provides NoopNavigator()) {
@@ -126,7 +122,7 @@ class PlayerScreenUnknownDurationTest {
         composeTestRule.waitUntil(timeoutMs) { composeTestRule.onAllNodesWithText(untaggedSong.name).fetchSemanticsNodes().isNotEmpty() }
     }
 
-    /** The row MediaStore hands back when the file carries no length: everything else intact. */
+    /** 長さのタグがないファイルについてMediaStoreが返す行。長さ以外はそのまま。 */
     private fun withoutDuration(song: SongModel): SongModel {
         return SongModel(song.songId, song.name, song.artistId, song.artistName, song.albumId, song.albumName, 0, song.trackNumber)
     }
@@ -135,7 +131,7 @@ class PlayerScreenUnknownDurationTest {
         onMain { PlaybackController.from(context).start(songs, 0) }
     }
 
-    /** ExoPlayer is built on the main looper, so everything that touches it has to go there. */
+    /** ExoPlayerはメインルーパーで作るので、操作はすべてメインスレッドで行う。 */
     private fun onMain(block: () -> Unit) {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(block)
     }
@@ -170,7 +166,7 @@ class PlayerScreenUnknownDurationTest {
         InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(context.packageName, permission)
     }
 
-    /** The screen is only expected to stay where it is, so back() has nothing to record. */
+    /** 画面が閉じないことだけを確かめるので、back()は何も記録しない。 */
     private class NoopNavigator : INavigator {
         override fun back() {}
         override fun mainEdit() {}
