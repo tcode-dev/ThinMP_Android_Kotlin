@@ -74,7 +74,7 @@ dependencies {
     implementation 'androidx.media3:media3-session:1.11.1'
     kapt 'com.google.dagger:hilt-compiler:2.60.1'
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.3.0'
     // 3.6.1はAPI 35以上で入力を注入できない(内部で使うInputManager.getInstanceが削除された)。
     // ComposeのテストルールもクリックとwaitForIdleにEspressoを使うので、3.7.0が必要。
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
