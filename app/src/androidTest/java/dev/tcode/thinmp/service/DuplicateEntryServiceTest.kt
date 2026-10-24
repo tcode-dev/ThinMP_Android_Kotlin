@@ -24,11 +24,10 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * These services used to compare an id count against a MediaStore row count and re-enter
- * themselves whenever the two disagreed. A duplicated id makes them disagree permanently - SQL IN
- * collapses the duplicate - so the cleanup deleted nothing and the call never converged. It did
- * not crash, it span, which is why the screen simply never finished loading. The duplicate is now
- * a state neither schema allows, and the services return the list they already mapped either way.
+ * These services return the list they already mapped rather than re-entering themselves until an
+ * id count matches a MediaStore row count. A duplicated id would make the two disagree permanently
+ * - SQL IN collapses the duplicate - so such a loop would never converge. The duplicate is also a
+ * state neither schema allows.
  *
  * Needs at least one audio file on the device; skipped otherwise.
  */
@@ -60,8 +59,7 @@ class DuplicateEntryServiceTest {
 
     /**
      * A song is either in a playlist or it is not, so (playlist_id, song_id) is the primary key and
-     * the duplicate this test used to construct is no longer a state the schema allows: the second
-     * add is ignored rather than written.
+     * a duplicate is not a state the schema allows: the second add is ignored rather than written.
      */
     @Test
     fun duplicatePlaylistSongRowCannotBeCreated() = runBlocking {
@@ -79,8 +77,8 @@ class DuplicateEntryServiceTest {
     }
 
     /**
-     * The same, one table over: the songId is the primary key, so the duplicate this test used to
-     * construct is no longer a state the schema allows.
+     * The same, one table over: the songId is the primary key, so a duplicate is not a
+     * state the schema allows.
      */
     @Test
     fun duplicateFavouriteRowCannotBeCreated() = runBlocking {
@@ -100,7 +98,7 @@ class DuplicateEntryServiceTest {
         assertEquals(1, songs.size)
     }
 
-    /** The cleanup the recursion existed to re-read after still has to happen. */
+    /** Ids that resolve to nothing are still cleaned up. */
     @Test
     fun favouriteWhoseFileIsGoneIsDropped() = runBlocking {
         val repository = FavoriteSongRepository(db.favoriteSongDao())

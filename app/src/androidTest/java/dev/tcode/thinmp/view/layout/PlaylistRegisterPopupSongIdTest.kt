@@ -29,10 +29,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * CommonLayoutView holds the song id the playlist popup is opened for. It used to hold it in a
- * plain local, which every recomposition of CommonLayoutView reset to SongId(""), and the popup
- * then wrote a playlist_songs row that resolves to no song in MediaStore - the song looks added
- * and is gone by the next load.
+ * CommonLayoutView holds the song id the playlist popup is opened for, and the id has to survive a
+ * recomposition of CommonLayoutView. Reset to SongId(""), the popup would write a playlist_songs
+ * row that resolves to no song in MediaStore - the song looks added and is gone by the next load.
  *
  * isVisibleMiniPlayer is the recomposition: it comes from the screen's uiState and flips while the
  * popup is open, for instance when playback starts. The two tests are the same flow with and

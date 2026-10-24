@@ -139,8 +139,8 @@ class PlaylistRepositoryTest {
 
     /**
      * The caller works from a list it read earlier, so an id in it can be gone by the time the
-     * order is saved. Skipping it is what the reorder was written to do; it used to throw
-     * NoSuchElementException out of the transaction instead, leaving nothing renumbered.
+     * order is saved. It is skipped rather than thrown out of the transaction as a
+     * NoSuchElementException, which would leave nothing renumbered.
      */
     @Test
     fun reorderIgnoresAnIdThatIsNoLongerThere() = runTest {

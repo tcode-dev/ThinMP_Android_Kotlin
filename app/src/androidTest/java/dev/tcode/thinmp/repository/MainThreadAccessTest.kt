@@ -12,7 +12,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Regression guard for removing .allowMainThreadQueries(). The database here is built without it,
+ * The check that Room needs no .allowMainThreadQueries(). The database here is built without it,
  * so if any DAO function stops being suspend, Room's assertNotMainThread() fires and these fail.
  */
 @RunWith(AndroidJUnit4::class)

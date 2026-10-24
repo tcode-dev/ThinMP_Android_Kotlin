@@ -81,7 +81,7 @@ class FavoriteArtistRepositoryTest {
     /**
      * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
      * between the read and the write, so two concurrent toggles can both see "not a favourite"
-     * and both go on to insert. The primary key now turns that into a crash rather than a
+     * and both go on to insert. The primary key turns that into a crash rather than a
      * duplicate row, which is still not what a double tap should do.
      */
     @Test
@@ -97,7 +97,7 @@ class FavoriteArtistRepositoryTest {
         }
     }
 
-    /** What the primary key buys: the duplicate row toggle used to have to clean up cannot exist. */
+    /** What the primary key buys: a duplicate row cannot exist. */
     @Test
     fun theSameArtistCannotBeStoredTwice() = runTest {
         val dao = db.favoriteArtistDao()

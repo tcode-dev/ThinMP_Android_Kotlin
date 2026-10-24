@@ -24,10 +24,9 @@ class MainService(val context: Context) {
     /**
      * The albums an album's tracks were added most recently first.
      *
-     * This used to sort the albums collection by its own _id, on the assumption that a larger id
-     * means a newer album. MediaStore computes that id from the album's name instead: delete an
-     * album and add it back and it returns with the id it had before, so the order it produces has
-     * nothing to do with when anything was added.
+     * The albums collection's own _id cannot give this order. MediaStore computes that id from the
+     * album's name: delete an album and add it back and it returns with the id it had before, so a
+     * larger id says nothing about when anything was added.
      *
      * The tracks come back one per album and already cut to the display count, so there is nothing
      * to whittle down here. findByIds cannot preserve an order, so the ids drive it afterwards, the

@@ -30,10 +30,11 @@ import org.junit.runner.RunWith
 
 /**
  * MediaStore reports duration 0 for a file whose metadata could not be read, and the player screen
- * divided the position by it. The two tests are the two answers that division has: at position 0
+ * divides the position by it. The two tests are the two answers that division has: at position 0
  * it is NaN, which Compose cannot round while it lays the thumb out (`Cannot round NaN value`, and
  * the screen goes down with it), and from the next tick on it is +Infinity, which the Slider does
- * clamp - to the end of the track, so a song that had just started was drawn as a finished one.
+ * clamp - to the end of the track, so a song that has just started would be drawn as a finished
+ * one.
  *
  * The song has to be a real one so it plays. Only the duration is replaced, which is what
  * MediaStore itself would have handed over for an untagged file. Needs an audio file on the

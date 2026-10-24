@@ -23,9 +23,9 @@ import org.junit.runner.RunWith
 import java.util.concurrent.TimeUnit
 
 /**
- * onCreate() no longer blocks on DataStore, so the player's repeat and shuffle modes hold their
+ * onCreate() does not block on DataStore, so the player's repeat and shuffle modes hold their
  * defaults for as long as the two reads take, and the buttons that drive them are on screen the whole time.
- * A tap in that window used to be undone by the stored value arriving behind it.
+ * A tap in that window must not be undone by the stored value arriving behind it.
  *
  * The service is reached through a MediaController and only bound, so nothing here plays audio, needs MediaStore content
  * or reaches startForeground().

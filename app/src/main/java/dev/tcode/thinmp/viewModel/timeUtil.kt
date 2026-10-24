@@ -5,12 +5,10 @@ import java.util.Locale
 /**
  * Formats a duration in milliseconds as mm:ss.
  *
- * This used to be `String.format("%1\$tM:%1\$tS", ms)`, which reads the Long as an instant since
- * the epoch and renders it in the default time zone. `%tM` is the minute within its hour, not the
- * elapsed minutes, so anything past an hour wrapped - and in a zone whose offset is not a whole
- * hour (Asia/Kolkata, Asia/Kathmandu, Australia/Adelaide, ...) every single time was off by that
- * offset: a three minute song read 33:00. JST is a whole hour ahead, which is why it looked right
- * here.
+ * Computed from the seconds rather than with `%tM:%tS`, which read the Long as an instant since the
+ * epoch in the default time zone. `%tM` is the minute within its hour, not the elapsed minutes, so
+ * anything past an hour would wrap - and in a zone whose offset is not a whole hour (Asia/Kolkata,
+ * Asia/Kathmandu, Australia/Adelaide, ...) every time would be off by that offset.
  *
  * Minutes are not capped at 60, so an hour long track reads 60:00 rather than starting over.
  * Locale.US keeps the digits ASCII in locales that would otherwise render them in their own

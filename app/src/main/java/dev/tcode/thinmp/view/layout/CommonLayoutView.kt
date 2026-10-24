@@ -10,8 +10,8 @@ import dev.tcode.thinmp.view.playlist.PlaylistRegisterPopupView
 fun CommonLayoutView(isVisibleMiniPlayer: Boolean = true, content: @Composable ((showPlaylistRegisterPopup: (songId: SongId) -> Unit) -> Unit)) {
     val visiblePopup = remember { mutableStateOf(false) }
     // The id has to survive a recomposition of CommonLayoutView itself, which happens while the
-    // popup is open whenever isVisibleMiniPlayer flips. A plain local was reinitialised to
-    // SongId("") there, and adding from the popup then wrote a row that resolves to no song.
+    // popup is open whenever isVisibleMiniPlayer flips. A plain local would be reinitialised to
+    // SongId("") there, and adding from the popup would then write a row that resolves to no song.
     val playlistRegisterSongId = remember { mutableStateOf(SongId("")) }
     val togglePopup = { visiblePopup.value = !visiblePopup.value }
     val showPlaylistRegisterPopup = { songId: SongId ->

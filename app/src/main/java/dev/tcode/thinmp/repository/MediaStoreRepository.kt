@@ -11,7 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * The query and the cursor it opens are arguments and locals, never fields. As fields they were
+ * The query and the cursor it opens are arguments and locals, never fields. As fields they would be
  * shared by every caller of the same instance: two coroutines querying one repository would
  * overwrite each other's selection between the assignment and the query, and close each other's
  * cursor mid-iteration. Nothing here is scoped to the instance, so the instance holds nothing.

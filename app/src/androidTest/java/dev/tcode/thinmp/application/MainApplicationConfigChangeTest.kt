@@ -19,7 +19,7 @@ import org.junit.runner.RunWith
 /**
  * MainApplication.onActivityDestroyed() stops the service when the activity goes away. A
  * configuration change - dark mode, font size, locale - destroys and recreates the activity, and
- * that used to reach the same stopService(): playback stopped while the app was still on screen.
+ * must not reach that stopService(): playback would stop while the app is still on screen.
  *
  * The service is started but not bound while the configuration change runs, which is the state the
  * app is in by the time the activity is destroyed - PlaybackController's connection is released in

@@ -21,13 +21,10 @@ class FavoriteSongsService(val context: Context, private val favoriteSongReposit
     }
 
     /**
-     * Drops favourites whose file has left MediaStore. This used to compare songIds.count() with
-     * songs.count() and re-enter findAll() on a mismatch, which never terminated when the counts
-     * differed because of a duplicate row rather than a missing file: the ids were all still
-     * present, so nothing was deleted and the next call saw the same state.
-     *
-     * The re-read was unnecessary anyway. Deleting rows that produced no SongModel cannot change
-     * `found`, so the caller already has the right answer before this runs.
+     * Drops favourites whose file has left MediaStore, without re-entering findAll(). Deleting rows
+     * that produced no SongModel cannot change `found`, so the caller already has the right answer
+     * before this runs. Re-reading until an id count matches a row count would spin forever on any
+     * mismatch the deletion cannot remove.
      */
     private suspend fun removeMissing(songIds: List<SongId>, songs: List<SongModel>) {
         val deleteIds = songIds.filter { id ->

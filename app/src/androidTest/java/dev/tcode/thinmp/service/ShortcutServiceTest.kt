@@ -29,12 +29,11 @@ private const val TITLE_PREFIX = "thinmp_test_compilation_"
 private const val ALBUM = "thinmp_test_compilation"
 
 /**
- * A shortcut to an artist takes its image from that artist's first album, and the code assumed
- * there always is one. The albums collection holds one row per album carrying one artist_id, so
- * every artist on a compilation except the one that row happens to name is an artist with no
- * album of their own. They are still listed under Artists, so they can be shortcut like any
- * other. first() threw NoSuchElementException there, and findAll() runs while the main screen
- * loads, so the crash took the whole screen.
+ * A shortcut to an artist takes its image from that artist's first album, and there may be none.
+ * The albums collection holds one row per album carrying one artist_id, so every artist on a
+ * compilation except the one that row happens to name is an artist with no album of their own.
+ * They are still listed under Artists, so they can be shortcut like any other. findAll() runs
+ * while the main screen loads, so a throw there would take the whole screen.
  *
  * The two tracks below build exactly that state in MediaStore rather than standing in for the
  * repository, so the album lookup that comes back empty is the real one. Which of the two artists

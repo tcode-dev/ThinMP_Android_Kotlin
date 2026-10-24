@@ -20,7 +20,7 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
         return found
     }
 
-    /** See FavoriteSongsService.removeMissing() for why this no longer re-reads. */
+    /** See FavoriteSongsService.removeMissing() for why this does not re-read. */
     private suspend fun removeMissing(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
         val deleteIds = artistIds.filter { id ->
             artists.none { it.artistId == id }

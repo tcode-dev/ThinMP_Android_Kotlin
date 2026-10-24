@@ -70,8 +70,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
 
     /**
      * Operations asked for while there is no connection yet. They run in order once it is up rather
-     * than being dropped, which is what used to happen to a tap made while a screen was still
-     * binding.
+     * than being dropped, so a tap made before the connection is up still takes effect.
      */
     private val pending = mutableListOf<(MediaController) -> Unit>()
 

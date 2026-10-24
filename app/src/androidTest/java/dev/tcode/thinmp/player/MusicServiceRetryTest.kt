@@ -25,15 +25,12 @@ import org.junit.runner.RunWith
 
 /**
  * A song whose file has gone missing raises ERROR_CODE_IO_FILE_NOT_FOUND, and the service drops it
- * and starts again on the next one. That recovery used to be unreachable whenever the *first* song
- * of the selection was the missing one: isStarting was still set from the start that had just
- * failed - playback never began, so nothing cleared it - and start() returns immediately while it
- * is set. The service was then left holding a released player and a flag nothing would clear, so
- * every later start() returned too.
+ * and starts again on the next one. That has to hold when the *first* song of the selection is the
+ * missing one too, so playback never began before the error arrived.
  *
  * Both tests here end in "the real song is playing", which is the only observation that
- * distinguishes recovery from the lock-up. Needs at least one audio file on the device; skipped
- * otherwise (tools/push-test-audio.sh).
+ * distinguishes recovery from a service that stopped starting songs. Needs at least one audio
+ * file on the device; skipped otherwise (tools/push-test-audio.sh).
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServiceRetryTest {

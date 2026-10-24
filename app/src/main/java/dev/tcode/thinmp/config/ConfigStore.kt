@@ -22,9 +22,9 @@ enum class RepeatState {
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(PREFERENCES_NAME)
 
 /**
- * Every accessor is suspend. They used to wrap DataStore in runBlocking, which blocked whichever
- * thread called them - in practice the main thread, from MusicService.onCreate() and from the
- * repeat/shuffle buttons, where a save means a blocking fsync.
+ * Every accessor is suspend, so none of them blocks the thread that calls it. The callers include
+ * the main thread - MusicService.onCreate() and the repeat/shuffle buttons - and a save means an
+ * fsync.
  *
  * Do not add withContext(Dispatchers.IO) around these: DataStore already does its file access on
  * its own dispatcher, for the same reason suspend Room calls are not wrapped either.

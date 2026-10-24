@@ -89,8 +89,8 @@ class SongListViewModelTest {
     }
 
     /**
-     * A list opened for the first time while a song is queued, the way a child screen is. It used to
-     * show the mini player only once its own bind had connected. Needs an audio file on the device;
+     * A list opened for the first time while a song is queued, the way a child screen is, shows the
+     * mini player from the state the controller already holds. Needs an audio file on the device;
      * skipped otherwise (tools/push-test-audio.sh).
      */
     @Test

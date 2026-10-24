@@ -9,10 +9,10 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 /**
- * The reloaded-list cases are the regression guards. A tap used to carry the row's position, taken
- * when the row was composed, and the list it was applied to was whatever the view model held when
- * the tap arrived. Those agree until a reload lands in between: a position past the new end is an
- * IllegalSeekPositionException inside the service, and one within it is the wrong song.
+ * The reloaded-list cases are the ones that matter. A position taken when the row was composed and
+ * the list the view model holds when the tap arrives agree until a reload lands in between: a
+ * position past the new end would be an IllegalSeekPositionException inside the service, and one
+ * within it the wrong song.
  */
 class IndexOfSongTest {
     private val a = song("1")

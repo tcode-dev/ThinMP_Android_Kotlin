@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger
  * When the song that failed was the only one left, retry() empties the queue, and the player screen
  * is then sitting on top of a service with nothing to drive: every button still reaches it and
  * media3 ignores all of it without so much as an exception. The mini player hides itself in that
- * state, so the two used to disagree about whether there is anything playing.
+ * state, and the player screen has to agree with it about whether there is anything playing.
  *
  * Both tests start on a real song first: the screen leaves only when the queue goes from having a
  * song to having none, and a title on screen is the only proof from out here that it has seen the

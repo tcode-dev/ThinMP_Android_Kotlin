@@ -53,9 +53,8 @@ class FavoriteSongRepositoryTest {
     }
 
     /**
-     * The reason replaceAll exists. Before it was a single transaction, the repository ran
-     * deleteAll() and then inserted one row at a time; a failure partway through left the user
-     * with no favourites at all.
+     * The reason replaceAll exists. Run as deleteAll() and then one insert at a time outside a
+     * transaction, a failure partway through would leave the user with no favourites at all.
      */
     @Test
     fun replaceAllRollsBackWhenAnInsertFails() = runTest {
@@ -86,7 +85,7 @@ class FavoriteSongRepositoryTest {
     /**
      * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
      * between the read and the write, so two concurrent toggles can both see "not a favourite"
-     * and both go on to insert. The primary key now turns that into a crash rather than a
+     * and both go on to insert. The primary key turns that into a crash rather than a
      * duplicate row, which is still not what a double tap should do.
      */
     @Test
@@ -102,7 +101,7 @@ class FavoriteSongRepositoryTest {
         }
     }
 
-    /** What the primary key buys: the duplicate row toggle used to have to clean up cannot exist. */
+    /** What the primary key buys: a duplicate row cannot exist. */
     @Test
     fun theSameSongCannotBeStoredTwice() = runTest {
         val dao = db.favoriteSongDao()

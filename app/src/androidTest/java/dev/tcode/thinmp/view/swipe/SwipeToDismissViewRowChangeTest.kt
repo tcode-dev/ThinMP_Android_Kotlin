@@ -21,11 +21,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A dismissed row is removed from the list. Without an item key the row below it took over the
- * slot - and the composition in it, the dismiss state included - and, left at DismissedToStart,
- * that state drew the new row already swiped off the screen. The item key is what keeps the
- * composition with the row: the dismissed row's state is disposed of with it, and the row that
- * moves up keeps its own.
+ * A dismissed row is removed from the list. Without an item key the row below it would take over
+ * the slot - and the composition in it, the dismiss state included - and, left at
+ * DismissedToStart, that state would draw the new row already swiped off the screen. The item key
+ * is what keeps the composition with the row: the dismissed row's state is disposed of with it,
+ * and the row that moves up keeps its own.
  *
  * The harness is built the way the edit screens are: a list keyed by the row's id, callbacks that
  * close over the index and nothing else, and rows given the full width because a swipe has to

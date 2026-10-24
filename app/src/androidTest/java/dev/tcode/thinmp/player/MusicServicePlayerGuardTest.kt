@@ -30,13 +30,10 @@ import java.util.concurrent.TimeUnit
 
 /**
  * The controls stay live in two states where there is nothing to play: before anything has given
- * the player a queue, and after retry() emptied it. When the service still built its player in
- * start(), the first one crashed on the lateinit - a config change destroys the activity,
- * MainApplication stops the service, and the screens reached a fresh service that start() never ran
- * on. The mini player was still on screen from the state it kept, so its play button reached a
- * service with nothing to play.
+ * the player a queue, and after retry() emptied it. A button left on screen can reach the service
+ * in either state.
  *
- * The buttons now reach the player through the session, so a crash would not be thrown back here:
+ * The buttons reach the player through the session, so a crash would not be thrown back here:
  * it would take the process down, the test runner's included. Each test sends every control, gives
  * the session time to run them, and checks the service is still there to answer.
  *

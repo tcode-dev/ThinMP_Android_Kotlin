@@ -95,7 +95,7 @@ class PlaybackControllerTest {
 
     /**
      * A mini player on a screen opened after the song started, which is the state a child screen
-     * is in. Each used to paint what it held from its own bind, or nothing until the bind arrived.
+     * is in. It paints the controller's current state rather than waiting for a bind of its own.
      */
     @Test
     fun aNewMiniPlayerHasTheCurrentSongFromTheStart() {

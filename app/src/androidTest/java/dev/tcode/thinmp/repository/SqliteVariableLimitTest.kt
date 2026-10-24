@@ -24,9 +24,9 @@ import org.junit.runner.RunWith
 private const val TITLE_PREFIX = "thinmp_test_limit_"
 
 /**
- * One over the 32766 the SQLite on this device compiles `IN (?,?,...)` with. It is the number at
- * which every query below threw `too many SQL variables` before the lists were chunked, so it is
- * what makes these tests fail when the chunking is taken back out. Devices whose SQLite predates
+ * One over the 32766 the SQLite on this device compiles `IN (?,?,...)` with. Sent unchunked, every
+ * query below throws `too many SQL variables` at this number, so it is what makes these tests fail
+ * without the chunking. Devices whose SQLite predates
  * 3.32 hit the same wall at 1000, which is why SqliteConstant.MAX_VARIABLES cuts at 999 rather
  * than at what this emulator happens to allow.
  */

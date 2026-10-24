@@ -17,8 +17,8 @@ import kotlinx.coroutines.flow.update
 /**
  * `loaded` is false until load() has put real data here. The done button is disabled while it is,
  * because save() writes this state as it stands and reorder/replaceAll both read "not in the list"
- * as "delete" - which is how a list emptied by swiping is saved, and what turned a tap that beat
- * the load into a wipe of the whole table. It cannot be inferred from the list being empty: an
+ * as "delete" - which is how a list emptied by swiping is saved, and what would turn a tap that
+ * beat the load into a wipe of the whole table. It cannot be inferred from the list being empty: an
  * empty list is also what the user leaves behind after swiping everything away.
  */
 data class PlaylistsEditUiState(

@@ -8,9 +8,9 @@ import java.util.Locale
 import java.util.TimeZone
 
 /**
- * The zone and locale cases are the regression guards. The old format read the millisecond count
- * as an instant since the epoch, so the answer depended on the device's time zone, and the minute
- * restarted every hour.
+ * The zone and locale cases pin that the millisecond count is read as a duration, not as an
+ * instant since the epoch: the answer must not depend on the device's time zone, and the minute
+ * must not restart every hour.
  */
 class TimeUtilTest {
     private val defaultTimeZone: TimeZone = TimeZone.getDefault()
@@ -40,7 +40,7 @@ class TimeUtilTest {
         assertEquals("00:01", formatTime(1_999))
     }
 
-    /** A zone offset that is not a whole hour used to shift every time by 30 minutes. */
+    /** A zone offset that is not a whole hour must not shift the time by 30 minutes. */
     @Test
     fun isTheSameInEveryTimeZone() {
         val zones = listOf("UTC", "Asia/Tokyo", "Asia/Kolkata", "Asia/Kathmandu", "Australia/Adelaide", "America/New_York")
@@ -52,7 +52,7 @@ class TimeUtilTest {
         }
     }
 
-    /** %tM is the minute within its hour, so an hour long track used to read 00:00. */
+    /** Elapsed minutes, not the minute within the hour, so an hour long track is not 00:00. */
     @Test
     fun keepsCountingPastAnHour() {
         assertEquals("60:00", formatTime(3_600_000))

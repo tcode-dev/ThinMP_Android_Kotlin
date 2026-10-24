@@ -9,7 +9,7 @@ import dev.tcode.thinmp.model.media.SongModel
 import java.util.concurrent.TimeUnit
 
 /**
- * The tests reach MusicService the way everything else does now, through its MediaSession. Each
+ * The tests reach MusicService the way everything else does, through its MediaSession. Each
  * test connects a controller of its own rather than borrowing PlaybackController, which the
  * activity under test connects and releases on its own schedule.
  */

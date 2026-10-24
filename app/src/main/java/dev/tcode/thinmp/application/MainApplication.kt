@@ -41,11 +41,9 @@ class MainApplication : Application(), Application.ActivityLifecycleCallbacks {
      *
      * A destroyed activity only means the app is going away when it is not coming straight back.
      * A configuration change - dark mode, font size, locale - destroys and recreates the activity,
-     * and stopping the service there ended playback while the app was still on screen. The mini
-     * player kept the state its retained view model held, so nothing on screen said playback had
-     * stopped, and the recreated screen bound with BIND_AUTO_CREATE into a fresh MusicService that
-     * start() had never run on. MainActivity declares configChanges="orientation|screenSize", so
-     * rotation never reached here; every other configuration change did.
+     * and stopping the service there would end playback while the app is still on screen.
+     * MainActivity declares configChanges="orientation|screenSize", so rotation never reaches here;
+     * every other configuration change does.
      */
     override fun onActivityDestroyed(activity: Activity) {
         if (activity.isChangingConfigurations) return

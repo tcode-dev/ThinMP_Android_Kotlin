@@ -5,7 +5,7 @@ import org.junit.Assert.assertFalse
 import org.junit.Test
 
 /**
- * The unknown duration cases are the regression guards: a Slider handed NaN takes the player
+ * The unknown duration cases are the ones that matter: a Slider handed NaN takes the player
  * screen down while it lays the thumb out, so what matters about them is as much that the answer
  * is a number at all as which number it is.
  */

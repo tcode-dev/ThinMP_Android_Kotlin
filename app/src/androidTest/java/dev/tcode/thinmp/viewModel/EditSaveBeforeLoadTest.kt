@@ -28,8 +28,8 @@ import org.junit.runner.RunWith
  * The done button is composed from the first frame - EditTopAppBarView only animates the bar's
  * background, not the row the button sits in - while the list behind it arrives asynchronously.
  * save() applies uiState as it stands, and its initial state is empty, so a tap that beat the load
- * wrote that emptiness back. Both reorder() and replaceAll() read "not in the list" as "delete",
- * which is how a list emptied by swiping is saved, so the whole table went.
+ * would write that emptiness back. Both reorder() and replaceAll() read "not in the list" as
+ * "delete", which is how a list emptied by swiping is saved, so the whole table would go.
  *
  * The button is disabled until the load lands, and save() refuses on its own as well, which is what
  * these tests drive: they call save() directly, the way a tap that slipped through would.
@@ -113,7 +113,7 @@ class EditSaveBeforeLoadTest {
         assertNull(withTimeoutOrNull(quietMs) { viewModel.saved.flow.first() })
     }
 
-    /** Saving after the load is what it always was: the list on screen is written back. */
+    /** Saving after the load writes the list on screen back. */
     @Test
     fun savingAfterTheListLoadsAppliesTheList() = runBlocking {
         val repository = PlaylistRepository()

@@ -23,8 +23,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * The popup's done button had no check on the name field, so tapping it straight away created a
- * playlist named "", which every list then shows as a blank row.
+ * The popup's done button stays disabled until the name field holds a non-blank name. Without that
+ * check, tapping it straight away would create a playlist named "", which every list shows as a
+ * blank row.
  *
  * The empty name and the spaces-only name are both tried before a real one, and the assertion is
  * that the playlists table holds only the real one: a write from either of the first two taps

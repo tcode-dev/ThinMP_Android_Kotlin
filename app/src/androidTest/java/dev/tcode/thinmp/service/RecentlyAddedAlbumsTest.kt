@@ -18,11 +18,10 @@ private const val TITLE_PREFIX = "thinmp_test_recent_"
 private const val ALBUM_PREFIX = "thinmp_test_recent_album_"
 
 /**
- * "Recently added" used to sort the albums collection by its own _id, taking a larger id to mean a
- * newer album. MediaStore computes that id from the album's name: delete an album and add it back
- * and it comes back with the id it had before, so the order had nothing to do with when anything
- * was added. The albums collection has no date column of its own, so the order has to come from
- * the tracks.
+ * "Recently added" cannot sort the albums collection by its own _id. MediaStore computes that id
+ * from the album's name: delete an album and add it back and it comes back with the id it had
+ * before, so a larger id says nothing about when anything was added. The albums collection has no
+ * date column of its own, so the order has to come from the tracks.
  *
  * The three albums below are added oldest first and expected back newest first, which is the order
  * their ids happen not to be in.

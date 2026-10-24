@@ -12,9 +12,9 @@ import androidx.compose.runtime.rememberUpdatedState
 
 /**
  * The lists key their items by the row's id, so this composition belongs to one row and the
- * dismiss state goes away with the row that was dismissed. Without the item key the row that was
- * below a dismissed one took over its slot and the composition in it, and a state left at
- * DismissedToStart drew that row already swiped off the screen.
+ * dismiss state goes away with the row that was dismissed. Without the item key the row below a
+ * dismissed one would take over its slot and the composition in it, and a state left at
+ * DismissedToStart would draw that row already swiped off the screen.
  *
  * The item key relies on the same id not appearing twice in one list. Duplicates in a playlist are
  * forbidden, and the favourites and shortcuts are keyed by the id itself, so no list can hold one

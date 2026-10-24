@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.dp
 /**
  * The lists key their items by the row's id, so this composition belongs to one row and is
  * disposed of with it: the open/closed state and the gesture detector need no key of their own.
- * Without the item key a list that lost an entry left the next row in the slot the old one had,
- * reusing the composition - and a menu left open from the old row then stood over whatever moved
- * up into it.
+ * Without the item key a list that lost an entry would leave the next row in the slot the old one
+ * had, reusing the composition - and a menu left open from the old row would then stand over
+ * whatever moved up into it.
  *
  * The row is what opens the menu, from its own gesture detector, which is why `content` is handed
  * the callback. A detector here would never fire: the row's detectTapGestures consumes the down

@@ -62,9 +62,9 @@ class MusicService : MediaSessionService() {
     private val serviceScope = CoroutineScope(serviceJob + Dispatchers.Main.immediate)
 
     /**
-     * The player keeps its defaults until the stored values arrive. onCreate() used to block the
-     * main thread on two DataStore reads, inside the five second window startForegroundService()
-     * allows.
+     * The player keeps its defaults until the stored values arrive. onCreate() does not wait for
+     * them: that would block the main thread on two DataStore reads, inside the five second window
+     * startForegroundService() allows.
      *
      * The buttons are live during that window, so each of the two settings carries a flag saying
      * the user has already worked it. loadConfig() skips the ones that are set: what the user just
@@ -77,13 +77,10 @@ class MusicService : MediaSessionService() {
     private var applyingStoredConfig = false
 
     /**
-     * setHandleAudioBecomingNoisy replaces a HEADSET_PLUG receiver this service used to register in
-     * onCreate(). That receiver stopped rather than paused - which leaves ExoPlayer idle, so the play
-     * button afterwards did nothing until the queue was rebuilt - and it read the wired headset's
-     * state extra with AudioManager's Bluetooth SCO constants, which only lined up because both
-     * happen to be 0. ACTION_AUDIO_BECOMING_NOISY is the intent meant for this, it covers Bluetooth
-     * going away as well as the wired jack, and the player enables and disables its own receiver
-     * around playback.
+     * setHandleAudioBecomingNoisy pauses playback on ACTION_AUDIO_BECOMING_NOISY, which covers
+     * Bluetooth going away as well as the wired jack. It pauses rather than stops, so ExoPlayer stays
+     * prepared and the play button works afterwards, and the player enables and disables its own
+     * receiver around playback.
      */
     override fun onCreate() {
         super.onCreate()
@@ -115,7 +112,7 @@ class MusicService : MediaSessionService() {
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    /** Keeps the channel the app's own notification used, so its name and the user's settings for it carry over. */
+    /** Uses NotificationConstant's channel, so its name and the user's settings for it stay the same. */
     private fun notificationProvider(): DefaultMediaNotificationProvider {
         val provider = DefaultMediaNotificationProvider.Builder(this)
             .setChannelId(NotificationConstant.CHANNEL_ID)
@@ -134,8 +131,8 @@ class MusicService : MediaSessionService() {
      *
      * Both are read before either is applied, so nothing suspends between the two flag checks and
      * the fields they guard: a tap either lands before this whole block, and is kept, or after it,
-     * and wins on its own. Assigning as each read returned left a gap between them where a tap on
-     * shuffle was still overwritten however the repeat flag came out.
+     * and wins on its own. Assigning as each read returns would leave a gap between them where a
+     * tap on shuffle could still be overwritten however the repeat flag came out.
      */
     private fun loadConfig() {
         serviceScope.launch {
@@ -196,7 +193,7 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * Swiping the app away stops playback, as closing the app always has. MediaSessionService's own
+     * Swiping the app away stops playback, as closing the app does. MediaSessionService's own
      * default keeps the service running while it plays.
      */
     override fun onTaskRemoved(rootIntent: Intent?) {

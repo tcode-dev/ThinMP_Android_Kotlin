@@ -5,7 +5,7 @@ import androidx.test.core.app.ApplicationProvider
 
 /**
  * Deliberately built without allowMainThreadQueries(): these tests are also the check that no
- * DAO function has quietly gone back to being blocking.
+ * DAO function is blocking.
  */
 fun createTestDatabase(): AppDatabase {
     return Room.inMemoryDatabaseBuilder(

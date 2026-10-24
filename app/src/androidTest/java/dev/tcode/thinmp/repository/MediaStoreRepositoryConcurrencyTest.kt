@@ -24,13 +24,12 @@ private const val TITLE_PREFIX = "thinmp_test_concurrent_"
 private const val ROUNDS = 20
 
 /**
- * MediaStoreRepository used to keep the selection, its arguments, the sort order and the open
- * cursor in fields, so two coroutines sharing one instance shared those too: each query overwrote
- * the other's selection before the cursor was created, and closed the other's cursor while it was
- * still being read. The repository is created per call today, which is why nothing on screen showed
- * it - the fields still made a single instance unusable from two places at once.
+ * MediaStoreRepository keeps the selection, its arguments, the sort order and the open cursor out
+ * of its fields. Kept in fields, two coroutines sharing one instance would share those too: each
+ * query would overwrite the other's selection before the cursor was created, and close the other's
+ * cursor while it was still being read.
  *
- * Both tests below query one instance from three coroutines at a time. Without the fix they fail
+ * Both tests below query one instance from three coroutines at a time. With fields they fail
  * either on the assertion - a coroutine handed another's rows - or on the cursor the other coroutine
  * closed underneath it.
  */

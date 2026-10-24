@@ -49,9 +49,8 @@ class PlaylistRepository(
         val playlists = findAll()
         val group = playlists.groupBy { playlist -> playlistIds.any { it.id == playlist.id } }
         val deletePlaylists = group[false] ?: emptyList()
-        // firstOrNull, which is what the surrounding mapNotNull was already written for: an id the
-        // caller holds but the table no longer does is skipped rather than thrown out of the
-        // transaction. first() made a caller working from a list that had gone stale crash instead.
+        // firstOrNull, so an id the caller holds but the table no longer does is skipped rather
+        // than thrown out of the transaction: a caller working from a stale list must not crash.
         val sortedPlaylists = playlistIds.mapNotNull { playlistId -> group[true]?.firstOrNull { it.id == playlistId.id } }
 
         deletePlaylists.forEach { playlist ->

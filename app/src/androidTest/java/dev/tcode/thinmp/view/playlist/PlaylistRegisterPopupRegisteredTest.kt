@@ -22,8 +22,8 @@ import org.junit.runner.RunWith
 
 /**
  * A playlist the song is already in cannot be added to, so the popup marks it as registered and
- * stops the row responding. Without that the row looked like every other one and a tap closed the
- * popup having written nothing.
+ * stops the row responding. Without that the row would look like every other one and a tap would
+ * close the popup having written nothing.
  *
  * Closing is what the tap is asserted on: the row's click handler adds the song and then invokes
  * the popup's callback, and the write itself is a no-op either way - the primary key already
