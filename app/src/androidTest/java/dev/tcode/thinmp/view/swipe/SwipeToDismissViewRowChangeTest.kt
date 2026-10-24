@@ -23,7 +23,7 @@ import org.junit.runner.RunWith
 /**
  * スワイプで消した行は一覧から取り除かれる。
  * itemにkeyがないと、下の行がその位置のcompositionをdismissのstateごと引き継ぎ、
- * DismissedToStartのままのstateのせいで、新しい行が最初から画面外にスワイプされた状態で描かれてしまう。
+ * EndToStartのままのstateのせいで、新しい行が最初から画面外にスワイプされた状態で描かれてしまう。
  * keyを付ければ、消した行のstateは行と一緒に破棄され、繰り上がった行は自分のstateを保つ。
  *
  * 編集画面と同じく、行のidをkeyにした一覧、インデックスだけを取り込むコールバック、
