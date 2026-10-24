@@ -64,7 +64,7 @@ View → ViewModel → PlaybackController → MusicService      (再生。MediaS
 ## 主な技術
 
 - **UI**:Jetpack Compose + Material 3。画像はCoil、権限はAccompanist
-- **再生**:Media3 1.4.0(ExoPlayer、MediaSession)。通知、ロック画面、フォアグラウンド化は`MediaSessionService`に任せる
+- **再生**:Media3 1.11.1(ExoPlayer、MediaSession)。通知、ロック画面、フォアグラウンド化は`MediaSessionService`に任せる
 - **DI**:Hilt
 - **データベース**:Room(お気に入り、プレイリスト、ショートカット)。
   `AppDatabase`はシングルトンで、`MainApplication.appContext`から作る。
@@ -79,7 +79,7 @@ View → ViewModel → PlaybackController → MusicService      (再生。MediaS
 サードパーティのAPIは、まずこのリポジトリの既存の呼び出し箇所を読む。それが実際に使っているバージョンになる。
 既存の呼び出しにないAPIを使うときは、このプロジェクトが指定しているバージョンで存在を確かめる。
 `~/.gradle/caches/modules-2/files-2.1/`に`-sources.jar`があればそれを読み、なければContext7(`.mcp.json`)で調べる。
-最新版の知識で書かないこと。指定しているバージョン(Media3 1.4.0など)は最新より古い。
+最新版の知識で書かないこと。指定しているバージョンが最新とは限らない。
 
 ## 主なディレクトリ
 

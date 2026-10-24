@@ -68,10 +68,10 @@ dependencies {
     implementation "androidx.room:room-runtime:2.8.5"
     implementation "androidx.room:room-ktx:2.8.5"
     kapt "androidx.room:room-compiler:2.8.5"
-    implementation "androidx.media3:media3-exoplayer:1.4.0"
-    implementation "androidx.media3:media3-exoplayer-dash:1.4.0"
-    implementation "androidx.media3:media3-ui:1.4.0"
-    implementation 'androidx.media3:media3-session:1.4.0'
+    implementation "androidx.media3:media3-exoplayer:1.11.1"
+    implementation "androidx.media3:media3-exoplayer-dash:1.11.1"
+    implementation "androidx.media3:media3-ui:1.11.1"
+    implementation 'androidx.media3:media3-session:1.11.1'
     kapt 'com.google.dagger:hilt-compiler:2.60.1'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
