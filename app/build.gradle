@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    compileSdk 36
+    compileSdk 37
 
     defaultConfig {
         applicationId 'dev.tcode.thinmp'
@@ -53,12 +53,12 @@ android {
 dependencies {
 
     implementation 'androidx.core:core-ktx:1.13.1'
-    implementation 'androidx.compose.ui:ui:1.6.8'
-    implementation "androidx.compose.material3:material3:1.2.1"
+    implementation 'androidx.compose.ui:ui:1.12.1'
+    implementation "androidx.compose.material3:material3:1.4.0"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.4'
     implementation 'androidx.activity:activity-compose:1.9.1'
     implementation 'androidx.navigation:navigation-compose:2.7.7'
-    implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout-compose:1.1.2'
     implementation 'io.coil-kt:coil-compose:2.7.0'
     implementation 'com.google.accompanist:accompanist-permissions:0.34.0'
     implementation 'com.google.dagger:hilt-android:2.60.1'
@@ -78,11 +78,11 @@ dependencies {
     // 3.6.1はAPI 35以上で入力を注入できない(内部で使うInputManager.getInstanceが削除された)。
     // ComposeのテストルールもクリックとwaitForIdleにEspressoを使うので、3.7.0が必要。
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.7.0'
-    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.6.8'
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4:1.12.1'
     androidTestImplementation "androidx.room:room-testing:2.8.5"
     androidTestImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1'
-    debugImplementation 'androidx.compose.ui:ui-tooling:1.6.8'
-    debugImplementation 'androidx.compose.ui:ui-test-manifest:1.6.8'
+    debugImplementation 'androidx.compose.ui:ui-tooling:1.12.1'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest:1.12.1'
 }
 kapt {
     correctErrorTypes true

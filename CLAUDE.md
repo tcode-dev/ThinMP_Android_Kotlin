@@ -15,7 +15,7 @@ ThinMPはKotlinで書いた軽量なAndroid用の音楽プレーヤー。
 ./gradlew connectedAndroidTest # インストルメンテーションテストを実行する(Roomのリポジトリのテストはここ)
 ```
 
-- Compile/Target SDKは36、Min SDKは33(Android 13以上)
+- Compile SDKは37、Target SDKは36、Min SDKは33(Android 13以上)
 - Javaのターゲットは JDK 17
 - HiltとRoomはKAPTで処理する
 
