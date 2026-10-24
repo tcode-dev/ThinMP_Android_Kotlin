@@ -44,7 +44,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** Media3の推奨どおり、Activityが見えている間だけ接続する。 */
+    /**
+     * Media3の推奨どおり、Activityが見えている間だけ接続する。
+     */
     override fun onStart() {
         super.onStart()
         playbackController.connect()

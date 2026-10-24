@@ -68,7 +68,10 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     private var controllerFuture: ListenableFuture<MediaController>? = null
     private var controller: MediaController? = null
 
-    /** 未接続の間に呼ばれた操作。捨てずに接続後に順に実行するので、接続前のタップも効く。 */
+    /**
+     * 未接続の間に呼ばれた操作。
+     * 捨てずに接続後に順に実行するので、接続前のタップも効く。
+     */
     private val pending = mutableListOf<(MediaController) -> Unit>()
 
     private val listener = object : Player.Listener {
@@ -101,7 +104,9 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         future.addListener({ onConnected(future) }, ContextCompat.getMainExecutor(context))
     }
 
-    /** [state]と、接続待ちの操作はそのまま残す。 */
+    /**
+     * [state]と、接続待ちの操作はそのまま残す。
+     */
     fun release() {
         val future = controllerFuture ?: return
 
@@ -145,7 +150,9 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         whenConnected { it.seekTo(ms) }
     }
 
-    /** 古いかもしれない[state]ではなく、実行時のプレーヤーのモードから次へ進める。 */
+    /**
+     * 古いかもしれない[state]ではなく、実行時のプレーヤーのモードから次へ進める。
+     */
     fun changeRepeat() {
         whenConnected { it.repeatMode = repeatStateOf(it.repeatMode).next().toRepeatMode() }
     }
@@ -154,7 +161,10 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         whenConnected { it.shuffleModeEnabled = !it.shuffleModeEnabled }
     }
 
-    /** 毎フレーム変わる値なので[state]には入れない。曲がなければ0。 */
+    /**
+     * 毎フレーム変わる値なので[state]には入れない。
+     * 曲がなければ0。
+     */
     fun currentPosition(): Long {
         val controller = this.controller ?: return 0
 
@@ -221,7 +231,9 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         return a.copy(currentSong = null) == b.copy(currentSong = null) && a.currentSong?.id == b.currentSong?.id
     }
 
-    /** Hiltで注入できないview modelやテストから取得するためのもの。 */
+    /**
+     * Hiltで注入できないview modelやテストから取得するためのもの。
+     */
     @EntryPoint
     @InstallIn(SingletonComponent::class)
     interface Accessor {

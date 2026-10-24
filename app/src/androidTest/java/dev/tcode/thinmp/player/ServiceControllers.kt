@@ -26,7 +26,10 @@ fun connectController(context: Context, timeoutMs: Long, listener: MediaControll
     return future.get(timeoutMs, TimeUnit.MILLISECONDS)
 }
 
-/** PlaybackController.start()と同じくURIなしで送る。URIはサービスがonAddMediaItems()で補う。 */
+/**
+ * PlaybackController.start()と同じくURIなしで送る。
+ * URIはサービスがonAddMediaItems()で補う。
+ */
 fun startOnController(controller: MediaController, songs: List<SongModel>, index: Int) {
     runOnMain {
         controller.setMediaItems(songs.map { it.toMediaItem(withUri = false) }, index, 0)
@@ -35,7 +38,9 @@ fun startOnController(controller: MediaController, songs: List<SongModel>, index
     }
 }
 
-/** コントローラーとプレーヤーはメインスレッドでのみ操作する。 */
+/**
+ * コントローラーとプレーヤーはメインスレッドでのみ操作する。
+ */
 fun <T> runOnMain(block: () -> T): T {
     var result: T? = null
 

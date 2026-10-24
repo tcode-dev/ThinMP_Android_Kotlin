@@ -16,7 +16,9 @@ import org.junit.Test
 class CustomGridCellsFixedTest {
     private val edge = 10
 
-    /** 端のセルはGridCellViewが内側に10dp多く余白を取るので、そのぶん10dp広くする。 */
+    /**
+     * 端のセルはGridCellViewが内側に10dp多く余白を取るので、そのぶん10dp広くする。
+     */
     @Test
     fun widensTheFirstAndLastCellByTheEdgeSpace() {
         assertEquals(listOf(510, 510), calculate(count = 2, availableSize = 1020))
@@ -24,7 +26,9 @@ class CustomGridCellsFixedTest {
         assertEquals(listOf(260, 250, 250, 260), calculate(count = 4, availableSize = 1020))
     }
 
-    /** 端と内側の幅の差がedgeSpaceと等しくないと、見える内容の幅が列によって変わってしまう。 */
+    /**
+     * 端と内側の幅の差がedgeSpaceと等しくないと、見える内容の幅が列によって変わってしまう。
+     */
     @Test
     fun keepsTheVisibleWidthOfEveryCellEqual() {
         val sizes = calculate(count = 4, availableSize = 1020)
@@ -38,7 +42,9 @@ class CustomGridCellsFixedTest {
         assertEquals(1020, calculate(count = 4, availableSize = 1020).sum())
     }
 
-    /** 割り切れない端数を捨てると、行の幅が最大でcount-1px足りなくなる。 */
+    /**
+     * 割り切れない端数を捨てると、行の幅が最大でcount-1px足りなくなる。
+     */
     @Test
     fun distributesTheRemainder() {
         // 411dp・density 2.625の端末。contentSizeが1027なので1px余る。
@@ -48,7 +54,9 @@ class CustomGridCellsFixedTest {
         assertEquals(1079, sizes.sum())
     }
 
-    /** GridCellsの仕様では、合計はセル間の余白を除いた幅でなければならない。 */
+    /**
+     * GridCellsの仕様では、合計はセル間の余白を除いた幅でなければならない。
+     */
     @Test
     fun subtractsTheSpacingBetweenCells() {
         val spacing = 10
@@ -57,7 +65,9 @@ class CustomGridCellsFixedTest {
         assertEquals(1010 - (spacing * 2), sizes.sum())
     }
 
-    /** 2列未満では最初と最後を区別できないので、幅を計算できない。 */
+    /**
+     * 2列未満では最初と最後を区別できないので、幅を計算できない。
+     */
     @Test
     fun rejectsAColumnCountBelowTwo() {
         assertThrows(IllegalArgumentException::class.java) { CustomGridCellsFixed(1) }
@@ -76,7 +86,9 @@ class CustomGridCellsFixedTest {
         assertEquals(CustomGridCellsFixed(3), CustomGridCellsFixed(3))
     }
 
-    /** 列数か余白が違えば幅も変わるので、別のものとして扱う。 */
+    /**
+     * 列数か余白が違えば幅も変わるので、別のものとして扱う。
+     */
     @Test
     fun treatsDifferentColumnCountOrEdgeSpaceAsNotEqual() {
         assertNotEquals(CustomGridCellsFixed(2, edge.dp), CustomGridCellsFixed(3, edge.dp))

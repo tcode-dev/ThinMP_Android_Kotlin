@@ -25,13 +25,19 @@ class IndexOfSongTest {
         assertEquals(2, indexOfSong(listOf(a, b, c), c.songId))
     }
 
-    /** [a, b, c]の1行目のbをタップしたが、一覧は[x, a, b, c]に変わっていた。1行目はもうaを指す。 */
+    /**
+     * [a, b, c]の1行目のbをタップしたが、一覧は[x, a, b, c]に変わっていた。
+     * 1行目はもうaを指す。
+     */
     @Test
     fun followsTheSongWhenAReloadMovesIt() {
         assertEquals(2, indexOfSong(listOf(x, a, b, c), b.songId))
     }
 
-    /** [a, b, c]の2行目のcをタップしたが、一覧は[a]に変わっていた。2行目はもうない。 */
+    /**
+     * [a, b, c]の2行目のcをタップしたが、一覧は[a]に変わっていた。
+     * 2行目はもうない。
+     */
     @Test
     fun isNullWhenAReloadDroppedTheSong() {
         assertNull(indexOfSong(listOf(a), c.songId))
@@ -42,7 +48,9 @@ class IndexOfSongTest {
         assertNull(indexOfSong(emptyList(), a.songId))
     }
 
-    /** MediaStoreはクエリのたびに新しいオブジェクトを返すので、読み込み直しても同じなのはidだけ。 */
+    /**
+     * MediaStoreはクエリのたびに新しいオブジェクトを返すので、読み込み直しても同じなのはidだけ。
+     */
     @Test
     fun matchesByIdAndNotByInstance() {
         assertEquals(1, indexOfSong(listOf(a, song("2"), c), b.songId))

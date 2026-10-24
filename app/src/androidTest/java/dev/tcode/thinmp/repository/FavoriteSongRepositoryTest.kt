@@ -102,7 +102,9 @@ class FavoriteSongRepositoryTest {
         }
     }
 
-    /** 主キーにより重複行は作れない。 */
+    /**
+     * 主キーにより重複行は作れない。
+     */
     @Test
     fun theSameSongCannotBeStoredTwice() = runTest {
         val dao = db.favoriteSongDao()

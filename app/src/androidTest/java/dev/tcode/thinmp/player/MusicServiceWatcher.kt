@@ -35,7 +35,9 @@ class MusicServiceWatcher private constructor(private val context: Context) {
         }
     }
 
-    /** 結果にかかわらずバインドを解除するので、1つのウォッチャーは1回しか使えない。 */
+    /**
+     * 結果にかかわらずバインドを解除するので、1つのウォッチャーは1回しか使えない。
+     */
     fun awaitDestroyed(timeoutMs: Long): Boolean {
         try {
             return destroyed.await(timeoutMs, TimeUnit.MILLISECONDS)

@@ -23,7 +23,9 @@ class PlaylistRepository(
         }
     }
 
-    /** 曲がすでにプレイリストに入っていて何も書き込まなかった場合はfalse。 */
+    /**
+     * 曲がすでにプレイリストに入っていて何も書き込まなかった場合はfalse。
+     */
     suspend fun add(playlistId: PlaylistId, songId: SongId): Boolean {
         val song = PlaylistSongEntity(playlistId = playlistId.id, songId = songId.id)
 
@@ -92,7 +94,9 @@ class PlaylistRepository(
     }
 
     companion object {
-        /** 行がすでにあったときにINSERT OR IGNOREが返す値。 */
+        /**
+         * 行がすでにあったときにINSERT OR IGNOREが返す値。
+         */
         private const val IGNORED = -1L
     }
 }

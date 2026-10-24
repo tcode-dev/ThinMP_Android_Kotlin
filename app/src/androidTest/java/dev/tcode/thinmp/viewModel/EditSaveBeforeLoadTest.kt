@@ -113,7 +113,9 @@ class EditSaveBeforeLoadTest {
         assertNull(withTimeoutOrNull(quietMs) { viewModel.saved.flow.first() })
     }
 
-    /** 読み込み後の保存では、画面の一覧が保存される。 */
+    /**
+     * 読み込み後の保存では、画面の一覧が保存される。
+     */
     @Test
     fun savingAfterTheListLoadsAppliesTheList() = runBlocking {
         val repository = PlaylistRepository()
@@ -129,7 +131,10 @@ class EditSaveBeforeLoadTest {
         assertEquals(listOf("second"), repository.findAll().map { it.name })
     }
 
-    /** スワイプで空にした一覧も保存できる。すべて消せなければならない。 */
+    /**
+     * スワイプで空にした一覧も保存できる。
+     * すべて消せなければならない。
+     */
     @Test
     fun savingAnEmptiedListDeletesEverything() = runBlocking {
         val repository = PlaylistRepository()

@@ -55,7 +55,10 @@ class MusicService : MediaSessionService() {
     private lateinit var mediaSession: MediaSession
     private lateinit var config: ConfigStore
 
-    /** ConfigStoreの読み書きをメインスレッドの外で行うためのスコープ。onDestroy()でキャンセルする。 */
+    /**
+     * ConfigStoreの読み書きをメインスレッドの外で行うためのスコープ。
+     * onDestroy()でキャンセルする。
+     */
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(serviceJob + Dispatchers.Main.immediate)
 
@@ -70,7 +73,10 @@ class MusicService : MediaSessionService() {
     private var repeatChangedByUser = false
     private var shuffleChangedByUser = false
 
-    /** loadConfig()が保存値を反映している間はtrue。リスナーがそれを保存し直さないようにする。 */
+    /**
+     * loadConfig()が保存値を反映している間はtrue。
+     * リスナーがそれを保存し直さないようにする。
+     */
     private var applyingStoredConfig = false
 
     /**
@@ -107,7 +113,9 @@ class MusicService : MediaSessionService() {
         return PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
     }
 
-    /** NotificationConstantのチャンネルを使い、チャンネル名とユーザーの通知設定を引き継ぐ。 */
+    /**
+     * NotificationConstantのチャンネルを使い、チャンネル名とユーザーの通知設定を引き継ぐ。
+     */
     private fun notificationProvider(): DefaultMediaNotificationProvider {
         val provider = DefaultMediaNotificationProvider.Builder(this)
             .setChannelId(NotificationConstant.CHANNEL_ID)
@@ -183,7 +191,10 @@ class MusicService : MediaSessionService() {
         return START_NOT_STICKY
     }
 
-    /** アプリをスワイプで消したら再生を止める。MediaSessionServiceの既定では再生中は動き続ける。 */
+    /**
+     * アプリをスワイプで消したら再生を止める。
+     * MediaSessionServiceの既定では再生中は動き続ける。
+     */
     override fun onTaskRemoved(rootIntent: Intent?) {
         pauseAllPlayersAndStopSelf()
     }

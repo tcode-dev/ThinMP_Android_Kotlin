@@ -74,7 +74,9 @@ class PlaylistRegisterPopupNameTest {
         assertEquals(listOf(playlistName), awaitPlaylists())
     }
 
-    /** プレイリストが1つもなければ、ポップアップは一覧ではなく名前の入力欄を表示する。 */
+    /**
+     * プレイリストが1つもなければ、ポップアップは一覧ではなく名前の入力欄を表示する。
+     */
     private fun showPopup() {
         composeTestRule.setContent {
             PlaylistRegisterPopupView(songId, callback = {})
@@ -83,7 +85,9 @@ class PlaylistRegisterPopupNameTest {
         composeTestRule.waitUntil(timeoutMs) { composeTestRule.onAllNodesWithText(doneText).fetchSemanticsNodes().isNotEmpty() }
     }
 
-    /** create()はviewModelScopeで動くので、行はタップの後から書き込まれる。 */
+    /**
+     * create()はviewModelScopeで動くので、行はタップの後から書き込まれる。
+     */
     private fun awaitPlaylists(): List<String> {
         val deadline = System.currentTimeMillis() + timeoutMs
 

@@ -76,7 +76,9 @@ class PlaylistRepositoryTest {
         assertEquals(listOf("1", "2"), repository.findSongsByPlaylistId(id).map { it.songId })
     }
 
-    /** 登録ポップアップがグレーアウトする、その曲を含むプレイリストだけを返すこと。 */
+    /**
+     * 登録ポップアップがグレーアウトする、その曲を含むプレイリストだけを返すこと。
+     */
     @Test
     fun findPlaylistIdsBySongIdReturnsThePlaylistsHoldingTheSong() = runTest {
         repository.create(SongId("1"), "first")

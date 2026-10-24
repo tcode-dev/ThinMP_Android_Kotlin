@@ -20,7 +20,10 @@ import kotlinx.coroutines.flow.update
 
 data class PlaylistsUiState(
     val playlists: List<PlaylistModel> = emptyList(),
-    /** ポップアップの曲が入っているプレイリスト。曲が決まるまでは空。 */
+    /**
+     * ポップアップの曲が入っているプレイリスト。
+     * 曲が決まるまでは空。
+     */
     val registeredPlaylistIds: Set<PlaylistId> = emptySet()
 )
 

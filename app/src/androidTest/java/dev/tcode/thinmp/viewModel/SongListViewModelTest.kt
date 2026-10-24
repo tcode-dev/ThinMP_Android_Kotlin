@@ -28,7 +28,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** 何もクエリせず、再読み込みの回数だけを数える。ファクトリーから作れるよう、publicでApplicationを受け取る。 */
+/**
+ * 何もクエリせず、再読み込みの回数だけを数える。
+ * ファクトリーから作れるよう、publicでApplicationを受け取る。
+ */
 class CountingSongListViewModel(application: Application) : SongListViewModel(application) {
     var loads = 0
 
@@ -78,7 +81,9 @@ class SongListViewModelTest {
         context.stopService(Intent(context, MusicService::class.java))
     }
 
-    /** 実在の曲は再生しないので、音声ファイルがなくてもスキップしない。 */
+    /**
+     * 実在の曲は再生しないので、音声ファイルがなくてもスキップしない。
+     */
     @Test
     fun reloadsWhenTheServiceDropsASong() {
         val viewModel = onMain { create(CountingSongListViewModel::class.java) }
@@ -105,7 +110,9 @@ class SongListViewModelTest {
         assertTrue("the mini player was hidden on the list's first frame", isVisible)
     }
 
-    /** 画面と同じく、メインスレッドで作る。 */
+    /**
+     * 画面と同じく、メインスレッドで作る。
+     */
     private fun <T : ViewModel> create(modelClass: Class<T>): T {
         val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(context as Application)
 
@@ -125,7 +132,9 @@ class SongListViewModelTest {
         }
     }
 
-    /** コントローラーとview modelはメインスレッドで動くので、操作はすべてメインスレッドで行う。 */
+    /**
+     * コントローラーとview modelはメインスレッドで動くので、操作はすべてメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 

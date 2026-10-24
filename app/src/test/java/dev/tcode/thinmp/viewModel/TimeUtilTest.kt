@@ -39,7 +39,9 @@ class TimeUtilTest {
         assertEquals("00:01", formatTime(1_999))
     }
 
-    /** オフセットが1時間単位でないゾーンでも、30分ずれないこと。 */
+    /**
+     * オフセットが1時間単位でないゾーンでも、30分ずれないこと。
+     */
     @Test
     fun isTheSameInEveryTimeZone() {
         val zones = listOf("UTC", "Asia/Tokyo", "Asia/Kolkata", "Asia/Kathmandu", "Australia/Adelaide", "America/New_York")
@@ -51,14 +53,18 @@ class TimeUtilTest {
         }
     }
 
-    /** 時刻の分ではなく経過した分なので、1時間の曲が00:00にならないこと。 */
+    /**
+     * 時刻の分ではなく経過した分なので、1時間の曲が00:00にならないこと。
+     */
     @Test
     fun keepsCountingPastAnHour() {
         assertEquals("60:00", formatTime(3_600_000))
         assertEquals("75:30", formatTime(4_530_000))
     }
 
-    /** 独自の数字を使うロケールでもASCIIの数字になること。 */
+    /**
+     * 独自の数字を使うロケールでもASCIIの数字になること。
+     */
     @Test
     fun formatsInAsciiDigits() {
         Locale.setDefault(Locale.forLanguageTag("ar-EG-u-nu-arab"))

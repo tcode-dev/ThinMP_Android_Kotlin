@@ -40,7 +40,9 @@ fun SongModel.toMediaItem(withUri: Boolean): MediaItem {
     return builder.build()
 }
 
-/** [toMediaItem]で作ったものでなければnull。 */
+/**
+ * [toMediaItem]で作ったものでなければnull。
+ */
 fun MediaItem.toSongModel(): SongModel? {
     val extras = mediaMetadata.extras ?: return null
 
@@ -56,7 +58,9 @@ fun MediaItem.toSongModel(): SongModel? {
     )
 }
 
-/** SongModel.getMediaUri()と同じURIを、media idだけから作る。 */
+/**
+ * SongModel.getMediaUri()と同じURIを、media idだけから作る。
+ */
 fun songMediaUri(mediaId: String): Uri {
     return Uri.parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${mediaId}")
 }

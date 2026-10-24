@@ -43,7 +43,9 @@ interface PlaylistDao {
     @Query("DELETE FROM playlists WHERE id IN (:ids)")
     suspend fun deleteByIdsChunk(ids: List<String>)
 
-    /** FavoriteSongDao.deleteBySongIdsを参照。 */
+    /**
+     * FavoriteSongDao.deleteBySongIdsを参照。
+     */
     @Transaction
     suspend fun deleteByIds(ids: List<String>) {
         ids.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteByIdsChunk(it) }

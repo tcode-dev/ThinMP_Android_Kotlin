@@ -20,7 +20,9 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
         return found
     }
 
-    /** 再取得しない理由はFavoriteSongsService.removeMissing()を参照。 */
+    /**
+     * 再取得しない理由はFavoriteSongsService.removeMissing()を参照。
+     */
     private suspend fun removeMissing(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
         val deleteIds = artistIds.filter { id ->
             artists.none { it.artistId == id }

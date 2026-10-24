@@ -30,7 +30,9 @@ abstract class SongListViewModel(application: Application) : AndroidViewModel(ap
     val isVisiblePlayer: StateFlow<Boolean> =
         playbackController.state.map { it.hasQueue }.stateIn(viewModelScope, SharingStarted.Eagerly, playbackController.state.value.hasQueue)
 
-    /** [start]で再生する一覧。 */
+    /**
+     * [start]で再生する一覧。
+     */
     protected abstract val songs: List<SongModel>
 
     protected abstract fun load()
@@ -66,7 +68,10 @@ abstract class SongListViewModel(application: Application) : AndroidViewModel(ap
     }
 }
 
-/** [songs]の中の[songId]の位置。見つからなければnull。 */
+/**
+ * [songs]の中の[songId]の位置。
+ * 見つからなければnull。
+ */
 fun indexOfSong(songs: List<SongModel>, songId: SongId): Int? {
     val index = songs.indexOfFirst { it.songId == songId }
 

@@ -64,7 +64,9 @@ class MusicServiceRetryTest {
         scenario.close()
     }
 
-    /** 失敗した曲を外し、次の曲を再生する。 */
+    /**
+     * 失敗した曲を外し、次の曲を再生する。
+     */
     @Test
     fun playsTheNextSongWhenTheFirstOneIsMissing() {
         startOnController(controller, listOf(missingSong("999999998"), realSong), 0)
@@ -73,7 +75,9 @@ class MusicServiceRetryTest {
         assertEquals(realSong.id, runOnMain { controller.currentMediaItem?.mediaId })
     }
 
-    /** 失敗が続いても、再生できる曲まで進み続ける。 */
+    /**
+     * 失敗が続いても、再生できる曲まで進み続ける。
+     */
     @Test
     fun playsTheFirstSongThatIsStillThere() {
         startOnController(controller, listOf(missingSong("999999998"), missingSong("999999997"), realSong), 0)

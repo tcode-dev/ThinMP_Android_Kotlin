@@ -34,7 +34,8 @@ import org.junit.runner.RunWith
  * SongId("")に戻ると、どの曲にも解決しない行がplaylist_songsに書き込まれ、
  * 追加したはずの曲が次の読み込みで消える。
  *
- * 再composeのきっかけは、ポップアップを開いている間に再生開始などでisVisibleMiniPlayerが切り替わること。
+ * 再composeのきっかけは、ポップアップを開いている間に
+ * 再生開始などでisVisibleMiniPlayerが切り替わること。
  * 2つのテストはその切り替えの有無だけが違うので、どちらが失敗したかで、追加そのものが壊れているのか、
  * 再composeの後だけなのかがわかる。
  *
@@ -120,7 +121,9 @@ class PlaylistRegisterPopupSongIdTest {
         return awaitSongs(playlistId)
     }
 
-    /** addSong()はviewModelScopeで動くので、行はタップの後から書き込まれる。 */
+    /**
+     * addSong()はviewModelScopeで動くので、行はタップの後から書き込まれる。
+     */
     private fun awaitSongs(playlistId: PlaylistId): List<String> {
         val deadline = System.currentTimeMillis() + timeoutMs
 

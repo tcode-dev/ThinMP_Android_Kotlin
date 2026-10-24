@@ -88,7 +88,9 @@ class PlayerScreenQueueEmptyTest {
         context.stopService(Intent(context, MusicService::class.java))
     }
 
-    /** 画面を開いたままキューが空になれば、画面を閉じる。 */
+    /**
+     * 画面を開いたままキューが空になれば、画面を閉じる。
+     */
     @Test
     fun leavesThePlayerScreenWhenTheQueueEmpties() {
         showPlayerScreen()
@@ -118,7 +120,9 @@ class PlayerScreenQueueEmptyTest {
         assertEquals("the screen left although the retry had another song to play", 0, awaitBack(settleMs))
     }
 
-    /** 画面を表示して曲を再生し、画面のリスナーが登録されて描画が始まった状態にする。 */
+    /**
+     * 画面を表示して曲を再生し、画面のリスナーが登録されて描画が始まった状態にする。
+     */
     private fun showPlayerScreen() {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalNavigator provides navigator) {
@@ -131,7 +135,9 @@ class PlayerScreenQueueEmptyTest {
         composeTestRule.waitUntil(timeoutMs) { composeTestRule.onAllNodesWithText(realSong.name).fetchSemanticsNodes().isNotEmpty() }
     }
 
-    /** MediaStoreに存在しえないidなので、開くとERROR_CODE_IO_FILE_NOT_FOUNDで失敗する。 */
+    /**
+     * MediaStoreに存在しえないidなので、開くとERROR_CODE_IO_FILE_NOT_FOUNDで失敗する。
+     */
     private fun missingSong(): SongModel {
         return SongModel(SongId("999999998"), missingName, ArtistId(""), "", AlbumId(""), "", 0, "")
     }
@@ -151,12 +157,17 @@ class PlayerScreenQueueEmptyTest {
         return latch
     }
 
-    /** ExoPlayerはメインルーパーで作るので、操作はすべてメインスレッドで行う。 */
+    /**
+     * ExoPlayerはメインルーパーで作るので、操作はすべてメインスレッドで行う。
+     */
     private fun start(songs: List<SongModel>) {
         InstrumentationRegistry.getInstrumentation().runOnMainSync { PlaybackController.from(context).start(songs, 0) }
     }
 
-    /** [timeout]の間に画面が閉じようとした回数。1回目で待つのをやめる。 */
+    /**
+     * [timeout]の間に画面が閉じようとした回数。
+     * 1回目で待つのをやめる。
+     */
     private fun awaitBack(timeout: Long): Int {
         val deadline = SystemClock.uptimeMillis() + timeout
 
@@ -201,7 +212,10 @@ class PlayerScreenQueueEmptyTest {
         InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(context.packageName, permission)
     }
 
-    /** back()の呼び出しで判定する。2回呼ばれたこともわかるよう、フラグではなく回数を数える。 */
+    /**
+     * back()の呼び出しで判定する。
+     * 2回呼ばれたこともわかるよう、フラグではなく回数を数える。
+     */
     private class RecordingNavigator : INavigator {
         val backCount = AtomicInteger(0)
 

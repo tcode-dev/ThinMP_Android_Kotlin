@@ -36,7 +36,9 @@ import org.junit.runner.RunWith
 class MainApplicationConfigChangeTest {
     private val timeoutMs = 15_000L
 
-    /** 起きてはいけない破棄を待つ時間。 */
+    /**
+     * 起きてはいけない破棄を待つ時間。
+     */
     private val quietMs = 1_000L
 
     private lateinit var context: Context
@@ -68,7 +70,9 @@ class MainApplicationConfigChangeTest {
         assertFalse("the configuration change stopped the service", watcher.awaitDestroyed(quietMs))
     }
 
-    /** 本当にアプリを離れたときは止まること。 */
+    /**
+     * 本当にアプリを離れたときは止まること。
+     */
     @Test
     fun theServiceStopsWhenTheActivityGoesAway() {
         val watcher = MusicServiceWatcher.attach(context, timeoutMs)

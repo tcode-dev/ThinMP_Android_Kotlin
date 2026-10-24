@@ -42,7 +42,9 @@ class PlayerScreenUnknownDurationTest {
     private val timeoutMs = 15_000L
     private val pollMs = 50L
 
-    /** シークバーの更新間隔(1秒)より長くして、定期更新を少なくとも1回含める。 */
+    /**
+     * シークバーの更新間隔(1秒)より長くして、定期更新を少なくとも1回含める。
+     */
     private val tickMs = 1_500L
 
     @get:Rule
@@ -92,7 +94,10 @@ class PlayerScreenUnknownDurationTest {
         assertSliderAtTheStart()
     }
 
-    /** 再生中なので定期的なシークバーの更新が走る。割合を計算するもう1つの場所。 */
+    /**
+     * 再生中なので定期的なシークバーの更新が走る。
+     * 割合を計算するもう1つの場所。
+     */
     @Test
     fun playsASongOfUnknownDurationWithTheSliderAtTheStart() {
         start(listOf(untaggedSong))
@@ -106,12 +111,16 @@ class PlayerScreenUnknownDurationTest {
         assertSliderAtTheStart()
     }
 
-    /** 範囲を持つノードは画面にSliderしかないので、他の条件で絞り込まない。 */
+    /**
+     * 範囲を持つノードは画面にSliderしかないので、他の条件で絞り込まない。
+     */
     private fun assertSliderAtTheStart() {
         composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo)).assertRangeInfoEquals(ProgressBarRangeInfo(0f, 0f..1f))
     }
 
-    /** 画面が曲を受け取って描画したことは、タイトルでしか確かめられない。 */
+    /**
+     * 画面が曲を受け取って描画したことは、タイトルでしか確かめられない。
+     */
     private fun showPlayerScreen() {
         composeTestRule.setContent {
             CompositionLocalProvider(LocalNavigator provides NoopNavigator()) {
@@ -122,7 +131,10 @@ class PlayerScreenUnknownDurationTest {
         composeTestRule.waitUntil(timeoutMs) { composeTestRule.onAllNodesWithText(untaggedSong.name).fetchSemanticsNodes().isNotEmpty() }
     }
 
-    /** 長さのタグがないファイルについてMediaStoreが返す行。長さ以外はそのまま。 */
+    /**
+     * 長さのタグがないファイルについてMediaStoreが返す行。
+     * 長さ以外はそのまま。
+     */
     private fun withoutDuration(song: SongModel): SongModel {
         return SongModel(song.songId, song.name, song.artistId, song.artistName, song.albumId, song.albumName, 0, song.trackNumber)
     }
@@ -131,7 +143,9 @@ class PlayerScreenUnknownDurationTest {
         onMain { PlaybackController.from(context).start(songs, 0) }
     }
 
-    /** ExoPlayerはメインルーパーで作るので、操作はすべてメインスレッドで行う。 */
+    /**
+     * ExoPlayerはメインルーパーで作るので、操作はすべてメインスレッドで行う。
+     */
     private fun onMain(block: () -> Unit) {
         InstrumentationRegistry.getInstrumentation().runOnMainSync(block)
     }
@@ -166,7 +180,9 @@ class PlayerScreenUnknownDurationTest {
         InstrumentationRegistry.getInstrumentation().uiAutomation.grantRuntimePermission(context.packageName, permission)
     }
 
-    /** 画面が閉じないことだけを確かめるので、back()は何も記録しない。 */
+    /**
+     * 画面が閉じないことだけを確かめるので、back()は何も記録しない。
+     */
     private class NoopNavigator : INavigator {
         override fun back() {}
         override fun mainEdit() {}

@@ -24,7 +24,10 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 
-/** Materialの無効状態のアルファ値。プレーヤーの非アクティブなアイコンと同じ。 */
+/**
+ * Materialの無効状態のアルファ値。
+ * プレーヤーの非アクティブなアイコンと同じ。
+ */
 private const val DISABLED_ALPHA = 0.38F
 
 /**

@@ -161,7 +161,10 @@ class SqliteVariableLimitTest {
         assertEquals(songs.map { it.artistName }.toSet(), found.map { it.name }.toSet())
     }
 
-    /** アルバムもアーティストも別々の3曲。1回の挿入で3つのテストに使える。 */
+    /**
+     * アルバムもアーティストも別々の3曲。
+     * 1回の挿入で3つのテストに使える。
+     */
     private suspend fun insertTracks(): List<SongModel> {
         listOf("a", "b", "c").forEach { name ->
             val values = ContentValues().apply {
@@ -180,7 +183,9 @@ class SqliteVariableLimitTest {
         return SongRepository(context).findAll().filter { it.name.startsWith(TITLE_PREFIX) }
     }
 
-    /** 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。 */
+    /**
+     * 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。
+     */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")

@@ -78,7 +78,9 @@ class MusicServiceControllerTest {
         }
     }
 
-    /** 前の曲がなければ、最初の3秒以内でも「前へ」は曲の先頭に戻る。 */
+    /**
+     * 前の曲がなければ、最初の3秒以内でも「前へ」は曲の先頭に戻る。
+     */
     @Test
     fun previousOnTheFirstSongRestartsIt() {
         val songs = twoSongs()
@@ -210,7 +212,9 @@ class MusicServiceControllerTest {
         }
     }
 
-    /** コントローラーはメインルーパーで作るので、操作はすべてメインスレッドで行う。 */
+    /**
+     * コントローラーはメインルーパーで作るので、操作はすべてメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 

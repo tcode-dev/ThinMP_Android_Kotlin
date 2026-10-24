@@ -19,7 +19,9 @@ class SliderUtilTest {
         assertEquals(1f, sliderPosition(200_000, 200_000), delta)
     }
 
-    /** メタデータを読めなかったファイルの長さは、MediaStoreでは0になる。 */
+    /**
+     * メタデータを読めなかったファイルの長さは、MediaStoreでは0になる。
+     */
     @Test
     fun treatsAnUnknownDurationAsTheStartOfTheTrack() {
         assertFalse("a NaN reaches the Slider and crashes the layout", sliderPosition(0, 0).isNaN())
@@ -29,7 +31,9 @@ class SliderUtilTest {
         assertEquals(0f, sliderPosition(5_000, 0), delta)
     }
 
-    /** DURATIONはInt列なので、負の値も0と同じく壊れたタグとして扱う。 */
+    /**
+     * DURATIONはInt列なので、負の値も0と同じく壊れたタグとして扱う。
+     */
     @Test
     fun treatsANegativeDurationAsTheStartOfTheTrack() {
         assertFalse("an infinity is as unroundable as a NaN", sliderPosition(5_000, -1).isInfinite())
@@ -37,7 +41,9 @@ class SliderUtilTest {
         assertEquals(0f, sliderPosition(5_000, -1), delta)
     }
 
-    /** 長さはタグ、位置はファイルから来るので、位置が長さを超えることがある。 */
+    /**
+     * 長さはタグ、位置はファイルから来るので、位置が長さを超えることがある。
+     */
     @Test
     fun staysWithinTheSlidersRange() {
         assertEquals(1f, sliderPosition(300_000, 200_000), delta)

@@ -79,7 +79,9 @@ class ShortcutRepositoryTest {
         assertEquals(listOf(2, 1), shortcuts.map { it.order })
     }
 
-    /** PlaylistRepositoryTest.reorderIgnoresAnIdThatIsNoLongerThereを参照。 */
+    /**
+     * PlaylistRepositoryTest.reorderIgnoresAnIdThatIsNoLongerThereを参照。
+     */
     @Test
     fun reorderIgnoresAnIdThatIsNoLongerThere() = runTest {
         repository.add(ArtistId("1"))

@@ -37,7 +37,9 @@ import java.util.concurrent.TimeUnit
 class MusicServiceLifetimeTest {
     private val timeoutMs = 15_000L
 
-    /** 起きてはいけない破棄を待つ時間。 */
+    /**
+     * 起きてはいけない破棄を待つ時間。
+     */
     private val quietMs = 1_000L
 
     private lateinit var context: Context

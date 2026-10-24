@@ -60,7 +60,9 @@ class MusicServiceConfigLoadTest {
         resetConfig()
     }
 
-    /** タップ後はALLとtrue、保存値はOFFとfalseなので、読み込みがタップを上書きした場合だけ結果が変わる。 */
+    /**
+     * タップ後はALLとtrue、保存値はOFFとfalseなので、読み込みがタップを上書きした場合だけ結果が変わる。
+     */
     @Test
     fun tappingBeforeTheConfigLoadsKeepsTheTap() = runBlocking {
         for (attempt in 1..attempts) {
@@ -82,7 +84,9 @@ class MusicServiceConfigLoadTest {
         }
     }
 
-    /** タップがなければ保存値が適用されること。 */
+    /**
+     * タップがなければ保存値が適用されること。
+     */
     @Test
     fun theStoredValuesAreAppliedWhenNothingIsTapped() = runBlocking {
         config.saveRepeat(RepeatState.ONE)
@@ -99,7 +103,9 @@ class MusicServiceConfigLoadTest {
         config.saveShuffle(false)
     }
 
-    /** [onConnected]はメインスレッドの接続コールバック内で呼ばれる。 */
+    /**
+     * [onConnected]はメインスレッドの接続コールバック内で呼ばれる。
+     */
     private fun connect(onConnected: (MediaController) -> Unit): MediaController {
         val token = SessionToken(context, ComponentName(context, MusicService::class.java))
         // 作成とリスナー登録を同じメインスレッドのターンで行うので、
@@ -138,7 +144,9 @@ class MusicServiceConfigLoadTest {
         }
     }
 
-    /** フィールドはサービスのメインスレッドのコルーチンが書くので、読むのもメインスレッドで行う。 */
+    /**
+     * フィールドはサービスのメインスレッドのコルーチンが書くので、読むのもメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 

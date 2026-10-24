@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/** `loaded`が必要な理由はPlaylistsEditUiStateを参照。 */
+/**
+ * `loaded`が必要な理由はPlaylistsEditUiStateを参照。
+ */
 data class FavoriteSongsEditUiState(
     val songs: List<SongModel> = emptyList(), val loaded: Boolean = false
 )
@@ -58,7 +60,9 @@ class FavoriteSongsEditViewModel(application: Application) : AndroidViewModel(ap
         }
     }
 
-    /** PlaylistsEditViewModel.save()を参照。 */
+    /**
+     * PlaylistsEditViewModel.save()を参照。
+     */
     fun save() {
         if (saveJob?.isActive == true) return
         if (!uiState.value.loaded) return

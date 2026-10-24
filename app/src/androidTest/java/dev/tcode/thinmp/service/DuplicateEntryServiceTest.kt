@@ -57,7 +57,9 @@ class DuplicateEntryServiceTest {
         db.close()
     }
 
-    /** (playlist_id, song_id)が主キーなので、同じ曲の2回目のaddは無視され、重複行はできない。 */
+    /**
+     * (playlist_id, song_id)が主キーなので、同じ曲の2回目のaddは無視され、重複行はできない。
+     */
     @Test
     fun duplicatePlaylistSongRowCannotBeCreated() = runBlocking {
         val repository = PlaylistRepository(db)
@@ -73,7 +75,9 @@ class DuplicateEntryServiceTest {
         assertEquals(1, playlist?.songs?.size)
     }
 
-    /** お気に入りも同じく、songIdが主キーなので重複行はできない。 */
+    /**
+     * お気に入りも同じく、songIdが主キーなので重複行はできない。
+     */
     @Test
     fun duplicateFavouriteRowCannotBeCreated() = runBlocking {
         db.favoriteSongDao().insert(FavoriteSongEntity(songId = realSongIdValue))
@@ -92,7 +96,9 @@ class DuplicateEntryServiceTest {
         assertEquals(1, songs.size)
     }
 
-    /** どの曲にも解決しないidは削除される。 */
+    /**
+     * どの曲にも解決しないidは削除される。
+     */
     @Test
     fun favouriteWhoseFileIsGoneIsDropped() = runBlocking {
         val repository = FavoriteSongRepository(db.favoriteSongDao())

@@ -84,7 +84,9 @@ class ShortcutServiceTest {
         assertEquals(Uri.EMPTY, models.first().imageUri)
     }
 
-    /** アルバムがなくてもショートカットは有効なので、不要な行として削除されないこと。 */
+    /**
+     * アルバムがなくてもショートカットは有効なので、不要な行として削除されないこと。
+     */
     @Test
     fun anArtistWithNoAlbumIsKept() = runBlocking {
         shortcuts.add(ArtistId(withoutAlbum))
@@ -94,7 +96,9 @@ class ShortcutServiceTest {
         assertEquals(1, shortcuts.findAll().size)
     }
 
-    /** アルバムがあるアーティストは、そのアルバムの画像を使うこと。 */
+    /**
+     * アルバムがあるアーティストは、そのアルバムの画像を使うこと。
+     */
     @Test
     fun anArtistWithAnAlbumKeepsItsImage() = runBlocking {
         shortcuts.add(ArtistId(withAlbum))
@@ -124,7 +128,9 @@ class ShortcutServiceTest {
         context.contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
     }
 
-    /** 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。 */
+    /**
+     * 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。
+     */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")

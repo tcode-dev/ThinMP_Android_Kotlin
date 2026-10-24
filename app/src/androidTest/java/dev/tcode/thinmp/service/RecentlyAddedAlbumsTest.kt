@@ -109,7 +109,9 @@ class RecentlyAddedAlbumsTest {
         return dates
     }
 
-    /** 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。 */
+    /**
+     * 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。
+     */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")

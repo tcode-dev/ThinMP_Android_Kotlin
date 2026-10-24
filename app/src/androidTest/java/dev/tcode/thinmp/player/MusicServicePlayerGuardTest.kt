@@ -42,7 +42,9 @@ import java.util.concurrent.TimeUnit
 class MusicServicePlayerGuardTest {
     private val timeoutMs = 15_000L
 
-    /** 送ったコマンドをセッションが処理し終えるまで待つ時間。 */
+    /**
+     * 送ったコマンドをセッションが処理し終えるまで待つ時間。
+     */
     private val settleMs = 1_000L
 
     private lateinit var context: Context
@@ -75,7 +77,9 @@ class MusicServicePlayerGuardTest {
         scenario.close()
     }
 
-    /** 一度もキューを受け取っていないサービス。 */
+    /**
+     * 一度もキューを受け取っていないサービス。
+     */
     @Test
     fun controlsAreIgnoredBeforeTheFirstStart() {
         assertControlsAreIgnored()
@@ -94,7 +98,9 @@ class MusicServicePlayerGuardTest {
         assertControlsAreIgnored()
     }
 
-    /** プレーヤー画面とミニプレーヤーが、曲がなくても送れる操作のすべて。 */
+    /**
+     * プレーヤー画面とミニプレーヤーが、曲がなくても送れる操作のすべて。
+     */
     private fun assertControlsAreIgnored() {
         runOnMain {
             controller.play()

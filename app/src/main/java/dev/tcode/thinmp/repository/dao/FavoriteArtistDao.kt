@@ -33,7 +33,9 @@ interface FavoriteArtistDao {
     @Query("DELETE FROM favorite_artists WHERE artist_id IN (:artistIds)")
     suspend fun deleteByArtistIdsChunk(artistIds: List<String>)
 
-    /** FavoriteSongDao.deleteBySongIdsを参照。 */
+    /**
+     * FavoriteSongDao.deleteBySongIdsを参照。
+     */
     @Transaction
     suspend fun deleteByArtistIds(artistIds: List<String>) {
         artistIds.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteByArtistIdsChunk(it) }

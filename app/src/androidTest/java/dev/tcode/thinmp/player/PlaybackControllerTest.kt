@@ -66,7 +66,9 @@ class PlaybackControllerTest {
         context.stopService(Intent(context, MusicService::class.java))
     }
 
-    /** コントローラーはURIなしで曲を送るので、サービスがonAddMediaItems()でURIを補わないと再生できない。 */
+    /**
+     * コントローラーはURIなしで曲を送るので、サービスがonAddMediaItems()でURIを補わないと再生できない。
+     */
     @Test
     fun playsASongStartedThroughTheController() {
         onMain { controller.start(listOf(song), 0) }
@@ -89,7 +91,9 @@ class PlaybackControllerTest {
         awaitPlaying()
     }
 
-    /** 曲の再生後に開いた画面(子画面)のミニプレーヤーは、バインドを待たずに現在の状態を表示する。 */
+    /**
+     * 曲の再生後に開いた画面(子画面)のミニプレーヤーは、バインドを待たずに現在の状態を表示する。
+     */
     @Test
     fun aNewMiniPlayerHasTheCurrentSongFromTheStart() {
         onMain { controller.start(listOf(song), 0) }
@@ -126,7 +130,9 @@ class PlaybackControllerTest {
         }
     }
 
-    /** コントローラーはメインスレッドで動くので、操作はすべてメインスレッドで行う。 */
+    /**
+     * コントローラーはメインスレッドで動くので、操作はすべてメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 
