@@ -12,11 +12,11 @@ class ShortcutViewModel : ViewModel(), ShortcutRegister {
     }
 
     /**
-     * Runs in viewModelScope rather than the caller's scope: the menu closes as soon as this is
-     * invoked, so a composition-scoped coroutine would be cancelled before the write lands.
+     * 呼ばれるとすぐにメニューが閉じるので、呼び出し元のスコープではなくviewModelScopeで書き込む。
+     * compositionのスコープだと、書き込みの前にキャンセルされてしまう。
      *
-     * The current state is decided inside the transaction rather than passed in from the menu
-     * label, so a stale label cannot turn an add into a second add.
+     * 現在の状態はメニューの表示から受け取らず、トランザクションの中で確かめる。
+     * 表示が古くても二重に追加しないようにするため。
      */
     fun toggle(shortcutItemId: ShortcutItemId) {
         viewModelScope.launch {

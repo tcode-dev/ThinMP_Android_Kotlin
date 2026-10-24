@@ -37,10 +37,9 @@ class ShortcutService(
 
             map[ItemType.ARTIST.ordinal] = artists.map { artist ->
                 val albums = albumRepository.findByArtistId(artist.id)
-                // An artist can resolve to no album at all: the albums collection carries the
-                // album's artist, so an artist who only appears on a compilation is not the
-                // artist of any album row. first() threw there, and this runs while the main
-                // screen is loading, so it took the whole screen with it.
+                // アルバムのテーブルはアルバムごとにアーティストを1人しか持たないので、
+                // コンピレーションにだけ参加しているアーティストにはアルバムがない。
+                // メイン画面の読み込み中なので、例外にせず画像なしにする。
                 val imageUri = albums.firstOrNull()?.getImageUri() ?: Uri.EMPTY
                 val id = group[ItemType.ARTIST.ordinal]!!.first { shortcut -> shortcut.itemId == artist.id }.id
 
@@ -83,7 +82,9 @@ class ShortcutService(
         return shortcutModels
     }
 
-    /** See FavoriteSongsService.removeMissing() for why this no longer re-reads. */
+    /**
+     * 再取得しない理由はFavoriteSongsService.removeMissing()を参照。
+     */
     private suspend fun removeMissing(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->
             shortcutModels.none { it.itemId.toId(it.type) == shortcutEntity.itemId }

@@ -28,7 +28,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
-/** Counts the reloads instead of querying anything. Public with an Application constructor so the factory can build it. */
+/**
+ * 何もクエリせず、再読み込みの回数だけを数える。
+ * ファクトリーから作れるよう、publicでApplicationを受け取る。
+ */
 class CountingSongListViewModel(application: Application) : SongListViewModel(application) {
     var loads = 0
 
@@ -40,9 +43,9 @@ class CountingSongListViewModel(application: Application) : SongListViewModel(ap
 }
 
 /**
- * The song lists read PlaybackController rather than binding the service: they reload when the
- * service drops a song it could not play, and show the mini player from the state the controller
- * already holds. The activity connects the controller, as it does in the app.
+ * 曲リストはサービスにバインドせずPlaybackControllerを読む。
+ * 再生できない曲が外されたら再読み込みし、コントローラーが持つ現在の状態からミニプレーヤーを表示する。
+ * アプリと同じくActivityが接続する。
  */
 @RunWith(AndroidJUnit4::class)
 class SongListViewModelTest {
@@ -61,8 +64,8 @@ class SongListViewModelTest {
         grantPermission("android.permission.POST_NOTIFICATIONS")
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
-        // Playback puts the service in the foreground, which the platform refuses while the app is
-        // in the background.
+        // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。
+        // バックグラウンドからのフォアグラウンド化はプラットフォームに拒否される。
         scenario = ActivityScenario.launch(MainActivity::class.java)
         controller = PlaybackController.from(context)
         await("the controller never connected") { onMain { controller.isConnected() } }
@@ -78,7 +81,9 @@ class SongListViewModelTest {
         context.stopService(Intent(context, MusicService::class.java))
     }
 
-    /** Plays nothing real, so it needs no MediaStore content and never skips itself. */
+    /**
+     * 実在の曲は再生しないので、音声ファイルがなくてもスキップしない。
+     */
     @Test
     fun reloadsWhenTheServiceDropsASong() {
         val viewModel = onMain { create(CountingSongListViewModel::class.java) }
@@ -89,9 +94,8 @@ class SongListViewModelTest {
     }
 
     /**
-     * A list opened for the first time while a song is queued, the way a child screen is. It used to
-     * show the mini player only once its own bind had connected. Needs an audio file on the device;
-     * skipped otherwise (tools/push-test-audio.sh).
+     * 曲がキューにあるときに初めて開いた一覧(子画面など)は、最初からミニプレーヤーを表示する。
+     * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
      */
     @Test
     fun aListOpenedWhileASongIsQueuedShowsTheMiniPlayerFromTheStart() {
@@ -106,7 +110,9 @@ class SongListViewModelTest {
         assertTrue("the mini player was hidden on the list's first frame", isVisible)
     }
 
-    /** Main thread only, like the screens that build these. */
+    /**
+     * 画面と同じく、メインスレッドで作る。
+     */
     private fun <T : ViewModel> create(modelClass: Class<T>): T {
         val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(context as Application)
 
@@ -126,7 +132,9 @@ class SongListViewModelTest {
         }
     }
 
-    /** The controller and the view models run on the main thread, so everything goes there. */
+    /**
+     * コントローラーとview modelはメインスレッドで動くので、操作はすべてメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 

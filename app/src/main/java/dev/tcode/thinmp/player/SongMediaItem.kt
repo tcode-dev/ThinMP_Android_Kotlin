@@ -17,12 +17,12 @@ private const val EXTRA_DURATION = "dev.tcode.thinmp.DURATION"
 private const val EXTRA_TRACK_NUMBER = "dev.tcode.thinmp.TRACK_NUMBER"
 
 /**
- * Everything a SongModel holds travels with the item, so whoever reads the queue - the service, or a
- * MediaController in PlaybackController - gets the whole song back from it without a MediaStore
- * query. The duration is MediaStore's own value, 0 for an untagged file, rather than the player's.
+ * SongModelの全項目をMediaItemに持たせるので、
+ * キューを読む側(サービスやPlaybackController)はMediaStoreを引かずに曲を復元できる。
+ * 長さはプレーヤーではなくMediaStoreの値で、タグがなければ0。
  *
- * Without [withUri] the item carries only the song's identity and metadata, which is all a
- * controller has to send: the service puts the URI back in onAddMediaItems().
+ * [withUri]がfalseならURIを含めない。
+ * コントローラーから送るときはこれで足り、URIはサービスがonAddMediaItems()で補う。
  */
 fun SongModel.toMediaItem(withUri: Boolean): MediaItem {
     val extras = Bundle().apply {
@@ -40,7 +40,9 @@ fun SongModel.toMediaItem(withUri: Boolean): MediaItem {
     return builder.build()
 }
 
-/** Null for an item that did not come from [toMediaItem]. */
+/**
+ * [toMediaItem]で作ったものでなければnull。
+ */
 fun MediaItem.toSongModel(): SongModel? {
     val extras = mediaMetadata.extras ?: return null
 
@@ -56,7 +58,9 @@ fun MediaItem.toSongModel(): SongModel? {
     )
 }
 
-/** The same URI SongModel.getMediaUri() builds, from the media id alone. */
+/**
+ * SongModel.getMediaUri()と同じURIを、media idだけから作る。
+ */
 fun songMediaUri(mediaId: String): Uri {
     return Uri.parse("${MediaStore.Audio.Media.EXTERNAL_CONTENT_URI}/${mediaId}")
 }

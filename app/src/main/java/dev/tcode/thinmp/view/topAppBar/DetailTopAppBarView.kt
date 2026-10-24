@@ -47,7 +47,7 @@ fun DetailTopAppBarView(title: String, visible: Boolean, toggle: () -> Unit) {
                 .statusBarsPadding()
                 .height(StyleConstant.ROW_HEIGHT.dp)
                 .padding(start = StyleConstant.PADDING_TINY.dp, end = StyleConstant.PADDING_TINY.dp)
-                // クリック時に下の要素が反応しないように空のclickableを設定
+                // 下の要素がタップに反応しないよう、空のclickableを設定する
                 .clickable {}, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween
         ) {
             BackButtonView()

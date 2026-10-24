@@ -7,9 +7,9 @@ import androidx.compose.ui.unit.dp
 import dev.tcode.thinmp.constant.StyleConstant
 
 /**
- * GridCellsを拡張してLazyVerticalGridの各行の最初と最後の要素の幅を変更する
- * GridCells.Fixedの代わりに使う
- * 最初と最後を区別するため2列以上でのみ使える
+ * LazyVerticalGridの各行で、最初と最後の要素の幅を変えるGridCells。
+ * GridCells.Fixedの代わりに使う。
+ * 最初と最後を区別するため、2列以上でしか使えない。
  */
 class CustomGridCellsFixed(
     private val count: Int,
@@ -34,8 +34,8 @@ class CustomGridCellsFixed(
     }
 
     /**
-     * LazyVerticalGridは列幅の計算結果をremember(columns, ...)で保持するため、同じ列数・同じ余白なら
-     * 等しいインスタンスとして扱われなければ、recompositionのたびにキャッシュごと作り直される
+     * LazyVerticalGridは列幅の計算結果をremember(columns, ...)で保持するので、
+     * 列数と余白が同じなら等しいと判定しないと、recompositionのたびに計算し直される。
      */
     override fun equals(other: Any?): Boolean {
         return other is CustomGridCellsFixed && count == other.count && edgeSpace == other.edgeSpace

@@ -19,8 +19,8 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.util.DividerView
 
 /**
- * A playlist row in the register popup. A playlist the song is already in cannot be tapped, so it
- * is greyed out and says so - otherwise it looks like a row that simply did nothing.
+ * 登録ポップアップのプレイリストの行。
+ * その曲が入っているプレイリストは追加できないので、グレーアウトして登録済みと表示する。
  */
 @Composable
 fun PlaylistRegisterRowView(text: String, registered: Boolean, modifier: Modifier = Modifier) {

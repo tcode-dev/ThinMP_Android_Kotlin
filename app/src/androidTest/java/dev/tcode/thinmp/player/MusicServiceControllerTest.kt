@@ -24,15 +24,13 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * What the notification, the lock screen and a headset reach: the service's MediaSession, through a
- * MediaController, rather than the app's own binder.
+ * 通知、ロック画面、ヘッドセットからの操作を、それらと同じくMediaController経由で確かめる。
  *
- * The back and forward buttons there are ExoPlayer's own: they stop at either end of the queue
- * unless repeat is set to all, and "next" is greyed out on the last song otherwise. And a repeat or
- * shuffle change made there has to be saved like one made in the app.
+ * 前へ・次へはExoPlayer標準の動きで、リピートが全曲でなければキューの両端で止まる。
+ * リピートとシャッフルの変更は、アプリから操作したときと同じく保存されなければならない。
  *
- * The seek tests need two audio files on the device and skip themselves otherwise
- * (tools/push-test-audio.sh). The config tests play nothing.
+ * シークのテストは端末に音声ファイルが2つ必要で、なければスキップする(tools/push-test-audio.sh)。
+ * 設定のテストは再生しない。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServiceControllerTest {
@@ -54,8 +52,8 @@ class MusicServiceControllerTest {
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
         resetConfig()
 
-        // Playback puts the service in the foreground, which the platform refuses while the app is
-        // in the background.
+        // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。
+        // バックグラウンドからのフォアグラウンド化はプラットフォームに拒否される。
         scenario = ActivityScenario.launch(MainActivity::class.java)
         controller = connectController(context, timeoutMs)
     }
@@ -80,7 +78,9 @@ class MusicServiceControllerTest {
         }
     }
 
-    /** With no song before it, "previous" restarts the first song even inside the first three seconds. */
+    /**
+     * 前の曲がなければ、最初の3秒以内でも「前へ」は曲の先頭に戻る。
+     */
     @Test
     fun previousOnTheFirstSongRestartsIt() {
         val songs = twoSongs()
@@ -124,10 +124,10 @@ class MusicServiceControllerTest {
     }
 
     /**
-     * Past the first three seconds "previous" restarts the song. seekToPrevious() is what the
-     * notification's button and a headset's arrive as, both through KEYCODE_MEDIA_PREVIOUS.
-     * seekToPreviousMediaItem() makes no three-second check: it moves to the song before whenever
-     * there is one.
+     * 3秒を過ぎると「前へ」は曲の先頭に戻る。
+     * 通知やヘッドセットのボタンはKEYCODE_MEDIA_PREVIOUSからseekToPrevious()として届くので、
+     * それを使う。
+     * seekToPreviousMediaItem()には3秒の判定がない。
      */
     @Test
     fun previousAfterThreeSecondsRestartsTheSong() {
@@ -175,9 +175,9 @@ class MusicServiceControllerTest {
     }
 
     /**
-     * Paused straight away, in the same main thread turn, so the song never plays. The test songs
-     * are two seconds long: left playing they move on to the next song, and back to the first one
-     * after the last, by themselves, which is exactly where the buttons under test are meant to go.
+     * 開始と同じメインスレッドのターンで一時停止し、実際には鳴らさない。
+     * テスト用の曲は2秒しかなく、鳴らしたままだと自動で次の曲へ進む(末尾からは先頭へ戻る)ため、
+     * ボタンを押した結果と区別できなくなる。
      */
     private fun start(songs: List<SongModel>, index: Int) {
         onMain {
@@ -212,7 +212,9 @@ class MusicServiceControllerTest {
         }
     }
 
-    /** The controller is built on the main looper, so everything that touches it has to go there. */
+    /**
+     * コントローラーはメインルーパーで作るので、操作はすべてメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 

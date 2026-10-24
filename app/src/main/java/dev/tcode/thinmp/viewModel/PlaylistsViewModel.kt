@@ -20,15 +20,18 @@ import kotlinx.coroutines.flow.update
 
 data class PlaylistsUiState(
     val playlists: List<PlaylistModel> = emptyList(),
-    /** Playlists the popup's song is already in. Empty until a song is named. */
+    /**
+     * ポップアップの曲が入っているプレイリスト。
+     * 曲が決まるまでは空。
+     */
     val registeredPlaylistIds: Set<PlaylistId> = emptySet()
 )
 
 class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
-    // The register popup is opened for one song, and the list has to mark the playlists that song
-    // is already in. onResume reloads without being told the song again, so it is kept here.
+    // 登録ポップアップでは、その曲が入っているプレイリストに印を付ける。
+    // onResumeでの再読み込みでは曲が渡されないので、ここに保持しておく。
     private var songId: SongId? = null
     private val _uiState = MutableStateFlow(PlaylistsUiState())
     val uiState: StateFlow<PlaylistsUiState> = _uiState.asStateFlow()
@@ -64,8 +67,8 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    // The popup and the dropdown close as soon as these are invoked, so the writes run in
-    // viewModelScope rather than in the caller's composition scope.
+    // ポップアップやドロップダウンは呼んだ直後に閉じるので、
+    // 書き込みはcompositionのスコープではなくviewModelScopeで行う。
     fun create(songId: SongId, name: String) {
         viewModelScope.launch { createPlaylist(songId, name) }
     }
@@ -74,9 +77,7 @@ class PlaylistsViewModel(application: Application) : AndroidViewModel(applicatio
         viewModelScope.launch {
             if (addSongToPlaylist(playlistId, songId)) return@launch
 
-            // The popup is gone by the time the write reports back, so there is no composition
-            // left to raise this from. viewModelScope runs on the main thread, which is where a
-            // Toast has to be shown.
+            // ポップアップはもう閉じているので、ここでToastを出す。viewModelScopeはメインスレッドで動く。
             Toast.makeText(getApplication(), R.string.already_added_to_playlist, Toast.LENGTH_SHORT).show()
         }
     }

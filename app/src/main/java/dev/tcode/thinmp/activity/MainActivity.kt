@@ -25,14 +25,12 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 画面全体に表示
+        // システムバーの下まで描画する
         WindowCompat.setDecorFitsSystemWindows(window, false)
         window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
 
-        // StatusBarを透過
         window.statusBarColor = ContextCompat.getColor(this, android.R.color.transparent)
 
-        // display cutout領域にも表示
         window.attributes.layoutInDisplayCutoutMode = WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
 
         setContent {
@@ -46,7 +44,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** Connected while the activity is visible, the way Media3 recommends; see PlaybackController. */
+    /**
+     * Media3の推奨どおり、Activityが見えている間だけ接続する。
+     */
     override fun onStart() {
         super.onStart()
         playbackController.connect()

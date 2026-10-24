@@ -59,7 +59,7 @@ class ShortcutRepository(
         val shortcuts = findAll()
         val group = shortcuts.groupBy { shortcut -> shortcutIds.any { it.id == shortcut.id } }
         val deleteShortcuts = group[false] ?: emptyList()
-        // See PlaylistRepository.reorder() for why this is firstOrNull.
+        // firstOrNullにする理由はPlaylistRepository.reorder()を参照。
         val sortedShortcuts = shortcutIds.mapNotNull { shortcutId -> group[true]?.firstOrNull { it.id == shortcutId.id } }
 
         if (deleteShortcuts.isNotEmpty()) {

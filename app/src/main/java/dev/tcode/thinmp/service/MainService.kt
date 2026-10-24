@@ -22,16 +22,14 @@ class MainService(val context: Context) {
     }
 
     /**
-     * The albums an album's tracks were added most recently first.
+     * 最近曲が追加されたアルバムを新しい順に返す。
      *
-     * This used to sort the albums collection by its own _id, on the assumption that a larger id
-     * means a newer album. MediaStore computes that id from the album's name instead: delete an
-     * album and add it back and it returns with the id it had before, so the order it produces has
-     * nothing to do with when anything was added.
+     * アルバムの_idでは並べられない。
+     * MediaStoreはアルバム名からidを計算するので、削除して追加し直したアルバムも以前と同じidになり、
+     * idの大小は追加日時と関係がない。
      *
-     * The tracks come back one per album and already cut to the display count, so there is nothing
-     * to whittle down here. findByIds cannot preserve an order, so the ids drive it afterwards, the
-     * way the favourites and shortcuts services do.
+     * 曲はアルバムごとに1曲、表示件数分だけ返るので、ここで絞り込む必要はない。
+     * findByIdsは順序を保たないので、他のサービスと同じくidの順に並べ直す。
      */
     suspend fun getRecentlyAlbums(): List<AlbumModel> {
         val songRepository = SongRepository(context)

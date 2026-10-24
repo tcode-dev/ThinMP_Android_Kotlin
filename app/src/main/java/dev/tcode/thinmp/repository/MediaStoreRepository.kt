@@ -11,10 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
- * The query and the cursor it opens are arguments and locals, never fields. As fields they were
- * shared by every caller of the same instance: two coroutines querying one repository would
- * overwrite each other's selection between the assignment and the query, and close each other's
- * cursor mid-iteration. Nothing here is scoped to the instance, so the instance holds nothing.
+ * selectionやカーソルはフィールドに持たず、引数とローカル変数だけで扱う。
+ * フィールドにすると、同じインスタンスを使う複数のコルーチンが互いのselectionを上書きしたり、
+ * 読み込み中のカーソルを閉じたりしてしまう。
  */
 abstract class MediaStoreRepository<T : Music>(private val context: Context, private val uri: Uri, private val projection: Array<String>) {
     abstract fun fetch(cursor: Cursor): T
@@ -31,27 +30,25 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         }
 
     /**
-     * [bundle] is for queries the selection/sortOrder arguments cannot express - a SQL GROUP BY, or
-     * a LIMIT. It is an overload rather than a fourth argument beside them because it carries its
-     * own selection and sort order: ContentResolver.query() takes either the three arguments or the
-     * bundle, never both.
+     * selection/sortOrderでは書けないクエリ(GROUP BYやLIMIT)用。
+     * ContentResolver.query()はselectionなどの引数かbundleのどちらか一方しか受け取らないので、
+     * 引数を足すのではなくオーバーロードにしている。
      */
     protected suspend fun getList(bundle: Bundle): List<T> = withContext(Dispatchers.IO) {
         toList(context.contentResolver.query(uri, projection, bundle, null))
     }
 
     /**
-     * An `IN` list costs one host parameter per id, and these statements are compiled by
-     * MediaProvider - a separate process, with a SQLite build of its own and a limit this side
-     * cannot read - so the list is cut at [SqliteConstant.MAX_VARIABLES] rather than sent whole.
+     * `IN`はidの数だけホストパラメーターを使い、
+     * その上限は別プロセスのMediaProviderのSQLite次第でアプリからは分からない。
+     * そのため[SqliteConstant.MAX_VARIABLES]ごとに分割して問い合わせる。
      *
-     * Split, it becomes several queries and several cursors, and the rows arrive grouped by chunk
-     * instead of in one provider order. That is already how callers treat a findByIds(): each maps
-     * its own id list over the result rather than using the order it came back in, because
-     * MediaStore has no way to sort by it.
+     * 分割すると結果はチャンクごとにまとまって返るが、MediaStoreではidの順に並べられないので、
+     * 呼び出し側はもともと戻り値の順序を使わず、自分のidリストの順に対応付けている。
      *
-     * [ids] is deduplicated first. `IN` collapses repeats anyway, and the same song listed a
-     * thousand times in one playlist should not be what pushes the query over the limit.
+     * [ids]は先に重複を除く。
+     * `IN`は重複をまとめるので結果は変わらず、
+     * 同じ曲が大量に入ったプレイリストで上限を超えることもなくなる。
      */
     protected suspend fun getListByIds(idColumn: String, ids: List<String>, condition: String? = null): List<T> {
         val suffix = if (condition == null) "" else " AND $condition"

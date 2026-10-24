@@ -14,7 +14,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-/** See PlaylistsEditUiState for why `loaded` cannot be inferred from the list being empty. */
+/**
+ * `loaded`が必要な理由はPlaylistsEditUiStateを参照。
+ */
 data class FavoriteArtistsEditUiState(
     val artists: List<ArtistModel> = emptyList(), val loaded: Boolean = false
 )
@@ -58,7 +60,9 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
         }
     }
 
-    /** See PlaylistsEditViewModel.save(). */
+    /**
+     * PlaylistsEditViewModel.save()を参照。
+     */
     fun save() {
         if (saveJob?.isActive == true) return
         if (!uiState.value.loaded) return

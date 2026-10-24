@@ -34,21 +34,27 @@ interface ShortcutDao {
     @Query("DELETE FROM shortcuts WHERE id IN (:ids)")
     suspend fun deleteByIdsChunk(ids: List<String>)
 
-    /** See FavoriteSongDao.deleteBySongIds. */
+    /**
+     * FavoriteSongDao.deleteBySongIdsを参照。
+     */
     @Transaction
     suspend fun deleteByIds(ids: List<String>) {
         ids.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteByIdsChunk(it) }
     }
 
-    /** Reads the current maximum order and inserts as one unit; separately they race and two
-     * concurrent adds can be assigned the same order. */
+    /**
+     * orderの最大値の取得と挿入を1つのトランザクションで行う。
+     * 別々にすると、同時に追加したときに同じorderが付いてしまう。
+     */
     @Transaction
     suspend fun insertAtEnd(itemId: String, type: Int) {
         insert(ShortcutEntity(itemId = itemId, type = type, order = getMaxOrder() + 1))
     }
 
-    /** Reads the current state and writes as one unit; separately they race and two concurrent
-     * toggles can both see "not a shortcut" and insert a second row for the same item. */
+    /**
+     * 状態の確認と書き込みを1つのトランザクションで行う。
+     * 別々にすると、同時に2回toggleしたときに両方が「未登録」と判断して、同じ項目が2行挿入される。
+     */
     @Transaction
     suspend fun toggle(itemId: String, type: Int) {
         if (exists(itemId, type)) {

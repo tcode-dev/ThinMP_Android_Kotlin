@@ -18,16 +18,14 @@ private const val TITLE_PREFIX = "thinmp_test_recent_"
 private const val ALBUM_PREFIX = "thinmp_test_recent_album_"
 
 /**
- * "Recently added" used to sort the albums collection by its own _id, taking a larger id to mean a
- * newer album. MediaStore computes that id from the album's name: delete an album and add it back
- * and it comes back with the id it had before, so the order had nothing to do with when anything
- * was added. The albums collection has no date column of its own, so the order has to come from
- * the tracks.
+ * 「最近追加された」アルバムは、アルバムの_idでは並べられない。
+ * MediaStoreはアルバム名からidを計算するので、削除して追加し直したアルバムも以前と同じidになり、
+ * idの大小は追加日時と関係がない。
+ * アルバムのテーブルには日付の列もないので、曲の追加日時から順序を決める。
  *
- * The three albums below are added oldest first and expected back newest first, which is the order
- * their ids happen not to be in.
+ * 3つのアルバムを古い順に追加し、新しい順に返ることを確かめる(この順はidの順と一致しない)。
  *
- * Needs at least one audio file on the device; skipped otherwise (tools/push-test-audio.sh).
+ * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class RecentlyAddedAlbumsTest {
@@ -58,9 +56,9 @@ class RecentlyAddedAlbumsTest {
     }
 
     /**
-     * An album is as recent as its newest track, and it appears once however many tracks it has.
-     * The grouping is SQL, so this is also the check that MediaStore honoured it: without it the
-     * album with two tracks comes back twice.
+     * アルバムの新しさは、その中で最も新しい曲で決まり、曲がいくつあってもアルバムは1回だけ返る。
+     * グループ化はSQLで行うので、MediaStoreがGROUP BYに従っていることの確認も兼ねる。
+     * 従わなければ2曲あるアルバムが2回返る。
      */
     @Test
     fun anAlbumIsAsRecentAsItsNewestTrack() = runBlocking {
@@ -75,8 +73,8 @@ class RecentlyAddedAlbumsTest {
     }
 
     /**
-     * date_added counts in seconds, so the tracks have to be spaced out to be ordered at all. The
-     * test asserts they came out distinct rather than trusting the sleep.
+     * date_addedは秒単位なので、順序が付くように間隔を空けて挿入する。
+     * sleepだけに頼らず、テスト側で値がすべて異なることを確かめる。
      */
     private fun insertTrack(album: String, suffix: String = "") {
         val values = ContentValues().apply {
@@ -111,7 +109,9 @@ class RecentlyAddedAlbumsTest {
         return dates
     }
 
-    /** Also runs before the inserts: a run that died before its tearDown must not skew the next. */
+    /**
+     * 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。
+     */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")

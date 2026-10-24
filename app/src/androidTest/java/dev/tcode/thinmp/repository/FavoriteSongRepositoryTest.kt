@@ -53,9 +53,9 @@ class FavoriteSongRepositoryTest {
     }
 
     /**
-     * The reason replaceAll exists. Before it was a single transaction, the repository ran
-     * deleteAll() and then inserted one row at a time; a failure partway through left the user
-     * with no favourites at all.
+     * トランザクションなしでdeleteAll()と1件ずつのinsertを行うと、
+     * 途中で失敗したときにお気に入りが全部消える。
+     * replaceAllはそれを防ぐためにある。
      */
     @Test
     fun replaceAllRollsBackWhenAnInsertFails() = runTest {
@@ -68,7 +68,7 @@ class FavoriteSongRepositoryTest {
             dao.replaceAll(entities)
             throw AssertionError("expected the duplicate primary key to abort the insert")
         } catch (expected: android.database.sqlite.SQLiteConstraintException) {
-            // The transaction must roll back the deleteAll() that preceded the failing insert.
+            // 失敗したinsertの前のdeleteAll()はロールバックされていなければならない。
         }
 
         assertEquals(listOf(SongId("1"), SongId("2"), SongId("3")), repository.findAll())
@@ -84,10 +84,10 @@ class FavoriteSongRepositoryTest {
     }
 
     /**
-     * The reason toggle exists. Reading exists() and then calling add() leaves a suspension point
-     * between the read and the write, so two concurrent toggles can both see "not a favourite"
-     * and both go on to insert. The primary key now turns that into a crash rather than a
-     * duplicate row, which is still not what a double tap should do.
+     * exists()とadd()を別々に呼ぶと間に中断点ができ、
+     * 同時に2回toggleすると両方が「未登録」と判断して挿入に進む。
+     * 主キーがあるので重複行にはならないがクラッシュする。
+     * toggleはそれを防ぐためにある。
      */
     @Test
     fun concurrentTogglesNeverInsertTheSameSongTwice() = runBlocking {
@@ -102,7 +102,9 @@ class FavoriteSongRepositoryTest {
         }
     }
 
-    /** What the primary key buys: the duplicate row toggle used to have to clean up cannot exist. */
+    /**
+     * 主キーにより重複行は作れない。
+     */
     @Test
     fun theSameSongCannotBeStoredTwice() = runTest {
         val dao = db.favoriteSongDao()
@@ -112,7 +114,7 @@ class FavoriteSongRepositoryTest {
             dao.insert(FavoriteSongEntity(songId = "1"))
             throw AssertionError("expected the primary key to reject the duplicate song")
         } catch (expected: android.database.sqlite.SQLiteConstraintException) {
-            // The row is the song, so storing it twice is not a state the schema allows.
+            // 主キーの重複なので失敗するのが正しい。
         }
 
         assertEquals(listOf(SongId("1")), repository.findAll())

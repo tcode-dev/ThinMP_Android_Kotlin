@@ -12,8 +12,8 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Regression guard for removing .allowMainThreadQueries(). The database here is built without it,
- * so if any DAO function stops being suspend, Room's assertNotMainThread() fires and these fail.
+ * Roomに.allowMainThreadQueries()が不要であることを確かめる。
+ * このデータベースはそれなしで作るので、suspendでないDAO関数があればassertNotMainThread()で失敗する。
  */
 @RunWith(AndroidJUnit4::class)
 class MainThreadAccessTest {

@@ -42,7 +42,7 @@ fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: P
 
     CustomLifecycleEventObserver(viewModel)
 
-    // The list is per song: it marks the playlists this song is already in.
+    // その曲が入っているプレイリストに印を付けるため、曲ごとに読み込む。
     LaunchedEffect(songId) { viewModel.load(songId) }
 
     Popup(
@@ -107,9 +107,8 @@ fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: P
                         .fillMaxWidth()
                         .padding(top = StyleConstant.PADDING_LARGE.dp), horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    // A playlist with no name is indistinguishable from the others in every list
-                    // that shows it, so the button stays disabled until there is one. Blank rather
-                    // than empty: a name of spaces displays the same as no name at all.
+                    // 名前のないプレイリストは一覧で見分けられないので、名前を入力するまで無効にする。
+                    // スペースだけの名前も空と同じに見えるので、isNotBlankで判定する。
                     OutlinedButton(
                         enabled = name.isNotBlank(),
                         onClick = {

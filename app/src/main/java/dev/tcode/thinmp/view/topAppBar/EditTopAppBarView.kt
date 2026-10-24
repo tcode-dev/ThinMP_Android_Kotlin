@@ -24,14 +24,18 @@ import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.title.PrimaryTitleView
 
-/** Material's disabled content alpha, the same one the player's inactive icons use. */
+/**
+ * Materialの無効状態のアルファ値。
+ * プレーヤーの非アクティブなアイコンと同じ。
+ */
 private const val DISABLED_ALPHA = 0.38F
 
 /**
- * [visible] fades the bar's background in as the list scrolls under it; the row of buttons is
- * outside that and always on screen. [enabled] is the done button on its own: the list arrives
- * asynchronously and saving before it does would write an empty list back over the stored one, so
- * the button stays inert - and looks it - until the screen has something real to save.
+ * [visible]は一覧のスクロールに合わせてバーの背景を表示する。
+ * ボタンは常に表示する。
+ * [enabled]は完了ボタンだけに効く。
+ * 一覧の読み込み前に保存すると空の一覧で上書きしてしまうので、読み込みが終わるまで無効にし、
+ * 見た目も無効にする。
  */
 @Composable
 fun EditTopAppBarView(visible: Boolean, enabled: Boolean, callback: () -> Unit) {

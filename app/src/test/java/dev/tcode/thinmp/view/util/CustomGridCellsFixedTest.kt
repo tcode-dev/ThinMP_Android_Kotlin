@@ -9,13 +9,16 @@ import org.junit.Assert.assertThrows
 import org.junit.Test
 
 /**
- * LazyVerticalGridは1行の幅を「またいだスロットの左端から右端まで」で決めるため、ここが返す合計が
- * availableSizeに届かないと、セルだけでなく全幅アイテム(メニュー行や曲一覧)の幅も足りなくなる。
+ * LazyVerticalGridは行の幅を、またがるセルの幅の合計で決める。
+ * ここで返す合計がavailableSizeに足りないと、
+ * セルだけでなく全幅のアイテム(メニューの行や曲の一覧)まで幅が足りなくなる。
  */
 class CustomGridCellsFixedTest {
     private val edge = 10
 
-    /** 端の要素はGridCellViewが内側に10dp多くパディングを取るぶん、幅も10dp広い。 */
+    /**
+     * 端のセルはGridCellViewが内側に10dp多く余白を取るので、そのぶん10dp広くする。
+     */
     @Test
     fun widensTheFirstAndLastCellByTheEdgeSpace() {
         assertEquals(listOf(510, 510), calculate(count = 2, availableSize = 1020))
@@ -23,7 +26,9 @@ class CustomGridCellsFixedTest {
         assertEquals(listOf(260, 250, 250, 260), calculate(count = 4, availableSize = 1020))
     }
 
-    /** 端と内側の差がedgeSpaceちょうどでなければ、見えるコンテンツの幅が列ごとに変わってしまう。 */
+    /**
+     * 端と内側の幅の差がedgeSpaceと等しくないと、見える内容の幅が列によって変わってしまう。
+     */
     @Test
     fun keepsTheVisibleWidthOfEveryCellEqual() {
         val sizes = calculate(count = 4, availableSize = 1020)
@@ -37,17 +42,21 @@ class CustomGridCellsFixedTest {
         assertEquals(1020, calculate(count = 4, availableSize = 1020).sum())
     }
 
-    /** 割り切れない端数を捨てると、行の幅が最大でcount-1px足りなくなる。 */
+    /**
+     * 割り切れない端数を捨てると、行の幅が最大でcount-1px足りなくなる。
+     */
     @Test
     fun distributesTheRemainder() {
-        // 411dp / density 2.625 の端末。contentSizeが1027なので1px余る
+        // 411dp・density 2.625の端末。contentSizeが1027なので1px余る。
         val sizes = calculate(count = 2, availableSize = 1079, density = 2.625f)
 
         assertEquals(listOf(540, 539), sizes)
         assertEquals(1079, sizes.sum())
     }
 
-    /** GridCellsの取り決めでは、返す合計はセルの間隔を除いた幅でなければならない。 */
+    /**
+     * GridCellsの仕様では、合計はセル間の余白を除いた幅でなければならない。
+     */
     @Test
     fun subtractsTheSpacingBetweenCells() {
         val spacing = 10
@@ -56,7 +65,9 @@ class CustomGridCellsFixedTest {
         assertEquals(1010 - (spacing * 2), sizes.sum())
     }
 
-    /** 最初と最後を区別できない列数は、幅の計算そのものが成立しない。 */
+    /**
+     * 2列未満では最初と最後を区別できないので、幅を計算できない。
+     */
     @Test
     fun rejectsAColumnCountBelowTwo() {
         assertThrows(IllegalArgumentException::class.java) { CustomGridCellsFixed(1) }
@@ -65,8 +76,8 @@ class CustomGridCellsFixedTest {
     }
 
     /**
-     * 各画面はrecompositionのたびにインスタンスを生成し直すため、ここが等しくないと
-     * remember(columns, ...)が持つ列幅のキャッシュが毎回作り直される。
+     * 画面はrecompositionのたびにインスタンスを作り直すので、
+     * 等しいと判定しないとremember(columns, ...)に保持した列幅が毎回計算し直される。
      */
     @Test
     fun treatsTheSameColumnCountAndEdgeSpaceAsEqual() {
@@ -75,7 +86,9 @@ class CustomGridCellsFixedTest {
         assertEquals(CustomGridCellsFixed(3), CustomGridCellsFixed(3))
     }
 
-    /** 列数か余白が変われば幅も変わるので、キャッシュを引き継いではいけない。 */
+    /**
+     * 列数か余白が違えば幅も変わるので、別のものとして扱う。
+     */
     @Test
     fun treatsDifferentColumnCountOrEdgeSpaceAsNotEqual() {
         assertNotEquals(CustomGridCellsFixed(2, edge.dp), CustomGridCellsFixed(3, edge.dp))

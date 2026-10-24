@@ -24,19 +24,17 @@ import org.junit.runner.RunWith
 private const val TITLE_PREFIX = "thinmp_test_limit_"
 
 /**
- * One over the 32766 the SQLite on this device compiles `IN (?,?,...)` with. It is the number at
- * which every query below threw `too many SQL variables` before the lists were chunked, so it is
- * what makes these tests fail when the chunking is taken back out. Devices whose SQLite predates
- * 3.32 hit the same wall at 1000, which is why SqliteConstant.MAX_VARIABLES cuts at 999 rather
- * than at what this emulator happens to allow.
+ * この端末のSQLiteで`IN (?,?,...)`に使える上限32766を1つ超える数。
+ * 分割せずに送ると、どのクエリも`too many SQL variables`で失敗する。
+ * 3.32より古いSQLiteの上限は999なので、
+ * SqliteConstant.MAX_VARIABLESはこのエミュレーターの値ではなく999にしている。
  */
 private const val OVER_LIMIT = 32767
 
 /**
- * The id list is the user's data, so its length is theirs to decide: 1000 favourites, a playlist
- * of everything on the device. Each test puts a real id at the start, the middle and the end of an
- * over-long list, so a chunking that stopped after the first chunk - or kept only the last - fails
- * as loudly as no chunking at all.
+ * idのリストはユーザーのデータなので、長さに上限はない(お気に入り1000件、全曲入りのプレイリストなど)。
+ * 長いリストの先頭・中央・末尾に実在するidを置くので、
+ * 最初や最後のチャンクしか実行しない分割も検出できる。
  */
 @RunWith(AndroidJUnit4::class)
 class SqliteVariableLimitTest {
@@ -132,8 +130,9 @@ class SqliteVariableLimitTest {
     }
 
     /**
-     * The MediaStore half of the same problem, and the one the app cannot size up in advance: these
-     * statements are compiled by MediaProvider, in its own process and with its own SQLite.
+     * MediaStore側の同じ問題。
+     * こちらの文はMediaProviderが自分のプロセスのSQLiteでコンパイルするので、
+     * アプリから上限を知る方法がない。
      */
     @Test
     fun songsCanBeFoundByMoreIdsThanSqliteBinds() = runBlocking {
@@ -162,7 +161,10 @@ class SqliteVariableLimitTest {
         assertEquals(songs.map { it.artistName }.toSet(), found.map { it.name }.toSet())
     }
 
-    /** Three tracks, each its own album and its own artist, so one insert serves all three tests. */
+    /**
+     * アルバムもアーティストも別々の3曲。
+     * 1回の挿入で3つのテストに使える。
+     */
     private suspend fun insertTracks(): List<SongModel> {
         listOf("a", "b", "c").forEach { name ->
             val values = ContentValues().apply {
@@ -181,7 +183,9 @@ class SqliteVariableLimitTest {
         return SongRepository(context).findAll().filter { it.name.startsWith(TITLE_PREFIX) }
     }
 
-    /** Also runs before the inserts: a run that died before its tearDown must not skew the next. */
+    /**
+     * 前回の実行がtearDownの前に止まっていても影響しないよう、挿入の前にも呼ぶ。
+     */
     private fun deleteTracks() {
         context.contentResolver.delete(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, "${MediaStore.Audio.Media.TITLE} LIKE ?", arrayOf("$TITLE_PREFIX%")
@@ -189,9 +193,8 @@ class SqliteVariableLimitTest {
     }
 
     /**
-     * [ids] placed at the first, middle and last position of a list of [OVER_LIMIT] ids that match
-     * nothing. The padding is what puts the statement over the limit; the placement is what makes
-     * the assertion notice a chunk that never ran.
+     * どれにも一致しない[OVER_LIMIT]個のidのリストの、先頭・中央・末尾に[ids]を置いて返す。
+     * 数で上限を超えさせ、置く位置で実行されなかったチャンクを検出する。
      */
     private fun spread(ids: List<String>): List<String> {
         require(ids.size == 3) { "spread() places exactly three ids" }

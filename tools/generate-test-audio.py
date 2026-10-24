@@ -1,9 +1,8 @@
 #!/usr/bin/env python3
-"""Writes the WAV files that tools/push-test-audio.sh pushes to a device.
+"""tools/push-test-audio.shが端末に入れるWAVファイルを生成する。
 
-MediaStore needs real audio to list anything, and a real music file cannot be
-committed. These are two seconds of a sine tone each, and a WAV carries no tag
-block, so MediaStore takes the title from the file name.
+MediaStoreに曲を表示させるには実際の音声ファイルが必要だが、音楽ファイルはコミットできない
+ので、2秒の正弦波を生成する。WAVにはタグがないので、タイトルはファイル名になる。
 """
 import math
 import struct

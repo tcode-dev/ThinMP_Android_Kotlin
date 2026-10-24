@@ -6,7 +6,9 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.UUID
 
-/** Every shortcut lookup keys on the (item_id, type) pair, so one composite index covers them all. */
+/**
+ * ショートカットの検索はすべて(item_id, type)の組で行うので、複合インデックス1つで足りる。
+ */
 @Entity(
     tableName = "shortcuts",
     indices = [Index(value = ["item_id", "type"])]

@@ -11,11 +11,11 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
- * Tells when the running MusicService is destroyed, the way the app itself finds out: a binding
- * without BIND_AUTO_CREATE, which does not keep the service alive and dies along with it.
+ * MusicServiceの破棄を検知する。
+ * BIND_AUTO_CREATEなしでバインドするので、サービスを生かし続けず、破棄されると切断される。
  *
- * It has to be attached while the service is running. Before then the binding would only wait for
- * one to start, and "not connected yet" and "already gone" look the same.
+ * サービスが動いている間にattachすること。
+ * 動いていないとバインドは起動待ちになり、「まだ接続していない」と「もう破棄された」を区別できない。
  */
 class MusicServiceWatcher private constructor(private val context: Context) {
     private val connected = CountDownLatch(1)
@@ -35,7 +35,9 @@ class MusicServiceWatcher private constructor(private val context: Context) {
         }
     }
 
-    /** Unbinds whatever the outcome, so the watcher is used up either way. */
+    /**
+     * 結果にかかわらずバインドを解除するので、1つのウォッチャーは1回しか使えない。
+     */
     fun awaitDestroyed(timeoutMs: Long): Boolean {
         try {
             return destroyed.await(timeoutMs, TimeUnit.MILLISECONDS)
@@ -46,9 +48,9 @@ class MusicServiceWatcher private constructor(private val context: Context) {
 
     companion object {
         /**
-         * The action a MediaController binds with. MusicService answers it with its session binder,
-         * which is all a watcher needs: a connection that exists exactly while the service does.
-         * A plain intent is answered with no binder, and its connection never reports anything.
+         * MediaControllerと同じアクションでバインドする。
+         * これならMusicServiceがbinderを返すので、サービスがある間だけ続く接続になる。
+         * 素のIntentではbinderが返らず、接続の通知が来ない。
          */
         private fun serviceIntent(context: Context): Intent {
             return Intent(MediaSessionService.SERVICE_INTERFACE).setComponent(ComponentName(context, MusicService::class.java))
@@ -64,8 +66,9 @@ class MusicServiceWatcher private constructor(private val context: Context) {
         }
 
         /**
-         * Stops the service and returns once it is gone, whether or not it was running. A bind with
-         * BIND_AUTO_CREATE first makes sure there is one to watch, so both cases end the same way.
+         * サービスを止め、破棄されるまで待つ。
+         * 先にBIND_AUTO_CREATEでバインドして必ず起動させるので、
+         * 動いていてもいなくても同じように終わる。
          */
         fun stopAndAwait(context: Context, timeoutMs: Long) {
             val created = CountDownLatch(1)

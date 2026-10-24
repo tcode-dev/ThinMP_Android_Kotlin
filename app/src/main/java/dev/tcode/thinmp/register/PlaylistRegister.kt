@@ -11,7 +11,9 @@ interface PlaylistRegister {
         repository.create(songId, text)
     }
 
-    /** false when the song is already in the playlist. */
+    /**
+     * 曲がすでにプレイリストに入っていればfalse。
+     */
     suspend fun addSongToPlaylist(playlistId: PlaylistId, songId: SongId): Boolean {
         val repository = PlaylistRepository()
 

@@ -3,7 +3,9 @@ package dev.tcode.thinmp.player
 import androidx.media3.common.Player
 import dev.tcode.thinmp.config.RepeatState
 
-/** The order the repeat button steps through. */
+/**
+ * リピートボタンを押したときの切り替え順。
+ */
 fun RepeatState.next(): RepeatState {
     return when (this) {
         RepeatState.OFF -> RepeatState.ALL

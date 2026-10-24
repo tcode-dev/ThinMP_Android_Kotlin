@@ -10,20 +10,25 @@ import dev.tcode.thinmp.model.room.PlaylistSongEntity
 
 @Dao
 interface PlaylistSongDao {
-    /** rowid is the insertion order, which is the order of the playlist. Without it the rows come
-     * back in whatever order the index SQLite chose happens to hold them in. */
+    /**
+     * プレイリストの曲順は挿入順なので、rowidで並べる。
+     * 指定しないと、SQLiteが選んだインデックスの順で返ってくる。
+     */
     @Query("SELECT * FROM playlist_songs WHERE playlist_id = :playlistId ORDER BY rowid")
     suspend fun findByPlaylistId(playlistId: String): List<PlaylistSongEntity>
 
-    /** The playlists one song is already registered to. Filters on song_id alone, which is why
-     * playlist_songs carries an index on that column. */
+    /**
+     * その曲が登録されているプレイリスト。
+     * song_idだけで絞り込むので、playlist_songsはsong_idにインデックスを持つ。
+     */
     @Query("SELECT playlist_id FROM playlist_songs WHERE song_id = :songId")
     suspend fun findPlaylistIdsBySongId(songId: String): List<String>
 
-    /** A song already in the playlist is left where it is: the primary key rejects the duplicate
-     * and IGNORE turns that into a no-op rather than a SQLiteConstraintException on a second tap.
-     * Returns the new rowid, or -1 when the row was already there - with IGNORE there is no
-     * exception to catch, so the return value is the only report that nothing was written. */
+    /**
+     * 登録済みの曲は主キーで重複になるが、IGNOREなので例外にならず、何もしない。
+     * 戻り値は新しいrowidで、すでにあった場合は-1。
+     * 例外が出ないので、書き込まなかったことは戻り値でしか分からない。
+     */
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(entity: PlaylistSongEntity): Long
 
@@ -33,8 +38,10 @@ interface PlaylistSongDao {
     @Query("DELETE FROM playlist_songs WHERE playlist_id = :playlistId AND song_id IN (:songIds)")
     suspend fun deleteByPlaylistIdAndSongIdsChunk(playlistId: String, songIds: List<String>)
 
-    /** See FavoriteSongDao.deleteBySongIds. playlistId is a host parameter of its own, so a chunk
-     * that filled MAX_VARIABLES would put the statement one over. */
+    /**
+     * FavoriteSongDao.deleteBySongIdsを参照。
+     * playlistIdもホストパラメーターを1つ使うので、チャンクを1つ小さくする。
+     */
     @Transaction
     suspend fun deleteByPlaylistIdAndSongIds(playlistId: String, songIds: List<String>) {
         songIds.chunked(SqliteConstant.MAX_VARIABLES - 1).forEach {

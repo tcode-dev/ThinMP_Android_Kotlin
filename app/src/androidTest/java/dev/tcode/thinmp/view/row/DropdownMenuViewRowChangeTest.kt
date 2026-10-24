@@ -21,13 +21,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Without an item key a row is identified by its position: a list that loses an entry leaves the
- * next row in that slot, reusing the composition, and a menu opened on the old row is left
- * standing over whatever moved up into it. The item key keeps the composition with the row, so
- * the open menu is disposed of together with the row it was opened on.
+ * itemにkeyがないと行は位置で識別されるので、一覧から行が消えると次の行が同じcompositionを使い回し、
+ * 消えた行で開いていたメニューが次の行の上に残ってしまう。
+ * keyを付ければcompositionは行に結び付き、メニューは開いた行と一緒に破棄される。
  *
- * The harness is built the way the screens are: a list keyed by the row's id, and rows that open
- * the menu from their own gesture detector on a long press.
+ * 画面と同じく、行のidをkeyにした一覧と、長押しで自分のジェスチャー検出からメニューを開く行で確かめる。
  */
 @RunWith(AndroidJUnit4::class)
 class DropdownMenuViewRowChangeTest {
@@ -55,7 +53,7 @@ class DropdownMenuViewRowChangeTest {
         composeTestRule.onNodeWithTag("a").performTouchInput { longClick() }
         composeTestRule.onNodeWithText(menuText).assertIsDisplayed()
 
-        // The row the menu was opened on is gone and the next one has moved up.
+        // メニューを開いた行を消し、次の行が繰り上がる。
         rows.removeAt(0)
         composeTestRule.waitForIdle()
 

@@ -38,8 +38,8 @@ data class PlayerUiState(
 )
 
 /**
- * Follows PlaybackController.state. The seek bar is the one thing state does not carry: it is read
- * from currentPosition() once a second while playing, and again whenever the position jumps.
+ * PlaybackController.stateに追従する。
+ * stateにないシークバーの位置は、再生中は1秒ごと、位置が飛んだときはその都度currentPosition()から読む。
  */
 class PlayerViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister,
     FavoriteSongRegister {
@@ -54,8 +54,8 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     val queueEmptied = OneShotEvent<Unit>()
 
     init {
-        // Collected from the current value on, which viewModelScope's immediate dispatcher delivers
-        // before the constructor returns, so the first frame already has the song.
+        // viewModelScopeはimmediateなので、現在値はコンストラクターが戻る前に届き、
+        // 最初のフレームから曲を表示できる。
         viewModelScope.launch {
             playbackController.state.collect { onState(it) }
         }
@@ -132,11 +132,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     /**
-     * The queue emptying out under the screen - retry() dropped the song that failed and found
-     * nothing left to play - leaves the screen, which is what the mini player does for the same
-     * state. Every control here would otherwise reach an empty player and do nothing.
+     * 画面を開いている間にキューが空になったら(retry()で再生できる曲がなくなったら)画面を閉じる。
+     * ミニプレーヤーも同じ状態で消える。
+     * 開いたままだと、どの操作も空のプレーヤーに届くだけになる。
      *
-     * When retry() did find another song the queue never empties, and the screen stays.
+     * retry()が次の曲を見つけた場合はキューが空にならないので、画面はそのまま。
      */
     private fun onState(state: PlaybackState) {
         cancelSeekBarProgressTask()
@@ -196,12 +196,11 @@ class PlayerViewModel(application: Application) : AndroidViewModel(application),
     }
 
     /**
-     * Kept out of the _uiState.update lambda above: update re-runs its lambda when the compare-
-     * and-set loses, which would re-issue the queries.
+     * _uiState.updateのラムダの中では呼ばない。
+     * updateはcompare-and-setに失敗するとラムダをやり直すので、クエリも投げ直されてしまう。
      *
-     * Cancelling the previous job matters while skipping tracks, where the song and the playing
-     * state change in quick succession. Without it two in-flight queries can complete out of order
-     * and paint the previous track's favourite state.
+     * 曲送りで曲と再生状態が続けて変わると、クエリが順不同で終わって
+     * 前の曲のお気に入り状態を表示することがあるので、前のジョブはキャンセルする。
      */
     private fun updateFavorites(artistId: ArtistId, songId: SongId) {
         favoriteJob?.cancel()

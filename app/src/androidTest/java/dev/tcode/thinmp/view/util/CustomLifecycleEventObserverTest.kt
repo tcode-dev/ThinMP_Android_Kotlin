@@ -14,11 +14,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * A LifecycleRegistry replays ON_CREATE, ON_START and ON_RESUME to every observer it adds. The
- * listener is therefore read through the observer rather than being a key of the effect: an effect
- * keyed on the listener would re-register whenever a recomposition passed a different one, and the
- * replay would hand a screen that is already resumed a second ON_RESUME. The new listener has to
- * receive the events that follow the swap all the same.
+ * LifecycleRegistryはobserverを追加するたびにON_CREATE、ON_START、ON_RESUMEを送り直す。
+ * リスナーをeffectのkeyにすると、別のリスナーが渡されるたびに登録し直され、
+ * resume済みの画面に2回目のON_RESUMEが届いてしまう。
+ * そのためリスナーはobserver経由で読む。
+ * 差し替えた後のイベントは、新しいリスナーに届かなければならない。
  */
 @RunWith(AndroidJUnit4::class)
 class CustomLifecycleEventObserverTest {

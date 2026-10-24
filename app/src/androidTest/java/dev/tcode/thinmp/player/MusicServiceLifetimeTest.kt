@@ -26,19 +26,20 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
 /**
- * A MediaController creates the service by binding to it, and a service that is only bound is
- * destroyed with its last binding. MediaSessionService starts itself only once playback is under
- * way, so a song that is still loading, or that fails to load, would go away with the connection
- * that queued it. Playback has to outlive the screen that started it.
+ * MediaControllerのバインドで起動したサービスは、最後のバインドが外れると破棄される。
+ * MediaSessionServiceは再生が始まるまで自分をstartしないので、
+ * 読み込み中や読み込みに失敗した曲は接続と一緒に消えてしまう。
+ * 再生は、それを始めた画面より長く続かなければならない。
  *
- * The song is a missing one, so nothing here needs MediaStore content and the test never skips
- * itself.
+ * 存在しない曲を使うので、音声ファイルがなくてもスキップしない。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServiceLifetimeTest {
     private val timeoutMs = 15_000L
 
-    /** How long a destruction that must not happen is given to happen anyway. */
+    /**
+     * 起きてはいけない破棄を待つ時間。
+     */
     private val quietMs = 1_000L
 
     private lateinit var context: Context
@@ -51,9 +52,9 @@ class MusicServiceLifetimeTest {
         grantPermission("android.permission.POST_NOTIFICATIONS")
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
-        // Starting a service is refused while the app is in the background.
+        // バックグラウンドからはサービスを起動できないため、アプリを前面に出しておく。
         scenario = ActivityScenario.launch(MainActivity::class.java)
-        // The activity's own connection would keep the service alive by itself.
+        // Activityの接続があるとそれだけでサービスが生き残るので、解放しておく。
         runOnMain { PlaybackController.from(context).release() }
     }
 
@@ -75,8 +76,8 @@ class MusicServiceLifetimeTest {
         })
 
         startOnController(controller, listOf(missingSong("999999997")), 0)
-        // The song failing to load is proof the service has taken the queue, and it is the case
-        // where playback never gets under way.
+        // 読み込み失敗の通知は、サービスがキューを受け取った証拠になる。
+        // 再生が一度も始まらないケースでもある。
         assertTrue("the missing song was never dropped", songRemoved.await(timeoutMs, TimeUnit.MILLISECONDS))
 
         val watcher = MusicServiceWatcher.attach(context, timeoutMs)

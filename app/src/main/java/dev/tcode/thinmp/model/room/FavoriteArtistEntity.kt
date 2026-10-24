@@ -4,7 +4,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-/** See FavoriteSongEntity for why the MediaStore id is the primary key. */
+/**
+ * MediaStoreのidを主キーにする理由はFavoriteSongEntityを参照。
+ */
 @Entity(tableName = "favorite_artists")
 data class FavoriteArtistEntity(
     @PrimaryKey

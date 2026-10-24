@@ -17,15 +17,11 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 
 /**
- * The lists key their items by the row's id, so this composition belongs to one row and is
- * disposed of with it: the open/closed state and the gesture detector need no key of their own.
- * Without the item key a list that lost an entry left the next row in the slot the old one had,
- * reusing the composition - and a menu left open from the old row then stood over whatever moved
- * up into it.
+ * 一覧はitemのkeyに行のidを使うので、このcompositionは行と一緒に破棄される。
+ * そのため開閉状態やジェスチャー検出にkeyは要らない。
  *
- * The row is what opens the menu, from its own gesture detector, which is why `content` is handed
- * the callback. A detector here would never fire: the row's detectTapGestures consumes the down
- * event, and a detector on the parent waits for one that is not consumed.
+ * メニューは行が自分のジェスチャー検出から開くので、`content`にコールバックを渡す。
+ * ここでジェスチャーを検出しても、行のdetectTapGesturesがdownイベントを消費するので反応しない。
  */
 @Composable
 fun DropdownMenuView(dropdownContent: @Composable ColumnScope.(callback: () -> Unit) -> Unit, content: @Composable BoxScope.(callback: () -> Unit) -> Unit) {

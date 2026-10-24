@@ -19,8 +19,10 @@ interface PlaylistDao {
     @Query("SELECT * FROM playlists WHERE id IN (:ids)")
     suspend fun findByIdsChunk(ids: List<String>): List<PlaylistEntity>
 
-    /** See FavoriteSongDao.deleteBySongIds. Reading in chunks is transactional too, so the caller
-     * gets one snapshot of the table rather than a list assembled across concurrent writes. */
+    /**
+     * FavoriteSongDao.deleteBySongIdsを参照。
+     * 読み込みもトランザクションにして、途中で書き込みが入っても1つの時点の結果になるようにする。
+     */
     @Transaction
     suspend fun findByIds(ids: List<String>): List<PlaylistEntity> {
         return ids.chunked(SqliteConstant.MAX_VARIABLES).flatMap { findByIdsChunk(it) }
@@ -41,7 +43,9 @@ interface PlaylistDao {
     @Query("DELETE FROM playlists WHERE id IN (:ids)")
     suspend fun deleteByIdsChunk(ids: List<String>)
 
-    /** See FavoriteSongDao.deleteBySongIds. */
+    /**
+     * FavoriteSongDao.deleteBySongIdsを参照。
+     */
     @Transaction
     suspend fun deleteByIds(ids: List<String>) {
         ids.chunked(SqliteConstant.MAX_VARIABLES).forEach { deleteByIdsChunk(it) }

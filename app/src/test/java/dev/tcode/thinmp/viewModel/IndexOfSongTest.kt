@@ -9,10 +9,8 @@ import org.junit.Assert.assertNull
 import org.junit.Test
 
 /**
- * The reloaded-list cases are the regression guards. A tap used to carry the row's position, taken
- * when the row was composed, and the list it was applied to was whatever the view model held when
- * the tap arrived. Those agree until a reload lands in between: a position past the new end is an
- * IllegalSeekPositionException inside the service, and one within it is the wrong song.
+ * 表示したときの位置と、タップしたときにview modelが持つ一覧は、その間に読み込み直しが入るとずれる。
+ * 位置で再生すると、範囲外ならサービスでIllegalSeekPositionException、範囲内なら違う曲の再生になる。
  */
 class IndexOfSongTest {
     private val a = song("1")
@@ -27,13 +25,19 @@ class IndexOfSongTest {
         assertEquals(2, indexOfSong(listOf(a, b, c), c.songId))
     }
 
-    /** Tapped b on row 1 of [a, b, c]; the list came back as [x, a, b, c]. Row 1 is now a. */
+    /**
+     * [a, b, c]の1行目のbをタップしたが、一覧は[x, a, b, c]に変わっていた。
+     * 1行目はもうaを指す。
+     */
     @Test
     fun followsTheSongWhenAReloadMovesIt() {
         assertEquals(2, indexOfSong(listOf(x, a, b, c), b.songId))
     }
 
-    /** Tapped c on row 2 of [a, b, c]; the list came back as [a]. Row 2 no longer exists. */
+    /**
+     * [a, b, c]の2行目のcをタップしたが、一覧は[a]に変わっていた。
+     * 2行目はもうない。
+     */
     @Test
     fun isNullWhenAReloadDroppedTheSong() {
         assertNull(indexOfSong(listOf(a), c.songId))
@@ -44,7 +48,9 @@ class IndexOfSongTest {
         assertNull(indexOfSong(emptyList(), a.songId))
     }
 
-    /** MediaStore hands out a fresh object per query, so only the id can survive a reload. */
+    /**
+     * MediaStoreはクエリのたびに新しいオブジェクトを返すので、読み込み直しても同じなのはidだけ。
+     */
     @Test
     fun matchesByIdAndNotByInstance() {
         assertEquals(1, indexOfSong(listOf(a, song("2"), c), b.songId))

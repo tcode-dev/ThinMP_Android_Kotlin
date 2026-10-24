@@ -14,7 +14,10 @@ class PlaylistsService(val context: Context) {
         return playlists.map { PlaylistModel(PlaylistId(it.id), it.name) }
     }
 
-    /** The playlists the song is already in, which the register popup shows as registered. */
+    /**
+     * その曲が入っているプレイリスト。
+     * 登録ポップアップで登録済みと表示するのに使う。
+     */
     suspend fun findRegisteredPlaylistIds(songId: SongId): Set<PlaylistId> {
         val repository = PlaylistRepository()
 

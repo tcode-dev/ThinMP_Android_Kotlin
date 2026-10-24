@@ -25,11 +25,11 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * PlaybackController is what the screens read and drive instead of binding the service each. The
- * activity connects it, as it does in the app.
+ * 画面がサービスを操作する窓口であるPlaybackControllerのテスト。
+ * アプリと同じくActivityが接続する。
  *
- * Every test plays a real song, so each needs an audio file on the device and skips itself
- * otherwise (tools/push-test-audio.sh).
+ * どのテストも実在の曲を再生するので、端末に音声ファイルが必要で、
+ * なければスキップする(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class PlaybackControllerTest {
@@ -52,8 +52,8 @@ class PlaybackControllerTest {
         song = songs.first()
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
-        // Playback puts the service in the foreground, which the platform refuses while the app is
-        // in the background.
+        // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。
+        // バックグラウンドからのフォアグラウンド化はプラットフォームに拒否される。
         scenario = ActivityScenario.launch(MainActivity::class.java)
         controller = PlaybackController.from(context)
         await("the controller never connected") { onMain { controller.isConnected() } }
@@ -67,8 +67,7 @@ class PlaybackControllerTest {
     }
 
     /**
-     * The controller sends a song without its URI, and the service has to put it back in
-     * onAddMediaItems() before the player can open the file.
+     * コントローラーはURIなしで曲を送るので、サービスがonAddMediaItems()でURIを補わないと再生できない。
      */
     @Test
     fun playsASongStartedThroughTheController() {
@@ -78,9 +77,8 @@ class PlaybackControllerTest {
     }
 
     /**
-     * Started while there is no connection - between the activity's onStop() and the next
-     * onStart(), or before the first connection completes - and run once it is up rather than
-     * dropped.
+     * 未接続の間(onStop()から次のonStart()まで、または最初の接続の完了前)に呼ばれたstartも、
+     * 捨てずに接続後に実行する。
      */
     @Test
     fun runsAStartMadeBeforeTheConnection() {
@@ -94,8 +92,7 @@ class PlaybackControllerTest {
     }
 
     /**
-     * A mini player on a screen opened after the song started, which is the state a child screen
-     * is in. Each used to paint what it held from its own bind, or nothing until the bind arrived.
+     * 曲の再生後に開いた画面(子画面)のミニプレーヤーは、バインドを待たずに現在の状態を表示する。
      */
     @Test
     fun aNewMiniPlayerHasTheCurrentSongFromTheStart() {
@@ -111,7 +108,7 @@ class PlaybackControllerTest {
                 ViewModelProvider(store, factory)[MiniPlayerViewModel::class.java].uiState.value
             }
 
-            // The test songs are two seconds long, so whether it is still playing is left out.
+            // テスト用の曲は2秒しかないので、再生中かどうかは比較しない。
             assertEquals(MiniPlayerUiState(song.name, song.getImageUri(), isVisible = true), uiState.copy(isPlaying = false))
         } finally {
             onMain { store.clear() }
@@ -133,7 +130,9 @@ class PlaybackControllerTest {
         }
     }
 
-    /** The controller runs on the main thread, so everything that touches it goes there. */
+    /**
+     * コントローラーはメインスレッドで動くので、操作はすべてメインスレッドで行う。
+     */
     private fun <T> onMain(block: () -> T): T {
         var result: T? = null
 
