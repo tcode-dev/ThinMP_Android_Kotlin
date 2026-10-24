@@ -27,7 +27,7 @@ import org.junit.runner.RunWith
  * keyを付ければ、消した行のstateは行と一緒に破棄され、繰り上がった行は自分のstateを保つ。
  *
  * 編集画面と同じく、行のidをkeyにした一覧、インデックスだけを取り込むコールバック、
- * 全幅の行で確かめる(スワイプで消すには幅の半分を超える必要がある)。
+ * 全幅の行で確かめる(swipeLeftは行の右端から左端までを200msで動かすので、行が狭いと消すのに要る56dpにも125dp/sにも届かない)。
  */
 @RunWith(AndroidJUnit4::class)
 class SwipeToDismissViewRowChangeTest {
