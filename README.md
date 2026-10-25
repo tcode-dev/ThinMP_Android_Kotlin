@@ -49,6 +49,7 @@
 
 * Manifest.permission.READ_MEDIA_AUDIO
 * Manifest.permission.FOREGROUND_SERVICE
+* Manifest.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK
 
 ## Architecture
 
