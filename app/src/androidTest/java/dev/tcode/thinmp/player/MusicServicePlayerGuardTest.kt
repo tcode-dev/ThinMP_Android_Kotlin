@@ -56,7 +56,6 @@ class MusicServicePlayerGuardTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。
         // バックグラウンドからのフォアグラウンド化はプラットフォームに拒否される。

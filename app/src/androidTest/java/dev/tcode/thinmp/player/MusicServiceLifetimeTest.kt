@@ -49,7 +49,6 @@ class MusicServiceLifetimeTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
         // バックグラウンドからはサービスを起動できないため、アプリを前面に出しておく。

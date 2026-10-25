@@ -29,7 +29,6 @@
     <string name="remove_shortcut">Remove from shortcut</string>
 
     <string name="permission_audio_denied">Allow access to music files to play songs.</string>
-    <string name="permission_notifications_denied">If you allow notifications, the media player will appear on the lock screen.</string>
     <string name="permission_denied_advice">If you deny repeatedly, the dialog will not appear, but you can change the permissions from the settings.</string>
     <string name="permission_request">Allow access</string>
 

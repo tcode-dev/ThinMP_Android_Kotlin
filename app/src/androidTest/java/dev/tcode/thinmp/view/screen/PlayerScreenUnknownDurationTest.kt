@@ -57,7 +57,6 @@ class PlayerScreenUnknownDurationTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         val song = runBlocking { SongRepository(context).findAll() }.firstOrNull()
         assumeTrue("needs at least one audio file in MediaStore", song != null)

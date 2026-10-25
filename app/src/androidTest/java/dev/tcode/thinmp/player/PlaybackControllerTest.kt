@@ -45,7 +45,6 @@ class PlaybackControllerTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         val songs = runBlocking { SongRepository(context).findAll() }
         assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())

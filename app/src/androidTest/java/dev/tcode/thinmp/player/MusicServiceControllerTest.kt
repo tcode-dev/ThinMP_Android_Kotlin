@@ -47,7 +47,6 @@ class MusicServiceControllerTest {
         context = ApplicationProvider.getApplicationContext()
         config = ConfigStore(context)
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
         resetConfig()

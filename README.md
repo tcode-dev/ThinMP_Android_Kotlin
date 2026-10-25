@@ -48,7 +48,6 @@
 ## Permission
 
 * Manifest.permission.READ_MEDIA_AUDIO
-* Manifest.permission.POST_NOTIFICATIONS
 * Manifest.permission.FOREGROUND_SERVICE
 
 ## Architecture

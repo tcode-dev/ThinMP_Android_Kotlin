@@ -68,7 +68,6 @@ class PlayerScreenQueueEmptyTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         // 画面はタイトルで確かめるので、失敗する曲と名前が違う曲を選ぶ。
         val song = runBlocking { SongRepository(context).findAll() }.firstOrNull { it.name != missingName }
