@@ -55,6 +55,10 @@ class ShortcutRepository(
         return dao.findAll()
     }
 
+    /**
+     * shortcutIdsは表示している順で受け取る。
+     * findAllは`order`の降順で返すので、先頭に最も大きい`order`を付ける。
+     */
     suspend fun reorder(shortcutIds: List<ShortcutId>) = db.withTransaction {
         val shortcuts = findAll()
         val group = shortcuts.groupBy { shortcut -> shortcutIds.any { it.id == shortcut.id } }
@@ -67,7 +71,7 @@ class ShortcutRepository(
         }
 
         for ((index, shortcut) in sortedShortcuts.withIndex()) {
-            dao.update(shortcut.copy(order = index + 1))
+            dao.update(shortcut.copy(order = sortedShortcuts.size - index))
         }
     }
 

@@ -75,8 +75,23 @@ class ShortcutRepositoryTest {
         val shortcuts = repository.findAll()
 
         assertEquals(2, shortcuts.size)
-        assertEquals(listOf(ids[2].id, ids[0].id), shortcuts.map { it.id })
+        assertEquals(listOf(ids[0].id, ids[2].id), shortcuts.map { it.id })
         assertEquals(listOf(2, 1), shortcuts.map { it.order })
+    }
+
+    /**
+     * 編集画面は表示している順のまま保存するので、何も変えずに保存しても順が変わらないこと。
+     */
+    @Test
+    fun reorderWithTheDisplayedOrderKeepsIt() = runTest {
+        repository.add(ArtistId("1"))
+        repository.add(ArtistId("2"))
+        repository.add(ArtistId("3"))
+        val ids = repository.findAll().map { ShortcutId(it.id) }
+
+        repository.reorder(ids)
+
+        assertEquals(ids.map { it.id }, repository.findAll().map { it.id })
     }
 
     /**
@@ -93,7 +108,7 @@ class ShortcutRepositoryTest {
         val shortcuts = repository.findAll()
 
         assertEquals(2, shortcuts.size)
-        assertEquals(listOf(ids[1].id, ids[0].id), shortcuts.map { it.id })
+        assertEquals(listOf(ids[0].id, ids[1].id), shortcuts.map { it.id })
         assertEquals(listOf(2, 1), shortcuts.map { it.order })
     }
 
