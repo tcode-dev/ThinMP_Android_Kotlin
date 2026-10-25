@@ -27,7 +27,7 @@
 
 ## Environments
 
-* Android Studio | 2025.2.2 Patch 1
+* Android Studio Rabbit 1 | 2026.2.1
 * Kotlin
 * Gradle
 * minSdkVersion 33
