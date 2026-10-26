@@ -61,7 +61,6 @@ class SongListViewModelTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
         // 再生でサービスがフォアグラウンドになるため、アプリを前面に出しておく。

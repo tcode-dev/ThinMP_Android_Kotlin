@@ -48,7 +48,6 @@ class MainApplicationConfigChangeTest {
     fun setUp() {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
-        grantPermission("android.permission.POST_NOTIFICATIONS")
 
         scenario = ActivityScenario.launch(MainActivity::class.java)
         context.startService(Intent(context, MusicService::class.java))
