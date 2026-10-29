@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Looper
 import androidx.annotation.OptIn
+import androidx.media3.common.AudioAttributes
+import androidx.media3.common.C
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -82,12 +84,21 @@ class MusicService : MediaSessionService() {
     /**
      * setHandleAudioBecomingNoisyで、有線イヤホンやBluetoothが外れたら一時停止する。
      * 停止ではなく一時停止なので、そのあと再生ボタンでそのまま再開できる。
+     *
+     * setAudioAttributesのhandleAudioFocusで、オーディオフォーカスをExoPlayerに任せる。
+     * ほかのアプリが再生を始めたら一時停止し、着信や通話の間は止めて終わったら再開する。
+     * ナビの音声案内のような短い割り込みでは音量を下げる。
      */
     override fun onCreate() {
         super.onCreate()
 
         config = ConfigStore(baseContext)
-        exoPlayer = ExoPlayer.Builder(applicationContext).setLooper(Looper.getMainLooper()).setHandleAudioBecomingNoisy(true).build()
+        val audioAttributes = AudioAttributes.Builder().setUsage(C.USAGE_MEDIA).setContentType(C.AUDIO_CONTENT_TYPE_MUSIC).build()
+        exoPlayer = ExoPlayer.Builder(applicationContext)
+            .setLooper(Looper.getMainLooper())
+            .setAudioAttributes(audioAttributes, true)
+            .setHandleAudioBecomingNoisy(true)
+            .build()
         exoPlayer.addListener(PlayerEventListener())
         mediaSession = MediaSession.Builder(this, exoPlayer).setSessionActivity(sessionActivity()).setCallback(SessionCallback()).build()
 
