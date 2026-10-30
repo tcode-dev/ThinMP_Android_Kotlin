@@ -8,7 +8,6 @@ import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.ShortcutModel
 import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.MainService
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +22,7 @@ data class MainEditUiState(
     val menu: List<MainMenuItem> = emptyList(), val shortcuts: List<ShortcutModel> = emptyList(), val recentlyAlbumsVisibility: Boolean = true, val shortcutVisibility: Boolean = true, val loaded: Boolean = false
 )
 
-class MainEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, ShortcutRegister {
+class MainEditViewModel(application: Application) : AndroidViewModel(application), ShortcutRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
@@ -35,7 +34,10 @@ class MainEditViewModel(application: Application) : AndroidViewModel(application
         load()
     }
 
-    fun load() {
+    /**
+     * PlaylistsEditViewModel.load()を参照。
+     */
+    private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = MainService(getApplication())

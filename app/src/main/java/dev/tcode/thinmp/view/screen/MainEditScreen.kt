@@ -18,7 +18,6 @@ import dev.tcode.thinmp.view.row.EditRowView
 import dev.tcode.thinmp.view.row.PlainRowView
 import dev.tcode.thinmp.view.swipe.SwipeToDismissView
 import dev.tcode.thinmp.view.title.SectionTitleView
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.view.util.OnEvent
 import dev.tcode.thinmp.viewModel.MainEditViewModel
 
@@ -29,7 +28,6 @@ fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
     val callback = { viewModel.save() }
 
     OnEvent(viewModel.saved) { navigator.back() }
-    CustomLifecycleEventObserver(viewModel)
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, callback) {

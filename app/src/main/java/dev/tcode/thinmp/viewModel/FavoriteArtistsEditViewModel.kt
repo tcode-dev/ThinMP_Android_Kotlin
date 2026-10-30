@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.service.FavoriteArtistsService
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,8 +20,7 @@ data class FavoriteArtistsEditUiState(
     val artists: List<ArtistModel> = emptyList(), val loaded: Boolean = false
 )
 
-class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister {
-    private var initialized: Boolean = false
+class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(application), FavoriteArtistRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
@@ -34,7 +32,10 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
         load()
     }
 
-    fun load() {
+    /**
+     * PlaylistsEditViewModel.load()を参照。
+     */
+    private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = FavoriteArtistsService(getApplication())
@@ -70,14 +71,6 @@ class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(
         saveJob = viewModelScope.launch {
             replaceFavoriteArtists(uiState.value.artists.map { it.artistId })
             saved.emit(Unit)
-        }
-    }
-
-    override fun onResume() {
-        if (initialized) {
-            load()
-        } else {
-            initialized = true
         }
     }
 }

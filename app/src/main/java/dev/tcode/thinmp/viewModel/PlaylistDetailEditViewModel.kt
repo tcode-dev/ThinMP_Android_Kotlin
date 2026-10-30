@@ -9,7 +9,6 @@ import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistDetailService
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,8 +27,7 @@ data class PlaylistDetailEditUiState(
 @HiltViewModel
 class PlaylistDetailEditViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
-) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
-    private var initialized: Boolean = false
+) : AndroidViewModel(application), PlaylistRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
@@ -77,14 +75,9 @@ class PlaylistDetailEditViewModel @Inject constructor(
         }
     }
 
-    override fun onResume() {
-        if (initialized) {
-            load()
-        } else {
-            initialized = true
-        }
-    }
-
+    /**
+     * PlaylistsEditViewModel.load()を参照。
+     */
     private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
