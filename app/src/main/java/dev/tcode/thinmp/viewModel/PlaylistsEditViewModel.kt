@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
-import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,8 +25,7 @@ data class PlaylistsEditUiState(
     val playlists: List<PlaylistModel> = emptyList(), val loaded: Boolean = false
 )
 
-class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
-    private var initialized: Boolean = false
+class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), PlaylistRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
@@ -39,15 +37,11 @@ class PlaylistsEditViewModel(application: Application) : AndroidViewModel(applic
         load()
     }
 
-    override fun onResume() {
-        if (initialized) {
-            load()
-        } else {
-            initialized = true
-        }
-    }
-
-    fun load() {
+    /**
+     * 読み込むのはinitの1回だけで、onResumeでは読み直さない。
+     * 読み直すと、アプリに戻ったときに保存前の編集がDBの内容で上書きされてしまう。
+     */
+    private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = PlaylistsService(getApplication())
