@@ -3,6 +3,7 @@ package dev.tcode.thinmp.player
 import android.content.Context
 import android.content.Intent
 import android.os.SystemClock
+import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.test.core.app.ActivityScenario
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith
  * 通知、ロック画面、ヘッドセットからの操作を、それらと同じくMediaController経由で確かめる。
  *
  * 前へ・次へはExoPlayer標準の動きで、リピートが全曲でなければキューの両端で止まる。
+ * リピートがオフでキューの最後まで再生したら、再生順で最初の曲に戻って止まる。
  * リピートとシャッフルの変更は、アプリから操作したときと同じく保存されなければならない。
  *
  * シークのテストは端末に音声ファイルが2つ必要で、なければスキップする(tools/push-test-audio.sh)。
@@ -171,6 +173,39 @@ class MusicServiceControllerTest {
     private suspend fun resetConfig() {
         config.saveRepeat(RepeatState.OFF)
         config.saveShuffle(false)
+    }
+
+    /**
+     * シャッフル中は、キューの先頭ではなくシャッフル順の最初の曲に戻る。
+     *
+     * シャッフル順は無作為なので、最初の曲がキューの先頭でない順になるまで並べ直す。
+     * 先頭が同じ順では、キューの先頭に戻していても通ってしまう。
+     */
+    @Test
+    fun theEndOfTheQueueGoesBackToTheFirstSongInShuffleOrder() {
+        val songs = twoSongs()
+        var first = C.INDEX_UNSET
+
+        onMain { controller.shuffleModeEnabled = true }
+
+        repeat(30) {
+            if (first > 0) return@repeat
+
+            start(songs, 0)
+            await("the queue never became ready") {
+                onMain { controller.mediaItemCount == songs.size && controller.playbackState == Player.STATE_READY }
+            }
+            first = onMain { controller.currentTimeline.getFirstWindowIndex(true) }
+        }
+
+        assertTrue("the shuffle order never started from the second song", first > 0)
+
+        // 2曲なので、シャッフル順の最初が2曲目なら最後は1曲目になる。
+        onMain { controller.play() }
+
+        await("playback never returned to the first song in shuffle order") {
+            onMain { !controller.playWhenReady && controller.currentMediaItemIndex == first }
+        }
     }
 
     /**

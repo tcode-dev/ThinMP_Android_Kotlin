@@ -165,17 +165,20 @@ class MusicService : MediaSessionService() {
     }
 
     /**
-     * 失敗した曲を外し、同じ位置の次の曲を再生する。
-     * 最後の曲だった場合は1つ前の曲を再生し、キューが空になったら止める。
+     * 失敗した曲を外し、再生順で次の曲に移る。
+     * 最後の曲だった場合は1つ前の曲に移り、キューが空になったら止める。
+     * 次と前はシャッフルとリピートを踏まえた順で、キューの並び順ではない。
      *
-     * エラーでプレーヤーはidleになっているので、prepareし直してから再生する。
+     * エラーでプレーヤーはidleになっているので、prepareし直す。
+     * playWhenReadyはエラーの前のままなので、play()は呼ばない。
+     * 一時停止中に失敗した曲に当たった場合は、一時停止のまま次の曲に移る。
      */
     private fun retry() {
-        val count = exoPlayer.mediaItemCount
-
-        if (count == 0) return
+        if (exoPlayer.mediaItemCount == 0) return
 
         val currentIndex = exoPlayer.currentMediaItemIndex
+        // 外した後では現在の曲がなくなり、次と前を求められないので、先に決める。
+        val nextIndex = exoPlayer.nextMediaItemIndex.takeIf { it != C.INDEX_UNSET } ?: exoPlayer.previousMediaItemIndex
 
         exoPlayer.removeMediaItem(currentIndex)
 
@@ -185,11 +188,9 @@ class MusicService : MediaSessionService() {
             return
         }
 
-        val nextIndex = if (count == currentIndex + 1) currentIndex - 1 else currentIndex
-
-        exoPlayer.seekTo(nextIndex, 0)
+        // 外した曲より後ろの曲は、インデックスが1つ前にずれる。
+        exoPlayer.seekTo(if (nextIndex > currentIndex) nextIndex - 1 else nextIndex, 0)
         exoPlayer.prepare()
-        exoPlayer.play()
     }
 
     /**
@@ -219,11 +220,15 @@ class MusicService : MediaSessionService() {
 
     inner class PlayerEventListener : Player.Listener {
         override fun onPlaybackStateChanged(playbackState: Int) {
-            // リピートがオフで最後の曲が終わるとSTATE_ENDEDになるので、先頭の曲に戻して止める。
+            // リピートがオフで最後の曲が終わるとSTATE_ENDEDになるので、再生順で最初の曲に戻して止める。
+            // シャッフル中はキューの先頭ではなく、シャッフル順の最初の曲になる。
             // 1曲だけのときはonMediaItemTransitionもEVENT_IS_PLAYING_CHANGEDも来ないので、ここで扱う。
             if (playbackState == Player.STATE_ENDED) {
+                val firstIndex = exoPlayer.currentTimeline.getFirstWindowIndex(exoPlayer.shuffleModeEnabled)
+
                 exoPlayer.pause()
-                exoPlayer.seekTo(0, 0)
+
+                if (firstIndex != C.INDEX_UNSET) exoPlayer.seekTo(firstIndex, 0)
             }
         }
 
