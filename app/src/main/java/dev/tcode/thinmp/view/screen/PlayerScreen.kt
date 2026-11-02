@@ -39,6 +39,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.view.button.BackButtonView
 import dev.tcode.thinmp.view.image.ImageView
 import dev.tcode.thinmp.view.nav.LocalNavigator
@@ -57,7 +58,9 @@ import dev.tcode.thinmp.viewModel.PlayerViewModel
 fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
-    val visiblePopup = remember { mutableStateOf(false) }
+    // ポップアップは開いたときの曲を保持し、閉じている間はnullにする。
+    // uiState.songIdを渡すと、開いている間に次の曲へ進んだときにその曲が追加されてしまう。
+    val popupSongId = remember { mutableStateOf<SongId?>(null) }
     val minSize = minSize()
     val maxSize = maxSize()
     val isHeightMedium = isHeightMedium()
@@ -248,7 +251,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
                     .size(StyleConstant.BUTTON_SIZE.dp)
                     .clip(RoundedCornerShape(StyleConstant.IMAGE_CORNER_SIZE.dp))
                     .clickable {
-                        visiblePopup.value = true
+                        popupSongId.value = uiState.songId
                     }) {
                     Icon(
                         painter = painterResource(id = R.drawable.round_playlist_add_24),
@@ -260,7 +263,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
             }
         }
     }
-    if (visiblePopup.value) {
-        PlaylistRegisterPopupView(uiState.songId, { visiblePopup.value = false })
+    popupSongId.value?.let { songId ->
+        PlaylistRegisterPopupView(songId, { popupSongId.value = null })
     }
 }
