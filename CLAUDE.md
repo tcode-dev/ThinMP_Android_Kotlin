@@ -105,6 +105,11 @@ app/src/main/java/dev/tcode/thinmp/
 - XMLのレイアウトは使わず、すべてJetpack Composeで書く
 - エンティティのIDは型付きの値オブジェクトで扱い、生の文字列やLongは使わない
 - 画面ごとに専用のViewModelを持つ
+- ViewModelはHiltを使わず、画面の`viewModel()`が標準のファクトリーで作る。
+  そのためコンストラクターの引数は、`()`、`(Application)`、`(Application, SavedStateHandle)`のどれかにする。
+  `PlaybackController`のようなHiltのシングルトンは、ViewModelの中で`PlaybackController.from(context)`のように取得する。
+  `@HiltViewModel`を付けても、Navigation Composeの`NavBackStackEntry`が使う既定のファクトリーはHiltのものではないので注入されず、
+  標準のファクトリーが作れない引数を足すと実行時にクラッシュする
 - ユーザーが作るデータはRoom、端末の音声はMediaStoreに置く
 - サロゲートの`id`は、それを読むものがある場合にだけ持たせる。
   お気に入りのテーブルはMediaStoreのidそのものを主キーにする(`favorite_songs(song_id)`、`favorite_artists(artist_id)`)。
@@ -172,7 +177,7 @@ app/src/main/java/dev/tcode/thinmp/
 - ViewModelの`load()`は`viewModelScope`で動かし、先に前のジョブをキャンセルする(`loadJob?.cancel()`)。
   `onResume`と`PlaybackController.songRemoved`の両方から呼ばれうるからだ。
   この3行は、あえてすべてのViewModelに繰り返し書いている。
-  15個のうち`SongListViewModel`を継承するのは5つだけで、残りの10個は`AndroidViewModel`を直接継承する(Hiltで注入するのは全体で4つ)。
+  15個のうち`SongListViewModel`を継承するのは5つだけで、残りの10個は`AndroidViewModel`を直接継承する。
   共通化すると、`cancel()`1つを隠すためにすべての継承関係に新しい基底クラスが要り、
   しかも`viewModelScope.launch`を直接呼ぶことは防げない。`loadJob`を基底クラスに移さないこと
 - 編集画面は`OneShotEvent`/`OnEvent`で保存し、書き込みが終わってから画面を離れる。
