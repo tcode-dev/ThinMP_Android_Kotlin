@@ -2,7 +2,7 @@ package dev.tcode.thinmp.view.playlist
 
 import android.app.Application
 import androidx.compose.ui.test.hasSetTextAction
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -11,6 +11,7 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import dev.tcode.thinmp.R
+import dev.tcode.thinmp.activity.HiltTestActivity
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.PlaylistRepository
@@ -41,7 +42,7 @@ class PlaylistRegisterPopupNameTest {
     private val songId = SongId("1")
 
     @get:Rule
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
     private lateinit var application: Application
     private lateinit var doneText: String

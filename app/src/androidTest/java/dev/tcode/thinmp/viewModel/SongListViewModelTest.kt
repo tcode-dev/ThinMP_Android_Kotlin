@@ -7,6 +7,8 @@ import android.os.SystemClock
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -30,9 +32,8 @@ import org.junit.runner.RunWith
 
 /**
  * 何もクエリせず、再読み込みの回数だけを数える。
- * ファクトリーから作れるよう、publicでApplicationを受け取る。
  */
-class CountingSongListViewModel(application: Application) : SongListViewModel(application) {
+class CountingSongListViewModel(application: Application) : SongListViewModel(application, PlaybackController.from(application)) {
     var loads = 0
 
     override val songs: List<SongModel> = emptyList()
@@ -85,7 +86,7 @@ class SongListViewModelTest {
      */
     @Test
     fun reloadsWhenTheServiceDropsASong() {
-        val viewModel = onMain { create(CountingSongListViewModel::class.java) }
+        val viewModel = onMain { create { CountingSongListViewModel(it) } }
 
         onMain { controller.start(listOf(missingSong("999999998")), 0) }
 
@@ -104,18 +105,19 @@ class SongListViewModelTest {
         onMain { controller.start(listOf(song!!), 0) }
         await("the song never reached the queue") { onMain { controller.state.value.hasQueue } }
 
-        val isVisible = onMain { create(SongsViewModel::class.java).isVisiblePlayer.value }
+        val isVisible = onMain { create { SongsViewModel(it, PlaybackController.from(it)) }.isVisiblePlayer.value }
 
         assertTrue("the mini player was hidden on the list's first frame", isVisible)
     }
 
     /**
      * 画面と同じく、メインスレッドで作る。
+     * Hiltを通さないので、依存は[build]で渡す。
      */
-    private fun <T : ViewModel> create(modelClass: Class<T>): T {
-        val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(context as Application)
+    private inline fun <reified T : ViewModel> create(crossinline build: (Application) -> T): T {
+        val factory = viewModelFactory { initializer { build(context as Application) } }
 
-        return ViewModelProvider(store, factory)[modelClass]
+        return ViewModelProvider(store, factory)[T::class.java]
     }
 
     private fun missingSong(id: String): SongModel {

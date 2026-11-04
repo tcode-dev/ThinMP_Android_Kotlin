@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.collapsingTopAppBar.EditCollapsingTopAppBarView
 import dev.tcode.thinmp.view.nav.LocalNavigator
@@ -22,7 +22,7 @@ import dev.tcode.thinmp.view.util.OnEvent
 import dev.tcode.thinmp.viewModel.MainEditViewModel
 
 @Composable
-fun MainEditScreen(viewModel: MainEditViewModel = viewModel()) {
+fun MainEditScreen(viewModel: MainEditViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val callback = { viewModel.save() }

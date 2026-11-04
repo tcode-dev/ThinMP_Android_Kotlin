@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.SystemClock
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelStore
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -102,7 +104,8 @@ class PlaybackControllerTest {
 
         try {
             val uiState = onMain {
-                val factory = ViewModelProvider.AndroidViewModelFactory.getInstance(context as Application)
+                // Hiltを通さないので、PlaybackControllerはfrom()で渡す。
+                val factory = viewModelFactory { initializer { MiniPlayerViewModel(context as Application, PlaybackController.from(context)) } }
 
                 ViewModelProvider(store, factory)[MiniPlayerViewModel::class.java].uiState.value
             }

@@ -4,8 +4,10 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.service.ArtistDetailService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class ArtistDetailUiState(
     val primaryText: String = "",
@@ -22,9 +25,10 @@ data class ArtistDetailUiState(
     val songs: List<SongModel> = emptyList()
 )
 
-class ArtistDetailViewModel(
-    application: Application, savedStateHandle: SavedStateHandle
-) : SongListViewModel(application) {
+@HiltViewModel
+class ArtistDetailViewModel @Inject constructor(
+    application: Application, savedStateHandle: SavedStateHandle, playbackController: PlaybackController
+) : SongListViewModel(application, playbackController) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(ArtistDetailUiState())
     val uiState: StateFlow<ArtistDetailUiState> = _uiState.asStateFlow()

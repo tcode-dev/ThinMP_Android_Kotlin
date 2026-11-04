@@ -8,11 +8,12 @@ import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertRangeInfoEquals
-import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.tcode.thinmp.activity.HiltTestActivity
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicService
 import dev.tcode.thinmp.player.PlaybackController
@@ -48,7 +49,7 @@ class PlayerScreenUnknownDurationTest {
     private val tickMs = 1_500L
 
     @get:Rule
-    val composeTestRule = createComposeRule()
+    val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
 
     private lateinit var context: Context
     private lateinit var untaggedSong: SongModel

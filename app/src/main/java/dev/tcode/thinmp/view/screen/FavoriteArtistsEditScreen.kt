@@ -7,7 +7,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.view.collapsingTopAppBar.EditCollapsingTopAppBarView
 import dev.tcode.thinmp.view.nav.LocalNavigator
 import dev.tcode.thinmp.view.row.PlainRowView
@@ -16,7 +16,7 @@ import dev.tcode.thinmp.view.util.OnEvent
 import dev.tcode.thinmp.viewModel.FavoriteArtistsEditViewModel
 
 @Composable
-fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = viewModel()) {
+fun FavoriteArtistsEditScreen(viewModel: FavoriteArtistsEditViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val callback = { viewModel.save() }

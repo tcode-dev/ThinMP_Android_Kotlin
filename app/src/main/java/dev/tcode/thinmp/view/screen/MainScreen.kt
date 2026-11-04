@@ -37,7 +37,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
@@ -58,7 +58,7 @@ import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MainViewModel = viewModel()) {
+fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val spanCount: Int = gridSpanCount()
     val navigator = LocalNavigator.current

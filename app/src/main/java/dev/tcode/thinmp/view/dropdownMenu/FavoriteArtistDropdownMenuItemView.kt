@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.viewModel.FavoriteArtistRegisterViewModel
 
 @Composable
-fun FavoriteArtistDropdownMenuItemView(id: ArtistId, close: () -> Unit, viewModel: FavoriteArtistRegisterViewModel = viewModel()) {
+fun FavoriteArtistDropdownMenuItemView(id: ArtistId, close: () -> Unit, viewModel: FavoriteArtistRegisterViewModel = hiltViewModel()) {
     // idをkeyにして、メニューを開いた行の状態を表示する。
     // 結果が返るまでは項目を無効にして残し、メニューの高さが変わらないようにする。
     //

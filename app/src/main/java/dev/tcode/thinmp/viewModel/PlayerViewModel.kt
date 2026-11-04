@@ -4,6 +4,7 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 const val START_TIME = "00:00"
 
@@ -41,10 +43,10 @@ data class PlayerUiState(
  * PlaybackController.stateに追従する。
  * stateにないシークバーの位置は、再生中は1秒ごと、位置が飛んだときはその都度currentPosition()から読む。
  */
-class PlayerViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister,
+@HiltViewModel
+class PlayerViewModel @Inject constructor(application: Application, private val playbackController: PlaybackController) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister,
     FavoriteSongRegister {
     private val INTERVAL_MS = 1000L
-    private val playbackController = PlaybackController.from(application)
     private var favoriteJob: Job? = null
     private var seekBarJob: Job? = null
     private var hadQueue = false

@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.collapsingTopAppBar.MenuCollapsingTopAppBarView
 import dev.tcode.thinmp.view.dropdownMenu.PlaylistRemoveDropdownMenuItemView
@@ -23,7 +23,7 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @Composable
-fun PlaylistsScreen(viewModel: PlaylistsViewModel = viewModel()) {
+fun PlaylistsScreen(viewModel: PlaylistsViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
 

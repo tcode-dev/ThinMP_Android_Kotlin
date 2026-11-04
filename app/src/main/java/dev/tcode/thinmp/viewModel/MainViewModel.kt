@@ -3,6 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.ShortcutModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class MainUiState(
     val menu: List<MainMenuItem> = emptyList(),
@@ -23,7 +25,8 @@ data class MainUiState(
     val albums: List<AlbumModel> = emptyList()
 )
 
-class MainViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+@HiltViewModel
+class MainViewModel @Inject constructor(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(MainUiState())

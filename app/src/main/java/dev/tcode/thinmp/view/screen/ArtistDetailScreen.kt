@@ -31,7 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -59,7 +59,7 @@ import dev.tcode.thinmp.view.util.isLandscape
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @Composable
-fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = viewModel()) {
+fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val spanCount: Int = gridSpanCount()

@@ -2,11 +2,14 @@ package dev.tcode.thinmp.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.register.ShortcutRegister
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ShortcutViewModel : ViewModel(), ShortcutRegister {
+@HiltViewModel
+class ShortcutViewModel @Inject constructor() : ViewModel(), ShortcutRegister {
     suspend fun isShortcut(shortcutItemId: ShortcutItemId): Boolean {
         return exists(shortcutItemId)
     }

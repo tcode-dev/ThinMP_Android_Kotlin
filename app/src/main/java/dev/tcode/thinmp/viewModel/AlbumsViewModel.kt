@@ -3,6 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.service.AlbumsService
 import dev.tcode.thinmp.view.util.CustomLifecycleEventObserverListener
@@ -12,12 +13,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class AlbumsUiState(
     val albums: List<AlbumModel> = emptyList()
 )
 
-class AlbumsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+@HiltViewModel
+class AlbumsViewModel @Inject constructor(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(AlbumsUiState())

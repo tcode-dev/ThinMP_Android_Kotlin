@@ -35,7 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.constant.StyleConstant
@@ -55,7 +55,7 @@ import dev.tcode.thinmp.view.util.systemBars
 import dev.tcode.thinmp.viewModel.PlayerViewModel
 
 @Composable
-fun PlayerScreen(viewModel: PlayerViewModel = viewModel()) {
+fun PlayerScreen(viewModel: PlayerViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     // ポップアップは開いたときの曲を保持し、閉じている間はnullにする。

@@ -21,7 +21,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.view.collapsingTopAppBar.DetailCollapsingTopAppBarView
@@ -41,7 +41,7 @@ import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @Composable
-fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = viewModel()) {
+fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val spanCount: Int = gridSpanCount()

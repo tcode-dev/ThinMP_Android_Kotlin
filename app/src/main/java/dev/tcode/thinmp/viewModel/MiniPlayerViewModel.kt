@@ -4,12 +4,14 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.player.PlaybackState
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import javax.inject.Inject
 
 data class MiniPlayerUiState(
     val primaryText: String = "", val imageUri: Uri = Uri.EMPTY, val isVisible: Boolean = false, val isPlaying: Boolean = false
@@ -20,8 +22,8 @@ data class MiniPlayerUiState(
  * 開いたばかりの画面でも最初のフレームから再生中の曲を表示できる。
  * キューに曲があるときだけ表示するので、retry()でキューが空になれば消える。
  */
-class MiniPlayerViewModel(application: Application) : AndroidViewModel(application) {
-    private val playbackController = PlaybackController.from(application)
+@HiltViewModel
+class MiniPlayerViewModel @Inject constructor(application: Application, private val playbackController: PlaybackController) : AndroidViewModel(application) {
 
     val uiState: StateFlow<MiniPlayerUiState> =
         playbackController.state.map { toUiState(it) }.stateIn(viewModelScope, SharingStarted.Eagerly, toUiState(playbackController.state.value))
