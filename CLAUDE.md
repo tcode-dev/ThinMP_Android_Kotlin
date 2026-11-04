@@ -65,7 +65,7 @@ View → ViewModel → PlaybackController → MusicService      (再生。MediaS
 
 - **UI**:Jetpack Compose + Material 3。画像はCoil、権限はAccompanist
 - **再生**:Media3 1.11.1(ExoPlayer、MediaSession)。通知、ロック画面、フォアグラウンド化は`MediaSessionService`に任せる
-- **DI**:Hilt
+- **DI**:Hilt。ViewModelは`hiltViewModel()`(`hilt-lifecycle-viewmodel-compose`)で作る
 - **データベース**:Room(お気に入り、プレイリスト、ショートカット)。
   `AppDatabase`はシングルトンで、`MainApplication.appContext`から作る。
   スキーマは`app/schemas/`に書き出す。
@@ -105,11 +105,14 @@ app/src/main/java/dev/tcode/thinmp/
 - XMLのレイアウトは使わず、すべてJetpack Composeで書く
 - エンティティのIDは型付きの値オブジェクトで扱い、生の文字列やLongは使わない
 - 画面ごとに専用のViewModelを持つ
-- ViewModelはHiltを使わず、画面の`viewModel()`が標準のファクトリーで作る。
-  そのためコンストラクターの引数は、`()`、`(Application)`、`(Application, SavedStateHandle)`のどれかにする。
-  `PlaybackController`のようなHiltのシングルトンは、ViewModelの中で`PlaybackController.from(context)`のように取得する。
-  `@HiltViewModel`を付けても、Navigation Composeの`NavBackStackEntry`が使う既定のファクトリーはHiltのものではないので注入されず、
-  標準のファクトリーが作れない引数を足すと実行時にクラッシュする
+- ViewModelにはすべて`@HiltViewModel`を付け、`@Inject constructor`で依存を受け取る。
+  画面と部品は`viewModel()`ではなく`hiltViewModel()`で取得する。
+  Navigation Composeの中の`viewModel()`は`NavBackStackEntry`の既定のファクトリーを使うので、`@HiltViewModel`を付けていても注入されず、
+  注入する引数を足すと実行時にクラッシュする。
+  `PlaybackController`はコンストラクターで受け取り、`PlaybackController.from(context)`はHiltで注入できないテストにだけ使う
+- `hiltViewModel()`を使う部品をComposeのテストで描くときは、`createComposeRule()`ではなく`createAndroidComposeRule<HiltTestActivity>()`を使う。
+  `hiltViewModel()`はActivityがHiltのコンポーネントを持つことを求めるからだ。
+  `HiltTestActivity`は、アプリのHiltに参加させるためにdebugのソースセットに置いている
 - ユーザーが作るデータはRoom、端末の音声はMediaStoreに置く
 - サロゲートの`id`は、それを読むものがある場合にだけ持たせる。
   お気に入りのテーブルはMediaStoreのidそのものを主キーにする(`favorite_songs(song_id)`、`favorite_artists(artist_id)`)。

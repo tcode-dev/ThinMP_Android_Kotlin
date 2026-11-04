@@ -4,6 +4,7 @@ import android.app.Application
 import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class PlaylistsUiState(
     val playlists: List<PlaylistModel> = emptyList(),
@@ -27,7 +29,8 @@ data class PlaylistsUiState(
     val registeredPlaylistIds: Set<PlaylistId> = emptySet()
 )
 
-class PlaylistsViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
+@HiltViewModel
+class PlaylistsViewModel @Inject constructor(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener, PlaylistRegister {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     // 登録ポップアップでは、その曲が入っているプレイリストに印を付ける。

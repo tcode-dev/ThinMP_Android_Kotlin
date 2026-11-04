@@ -4,8 +4,10 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
+import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.service.PlaylistDetailService
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
@@ -13,14 +15,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 data class PlaylistDetailUiState(
     val primaryText: String = "", val secondaryText: String = "", val imageUri: Uri = Uri.EMPTY, val songs: List<SongModel> = emptyList()
 )
 
-class PlaylistDetailViewModel(
-    application: Application, savedStateHandle: SavedStateHandle
-) : SongListViewModel(application) {
+@HiltViewModel
+class PlaylistDetailViewModel @Inject constructor(
+    application: Application, savedStateHandle: SavedStateHandle, playbackController: PlaybackController
+) : SongListViewModel(application, playbackController) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(PlaylistDetailUiState())
     val uiState: StateFlow<PlaylistDetailUiState> = _uiState.asStateFlow()

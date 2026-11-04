@@ -3,6 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.ShortcutModel
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /**
  * `loaded`が必要な理由はPlaylistsEditUiStateを参照。
@@ -22,7 +24,8 @@ data class MainEditUiState(
     val menu: List<MainMenuItem> = emptyList(), val shortcuts: List<ShortcutModel> = emptyList(), val recentlyAlbumsVisibility: Boolean = true, val shortcutVisibility: Boolean = true, val loaded: Boolean = false
 )
 
-class MainEditViewModel(application: Application) : AndroidViewModel(application), ShortcutRegister {
+@HiltViewModel
+class MainEditViewModel @Inject constructor(application: Application) : AndroidViewModel(application), ShortcutRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 

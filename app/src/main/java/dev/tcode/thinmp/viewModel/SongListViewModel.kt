@@ -23,8 +23,7 @@ import kotlinx.coroutines.launch
  *
  * initで読み込み済みなので、直後に来る最初のON_RESUMEでは読み込まない。
  */
-abstract class SongListViewModel(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
-    private val playbackController = PlaybackController.from(application)
+abstract class SongListViewModel(application: Application, private val playbackController: PlaybackController) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
 
     val isVisiblePlayer: StateFlow<Boolean> =

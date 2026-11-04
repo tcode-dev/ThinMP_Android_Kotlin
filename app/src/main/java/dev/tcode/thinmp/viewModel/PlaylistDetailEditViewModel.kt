@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.register.PlaylistRegister
@@ -14,6 +15,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /**
  * `loaded`が必要な理由はPlaylistsEditUiStateを参照。
@@ -22,7 +24,8 @@ data class PlaylistDetailEditUiState(
     val primaryText: String = "", val songs: List<SongModel> = emptyList(), val loaded: Boolean = false
 )
 
-class PlaylistDetailEditViewModel(
+@HiltViewModel
+class PlaylistDetailEditViewModel @Inject constructor(
     application: Application, savedStateHandle: SavedStateHandle
 ) : AndroidViewModel(application), PlaylistRegister {
     private var loadJob: Job? = null

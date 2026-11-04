@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.model.media.valueObject.SongId
@@ -35,7 +35,7 @@ import dev.tcode.thinmp.view.util.CustomLifecycleEventObserver
 import dev.tcode.thinmp.viewModel.PlaylistsViewModel
 
 @Composable
-fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: PlaylistsViewModel = viewModel()) {
+fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: PlaylistsViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     var isCreate by remember { mutableStateOf(false) }
     var name by remember { mutableStateOf("") }

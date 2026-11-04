@@ -11,7 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.collapsingTopAppBar.EditCollapsingTopAppBarView
 import dev.tcode.thinmp.view.nav.LocalNavigator
@@ -21,7 +21,7 @@ import dev.tcode.thinmp.view.util.OnEvent
 import dev.tcode.thinmp.viewModel.PlaylistDetailEditViewModel
 
 @Composable
-fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel = viewModel()) {
+fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val doneCallback = { viewModel.save() }

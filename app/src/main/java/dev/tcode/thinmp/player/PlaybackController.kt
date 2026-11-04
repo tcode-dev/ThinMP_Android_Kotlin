@@ -232,7 +232,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     }
 
     /**
-     * Hiltで注入できないview modelやテストから取得するためのもの。
+     * Hiltで注入できないテストから取得するためのもの。
      */
     @EntryPoint
     @InstallIn(SingletonComponent::class)

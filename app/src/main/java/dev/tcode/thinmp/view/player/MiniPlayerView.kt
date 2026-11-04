@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.image.ImageView
@@ -28,7 +28,7 @@ import dev.tcode.thinmp.view.text.PrimaryTextView
 import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 
 @Composable
-fun MiniPlayerView(viewModel: MiniPlayerViewModel = viewModel()) {
+fun MiniPlayerView(viewModel: MiniPlayerViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
 

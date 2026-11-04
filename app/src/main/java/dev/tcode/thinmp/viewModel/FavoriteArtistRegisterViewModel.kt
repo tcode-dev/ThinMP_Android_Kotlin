@@ -2,11 +2,14 @@ package dev.tcode.thinmp.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class FavoriteArtistRegisterViewModel : ViewModel(), FavoriteArtistRegister {
+@HiltViewModel
+class FavoriteArtistRegisterViewModel @Inject constructor() : ViewModel(), FavoriteArtistRegister {
     suspend fun isFavorite(artistId: ArtistId): Boolean {
         return existsFavoriteArtist(artistId)
     }

@@ -8,7 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.view.cell.AlbumCellView
 import dev.tcode.thinmp.view.cell.GridCellView
@@ -23,7 +23,7 @@ import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.AlbumsViewModel
 
 @Composable
-fun AlbumsScreen(viewModel: AlbumsViewModel = viewModel()) {
+fun AlbumsScreen(viewModel: AlbumsViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val navigator = LocalNavigator.current
     val spanCount: Int = gridSpanCount()

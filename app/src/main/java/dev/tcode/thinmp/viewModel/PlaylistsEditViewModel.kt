@@ -3,6 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.PlaylistModel
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /**
  * `loaded`はload()が実際のデータを入れるまでfalseで、その間は完了ボタンを無効にする。
@@ -25,7 +27,8 @@ data class PlaylistsEditUiState(
     val playlists: List<PlaylistModel> = emptyList(), val loaded: Boolean = false
 )
 
-class PlaylistsEditViewModel(application: Application) : AndroidViewModel(application), PlaylistRegister {
+@HiltViewModel
+class PlaylistsEditViewModel @Inject constructor(application: Application) : AndroidViewModel(application), PlaylistRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 

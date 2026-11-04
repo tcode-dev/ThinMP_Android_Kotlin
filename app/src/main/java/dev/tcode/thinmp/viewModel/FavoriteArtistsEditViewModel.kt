@@ -3,6 +3,7 @@ package dev.tcode.thinmp.viewModel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.register.FavoriteArtistRegister
 import dev.tcode.thinmp.service.FavoriteArtistsService
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import javax.inject.Inject
 
 /**
  * `loaded`が必要な理由はPlaylistsEditUiStateを参照。
@@ -20,7 +22,8 @@ data class FavoriteArtistsEditUiState(
     val artists: List<ArtistModel> = emptyList(), val loaded: Boolean = false
 )
 
-class FavoriteArtistsEditViewModel(application: Application) : AndroidViewModel(application), FavoriteArtistRegister {
+@HiltViewModel
+class FavoriteArtistsEditViewModel @Inject constructor(application: Application) : AndroidViewModel(application), FavoriteArtistRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
