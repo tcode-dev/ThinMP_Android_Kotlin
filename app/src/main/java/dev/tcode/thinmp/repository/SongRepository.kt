@@ -22,12 +22,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         MediaStore.Audio.Media.CD_TRACK_NUMBER
     )
 ) {
-    private val trackNumberSortOrder = "CASE " +
-            "WHEN ${MediaStore.Audio.Media.CD_TRACK_NUMBER} LIKE '%/%' THEN " +
-            "CAST(SUBSTR(${MediaStore.Audio.Media.CD_TRACK_NUMBER}, 0, INSTR(${MediaStore.Audio.Media.CD_TRACK_NUMBER}, '/')) AS INTEGER) " +
-            "ELSE " +
-            "CAST(${MediaStore.Audio.Media.CD_TRACK_NUMBER} AS INTEGER) " +
-            "END ASC"
+    private val trackSortOrder = "${numberSortOrder(MediaStore.Audio.Media.DISC_NUMBER)}, ${numberSortOrder(MediaStore.Audio.Media.CD_TRACK_NUMBER)}"
 
     suspend fun findById(songId: String): SongModel? {
         return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(songId))
@@ -41,7 +36,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList(
             MediaStore.Audio.Media.ARTIST_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1",
             arrayOf(artistId),
-            "${MediaStore.Audio.Media.ALBUM} ASC, $trackNumberSortOrder"
+            "${MediaStore.Audio.Media.ALBUM} ASC, $trackSortOrder"
         )
     }
 
@@ -49,7 +44,7 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
         return getList(
             MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1",
             arrayOf(albumId),
-            trackNumberSortOrder
+            trackSortOrder
         )
     }
 
@@ -80,6 +75,19 @@ class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
             null,
             MediaStore.Audio.Media.TITLE + " ASC"
         )
+    }
+
+    /**
+     * ディスク番号とトラック番号の列にはタグの値が入り、"3/12"のように全体の数を含むことがある。
+     * 文字列のまま比べると"10"が"2"より前になるので、先頭の数値で比べる。
+     */
+    private fun numberSortOrder(column: String): String {
+        return "CASE " +
+                "WHEN $column LIKE '%/%' THEN " +
+                "CAST(SUBSTR($column, 0, INSTR($column, '/')) AS INTEGER) " +
+                "ELSE " +
+                "CAST($column AS INTEGER) " +
+                "END ASC"
     }
 
     private fun getId(cursor: Cursor): SongId {
