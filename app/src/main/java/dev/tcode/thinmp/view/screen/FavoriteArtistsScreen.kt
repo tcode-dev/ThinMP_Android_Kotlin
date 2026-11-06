@@ -35,11 +35,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = hiltViewModel())
         }) {
             items(uiState.artists, key = { it.id }) { artist ->
                 DropdownMenuView(dropdownContent = { callback ->
-                    val close = {
-                        callback()
-                        viewModel.load()
-                    }
-                    FavoriteArtistDropdownMenuItemView(artist.artistId, close)
+                    FavoriteArtistDropdownMenuItemView(artist.artistId, callback, onToggled = { viewModel.load() })
                     ShortcutDropdownMenuItemView(artist.artistId, callback)
                 }) { callback ->
                     PlainRowView(artist.name, Modifier.pointerInput(Unit) {

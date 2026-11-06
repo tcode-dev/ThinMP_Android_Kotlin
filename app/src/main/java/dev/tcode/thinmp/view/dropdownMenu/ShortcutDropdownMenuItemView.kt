@@ -13,7 +13,7 @@ import dev.tcode.thinmp.model.media.valueObject.ShortcutItemId
 import dev.tcode.thinmp.viewModel.ShortcutViewModel
 
 @Composable
-fun ShortcutDropdownMenuItemView(id: ShortcutItemId, callback: () -> Unit, viewModel: ShortcutViewModel = hiltViewModel()) {
+fun ShortcutDropdownMenuItemView(id: ShortcutItemId, callback: () -> Unit, onToggled: () -> Unit = {}, viewModel: ShortcutViewModel = hiltViewModel()) {
     // idをkeyにして、メニューを開いた行の状態を表示する。
     // 結果が返るまでは項目を無効にして残し、メニューの高さが変わらないようにする。
     // lintを抑制する理由はFavoriteArtistDropdownMenuItemViewを参照。
@@ -24,7 +24,7 @@ fun ShortcutDropdownMenuItemView(id: ShortcutItemId, callback: () -> Unit, viewM
         enabled = isShortcut != null,
         text = { Text(stringResource(if (isShortcut == true) R.string.remove_shortcut else R.string.add_shortcut), color = MaterialTheme.colorScheme.primary) },
         onClick = {
-            viewModel.toggle(id)
+            viewModel.toggle(id, onToggled)
             callback()
         },
     )
