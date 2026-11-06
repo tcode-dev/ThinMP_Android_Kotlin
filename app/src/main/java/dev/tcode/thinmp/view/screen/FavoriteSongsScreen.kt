@@ -36,15 +36,11 @@ fun FavoriteSongsScreen(viewModel: FavoriteSongsViewModel = hiltViewModel()) {
         }) {
             items(uiState.songs, key = { it.id }) { song ->
                 DropdownMenuView(dropdownContent = { callback ->
-                    val callbackFavorite = {
-                        callback()
-                        viewModel.load()
-                    }
                     val callbackPlaylist = {
                         showPlaylistRegisterPopup(song.songId)
                         callback()
                     }
-                    FavoriteSongDropdownMenuItemView(song.songId, callbackFavorite)
+                    FavoriteSongDropdownMenuItemView(song.songId, callback, onToggled = { viewModel.load() })
                     PlaylistDropdownMenuItemView(callbackPlaylist)
                 }) { callback ->
                     MediaRowView(song.name, song.artistName, song.getImageUri(), Modifier.pointerInput(Unit) {

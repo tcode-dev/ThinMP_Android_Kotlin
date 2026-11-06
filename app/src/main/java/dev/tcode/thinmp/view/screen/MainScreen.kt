@@ -128,11 +128,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
                 }
                 itemsIndexed(items = uiState.shortcuts, key = { _, shortcut -> shortcut.id.id }) { index, shortcut ->
                     DropdownMenuView(dropdownContent = { callback ->
-                        val callbackShortcut = {
-                            callback()
-                            viewModel.load()
-                        }
-                        ShortcutDropdownMenuItemView(shortcut.itemId, callbackShortcut)
+                        ShortcutDropdownMenuItemView(shortcut.itemId, callback, onToggled = { viewModel.load() })
                     }) { callback ->
                         GridCellView(index, spanCount) {
                             ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
@@ -148,11 +144,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
                 }
                 itemsIndexed(items = uiState.albums, key = { _, album -> album.id }) { index, album ->
                     DropdownMenuView(dropdownContent = { callback ->
-                        val callbackAlbum = {
-                            callback()
-                            viewModel.load()
-                        }
-                        ShortcutDropdownMenuItemView(album.albumId, callbackAlbum)
+                        ShortcutDropdownMenuItemView(album.albumId, callback, onToggled = { viewModel.load() })
                     }) { callback ->
                         GridCellView(index, spanCount) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {

@@ -20,10 +20,14 @@ class ShortcutViewModel @Inject constructor() : ViewModel(), ShortcutRegister {
      *
      * 現在の状態はメニューの表示から受け取らず、トランザクションの中で確かめる。
      * 表示が古くても二重に追加しないようにするため。
+     *
+     * [onToggled]は書き込みが終わってから呼ぶ。
+     * 一覧の読み直しが書き込みより先に終わると、外した行が残ってしまうからだ。
      */
-    fun toggle(shortcutItemId: ShortcutItemId) {
+    fun toggle(shortcutItemId: ShortcutItemId, onToggled: () -> Unit = {}) {
         viewModelScope.launch {
             toggleShortcut(shortcutItemId)
+            onToggled()
         }
     }
 }

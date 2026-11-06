@@ -13,7 +13,7 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.viewModel.FavoriteSongRegisterViewModel
 
 @Composable
-fun FavoriteSongDropdownMenuItemView(id: SongId, callback: () -> Unit, viewModel: FavoriteSongRegisterViewModel = hiltViewModel()) {
+fun FavoriteSongDropdownMenuItemView(id: SongId, callback: () -> Unit, onToggled: () -> Unit = {}, viewModel: FavoriteSongRegisterViewModel = hiltViewModel()) {
     // idをkeyにして、メニューを開いた行の状態を表示する。
     // 結果が返るまでは項目を無効にして残し、メニューの高さが変わらないようにする。
     // lintを抑制する理由はFavoriteArtistDropdownMenuItemViewを参照。
@@ -24,7 +24,7 @@ fun FavoriteSongDropdownMenuItemView(id: SongId, callback: () -> Unit, viewModel
         enabled = isFavorite != null,
         text = { Text(stringResource(if (isFavorite == true) R.string.remove_favorite else R.string.add_favorite), color = MaterialTheme.colorScheme.primary) },
         onClick = {
-            viewModel.toggle(id)
+            viewModel.toggle(id, onToggled)
             callback()
         },
     )

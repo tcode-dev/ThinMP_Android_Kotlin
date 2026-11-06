@@ -20,10 +20,14 @@ class FavoriteArtistRegisterViewModel @Inject constructor() : ViewModel(), Favor
      *
      * 現在の状態はメニューの表示から受け取らず、トランザクションの中で確かめる。
      * 表示が古くても二重に追加しないようにするため。
+     *
+     * [onToggled]は書き込みが終わってから呼ぶ。
+     * 一覧の読み直しが書き込みより先に終わると、外した行が残ってしまうからだ。
      */
-    fun toggle(artistId: ArtistId) {
+    fun toggle(artistId: ArtistId, onToggled: () -> Unit = {}) {
         viewModelScope.launch {
             toggleFavoriteArtist(artistId)
+            onToggled()
         }
     }
 }
