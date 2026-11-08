@@ -1,6 +1,8 @@
 package dev.tcode.thinmp.view.collapsingTopAppBar
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,5 +27,9 @@ fun EditCollapsingTopAppBarView(enabled: Boolean, callback: () -> Unit, content:
             EmptyTopAppBarView()
         }
         content()
+        // 編集画面にはミニプレーヤーがないので、ナビゲーションバーの高さだけ空ける。
+        item {
+            Spacer(Modifier.navigationBarsPadding())
+        }
     }
 }
