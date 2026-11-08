@@ -9,7 +9,11 @@ import dev.tcode.thinmp.model.room.FavoriteSongEntity
 
 @Dao
 interface FavoriteSongDao {
-    @Query("SELECT * FROM favorite_songs")
+    /**
+     * お気に入りの順は挿入順なので、rowidで並べる。
+     * replaceAllは編集画面で並べた順に挿入し直すので、この順が編集画面の並びになる。
+     */
+    @Query("SELECT * FROM favorite_songs ORDER BY rowid")
     suspend fun findAll(): List<FavoriteSongEntity>
 
     @Query("SELECT * FROM favorite_songs WHERE song_id = :songId")

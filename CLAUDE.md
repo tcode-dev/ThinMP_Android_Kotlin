@@ -123,9 +123,9 @@ app/src/main/java/dev/tcode/thinmp/
 - DAOのクエリが絞り込む主キー以外の列には`@Index`を付け、それ以上は付けない。
   複合インデックスは、すべてのクエリがその組で絞り込む場合だけにする(`shortcuts(item_id, type)`)。
   主キーのインデックスの先頭がその列なら、インデックスは付けない(`playlist_songs(playlist_id, song_id)`は`playlist_id`だけを指定するクエリにも使える)
-- プレイリストの曲順は行を挿入した順。
-  そのため`findByPlaylistId`は、SQLiteが選ぶインデックスに任せず`ORDER BY rowid`を指定する。
-  順序を保つ必要がある書き込み(`updatePlaylist`)は、そのプレイリストの行を削除し、新しい順で挿入し直す
+- プレイリストの曲順と、お気に入りの曲・アーティストの順は、行を挿入した順。
+  そのため`findByPlaylistId`と、お気に入りの`findAll`は、SQLiteが選ぶインデックスに任せず`ORDER BY rowid`を指定する。
+  順序を保つ必要がある書き込み(`updatePlaylist`、お気に入りの`replaceAll`)は、行を削除し、新しい順で挿入し直す
 - 列名は`snake_case`にする。Kotlinのプロパティがcamelの場合は`@ColumnInfo(name = ...)`で指定する。
   指定しないとRoomはプロパティ名をそのまま列名にする。
   SQLiteの識別子は大文字と小文字を区別しないので、camelCaseにしても何も区別できない
