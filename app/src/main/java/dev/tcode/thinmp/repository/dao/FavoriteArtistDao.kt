@@ -9,7 +9,10 @@ import dev.tcode.thinmp.model.room.FavoriteArtistEntity
 
 @Dao
 interface FavoriteArtistDao {
-    @Query("SELECT * FROM favorite_artists")
+    /**
+     * FavoriteSongDao.findAllを参照。
+     */
+    @Query("SELECT * FROM favorite_artists ORDER BY rowid")
     suspend fun findAll(): List<FavoriteArtistEntity>
 
     @Query("SELECT * FROM favorite_artists WHERE artist_id = :artistId")
