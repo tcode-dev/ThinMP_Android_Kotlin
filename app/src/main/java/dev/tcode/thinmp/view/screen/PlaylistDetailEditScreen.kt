@@ -26,7 +26,7 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
     val navigator = LocalNavigator.current
     val doneCallback = { viewModel.save() }
 
-    OnEvent(viewModel.saved) { navigator.back() }
+    OnEvent(viewModel.saved) { navigator.backFromEvent() }
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, doneCallback) {

@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.navigation.NavController
 import dev.tcode.thinmp.R
 import dev.tcode.thinmp.constant.StyleConstant
 import dev.tcode.thinmp.view.cell.AlbumCellView
@@ -58,7 +57,7 @@ import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.MainViewModel
 
 @Composable
-fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltViewModel()) {
+fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val spanCount: Int = gridSpanCount()
     val navigator = LocalNavigator.current
@@ -118,7 +117,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
             items(items = uiState.menu, key = { it.key }, span = { GridItemSpan(spanCount) }) { item ->
                 if (item.visibility) {
                     PlainRowView(stringResource(item.id), modifier = Modifier.clickable {
-                        navController.navigate(item.key)
+                        navigator.navigate(item.key)
                     })
                 }
             }
@@ -132,7 +131,7 @@ fun MainScreen(navController: NavController, viewModel: MainViewModel = hiltView
                     }) { callback ->
                         GridCellView(index, spanCount) {
                             ShortcutCellView(shortcut.primaryText, shortcut.secondaryText, shortcut.imageUri, shortcut.type, Modifier.pointerInput(Unit) {
-                                detectTapGestures(onLongPress = { callback() }, onTap = { navController.navigate(shortcut.url) })
+                                detectTapGestures(onLongPress = { callback() }, onTap = { navigator.navigate(shortcut.url) })
                             })
                         }
                     }

@@ -1,10 +1,13 @@
 package dev.tcode.thinmp.view.nav
 
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.NavConstant
 
 interface INavigator {
     fun back()
+    fun backFromEvent()
+    fun navigate(route: String)
     fun mainEdit()
     fun artistDetail(id: String)
     fun albumDetail(id: String)
@@ -16,44 +19,71 @@ interface INavigator {
     fun player()
 }
 
+/**
+ * ユーザーの操作による遷移は、現在の画面がRESUMEDのときだけ行う。
+ * 遷移のアニメーション中は前の画面も描かれていてタップを受け付けるので、
+ * 連打すると同じ画面が2つ積まれたり、戻るが2回効いて最初の画面まで閉じたりする。
+ * 遷移が始まると現在の画面はアニメーションが終わるまでRESUMEDにならないので、2回目は捨てられる。
+ */
 class Navigator(private val navController: NavController) : INavigator {
     override fun back() {
+        if (!isResumed()) return
+
         navController.popBackStack()
     }
 
+    /**
+     * 保存の完了など、イベントを受けて画面を閉じるときに使う。
+     * イベントはアプリがバックグラウンドにあってRESUMEDでないときにも届くので、back()と違って状態を確かめない。
+     * 確かめると、イベントが捨てられて画面が閉じなくなる。
+     */
+    override fun backFromEvent() {
+        navController.popBackStack()
+    }
+
+    override fun navigate(route: String) {
+        if (!isResumed()) return
+
+        navController.navigate(route)
+    }
+
     override fun mainEdit() {
-        navController.navigate(NavConstant.MAIN_EDIT)
+        navigate(NavConstant.MAIN_EDIT)
     }
 
     override fun artistDetail(id: String) {
-        navController.navigate("${NavConstant.ARTIST_DETAIL}/${id}")
+        navigate("${NavConstant.ARTIST_DETAIL}/${id}")
     }
 
     override fun albumDetail(id: String) {
-        navController.navigate("${NavConstant.ALBUM_DETAIL}/${id}")
+        navigate("${NavConstant.ALBUM_DETAIL}/${id}")
     }
 
     override fun favoriteArtistsEdit() {
-        navController.navigate(NavConstant.FAVORITE_ARTISTS_EDIT)
+        navigate(NavConstant.FAVORITE_ARTISTS_EDIT)
     }
 
     override fun favoriteSongsEdit() {
-        navController.navigate(NavConstant.FAVORITE_SONGS_EDIT)
+        navigate(NavConstant.FAVORITE_SONGS_EDIT)
     }
 
     override fun playlistDetail(id: String) {
-        navController.navigate("${NavConstant.PLAYLIST_DETAIL}/${id}")
+        navigate("${NavConstant.PLAYLIST_DETAIL}/${id}")
     }
 
     override fun playlistDetailEdit(id: String) {
-        navController.navigate("${NavConstant.PLAYLIST_DETAIL_EDIT}/${id}")
+        navigate("${NavConstant.PLAYLIST_DETAIL_EDIT}/${id}")
     }
 
     override fun playlistsEdit() {
-        navController.navigate(NavConstant.PLAYLISTS_EDIT)
+        navigate(NavConstant.PLAYLISTS_EDIT)
     }
 
     override fun player() {
-        navController.navigate(NavConstant.PLAYER)
+        navigate(NavConstant.PLAYER)
+    }
+
+    private fun isResumed(): Boolean {
+        return navController.currentBackStackEntry?.lifecycle?.currentState == Lifecycle.State.RESUMED
     }
 }
