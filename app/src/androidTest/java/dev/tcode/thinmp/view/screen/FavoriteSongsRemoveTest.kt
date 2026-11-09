@@ -109,6 +109,8 @@ class FavoriteSongsRemoveTest {
 
     private object NoNavigator : INavigator {
         override fun back() {}
+        override fun backFromEvent() {}
+        override fun navigate(route: String) {}
         override fun mainEdit() {}
         override fun artistDetail(id: String) {}
         override fun albumDetail(id: String) {}

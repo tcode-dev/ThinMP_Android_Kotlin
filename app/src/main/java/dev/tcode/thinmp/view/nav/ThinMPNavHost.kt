@@ -31,7 +31,7 @@ fun ThinMPNavHost() {
 
     CompositionLocalProvider(LocalNavigator provides Navigator(navController)) {
         NavHost(navController = navController, startDestination = NavConstant.MAIN) {
-            composable(NavConstant.MAIN) { MainScreen(navController) }
+            composable(NavConstant.MAIN) { MainScreen() }
             composable(NavConstant.MAIN_EDIT) { MainEditScreen() }
             composable(NavConstant.ARTISTS) { ArtistsScreen() }
             composable(NavConstant.ALBUMS) { AlbumsScreen() }

@@ -213,15 +213,19 @@ class PlayerScreenQueueEmptyTest {
     }
 
     /**
-     * back()の呼び出しで判定する。
+     * 画面はキューが空になったイベントで閉じるので、backFromEvent()の呼び出しで判定する。
      * 2回呼ばれたこともわかるよう、フラグではなく回数を数える。
      */
     private class RecordingNavigator : INavigator {
         val backCount = AtomicInteger(0)
 
-        override fun back() {
+        override fun back() {}
+
+        override fun backFromEvent() {
             backCount.incrementAndGet()
         }
+
+        override fun navigate(route: String) {}
 
         override fun mainEdit() {}
         override fun artistDetail(id: String) {}

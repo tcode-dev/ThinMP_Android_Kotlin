@@ -27,7 +27,7 @@ fun MainEditScreen(viewModel: MainEditViewModel = hiltViewModel()) {
     val navigator = LocalNavigator.current
     val callback = { viewModel.save() }
 
-    OnEvent(viewModel.saved) { navigator.back() }
+    OnEvent(viewModel.saved) { navigator.backFromEvent() }
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, callback) {

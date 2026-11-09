@@ -70,7 +70,7 @@ fun PlayerScreen(viewModel: PlayerViewModel = hiltViewModel()) {
     val isPortrait = LocalConfiguration.current.orientation == Configuration.ORIENTATION_PORTRAIT
 
     CustomLifecycleEventObserver(viewModel)
-    OnEvent(viewModel.queueEmptied) { navigator.back() }
+    OnEvent(viewModel.queueEmptied) { navigator.backFromEvent() }
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         val (player, img) = createRefs()
