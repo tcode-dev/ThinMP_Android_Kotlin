@@ -1,7 +1,6 @@
 package dev.tcode.thinmp.player
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
@@ -14,10 +13,13 @@ import androidx.test.platform.app.InstrumentationRegistry
 import com.google.common.util.concurrent.Futures
 import com.google.common.util.concurrent.ListenableFuture
 import dev.tcode.thinmp.activity.MainActivity
+import dev.tcode.thinmp.config.ConfigStore
+import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -69,11 +71,21 @@ class MusicServicePlayerGuardTest {
         })
     }
 
+    /**
+     * 操作にリピートとシャッフルが含まれ、サービスがそれを保存するので、既定値に戻す。
+     * サービスの破棄を待ってから戻すのは、保存が戻した後に届いて上書きしないようにするためだ。
+     * Activityのコントローラーもサービスにバインドしているので、先にActivityを閉じないと破棄されない。
+     */
     @After
-    fun tearDown() {
+    fun tearDown() = runBlocking {
         runOnMain { controller.release() }
-        context.stopService(Intent(context, MusicService::class.java))
         scenario.close()
+        MusicServiceWatcher.stopAndAwait(context, timeoutMs)
+
+        val config = ConfigStore(context)
+
+        config.saveRepeat(RepeatState.OFF)
+        config.saveShuffle(false)
     }
 
     /**
