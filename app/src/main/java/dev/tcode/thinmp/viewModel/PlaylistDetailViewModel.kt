@@ -23,7 +23,7 @@ data class PlaylistDetailUiState(
 
 @HiltViewModel
 class PlaylistDetailViewModel @Inject constructor(
-    application: Application, savedStateHandle: SavedStateHandle, playbackController: PlaybackController
+    application: Application, savedStateHandle: SavedStateHandle, playbackController: PlaybackController, private val mediaStoreFailure: MediaStoreFailure
 ) : SongListViewModel(application, playbackController) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(PlaylistDetailUiState())
@@ -42,13 +42,15 @@ class PlaylistDetailViewModel @Inject constructor(
     override fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = PlaylistDetailService(getApplication())
-            val playlist = service.findById(id) ?: return@launch
+            mediaStoreFailure.catching {
+                val service = PlaylistDetailService(getApplication())
+                val playlist = service.findById(id) ?: return@launch
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = playlist.primaryText, secondaryText = playlist.secondaryText, imageUri = playlist.imageUri, songs = playlist.songs
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        primaryText = playlist.primaryText, secondaryText = playlist.secondaryText, imageUri = playlist.imageUri, songs = playlist.songs
+                    )
+                }
             }
         }
     }

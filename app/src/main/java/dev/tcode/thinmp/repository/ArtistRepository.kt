@@ -2,12 +2,16 @@ package dev.tcode.thinmp.repository
 
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.ArtistModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 
-class ArtistRepository(context: Context) : MediaStoreRepository<ArtistModel>(
-    context, MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI, arrayOf(
+/**
+ * [uri]はテストで問い合わせの失敗を起こすためだけに差し替える。
+ */
+class ArtistRepository(context: Context, uri: Uri = MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI) : MediaStoreRepository<ArtistModel>(
+    context, uri, arrayOf(
         MediaStore.Audio.Artists._ID,
         MediaStore.Audio.Artists.ARTIST,
         MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,

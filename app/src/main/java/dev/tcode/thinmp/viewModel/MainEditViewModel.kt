@@ -25,7 +25,7 @@ data class MainEditUiState(
 )
 
 @HiltViewModel
-class MainEditViewModel @Inject constructor(application: Application) : AndroidViewModel(application), ShortcutRegister {
+class MainEditViewModel @Inject constructor(application: Application, private val mediaStoreFailure: MediaStoreFailure) : AndroidViewModel(application), ShortcutRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
@@ -43,16 +43,18 @@ class MainEditViewModel @Inject constructor(application: Application) : AndroidV
     private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = MainService(getApplication())
-            val menu = service.getMenu()
-            val shortcutVisibility = service.getShortcutVisibility()
-            val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
-            val shortcuts = service.getShortcuts()
+            mediaStoreFailure.catching {
+                val service = MainService(getApplication())
+                val menu = service.getMenu()
+                val shortcutVisibility = service.getShortcutVisibility()
+                val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
+                val shortcuts = service.getShortcuts()
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility, loaded = true
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        menu = menu, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, shortcutVisibility = shortcutVisibility, loaded = true
+                    )
+                }
             }
         }
     }

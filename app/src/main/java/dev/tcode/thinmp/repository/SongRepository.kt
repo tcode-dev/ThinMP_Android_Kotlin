@@ -3,6 +3,7 @@ package dev.tcode.thinmp.repository
 import android.content.ContentResolver
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.SongModel
@@ -10,8 +11,11 @@ import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 
-class SongRepository(context: Context) : MediaStoreRepository<SongModel>(
-    context, MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, arrayOf(
+/**
+ * [uri]はテストで問い合わせの失敗を起こすためだけに差し替える。
+ */
+class SongRepository(context: Context, uri: Uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI) : MediaStoreRepository<SongModel>(
+    context, uri, arrayOf(
         MediaStore.Audio.Media._ID,
         MediaStore.Audio.Media.TITLE,
         MediaStore.Audio.Media.ARTIST_ID,

@@ -10,13 +10,16 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.SongRepository
 import dev.tcode.thinmp.repository.PlaylistRepository
 
-class PlaylistDetailService(val context: Context, private val playlistRepository: PlaylistRepository = PlaylistRepository()) {
+class PlaylistDetailService(
+    val context: Context,
+    private val playlistRepository: PlaylistRepository = PlaylistRepository(),
+    private val songRepository: SongRepository = SongRepository(context)
+) {
     suspend fun findById(playlistId: PlaylistId): PlaylistDetailModel? {
         val resources = context.resources
         val playlist = playlistRepository.findById(playlistId) ?: return null
         val playlistSongs = playlistRepository.findSongsByPlaylistId(playlistId)
         val songIds = playlistSongs.map { SongId(it.songId) }
-        val songRepository = SongRepository(context)
         val songs = songRepository.findByIds(songIds)
         val sortedSongs = songIds.mapNotNull { id ->
             songs.find { it.songId == id }
@@ -30,7 +33,7 @@ class PlaylistDetailService(val context: Context, private val playlistRepository
 
     /**
      * MediaStoreから消えた曲をプレイリストから削除する。
-     * findById()を呼び直さない理由はFavoriteSongsService.removeMissing()を参照。
+     * findById()を呼び直さない理由と、問い合わせが失敗したときに削除しない理由はFavoriteSongsService.removeMissing()を参照。
      */
     private suspend fun removeMissing(playlistId: PlaylistId, songIds: List<SongId>, songs: List<SongModel>) {
         val deleteIds = songIds.filter { id ->

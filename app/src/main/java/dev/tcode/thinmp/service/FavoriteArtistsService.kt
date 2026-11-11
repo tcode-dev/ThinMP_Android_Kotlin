@@ -6,10 +6,13 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.repository.ArtistRepository
 import dev.tcode.thinmp.repository.FavoriteArtistRepository
 
-class FavoriteArtistsService(val context: Context, private val favoriteArtistRepository: FavoriteArtistRepository = FavoriteArtistRepository()) {
+class FavoriteArtistsService(
+    val context: Context,
+    private val favoriteArtistRepository: FavoriteArtistRepository = FavoriteArtistRepository(),
+    private val artistRepository: ArtistRepository = ArtistRepository(context)
+) {
     suspend fun findAll(): List<ArtistModel> {
         val artistIds = favoriteArtistRepository.findAll()
-        val artistRepository = ArtistRepository(context)
         val artists = artistRepository.findByIds(artistIds)
         val found = artistIds.mapNotNull { id ->
             artists.find { it.artistId == id }
@@ -21,7 +24,7 @@ class FavoriteArtistsService(val context: Context, private val favoriteArtistRep
     }
 
     /**
-     * 再取得しない理由はFavoriteSongsService.removeMissing()を参照。
+     * 再取得しない理由と、問い合わせが失敗したときに削除しない理由はFavoriteSongsService.removeMissing()を参照。
      */
     private suspend fun removeMissing(artistIds: List<ArtistId>, artists: List<ArtistModel>) {
         val deleteIds = artistIds.filter { id ->

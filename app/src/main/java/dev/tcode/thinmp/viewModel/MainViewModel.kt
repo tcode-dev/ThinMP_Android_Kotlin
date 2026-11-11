@@ -26,7 +26,7 @@ data class MainUiState(
 )
 
 @HiltViewModel
-class MainViewModel @Inject constructor(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+class MainViewModel @Inject constructor(application: Application, private val mediaStoreFailure: MediaStoreFailure) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(MainUiState())
@@ -47,17 +47,19 @@ class MainViewModel @Inject constructor(application: Application) : AndroidViewM
     fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = MainService(getApplication())
-            val menu = service.getMenu()
-            val shortcutVisibility = service.getShortcutVisibility()
-            val shortcuts = if (shortcutVisibility) service.getShortcuts() else emptyList()
-            val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
-            val albums = if (recentlyAlbumsVisibility) service.getRecentlyAlbums() else emptyList()
+            mediaStoreFailure.catching {
+                val service = MainService(getApplication())
+                val menu = service.getMenu()
+                val shortcutVisibility = service.getShortcutVisibility()
+                val shortcuts = if (shortcutVisibility) service.getShortcuts() else emptyList()
+                val recentlyAlbumsVisibility = service.getRecentlyAlbumsVisibility()
+                val albums = if (recentlyAlbumsVisibility) service.getRecentlyAlbums() else emptyList()
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    menu = menu, shortcutVisibility = shortcutVisibility, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, albums = albums,
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        menu = menu, shortcutVisibility = shortcutVisibility, shortcuts = shortcuts, recentlyAlbumsVisibility = recentlyAlbumsVisibility, albums = albums,
+                    )
+                }
             }
         }
     }

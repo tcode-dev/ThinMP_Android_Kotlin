@@ -141,11 +141,18 @@ app/src/main/java/dev/tcode/thinmp/
   これが正しく動くのは、タップのクロージャーが行の識別子(`songId`、`album.id`、`shortcut.url`)だけを読み、
   再読み込みで変わりうる表示用のフィールドを読まないからだ。
   変化を追う必要がある値は、`pointerInput`のkeyではなく`rememberUpdatedState`で読む
-- `catch`は、特定の例外に特定の回復方法があるところにだけ書く。今はそういう場所はない。
+- `catch`は、特定の例外に特定の回復方法があるところにだけ書く。
+  今そういう場所は、ViewModelの読み込みで`MediaStoreQueryException`を捕まえるところだけだ。
+  `ContentResolver.query()`はプロバイダーが見つからないか失敗すると`null`を返し(0件なら0件のCursorが返る)、
+  `MediaStoreRepository`はそれを空の一覧にせず`MediaStoreQueryException`を投げる。
+  サービスは捕まえず、MediaStoreを読むViewModelの`load()`が`MediaStoreFailure.catching { }`で包んで失敗の状態を立てる。
+  `ErrorView`(`MainActivity`で`ThinMPNavHost()`を包む)がそれを見てエラーと再読み込みのボタンを出し、
+  再読み込みで`ThinMPNavHost()`をViewModelごと作り直してメイン画面から読み直す。
+  MediaStoreを読むコルーチンを足すときは、同じく`catching`で包む。
+  包み忘れるとクラッシュするが、失敗を0件として黙って表示するよりはよい。
   削除されたファイルは、例外ではなく`MusicService`の`onPlayerError()`に`ERROR_CODE_IO_FILE_NOT_FOUND`として届く。
-  ViewModelの読み込みにもあえて`catch`を書いていない。
-  権限はどの画面よりも先に`PermissionView`で確かめ、`ContentResolver.query()`はプロバイダーの失敗を`null`で返し、`?.use`がそれを空の一覧にする。
-  残るのは不正なselectionやソート順、Roomの`SQLiteException`で、これはプログラムの誤りか回復できないものだ。
+  権限はどの画面よりも先に`PermissionView`で確かめる。
+  残るのは不正なselectionやソート順、Roomの`SQLiteException`で、これはプログラムの誤りか回復できないものなので捕まえない。
   まとめて`catch`すると、クラッシュではなく空の画面として現れてしまう
 
 ### コメント
@@ -193,4 +200,6 @@ app/src/main/java/dev/tcode/thinmp/
 - RoomのidをMediaStoreと突き合わせるサービス(`FavoriteSongsService`、`ShortcutService`、`PlaylistDetailService`など)は、
   何にも解決しなかったidを削除し、**すでに変換したリストを返す**。
   削除の後に関数を呼び直さないこと。
-  idが重複していると、idの件数とMediaStoreの行数がずっと一致しなくなり、読み直すと収束せずに回り続ける
+  idが重複していると、idの件数とMediaStoreの行数がずっと一致しなくなり、読み直すと収束せずに回り続ける。
+  MediaStoreの問い合わせが失敗したときは、`MediaStoreQueryException`で処理が止まるので削除は走らない。
+  失敗を空の一覧にすると、すべてのidが解決しなかったことになり、全件削除してしまう

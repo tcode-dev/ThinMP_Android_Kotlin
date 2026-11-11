@@ -11,6 +11,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 /**
+ * ContentResolver.query()がnullを返したら、空の一覧やnullにせず[MediaStoreQueryException]を投げる。
+ * 呼び出し側はこれを捕まえず、ViewModelの読み込みまで伝える。
+ *
  * selectionやカーソルはフィールドに持たず、引数とローカル変数だけで扱う。
  * フィールドにすると、同じインスタンスを使う複数のコルーチンが互いのselectionを上書きしたり、
  * 読み込み中のカーソルを閉じたりしてしまう。
@@ -19,7 +22,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
     abstract fun fetch(cursor: Cursor): T
 
     protected suspend fun get(selection: String? = null, selectionArgs: Array<String>? = null): T? = withContext(Dispatchers.IO) {
-        createCursor(selection, selectionArgs, null)?.use { cursor ->
+        createCursor(selection, selectionArgs, null).use { cursor ->
             if (cursor.moveToNext()) fetch(cursor) else null
         }
     }
@@ -35,7 +38,7 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
      * 引数を足すのではなくオーバーロードにしている。
      */
     protected suspend fun getList(bundle: Bundle): List<T> = withContext(Dispatchers.IO) {
-        toList(context.contentResolver.query(uri, projection, bundle, null))
+        toList(context.contentResolver.query(uri, projection, bundle, null) ?: throw MediaStoreQueryException(uri))
     }
 
     /**
@@ -58,10 +61,10 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         }
     }
 
-    private fun toList(cursor: Cursor?): List<T> {
+    private fun toList(cursor: Cursor): List<T> {
         val list: MutableList<T> = ArrayList()
 
-        cursor?.use {
+        cursor.use {
             while (it.moveToNext()) {
                 list.add(fetch(it))
             }
@@ -78,13 +81,13 @@ abstract class MediaStoreRepository<T : Music>(private val context: Context, pri
         return TextUtils.join(",", IntArray(size).map { "?" })
     }
 
-    private fun createCursor(selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor? {
+    private fun createCursor(selection: String?, selectionArgs: Array<String>?, sortOrder: String?): Cursor {
         return context.contentResolver.query(
             uri,
             projection,
             selection,
             selectionArgs,
             sortOrder
-        )
+        ) ?: throw MediaStoreQueryException(uri)
     }
 }

@@ -26,7 +26,7 @@ data class PlaylistDetailEditUiState(
 
 @HiltViewModel
 class PlaylistDetailEditViewModel @Inject constructor(
-    application: Application, savedStateHandle: SavedStateHandle
+    application: Application, savedStateHandle: SavedStateHandle, private val mediaStoreFailure: MediaStoreFailure
 ) : AndroidViewModel(application), PlaylistRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
@@ -81,13 +81,15 @@ class PlaylistDetailEditViewModel @Inject constructor(
     private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = PlaylistDetailService(getApplication())
-            val playlist = service.findById(id) ?: return@launch
+            mediaStoreFailure.catching {
+                val service = PlaylistDetailService(getApplication())
+                val playlist = service.findById(id) ?: return@launch
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = playlist.primaryText, songs = playlist.songs, loaded = true
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        primaryText = playlist.primaryText, songs = playlist.songs, loaded = true
+                    )
+                }
             }
         }
     }

@@ -20,7 +20,7 @@ data class ArtistsUiState(
 )
 
 @HiltViewModel
-class ArtistsViewModel @Inject constructor(application: Application) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
+class ArtistsViewModel @Inject constructor(application: Application, private val mediaStoreFailure: MediaStoreFailure) : AndroidViewModel(application), CustomLifecycleEventObserverListener {
     private var initialized: Boolean = false
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(ArtistsUiState())
@@ -41,13 +41,15 @@ class ArtistsViewModel @Inject constructor(application: Application) : AndroidVi
     private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = ArtistsService(getApplication())
-            val artists = service.findAll()
+            mediaStoreFailure.catching {
+                val service = ArtistsService(getApplication())
+                val artists = service.findAll()
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    artists = artists
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        artists = artists
+                    )
+                }
             }
         }
     }
