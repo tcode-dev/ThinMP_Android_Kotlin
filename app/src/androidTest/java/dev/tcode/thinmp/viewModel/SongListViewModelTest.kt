@@ -105,7 +105,7 @@ class SongListViewModelTest {
         onMain { controller.start(listOf(song!!), 0) }
         await("the song never reached the queue") { onMain { controller.state.value.hasQueue } }
 
-        val isVisible = onMain { create { SongsViewModel(it, PlaybackController.from(it)) }.isVisiblePlayer.value }
+        val isVisible = onMain { create { SongsViewModel(it, PlaybackController.from(it), MediaStoreFailure()) }.isVisiblePlayer.value }
 
         assertTrue("the mini player was hidden on the list's first frame", isVisible)
     }

@@ -22,7 +22,7 @@ data class AlbumDetailUiState(
 
 @HiltViewModel
 class AlbumDetailViewModel @Inject constructor(
-    application: Application, savedStateHandle: SavedStateHandle, playbackController: PlaybackController
+    application: Application, savedStateHandle: SavedStateHandle, playbackController: PlaybackController, private val mediaStoreFailure: MediaStoreFailure
 ) : SongListViewModel(application, playbackController) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
@@ -41,13 +41,15 @@ class AlbumDetailViewModel @Inject constructor(
     override fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = AlbumDetailService(getApplication())
-            val album = service.findById(id) ?: return@launch
+            mediaStoreFailure.catching {
+                val service = AlbumDetailService(getApplication())
+                val album = service.findById(id) ?: return@launch
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        primaryText = album.primaryText, secondaryText = album.secondaryText, imageUri = album.imageUri, songs = album.songs
+                    )
+                }
             }
         }
     }

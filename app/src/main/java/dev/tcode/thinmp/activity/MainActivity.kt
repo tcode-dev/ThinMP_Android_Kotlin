@@ -13,6 +13,7 @@ import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.ui.theme.ThinMPTheme
+import dev.tcode.thinmp.view.error.ErrorView
 import dev.tcode.thinmp.view.nav.ThinMPNavHost
 import dev.tcode.thinmp.view.permission.PermissionView
 import javax.inject.Inject
@@ -37,7 +38,9 @@ class MainActivity : ComponentActivity() {
             ThinMPTheme {
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
                     PermissionView {
-                        ThinMPNavHost()
+                        ErrorView {
+                            ThinMPNavHost()
+                        }
                     }
                 }
             }

@@ -19,7 +19,7 @@ data class FavoriteSongsUiState(
 )
 
 @HiltViewModel
-class FavoriteSongsViewModel @Inject constructor(application: Application, playbackController: PlaybackController) : SongListViewModel(application, playbackController) {
+class FavoriteSongsViewModel @Inject constructor(application: Application, playbackController: PlaybackController, private val mediaStoreFailure: MediaStoreFailure) : SongListViewModel(application, playbackController) {
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(FavoriteSongsUiState())
     val uiState: StateFlow<FavoriteSongsUiState> = _uiState.asStateFlow()
@@ -34,13 +34,15 @@ class FavoriteSongsViewModel @Inject constructor(application: Application, playb
     public override fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = FavoriteSongsService(getApplication())
-            val songs = service.findAll()
+            mediaStoreFailure.catching {
+                val service = FavoriteSongsService(getApplication())
+                val songs = service.findAll()
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    songs = songs
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        songs = songs
+                    )
+                }
             }
         }
     }

@@ -83,7 +83,7 @@ class ShortcutService(
     }
 
     /**
-     * 再取得しない理由はFavoriteSongsService.removeMissing()を参照。
+     * 再取得しない理由と、問い合わせが失敗したときに削除しない理由はFavoriteSongsService.removeMissing()を参照。
      */
     private suspend fun removeMissing(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->

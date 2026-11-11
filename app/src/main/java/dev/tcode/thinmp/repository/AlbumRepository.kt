@@ -2,12 +2,16 @@ package dev.tcode.thinmp.repository
 
 import android.content.Context
 import android.database.Cursor
+import android.net.Uri
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 
-class AlbumRepository(context: Context) : MediaStoreRepository<AlbumModel>(
-    context, MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI, arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Albums.ARTIST)
+/**
+ * [uri]はテストで問い合わせの失敗を起こすためだけに差し替える。
+ */
+class AlbumRepository(context: Context, uri: Uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI) : MediaStoreRepository<AlbumModel>(
+    context, uri, arrayOf(MediaStore.Audio.Albums._ID, MediaStore.Audio.Albums.ALBUM, MediaStore.Audio.Media.ARTIST_ID, MediaStore.Audio.Albums.ARTIST)
 ) {
     suspend fun findAll(): List<AlbumModel> {
         return getList(sortOrder = MediaStore.Audio.Albums.ALBUM + " ASC")

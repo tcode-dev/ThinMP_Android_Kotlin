@@ -87,7 +87,7 @@ class EditSaveBeforeLoadTest {
         val repository = FavoriteSongRepository()
         repository.add(SongId(songIdValue))
 
-        val viewModel = onMain { FavoriteSongsEditViewModel(application).also { it.save() } }
+        val viewModel = onMain { FavoriteSongsEditViewModel(application, MediaStoreFailure()).also { it.save() } }
         awaitLoaded { viewModel.uiState.value.loaded }
 
         assertEquals(listOf(songIdValue), repository.findAll().map { it.id })
@@ -103,7 +103,7 @@ class EditSaveBeforeLoadTest {
      */
     @Test
     fun savingWithoutLoadedStateReportsNothing() = runBlocking {
-        val viewModel = onMain { PlaylistDetailEditViewModel(application, SavedStateHandle(mapOf("id" to "gone"))) }
+        val viewModel = onMain { PlaylistDetailEditViewModel(application, SavedStateHandle(mapOf("id" to "gone")), MediaStoreFailure()) }
 
         delay(quietMs)
         assertFalse(viewModel.uiState.value.loaded)

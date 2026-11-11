@@ -23,7 +23,7 @@ data class FavoriteSongsEditUiState(
 )
 
 @HiltViewModel
-class FavoriteSongsEditViewModel @Inject constructor(application: Application) : AndroidViewModel(application), FavoriteSongRegister {
+class FavoriteSongsEditViewModel @Inject constructor(application: Application, private val mediaStoreFailure: MediaStoreFailure) : AndroidViewModel(application), FavoriteSongRegister {
     private var loadJob: Job? = null
     private var saveJob: Job? = null
 
@@ -41,13 +41,15 @@ class FavoriteSongsEditViewModel @Inject constructor(application: Application) :
     private fun load() {
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
-            val service = FavoriteSongsService(getApplication())
-            val songs = service.findAll()
+            mediaStoreFailure.catching {
+                val service = FavoriteSongsService(getApplication())
+                val songs = service.findAll()
 
-            _uiState.update { currentState ->
-                currentState.copy(
-                    songs = songs, loaded = true
-                )
+                _uiState.update { currentState ->
+                    currentState.copy(
+                        songs = songs, loaded = true
+                    )
+                }
             }
         }
     }
