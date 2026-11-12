@@ -4,6 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionCommand
@@ -171,6 +172,20 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         if (controller.mediaItemCount == 0) return 0
 
         return controller.currentPosition
+    }
+
+    /**
+     * プレーヤーが読み込んだファイルから知った曲の長さ。
+     * 読み込む前や、ファイルから長さが分からないときは0。
+     */
+    fun duration(): Long {
+        val controller = this.controller ?: return 0
+
+        if (controller.mediaItemCount == 0) return 0
+
+        val duration = controller.duration
+
+        return if (duration == C.TIME_UNSET) 0 else duration
     }
 
     /**
