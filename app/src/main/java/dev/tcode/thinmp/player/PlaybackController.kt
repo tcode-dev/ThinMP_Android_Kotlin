@@ -70,7 +70,8 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
 
     /**
      * 未接続の間に呼ばれた操作。
-     * 捨てずに接続後に順に実行するので、接続前のタップも効く。
+     * 接続後に順に実行するので、接続前のタップも効く。
+     * release()では捨てる。
      */
     private val pending = mutableListOf<(MediaController) -> Unit>()
 
@@ -105,9 +106,13 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     }
 
     /**
-     * [state]と、接続待ちの操作はそのまま残す。
+     * [state]は残し、接続待ちの操作は捨てる。
+     * [state]は、バックグラウンドで再生を続けている曲を、再接続するまで表示するためのもの。
+     * 接続待ちの操作を残すと、接続前にタップしてすぐホームへ戻った再生が、次にアプリを開いたときに始まってしまう。
      */
     fun release() {
+        pending.clear()
+
         val future = controllerFuture ?: return
 
         controllerFuture = null
