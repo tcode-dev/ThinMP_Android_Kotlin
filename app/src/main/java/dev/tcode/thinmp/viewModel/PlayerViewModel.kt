@@ -110,7 +110,7 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
 
         viewModelScope.launch {
             toggleFavoriteArtist(song.artistId)
-            updateFavorites(song.artistId, song.songId)
+            refreshFavorites()
         }
     }
 
@@ -119,7 +119,7 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
 
         viewModelScope.launch {
             toggleFavoriteSong(song.songId)
-            updateFavorites(song.artistId, song.songId)
+            refreshFavorites()
         }
     }
 
@@ -171,6 +171,17 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
     }
 
     private fun currentSong() = playbackController.state.value.currentSong
+
+    /**
+     * 切り替えの書き込みが終わるまでに曲が進んでいることがあるので、押した曲ではなく今の曲を読み直す。
+     * 押した曲で読むと、次の曲の読み込みをキャンセルして、次の曲の画面に前の曲の状態を出してしまう。
+     * 次の曲が同じアーティストなら、次の曲の読み込みが書き込みより先に終わっていることもあるので、読み直しは省かない。
+     */
+    private fun refreshFavorites() {
+        val song = currentSong() ?: return
+
+        updateFavorites(song.artistId, song.songId)
+    }
 
     private fun seekBarProgress() {
         _uiState.update { currentState ->
