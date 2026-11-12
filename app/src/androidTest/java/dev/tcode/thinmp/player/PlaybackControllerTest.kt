@@ -20,6 +20,7 @@ import dev.tcode.thinmp.viewModel.MiniPlayerViewModel
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -37,6 +38,7 @@ import org.junit.runner.RunWith
 class PlaybackControllerTest {
     private val timeoutMs = 15_000L
     private val pollMs = 50L
+    private val settleMs = 1_000L
 
     private lateinit var context: Context
     private lateinit var scenario: ActivityScenario<MainActivity>
@@ -90,6 +92,26 @@ class PlaybackControllerTest {
         }
 
         awaitPlaying()
+    }
+
+    /**
+     * 接続前にタップしてすぐホームへ戻った再生は、次にアプリを開いたときに始めない。
+     * 接続待ちの操作は接続の完了と同じ呼び出しの中で実行されるので、接続した時点でキューに曲がなければ捨てている。
+     * サービスから状態が届くのを待つために、少しだけ待つ。
+     */
+    @Test
+    fun dropsAStartMadeBeforeARelease() {
+        onMain {
+            controller.release()
+            controller.start(listOf(song), 0)
+            controller.release()
+            controller.connect()
+        }
+
+        await("the controller never reconnected") { onMain { controller.isConnected() } }
+        Thread.sleep(settleMs)
+
+        assertFalse("a start made before the release ran after reconnecting", onMain { controller.state.value.hasQueue })
     }
 
     /**
