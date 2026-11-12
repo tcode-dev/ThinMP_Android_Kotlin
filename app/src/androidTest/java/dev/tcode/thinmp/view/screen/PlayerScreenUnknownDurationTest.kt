@@ -5,11 +5,14 @@ import android.content.Intent
 import android.os.SystemClock
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assertRangeInfoEquals
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -28,15 +31,18 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import kotlin.math.abs
 
 /**
- * メタデータを読めないファイルの長さはMediaStoreでは0になり、プレーヤー画面は再生位置をそれで割る。
- * 位置が0のときはNaNになり、Composeがつまみの配置で丸められずに落ちる(`Cannot round NaN value`)。
- * 位置が進むと+Infinityになり、Sliderは末尾に丸めるので、始まったばかりの曲が終わったように見える。
- * 2つのテストはこの2つのケースに対応する。
+ * メタデータを読めないファイルの長さはMediaStoreでは0になる。
+ * プレーヤー画面がそれで再生位置を割ると、位置が0のときはNaNになってComposeが落ち(`Cannot round NaN value`)、
+ * 位置が進むと+Infinityになって始まったばかりの曲が終わったように見える。
+ * シークも長さに割合を掛けるので、常に0msになる。
+ * 画面はプレーヤーがファイルから知った長さを使うので、どれも起きないことを確かめる。
  *
  * 再生するので曲は実在するものを使い、長さだけをタグのないファイルと同じ0に差し替える。
  * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
+ * テスト用の曲は2秒なので、長さの表示は00:02になる。
  */
 @RunWith(AndroidJUnit4::class)
 class PlayerScreenUnknownDurationTest {
@@ -47,6 +53,12 @@ class PlayerScreenUnknownDurationTest {
      * シークバーの更新間隔(1秒)より長くして、定期更新を少なくとも1回含める。
      */
     private val tickMs = 1_500L
+
+    /**
+     * コントローラーの位置はサービスの位置からの推定なので、多少ずれる。
+     */
+    private val seekToleranceMs = 200L
+    private val durationText = "00:02"
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
@@ -82,24 +94,21 @@ class PlayerScreenUnknownDurationTest {
      */
     @Test
     fun opensOnASongOfUnknownDurationWithTheSliderAtTheStart() {
-        start(listOf(untaggedSong))
-        awaitPlaying()
-        onMain {
-            PlaybackController.from(context).pause()
-            PlaybackController.from(context).seekTo(0)
-        }
+        startPaused()
 
         showPlayerScreen()
 
-        assertSliderAtTheStart()
+        assertSliderAt(0f)
+        composeTestRule.onNodeWithText(durationText).assertExists()
     }
 
     /**
      * 再生中なので定期的なシークバーの更新が走る。
      * 割合を計算するもう1つの場所。
+     * MediaStoreの長さで割るとつまみは動かないので、進んでいることを確かめる。
      */
     @Test
-    fun playsASongOfUnknownDurationWithTheSliderAtTheStart() {
+    fun playsASongOfUnknownDurationWithTheSliderMoving() {
         start(listOf(untaggedSong))
         awaitPlaying()
 
@@ -108,14 +117,47 @@ class PlayerScreenUnknownDurationTest {
         Thread.sleep(tickMs)
         composeTestRule.waitForIdle()
 
-        assertSliderAtTheStart()
+        val position = sliderNode().fetchSemanticsNode().config[SemanticsProperties.ProgressBarRangeInfo].current
+
+        assertTrue("the slider never moved: $position", position > 0f && position <= 1f)
+    }
+
+    /**
+     * MediaStoreの長さ(0)に割合を掛けると、どこを押しても先頭にシークする。
+     * 一時停止しているので、シークした位置から動かない。
+     */
+    @Test
+    fun seeksASongOfUnknownDurationByThePlayersDuration() {
+        startPaused()
+        showPlayerScreen()
+
+        sliderNode().performSemanticsAction(SemanticsActions.SetProgress) { it(0.5f) }
+        composeTestRule.waitForIdle()
+
+        val duration = onMain { PlaybackController.from(context).duration() }
+        val position = awaitPosition { it > 0 }
+
+        assertTrue("the player knows no duration", duration > 0)
+        assertTrue("seeked to $position of $duration", abs(position - duration / 2) <= seekToleranceMs)
+    }
+
+    private fun startPaused() {
+        start(listOf(untaggedSong))
+        awaitPlaying()
+        onMain {
+            PlaybackController.from(context).pause()
+            PlaybackController.from(context).seekTo(0)
+        }
+        awaitPosition { it == 0L }
     }
 
     /**
      * 範囲を持つノードは画面にSliderしかないので、他の条件で絞り込まない。
      */
-    private fun assertSliderAtTheStart() {
-        composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo)).assertRangeInfoEquals(ProgressBarRangeInfo(0f, 0f..1f))
+    private fun sliderNode() = composeTestRule.onNode(SemanticsMatcher.keyIsDefined(SemanticsProperties.ProgressBarRangeInfo))
+
+    private fun assertSliderAt(position: Float) {
+        sliderNode().assertRangeInfoEquals(ProgressBarRangeInfo(position, 0f..1f))
     }
 
     /**
@@ -144,10 +186,32 @@ class PlayerScreenUnknownDurationTest {
     }
 
     /**
+     * シークはサービスに届いてから位置に表れるので、待つ。
+     */
+    private fun awaitPosition(condition: (Long) -> Boolean): Long {
+        val deadline = SystemClock.uptimeMillis() + timeoutMs
+
+        while (SystemClock.uptimeMillis() < deadline) {
+            val position = onMain { PlaybackController.from(context).currentPosition() }
+
+            if (condition(position)) return position
+
+            Thread.sleep(pollMs)
+        }
+
+        throw AssertionError("the position never reached the expected value")
+    }
+
+    /**
      * ExoPlayerはメインルーパーで作るので、操作はすべてメインスレッドで行う。
      */
-    private fun onMain(block: () -> Unit) {
-        InstrumentationRegistry.getInstrumentation().runOnMainSync(block)
+    private fun <T> onMain(block: () -> T): T {
+        var result: T? = null
+
+        InstrumentationRegistry.getInstrumentation().runOnMainSync { result = block() }
+
+        @Suppress("UNCHECKED_CAST")
+        return result as T
     }
 
     private fun awaitPlaying() {

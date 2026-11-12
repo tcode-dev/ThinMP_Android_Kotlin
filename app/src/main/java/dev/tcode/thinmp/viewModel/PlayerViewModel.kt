@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.config.RepeatState
+import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.player.PlaybackController
@@ -86,7 +87,7 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
         cancelSeekBarProgressTask()
 
         val song = currentSong() ?: return
-        val ms = (song.duration.toFloat() * value).toLong()
+        val ms = (durationMs(song).toFloat() * value).toLong()
 
         playbackController.seekTo(ms)
 
@@ -159,7 +160,7 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
                 imageUri = song.getImageUri(),
                 sliderPosition = getSliderPosition(),
                 currentTime = formatTime(playbackController.currentPosition()),
-                durationTime = formatTime(song.duration.toLong()),
+                durationTime = formatTime(durationMs(song)),
                 isPlaying = state.isPlaying,
                 repeat = state.repeat,
                 shuffle = state.shuffle
@@ -172,11 +173,18 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
 
     private fun currentSong() = playbackController.state.value.currentSong
 
+    /**
+     * 長さも読み直す。
+     * 曲が変わった時点ではプレーヤーがまだファイルを読んでおらず、MediaStoreの長さを表示していることがあるからだ。
+     */
     private fun seekBarProgress() {
+        val song = currentSong()
+
         _uiState.update { currentState ->
             currentState.copy(
                 sliderPosition = getSliderPosition(),
                 currentTime = formatTime(playbackController.currentPosition()),
+                durationTime = if (song == null) currentState.durationTime else formatTime(durationMs(song)),
             )
         }
     }
@@ -221,6 +229,14 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
     private fun getSliderPosition(): Float {
         val song = currentSong() ?: return 0f
 
-        return sliderPosition(playbackController.currentPosition(), song.duration.toLong())
+        return sliderPosition(playbackController.currentPosition(), durationMs(song))
+    }
+
+    /**
+     * MediaStoreの長さはタグから読んだもので、タグがないファイルでは0になる。
+     * プレーヤーがファイルから長さを知っていればそちらを使い、読み込む前だけMediaStoreの値を使う。
+     */
+    private fun durationMs(song: SongModel): Long {
+        return playbackController.duration().takeIf { it > 0 } ?: song.duration.toLong()
     }
 }
