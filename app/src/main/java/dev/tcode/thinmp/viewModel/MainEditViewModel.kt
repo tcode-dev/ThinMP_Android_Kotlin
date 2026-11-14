@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.constant.MainMenuItem
 import dev.tcode.thinmp.model.media.ShortcutModel
+import dev.tcode.thinmp.model.media.valueObject.ShortcutId
 import dev.tcode.thinmp.register.ShortcutRegister
 import dev.tcode.thinmp.service.MainService
 import kotlinx.coroutines.Job
@@ -90,14 +91,13 @@ class MainEditViewModel @Inject constructor(application: Application, private va
         }
     }
 
-    fun removeShortcut(index: Int) {
+    /**
+     * PlaylistsEditViewModel.removePlaylist()を参照。
+     */
+    fun removeShortcut(id: ShortcutId) {
         _uiState.update { currentState ->
-            val list = currentState.shortcuts.toMutableList()
-
-            list.removeAt(index)
-
             currentState.copy(
-                shortcuts = list
+                shortcuts = currentState.shortcuts.filter { it.id != id }
             )
         }
     }

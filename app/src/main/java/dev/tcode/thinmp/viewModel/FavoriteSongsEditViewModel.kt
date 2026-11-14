@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.register.FavoriteSongRegister
 import dev.tcode.thinmp.service.FavoriteSongsService
 import kotlinx.coroutines.Job
@@ -54,14 +55,13 @@ class FavoriteSongsEditViewModel @Inject constructor(application: Application, p
         }
     }
 
-    fun removeSong(index: Int) {
+    /**
+     * PlaylistsEditViewModel.removePlaylist()を参照。
+     */
+    fun removeSong(id: SongId) {
         _uiState.update { currentState ->
-            val list = currentState.songs.toMutableList()
-
-            list.removeAt(index)
-
             currentState.copy(
-                songs = list
+                songs = currentState.songs.filter { it.songId != id }
             )
         }
     }

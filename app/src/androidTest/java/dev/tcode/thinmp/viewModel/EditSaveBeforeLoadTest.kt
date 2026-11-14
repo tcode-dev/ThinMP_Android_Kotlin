@@ -124,7 +124,7 @@ class EditSaveBeforeLoadTest {
 
         val viewModel = onMain { PlaylistsEditViewModel(application) }
         awaitLoaded { viewModel.uiState.value.loaded }
-        onMain { viewModel.removePlaylist(0) }
+        onMain { viewModel.removePlaylist(viewModel.uiState.value.playlists.first().id) }
         onMain { viewModel.save() }
         withTimeout(timeoutMs) { viewModel.saved.flow.first() }
 
@@ -142,7 +142,7 @@ class EditSaveBeforeLoadTest {
 
         val viewModel = onMain { PlaylistsEditViewModel(application) }
         awaitLoaded { viewModel.uiState.value.loaded }
-        onMain { viewModel.removePlaylist(0) }
+        onMain { viewModel.removePlaylist(viewModel.uiState.value.playlists.first().id) }
         onMain { viewModel.save() }
         withTimeout(timeoutMs) { viewModel.saved.flow.first() }
 

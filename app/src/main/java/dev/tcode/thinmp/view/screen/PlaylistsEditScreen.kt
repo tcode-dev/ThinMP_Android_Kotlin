@@ -1,7 +1,7 @@
 package dev.tcode.thinmp.view.screen
 
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -25,8 +25,8 @@ fun PlaylistsEditScreen(viewModel: PlaylistsEditViewModel = hiltViewModel()) {
 
     ConstraintLayout(Modifier.fillMaxSize()) {
         EditCollapsingTopAppBarView(uiState.loaded, doneCallback) {
-            itemsIndexed(uiState.playlists, key = { _, playlist -> playlist.id.id }) { index, playlist ->
-                SwipeToDismissView(callback = { viewModel.removePlaylist(index) }) {
+            items(uiState.playlists, key = { it.id.id }) { playlist ->
+                SwipeToDismissView(callback = { viewModel.removePlaylist(playlist.id) }) {
                     PlainRowView(playlist.primaryText)
                 }
             }
