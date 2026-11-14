@@ -125,7 +125,10 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
-                itemsIndexed(items = uiState.shortcuts, key = { _, shortcut -> shortcut.id.id }) { index, shortcut ->
+                // ショートカットとアルバムは同じグリッドに並ぶ。
+                // ショートカットのidはRoomの値、アルバムのidはMediaStoreの_IDで、番号が重なることがある。
+                // keyに種類を付けて区別する。
+                itemsIndexed(items = uiState.shortcuts, key = { _, shortcut -> "shortcut:${shortcut.id.id}" }) { index, shortcut ->
                     DropdownMenuView(dropdownContent = { callback ->
                         ShortcutDropdownMenuItemView(shortcut.itemId, callback, onToggled = { viewModel.load() })
                     }) { callback ->
@@ -141,7 +144,7 @@ fun MainScreen(viewModel: MainViewModel = hiltViewModel()) {
                 item(span = { GridItemSpan(spanCount) }) {
                     SectionTitleView(stringResource(R.string.recently_added))
                 }
-                itemsIndexed(items = uiState.albums, key = { _, album -> album.id }) { index, album ->
+                itemsIndexed(items = uiState.albums, key = { _, album -> "album:${album.id}" }) { index, album ->
                     DropdownMenuView(dropdownContent = { callback ->
                         ShortcutDropdownMenuItemView(album.albumId, callback, onToggled = { viewModel.load() })
                     }) { callback ->
