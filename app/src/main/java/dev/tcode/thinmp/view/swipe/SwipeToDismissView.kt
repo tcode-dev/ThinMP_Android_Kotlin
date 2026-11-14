@@ -17,9 +17,8 @@ import androidx.compose.runtime.LaunchedEffect
  * confirmValueChangeは指を離したときとアニメーションが止まったときの両方で呼ばれ、1回のスワイプで2回呼ばれる。
  * そのため、コールバックはconfirmValueChangeではなく、currentValueがEndToStartに変わったときに1回だけ呼ぶ。
  *
- * 編集画面のコールバックは行のインデックスを取り込んでおり、上の行が消えるとインデックスが変わる。
- * effectはcurrentValueが変わったcompositionで始まり、そのcompositionのcallbackを呼ぶので、
- * 行を作ったときの古いインデックスで違う行を消すことはない。
+ * 編集画面のコールバックは行のidだけを取り込み、位置は取り込まない。
+ * 位置で消すと、スワイプの確定までに一覧が入れ替わったときに別の行を消すか、範囲外で落ちる。
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

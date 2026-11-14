@@ -3,7 +3,7 @@ package dev.tcode.thinmp.view.screen
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,8 +39,8 @@ fun PlaylistDetailEditScreen(id: String, viewModel: PlaylistDetailEditViewModel 
                         .padding(StyleConstant.PADDING_LARGE.dp),
                     onValueChange = { viewModel.changeName(it) })
             }
-            itemsIndexed(uiState.songs, key = { _, song -> song.id }) { index, song ->
-                SwipeToDismissView(callback = { viewModel.removeSong(index) }) {
+            items(uiState.songs, key = { it.id }) { song ->
+                SwipeToDismissView(callback = { viewModel.removeSong(song.songId) }) {
                     MediaRowView(song.name, song.artistName, song.getImageUri())
                 }
             }

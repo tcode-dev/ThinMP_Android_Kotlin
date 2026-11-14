@@ -3,7 +3,6 @@ package dev.tcode.thinmp.view.screen
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,8 +49,8 @@ fun MainEditScreen(viewModel: MainEditViewModel = hiltViewModel()) {
                     SectionTitleView(stringResource(R.string.shortcut))
                 }
             }
-            itemsIndexed(uiState.shortcuts, key = { _, shortcut -> shortcut.id.id }) { index, shortcut ->
-                SwipeToDismissView(callback = { viewModel.removeShortcut(index) }) {
+            items(uiState.shortcuts, key = { it.id.id }) { shortcut ->
+                SwipeToDismissView(callback = { viewModel.removeShortcut(shortcut.id) }) {
                     PlainRowView(shortcut.primaryText)
                 }
             }

@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.PlaylistModel
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.register.PlaylistRegister
 import dev.tcode.thinmp.service.PlaylistsService
 import kotlinx.coroutines.Job
@@ -58,14 +59,14 @@ class PlaylistsEditViewModel @Inject constructor(application: Application) : And
         }
     }
 
-    fun removePlaylist(index: Int) {
+    /**
+     * 位置ではなくidで消す。
+     * スワイプが確定するまでの間に一覧が入れ替わっても、別の行を消したり範囲外で落ちたりしない。
+     */
+    fun removePlaylist(id: PlaylistId) {
         _uiState.update { currentState ->
-            val list = currentState.playlists.toMutableList()
-
-            list.removeAt(index)
-
             currentState.copy(
-                playlists = list
+                playlists = currentState.playlists.filter { it.id != id }
             )
         }
     }
