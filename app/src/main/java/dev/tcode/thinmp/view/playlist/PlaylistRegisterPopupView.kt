@@ -74,7 +74,9 @@ fun PlaylistRegisterPopupView(songId: SongId, callback: () -> Unit, viewModel: P
                 }
                 Column {
                     uiState.playlists.forEach { playlist ->
-                        val registered = uiState.registeredPlaylistIds.contains(playlist.id)
+                        // 前に開いた曲の結果が残っている間は、初めて開いたときと同じく印を付けない。
+                        // ここで押しても、addSongが重複を見つけてToastで知らせる。
+                        val registered = uiState.registeredSongId == songId && uiState.registeredPlaylistIds.contains(playlist.id)
 
                         PlaylistRegisterRowView(playlist.primaryText,
                             registered,
