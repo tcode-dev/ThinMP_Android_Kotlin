@@ -23,10 +23,16 @@ import javax.inject.Inject
 data class PlaylistsUiState(
     val playlists: List<PlaylistModel> = emptyList(),
     /**
-     * ポップアップの曲が入っているプレイリスト。
+     * `registeredSongId`の曲が入っているプレイリスト。
      * 曲が決まるまでは空。
      */
-    val registeredPlaylistIds: Set<PlaylistId> = emptySet()
+    val registeredPlaylistIds: Set<PlaylistId> = emptySet(),
+    /**
+     * `registeredPlaylistIds`をどの曲について読んだか。
+     * ViewModelは画面のback stack entryに残るので、別の曲でポップアップを開き直した直後は前の曲の結果が入っている。
+     * ポップアップはこれが自分の曲と一致するときだけ印を付ける。
+     */
+    val registeredSongId: SongId? = null
 )
 
 @HiltViewModel
@@ -56,15 +62,17 @@ class PlaylistsViewModel @Inject constructor(application: Application) : Android
             this.songId = songId
         }
 
+        val registeredSongId = this.songId
+
         loadJob?.cancel()
         loadJob = viewModelScope.launch {
             val service = PlaylistsService(getApplication())
             val playlists = service.findAll()
-            val registeredPlaylistIds = this@PlaylistsViewModel.songId?.let { service.findRegisteredPlaylistIds(it) } ?: emptySet()
+            val registeredPlaylistIds = registeredSongId?.let { service.findRegisteredPlaylistIds(it) } ?: emptySet()
 
             _uiState.update { currentState ->
                 currentState.copy(
-                    playlists = playlists, registeredPlaylistIds = registeredPlaylistIds
+                    playlists = playlists, registeredPlaylistIds = registeredPlaylistIds, registeredSongId = registeredSongId
                 )
             }
         }

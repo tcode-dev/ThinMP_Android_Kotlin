@@ -1,6 +1,7 @@
 package dev.tcode.thinmp.view.playlist
 
 import android.app.Application
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
@@ -14,6 +15,7 @@ import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.PlaylistRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
@@ -40,6 +42,7 @@ class PlaylistRegisterPopupRegisteredTest {
     private val registeredName = "registered"
     private val otherName = "other"
     private val songId = SongId("1")
+    private val otherSongId = SongId("2")
 
     @get:Rule
     val composeTestRule = createAndroidComposeRule<HiltTestActivity>()
@@ -55,7 +58,7 @@ class PlaylistRegisterPopupRegisteredTest {
         // create()は曲を1つ入れて作るので、1つ目はsongIdを含むプレイリスト、2つ目は含まないプレイリストになる。
         val repository = PlaylistRepository()
         repository.create(songId, registeredName)
-        repository.create(SongId("2"), otherName)
+        repository.create(otherSongId, otherName)
     }
 
     @After
@@ -96,6 +99,40 @@ class PlaylistRegisterPopupRegisteredTest {
         composeTestRule.waitForIdle()
 
         assertTrue(closed)
+    }
+
+    /**
+     * ViewModelは画面に残るので、別の曲で開き直すと、読み込みが終わるまで前の曲の結果が入っている。
+     * その間に前の曲の印を出すと、今の曲が入っていないプレイリストが押せなくなる。
+     *
+     * 読み込みはRoomのスレッドで行うので、フレームを1つだけ進めれば、その時点ではまだ終わっていない。
+     * 曲を切り替えた最初のフレームで印がないことを確かめる。
+     */
+    @Test
+    fun doesNotShowThePreviousSongsMarkWhenReopenedForAnotherSong() {
+        val popupSongId = mutableStateOf(songId)
+        var closed = false
+
+        composeTestRule.setContent {
+            PlaylistRegisterPopupView(popupSongId.value, callback = { closed = true })
+        }
+        awaitRegisteredMark()
+
+        composeTestRule.mainClock.autoAdvance = false
+        composeTestRule.runOnUiThread { popupSongId.value = otherSongId }
+        composeTestRule.mainClock.advanceTimeByFrame()
+
+        composeTestRule.onNodeWithText(registeredText).assertDoesNotExist()
+
+        // 読み込みが終われば、今の曲が入っているプレイリストに印が付き、押せなくなる。
+        composeTestRule.mainClock.autoAdvance = true
+        awaitRegisteredMark()
+
+        assertEquals(1, composeTestRule.onAllNodesWithText(registeredText).fetchSemanticsNodes().size)
+        composeTestRule.onNodeWithText(otherName).performClick()
+        composeTestRule.waitForIdle()
+
+        assertFalse(closed)
     }
 
     private fun showPopup(callback: () -> Unit = {}) {
