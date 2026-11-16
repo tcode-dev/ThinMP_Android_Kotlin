@@ -87,7 +87,8 @@ class ShortcutService(
      */
     private suspend fun removeMissing(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->
-            shortcutModels.none { it.itemId.toId(it.type) == shortcutEntity.itemId }
+            // アーティストとアルバムのidはどちらもMediaStoreの_IDで、同じ文字列になりうるので種類も比べる。
+            shortcutModels.none { it.type.ordinal == shortcutEntity.type && it.itemId.toId(it.type) == shortcutEntity.itemId }
         }.map { it.id }
 
         if (deleteShortcutIds.isEmpty()) return

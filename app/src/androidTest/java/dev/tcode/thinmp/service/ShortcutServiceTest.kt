@@ -8,6 +8,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.constant.ItemType
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.repository.AlbumRepository
 import dev.tcode.thinmp.repository.AppDatabase
@@ -107,6 +108,23 @@ class ShortcutServiceTest {
 
         assertEquals(1, models.size)
         assertNotEquals(Uri.EMPTY, models.first().imageUri)
+    }
+
+    /**
+     * 消えたアーティストのショートカットは、同じid文字列のアルバムのショートカットがあっても削除されること。
+     * アーティストとアルバムのidはどちらもMediaStoreの_IDなので、文字列だけで比べると一致してしまう。
+     */
+    @Test
+    fun aMissingArtistIsRemovedEvenIfAnAlbumHasTheSameId() = runBlocking {
+        val albumId = AlbumRepository(context).findByArtistId(withAlbum).first().id
+        assumeTrue("an artist has the same id as the album", ArtistRepository(context).findByIds(listOf(ArtistId(albumId))).isEmpty())
+        shortcuts.add(AlbumId(albumId))
+        shortcuts.add(ArtistId(albumId))
+
+        val models = ShortcutService(context, context.resources, shortcuts, ArtistRepository(context), AlbumRepository(context), SongRepository(context), PlaylistRepository(db)).findAll()
+
+        assertEquals(listOf(ItemType.ALBUM), models.map { it.type })
+        assertEquals(listOf(ItemType.ALBUM.ordinal), shortcuts.findAll().map { it.type })
     }
 
     /**
