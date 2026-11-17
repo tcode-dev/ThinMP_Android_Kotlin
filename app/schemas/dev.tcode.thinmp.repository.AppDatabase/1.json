@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "eae0c7719a1821fbfaff9b66febcf304",
+    "identityHash": "41d563001817d19c967de63b9daf0307",
     "entities": [
       {
         "tableName": "favorite_songs",
@@ -20,9 +20,7 @@
           "columnNames": [
             "song_id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "favorite_artists",
@@ -40,9 +38,7 @@
           "columnNames": [
             "artist_id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "playlists",
@@ -72,9 +68,7 @@
           "columnNames": [
             "id"
           ]
-        },
-        "indices": [],
-        "foreignKeys": []
+        }
       },
       {
         "tableName": "playlist_songs",
@@ -110,8 +104,7 @@
             "orders": [],
             "createSql": "CREATE INDEX IF NOT EXISTS `index_playlist_songs_song_id` ON `${TABLE_NAME}` (`song_id`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       },
       {
         "tableName": "shortcuts",
@@ -151,22 +144,20 @@
         "indices": [
           {
             "name": "index_shortcuts_item_id_type",
-            "unique": false,
+            "unique": true,
             "columnNames": [
               "item_id",
               "type"
             ],
             "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_shortcuts_item_id_type` ON `${TABLE_NAME}` (`item_id`, `type`)"
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_shortcuts_item_id_type` ON `${TABLE_NAME}` (`item_id`, `type`)"
           }
-        ],
-        "foreignKeys": []
+        ]
       }
     ],
-    "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'eae0c7719a1821fbfaff9b66febcf304')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41d563001817d19c967de63b9daf0307')"
     ]
   }
 }

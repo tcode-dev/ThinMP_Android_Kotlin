@@ -119,7 +119,8 @@ app/src/main/java/dev/tcode/thinmp/
   `playlist_songs`は(`playlist_id`, `song_id`)の組を主キーにする。
   これで重複行(`toggle`が防ごうとしていたものや、同じ曲を同じプレイリストに2回登録したもの)が禁止され、
   クエリが絞り込む列のインデックスも同時に付く。
-  `shortcuts`は、`ShortcutService`が`id`を`ShortcutModel`に渡すので`id`を残している
+  `shortcuts`は、`ShortcutService`が`id`を`ShortcutModel`に渡すので`id`を残している。
+  そのため(`item_id`, `type`)は主キーにできず、uniqueのインデックスで重複行を禁止する
 - DAOのクエリが絞り込む主キー以外の列には`@Index`を付け、それ以上は付けない。
   複合インデックスは、すべてのクエリがその組で絞り込む場合だけにする(`shortcuts(item_id, type)`)。
   主キーのインデックスの先頭がその列なら、インデックスは付けない(`playlist_songs(playlist_id, song_id)`は`playlist_id`だけを指定するクエリにも使える)
