@@ -8,10 +8,11 @@ import java.util.UUID
 
 /**
  * ショートカットの検索はすべて(item_id, type)の組で行うので、複合インデックス1つで足りる。
+ * 同じ項目のショートカットが2行あると一覧のkeyがぶつかって落ちるので、uniqueにして重複を禁止する。
  */
 @Entity(
     tableName = "shortcuts",
-    indices = [Index(value = ["item_id", "type"])]
+    indices = [Index(value = ["item_id", "type"], unique = true)]
 )
 data class ShortcutEntity(
     @PrimaryKey

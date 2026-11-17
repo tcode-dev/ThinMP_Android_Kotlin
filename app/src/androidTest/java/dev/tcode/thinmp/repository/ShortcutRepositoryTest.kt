@@ -46,6 +46,25 @@ class ShortcutRepositoryTest {
         assertFalse(repository.exists(ArtistId("1")))
     }
 
+    /**
+     * 同じ項目のショートカットが2行あると、MainScreenとMainEditScreenで一覧のkeyがぶつかって落ちる。
+     */
+    @Test
+    fun theSameItemCannotBeAddedTwice() = runTest {
+        repository.add(ArtistId("1"))
+
+        try {
+            repository.add(ArtistId("1"))
+            throw AssertionError("expected the unique index to abort the insert")
+        } catch (expected: android.database.sqlite.SQLiteConstraintException) {
+        }
+
+        // typeが違えば同じidでも入る。
+        repository.add(AlbumId("1"))
+
+        assertEquals(2, repository.findAll().size)
+    }
+
     @Test
     fun addNumbersShortcutsFromOne() = runTest {
         repository.add(ArtistId("1"))
@@ -133,8 +152,8 @@ class ShortcutRepositoryTest {
 
     /**
      * exists()とadd()を別々に呼ぶと間に中断点ができ、
-     * 同時に2回toggleすると両方が「未登録」と判断して2行目を挿入してしまう。
-     * shortcutsのスキーマには重複を防ぐ制約がない。
+     * 同時に2回toggleすると両方が「未登録」と判断して2行目を挿入しようとする。
+     * スキーマのunique制約で2行目は入らないが、例外になる。
      * toggleはそれを防ぐためにある。
      */
     @Test
