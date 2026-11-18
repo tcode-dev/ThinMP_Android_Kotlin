@@ -28,26 +28,26 @@ class SongRepository(context: Context, uri: Uri = MediaStore.Audio.Media.EXTERNA
 ) {
     private val trackSortOrder = "${numberSortOrder(MediaStore.Audio.Media.DISC_NUMBER)}, ${numberSortOrder(MediaStore.Audio.Media.CD_TRACK_NUMBER)}"
 
-    suspend fun findById(songId: String): SongModel? {
-        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(songId))
+    suspend fun findById(songId: SongId): SongModel? {
+        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(songId.id))
     }
 
     suspend fun findByIds(songIds: List<SongId>): List<SongModel> {
         return getListByIds(MediaStore.Audio.Media._ID, songIds.map { it.id }, MediaStore.Audio.Media.IS_MUSIC + " = 1")
     }
 
-    suspend fun findByArtistId(artistId: String): List<SongModel> {
+    suspend fun findByArtistId(artistId: ArtistId): List<SongModel> {
         return getList(
             MediaStore.Audio.Media.ARTIST_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1",
-            arrayOf(artistId),
+            arrayOf(artistId.id),
             "${MediaStore.Audio.Media.ALBUM} ASC, $trackSortOrder"
         )
     }
 
-    suspend fun findByAlbumId(albumId: String): List<SongModel> {
+    suspend fun findByAlbumId(albumId: AlbumId): List<SongModel> {
         return getList(
             MediaStore.Audio.Media.ALBUM_ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1",
-            arrayOf(albumId),
+            arrayOf(albumId.id),
             trackSortOrder
         )
     }

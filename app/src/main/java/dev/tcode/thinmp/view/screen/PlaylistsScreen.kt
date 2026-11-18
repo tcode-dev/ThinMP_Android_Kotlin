@@ -43,7 +43,7 @@ fun PlaylistsScreen(viewModel: PlaylistsViewModel = hiltViewModel()) {
                     ShortcutDropdownMenuItemView(playlist.id, callback)
                 }) { callback ->
                     PlainRowView(playlist.primaryText, Modifier.pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { callback() }, onTap = { navigator.playlistDetail(playlist.id.id) })
+                        detectTapGestures(onLongPress = { callback() }, onTap = { navigator.playlistDetail(playlist.id) })
                     })
                 }
             }

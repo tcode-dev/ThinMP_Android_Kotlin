@@ -57,7 +57,7 @@ class MediaStoreRepositoryConcurrencyTest {
         repeat(ROUNDS) {
             val found = coroutineScope {
                 songs.map { song ->
-                    async(Dispatchers.Default) { song.name to repository.findByAlbumId(song.albumId.id).map { it.name } }
+                    async(Dispatchers.Default) { song.name to repository.findByAlbumId(song.albumId).map { it.name } }
                 }.awaitAll()
             }
 
@@ -73,7 +73,7 @@ class MediaStoreRepositoryConcurrencyTest {
         repeat(ROUNDS) {
             val found = coroutineScope {
                 songs.map { song ->
-                    async(Dispatchers.Default) { song.name to repository.findById(song.songId.id)?.name }
+                    async(Dispatchers.Default) { song.name to repository.findById(song.songId)?.name }
                 }.awaitAll()
             }
 

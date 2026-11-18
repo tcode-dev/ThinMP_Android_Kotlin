@@ -6,6 +6,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.tcode.thinmp.model.media.SongModel
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.player.PlaybackController
 import dev.tcode.thinmp.service.AlbumDetailService
 import kotlinx.coroutines.Job
@@ -27,13 +28,13 @@ class AlbumDetailViewModel @Inject constructor(
     private var loadJob: Job? = null
     private val _uiState = MutableStateFlow(AlbumDetailUiState())
     val uiState: StateFlow<AlbumDetailUiState> = _uiState.asStateFlow()
-    val id: String
+    val id: AlbumId
 
     override val songs: List<SongModel>
         get() = uiState.value.songs
 
     init {
-        id = savedStateHandle.get<String>("id").toString()
+        id = AlbumId(savedStateHandle.get<String>("id").toString())
 
         load()
     }

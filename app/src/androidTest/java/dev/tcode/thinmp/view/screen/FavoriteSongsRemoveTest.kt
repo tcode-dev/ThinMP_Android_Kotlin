@@ -25,6 +25,9 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 
 /**
  * お気に入りの一覧で曲を外すと、その行が一覧から消える。
@@ -112,13 +115,13 @@ class FavoriteSongsRemoveTest {
         override fun backFromEvent() {}
         override fun navigate(route: String) {}
         override fun mainEdit() {}
-        override fun artistDetail(id: String) {}
-        override fun albumDetail(id: String) {}
+        override fun artistDetail(id: ArtistId) {}
+        override fun albumDetail(id: AlbumId) {}
         override fun favoriteArtistsEdit() {}
         override fun favoriteSongsEdit() {}
         override fun playlistsEdit() {}
-        override fun playlistDetail(id: String) {}
-        override fun playlistDetailEdit(id: String) {}
+        override fun playlistDetail(id: PlaylistId) {}
+        override fun playlistDetailEdit(id: PlaylistId) {}
         override fun player() {}
     }
 }

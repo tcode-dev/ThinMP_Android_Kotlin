@@ -59,7 +59,7 @@ import dev.tcode.thinmp.view.util.isLandscape
 import dev.tcode.thinmp.viewModel.ArtistDetailViewModel
 
 @Composable
-fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = hiltViewModel()) {
+fun ArtistDetailScreen(id: ArtistId, viewModel: ArtistDetailViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val spanCount: Int = gridSpanCount()
@@ -72,8 +72,8 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = hiltViewMo
 
     CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
-            FavoriteArtistDropdownMenuItemView(ArtistId(id), callback)
-            ShortcutDropdownMenuItemView(ArtistId(id), callback)
+            FavoriteArtistDropdownMenuItemView(id, callback)
+            ShortcutDropdownMenuItemView(id, callback)
         }) {
             item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(
@@ -151,7 +151,7 @@ fun ArtistDetailScreen(id: String, viewModel: ArtistDetailViewModel = hiltViewMo
                     }) { callback ->
                         GridCellView(index, spanCount) {
                             AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
-                                detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
+                                detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.albumId) })
                             })
                         }
                     }
