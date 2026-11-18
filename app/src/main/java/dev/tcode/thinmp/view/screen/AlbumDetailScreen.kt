@@ -41,7 +41,7 @@ import dev.tcode.thinmp.view.util.gridSpanCount
 import dev.tcode.thinmp.viewModel.AlbumDetailViewModel
 
 @Composable
-fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = hiltViewModel()) {
+fun AlbumDetailScreen(id: AlbumId, viewModel: AlbumDetailViewModel = hiltViewModel()) {
     val uiState by viewModel.uiState.collectAsState()
     val isVisiblePlayer by viewModel.isVisiblePlayer.collectAsState()
     val spanCount: Int = gridSpanCount()
@@ -51,7 +51,7 @@ fun AlbumDetailScreen(id: String, viewModel: AlbumDetailViewModel = hiltViewMode
 
     CommonLayoutView(isVisiblePlayer) { showPlaylistRegisterPopup ->
         DetailCollapsingTopAppBarView(title = uiState.primaryText, columns = CustomGridCellsFixed(spanCount), spanCount = spanCount, dropdownMenus = { callback ->
-            ShortcutDropdownMenuItemView(AlbumId(id), callback)
+            ShortcutDropdownMenuItemView(id, callback)
         }) {
             item(span = { GridItemSpan(spanCount) }) {
                 ConstraintLayout(

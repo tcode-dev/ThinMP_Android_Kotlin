@@ -8,6 +8,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import dev.tcode.thinmp.constant.NavConstant
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.view.screen.AlbumDetailScreen
 import dev.tcode.thinmp.view.screen.AlbumsScreen
 import dev.tcode.thinmp.view.screen.ArtistDetailScreen
@@ -46,22 +49,22 @@ fun ThinMPNavHost() {
             composable(
                 "${NavConstant.ALBUM_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                AlbumDetailScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                AlbumDetailScreen(AlbumId(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull)))
             }
             composable(
                 "${NavConstant.ARTIST_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                ArtistDetailScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                ArtistDetailScreen(ArtistId(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull)))
             }
             composable(
                 "${NavConstant.PLAYLIST_DETAIL}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                PlaylistDetailScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                PlaylistDetailScreen(PlaylistId(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull)))
             }
             composable(
                 "${NavConstant.PLAYLIST_DETAIL_EDIT}/{${NavConstant.ID}}", arguments = listOf(navArgument(NavConstant.ID) { type = NavType.StringType })
             ) { backStackEntry ->
-                PlaylistDetailEditScreen(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull))
+                PlaylistDetailEditScreen(PlaylistId(backStackEntry.arguments?.getString(NavConstant.ID).let(::requireNotNull)))
             }
         }
     }

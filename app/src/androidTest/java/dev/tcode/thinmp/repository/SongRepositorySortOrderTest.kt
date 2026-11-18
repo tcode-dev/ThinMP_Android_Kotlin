@@ -51,7 +51,7 @@ class SongRepositorySortOrderTest {
         insertTrack("d2t2", "2", "2")
         insertTrack("d1t1", "1", "1")
 
-        assertEquals(listOf("d1t1", "d1t2", "d2t1", "d2t2"), names(repository.findByAlbumId(insertedSong().albumId.id)))
+        assertEquals(listOf("d1t1", "d1t2", "d2t1", "d2t2"), names(repository.findByAlbumId(insertedSong().albumId)))
     }
 
     /**
@@ -63,7 +63,7 @@ class SongRepositorySortOrderTest {
         insertTrack("d2t10", "2/10", "10/12")
         insertTrack("d2t2", "2/10", "2/12")
 
-        assertEquals(listOf("d2t2", "d2t10", "d10t1"), names(repository.findByAlbumId(insertedSong().albumId.id)))
+        assertEquals(listOf("d2t2", "d2t10", "d10t1"), names(repository.findByAlbumId(insertedSong().albumId)))
     }
 
     /**
@@ -74,7 +74,7 @@ class SongRepositorySortOrderTest {
         insertTrack("t2", null, "2")
         insertTrack("t1", null, "1")
 
-        assertEquals(listOf("t1", "t2"), names(repository.findByAlbumId(insertedSong().albumId.id)))
+        assertEquals(listOf("t1", "t2"), names(repository.findByAlbumId(insertedSong().albumId)))
     }
 
     /**
@@ -85,7 +85,7 @@ class SongRepositorySortOrderTest {
         insertTrack("d2t1", "2", "1")
         insertTrack("d1t2", "1", "2")
 
-        assertEquals(listOf("d1t2", "d2t1"), names(repository.findByArtistId(insertedSong().artistId.id)))
+        assertEquals(listOf("d1t2", "d2t1"), names(repository.findByArtistId(insertedSong().artistId)))
     }
 
     private suspend fun insertedSong(): SongModel {

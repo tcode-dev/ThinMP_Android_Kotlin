@@ -38,7 +38,7 @@ fun AlbumsScreen(viewModel: AlbumsViewModel = hiltViewModel()) {
                 }) { callback ->
                     GridCellView(index, spanCount) {
                         AlbumCellView(album.name, album.artistName, album.getImageUri(), Modifier.pointerInput(Unit) {
-                            detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.id) })
+                            detectTapGestures(onLongPress = { callback() }, onTap = { navigator.albumDetail(album.albumId) })
                         })
                     }
                 }

@@ -3,19 +3,22 @@ package dev.tcode.thinmp.view.nav
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.NavController
 import dev.tcode.thinmp.constant.NavConstant
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 
 interface INavigator {
     fun back()
     fun backFromEvent()
     fun navigate(route: String)
     fun mainEdit()
-    fun artistDetail(id: String)
-    fun albumDetail(id: String)
+    fun artistDetail(id: ArtistId)
+    fun albumDetail(id: AlbumId)
     fun favoriteArtistsEdit()
     fun favoriteSongsEdit()
     fun playlistsEdit()
-    fun playlistDetail(id: String)
-    fun playlistDetailEdit(id: String)
+    fun playlistDetail(id: PlaylistId)
+    fun playlistDetailEdit(id: PlaylistId)
     fun player()
 }
 
@@ -51,12 +54,12 @@ class Navigator(private val navController: NavController) : INavigator {
         navigate(NavConstant.MAIN_EDIT)
     }
 
-    override fun artistDetail(id: String) {
-        navigate("${NavConstant.ARTIST_DETAIL}/${id}")
+    override fun artistDetail(id: ArtistId) {
+        navigate("${NavConstant.ARTIST_DETAIL}/${id.id}")
     }
 
-    override fun albumDetail(id: String) {
-        navigate("${NavConstant.ALBUM_DETAIL}/${id}")
+    override fun albumDetail(id: AlbumId) {
+        navigate("${NavConstant.ALBUM_DETAIL}/${id.id}")
     }
 
     override fun favoriteArtistsEdit() {
@@ -67,12 +70,12 @@ class Navigator(private val navController: NavController) : INavigator {
         navigate(NavConstant.FAVORITE_SONGS_EDIT)
     }
 
-    override fun playlistDetail(id: String) {
-        navigate("${NavConstant.PLAYLIST_DETAIL}/${id}")
+    override fun playlistDetail(id: PlaylistId) {
+        navigate("${NavConstant.PLAYLIST_DETAIL}/${id.id}")
     }
 
-    override fun playlistDetailEdit(id: String) {
-        navigate("${NavConstant.PLAYLIST_DETAIL_EDIT}/${id}")
+    override fun playlistDetailEdit(id: PlaylistId) {
+        navigate("${NavConstant.PLAYLIST_DETAIL_EDIT}/${id.id}")
     }
 
     override fun playlistsEdit() {

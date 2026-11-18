@@ -139,7 +139,7 @@ app/src/main/java/dev/tcode/thinmp/
   行のidはその行のcompositionの中で変わらないので、keyにしても`Unit`と同じになる。
   **`pointerInput(Unit)`を`pointerInput(id)`に変えないこと。**
   `853a6e9`まではitemのkeyがないことへの回避策としてそうしていたが、keyを付けたことで不要になり、外した。
-  これが正しく動くのは、タップのクロージャーが行の識別子(`songId`、`album.id`、`shortcut.url`)だけを読み、
+  これが正しく動くのは、タップのクロージャーが行の識別子(`songId`、`album.albumId`、`shortcut.url`)だけを読み、
   再読み込みで変わりうる表示用のフィールドを読まないからだ。
   変化を追う必要がある値は、`pointerInput`のkeyではなく`rememberUpdatedState`で読む
 - `catch`は、特定の例外に特定の回復方法があるところにだけ書く。
