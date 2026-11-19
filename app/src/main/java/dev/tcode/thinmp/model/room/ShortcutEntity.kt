@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
+import dev.tcode.thinmp.constant.ItemType
 import java.util.UUID
 
 /**
@@ -19,6 +20,9 @@ data class ShortcutEntity(
     val id: String = UUID.randomUUID().toString(),
     @ColumnInfo(name = "item_id")
     val itemId: String = "",
-    val type: Int = 0,
+    /**
+     * Roomはenumを名前の文字列で保存するので、ItemTypeの並び順を変えても既存の行の種類は変わらない。
+     */
+    val type: ItemType,
     val order: Int = 0
 )

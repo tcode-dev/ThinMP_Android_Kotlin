@@ -124,7 +124,7 @@ class ShortcutServiceTest {
         val models = ShortcutService(context, context.resources, shortcuts, ArtistRepository(context), AlbumRepository(context), SongRepository(context), PlaylistRepository(db)).findAll()
 
         assertEquals(listOf(ItemType.ALBUM), models.map { it.type })
-        assertEquals(listOf(ItemType.ALBUM.ordinal), shortcuts.findAll().map { it.type })
+        assertEquals(listOf(ItemType.ALBUM), shortcuts.findAll().map { it.type })
     }
 
     /**
