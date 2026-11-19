@@ -9,6 +9,7 @@ import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.ShortcutId
+import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.model.room.ShortcutEntity
 import dev.tcode.thinmp.repository.AlbumRepository
 import dev.tcode.thinmp.repository.ArtistRepository
@@ -36,7 +37,7 @@ class ShortcutService(
             val artists = artistRepository.findByIds(artistIds)
 
             map[ItemType.ARTIST] = artists.map { artist ->
-                val albums = albumRepository.findByArtistId(artist.id)
+                val albums = albumRepository.findByArtistId(artist.artistId)
                 // アルバムのテーブルはアルバムごとにアーティストを1人しか持たないので、
                 // コンピレーションにだけ参加しているアーティストにはアルバムがない。
                 // メイン画面の読み込み中なので、例外にせず画像なしにする。
@@ -65,7 +66,7 @@ class ShortcutService(
             map[ItemType.PLAYLIST] = playlists.map { playlist ->
                 val playlistSongs = playlistRepository.findSongsByPlaylistId(PlaylistId(playlist.id))
                 val firstSong = playlistSongs.firstOrNull()
-                val songModel = firstSong?.let { songRepository.findById(it.songId) }
+                val songModel = firstSong?.let { songRepository.findById(SongId(it.songId)) }
                 val imageUri = songModel?.getImageUri() ?: Uri.EMPTY
                 val id = group[ItemType.PLAYLIST]!!.first { shortcut -> shortcut.itemId == playlist.id }.id
 

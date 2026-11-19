@@ -39,7 +39,7 @@ fun FavoriteArtistsScreen(viewModel: FavoriteArtistsViewModel = hiltViewModel())
                     ShortcutDropdownMenuItemView(artist.artistId, callback)
                 }) { callback ->
                     PlainRowView(artist.name, Modifier.pointerInput(Unit) {
-                        detectTapGestures(onLongPress = { callback() }, onTap = { navigator.artistDetail(artist.id) })
+                        detectTapGestures(onLongPress = { callback() }, onTap = { navigator.artistDetail(artist.artistId) })
                     })
                 }
             }

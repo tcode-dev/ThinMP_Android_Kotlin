@@ -2,11 +2,12 @@ package dev.tcode.thinmp.service
 
 import android.content.Context
 import dev.tcode.thinmp.model.media.AlbumDetailModel
+import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.repository.AlbumRepository
 import dev.tcode.thinmp.repository.SongRepository
 
 class AlbumDetailService(val context: Context) {
-    suspend fun findById(id: String): AlbumDetailModel? {
+    suspend fun findById(id: AlbumId): AlbumDetailModel? {
         val albumRepository = AlbumRepository(context)
         val songRepository = SongRepository(context)
         val album = albumRepository.findById(id)

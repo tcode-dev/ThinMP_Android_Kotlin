@@ -22,8 +22,8 @@ class ArtistRepository(context: Context, uri: Uri = MediaStore.Audio.Artists.EXT
         return getList(sortOrder = MediaStore.Audio.Artists.ARTIST + " ASC")
     }
 
-    suspend fun findById(artistId: String): ArtistModel? {
-        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(artistId))
+    suspend fun findById(artistId: ArtistId): ArtistModel? {
+        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(artistId.id))
     }
 
     suspend fun findByIds(artistIds: List<ArtistId>): List<ArtistModel> {

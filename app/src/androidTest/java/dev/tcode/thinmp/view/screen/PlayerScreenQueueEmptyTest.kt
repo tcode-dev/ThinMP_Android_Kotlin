@@ -38,6 +38,7 @@ import org.junit.runner.RunWith
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicInteger
+import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 
 /**
  * 失敗した曲が最後の1曲だった場合、retry()はキューを空にする。
@@ -228,13 +229,13 @@ class PlayerScreenQueueEmptyTest {
         override fun navigate(route: String) {}
 
         override fun mainEdit() {}
-        override fun artistDetail(id: String) {}
-        override fun albumDetail(id: String) {}
+        override fun artistDetail(id: ArtistId) {}
+        override fun albumDetail(id: AlbumId) {}
         override fun favoriteArtistsEdit() {}
         override fun favoriteSongsEdit() {}
         override fun playlistsEdit() {}
-        override fun playlistDetail(id: String) {}
-        override fun playlistDetailEdit(id: String) {}
+        override fun playlistDetail(id: PlaylistId) {}
+        override fun playlistDetailEdit(id: PlaylistId) {}
         override fun player() {}
     }
 }

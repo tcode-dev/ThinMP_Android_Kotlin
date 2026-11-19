@@ -63,8 +63,8 @@ class ShortcutServiceTest {
         assumeTrue("MediaStore did not keep the two tracks apart", artistIds.size == 2)
 
         val albums = AlbumRepository(context)
-        withoutAlbum = artistIds.firstOrNull { albums.findByArtistId(it).isEmpty() } ?: ""
-        withAlbum = artistIds.firstOrNull { albums.findByArtistId(it).isNotEmpty() } ?: ""
+        withoutAlbum = artistIds.firstOrNull { albums.findByArtistId(ArtistId(it)).isEmpty() } ?: ""
+        withAlbum = artistIds.firstOrNull { albums.findByArtistId(ArtistId(it)).isNotEmpty() } ?: ""
         assumeTrue("MediaStore gave both artists an album of their own", withoutAlbum.isNotEmpty() && withAlbum.isNotEmpty())
     }
 
@@ -116,7 +116,7 @@ class ShortcutServiceTest {
      */
     @Test
     fun aMissingArtistIsRemovedEvenIfAnAlbumHasTheSameId() = runBlocking {
-        val albumId = AlbumRepository(context).findByArtistId(withAlbum).first().id
+        val albumId = AlbumRepository(context).findByArtistId(ArtistId(withAlbum)).first().id
         assumeTrue("an artist has the same id as the album", ArtistRepository(context).findByIds(listOf(ArtistId(albumId))).isEmpty())
         shortcuts.add(AlbumId(albumId))
         shortcuts.add(ArtistId(albumId))

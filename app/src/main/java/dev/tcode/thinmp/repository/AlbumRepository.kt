@@ -6,6 +6,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import dev.tcode.thinmp.model.media.AlbumModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
 
 /**
  * [uri]はテストで問い合わせの失敗を起こすためだけに差し替える。
@@ -17,18 +18,18 @@ class AlbumRepository(context: Context, uri: Uri = MediaStore.Audio.Albums.EXTER
         return getList(sortOrder = MediaStore.Audio.Albums.ALBUM + " ASC")
     }
 
-    suspend fun findById(albumId: String): AlbumModel? {
-        return get(MediaStore.Audio.Albums._ID + " = ?", arrayOf(albumId))
+    suspend fun findById(albumId: AlbumId): AlbumModel? {
+        return get(MediaStore.Audio.Albums._ID + " = ?", arrayOf(albumId.id))
     }
 
     suspend fun findByIds(albumIds: List<AlbumId>): List<AlbumModel> {
         return getListByIds(MediaStore.Audio.Albums._ID, albumIds.map { it.id })
     }
 
-    suspend fun findByArtistId(artistId: String): List<AlbumModel> {
+    suspend fun findByArtistId(artistId: ArtistId): List<AlbumModel> {
         return getList(
             MediaStore.Audio.Media.ARTIST_ID + " = ?",
-            arrayOf(artistId),
+            arrayOf(artistId.id),
             "${MediaStore.Audio.Media.ALBUM} ASC"
         )
     }
@@ -39,8 +40,10 @@ class AlbumRepository(context: Context, uri: Uri = MediaStore.Audio.Albums.EXTER
         return AlbumId(id)
     }
 
-    private fun getArtistId(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
+    private fun getArtistId(cursor: Cursor): ArtistId {
+        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
+
+        return ArtistId(id)
     }
 
     private fun getArtistName(cursor: Cursor): String {
