@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import dev.tcode.thinmp.constant.ItemType
 import dev.tcode.thinmp.constant.SqliteConstant
 import dev.tcode.thinmp.model.room.ShortcutEntity
 
@@ -14,10 +15,10 @@ interface ShortcutDao {
     suspend fun findAll(): List<ShortcutEntity>
 
     @Query("SELECT * FROM shortcuts WHERE item_id = :itemId AND type = :type")
-    suspend fun findByItemIdAndType(itemId: String, type: Int): List<ShortcutEntity>
+    suspend fun findByItemIdAndType(itemId: String, type: ItemType): List<ShortcutEntity>
 
     @Query("SELECT COUNT(*) > 0 FROM shortcuts WHERE item_id = :itemId AND type = :type")
-    suspend fun exists(itemId: String, type: Int): Boolean
+    suspend fun exists(itemId: String, type: ItemType): Boolean
 
     @Query("SELECT COALESCE(MAX(`order`), 0) FROM shortcuts")
     suspend fun getMaxOrder(): Int
@@ -29,7 +30,7 @@ interface ShortcutDao {
     suspend fun update(entity: ShortcutEntity)
 
     @Query("DELETE FROM shortcuts WHERE item_id = :itemId AND type = :type")
-    suspend fun deleteByItemIdAndType(itemId: String, type: Int)
+    suspend fun deleteByItemIdAndType(itemId: String, type: ItemType)
 
     @Query("DELETE FROM shortcuts WHERE id IN (:ids)")
     suspend fun deleteByIdsChunk(ids: List<String>)
@@ -47,7 +48,7 @@ interface ShortcutDao {
      * 別々にすると、同時に追加したときに同じorderが付いてしまう。
      */
     @Transaction
-    suspend fun insertAtEnd(itemId: String, type: Int) {
+    suspend fun insertAtEnd(itemId: String, type: ItemType) {
         insert(ShortcutEntity(itemId = itemId, type = type, order = getMaxOrder() + 1))
     }
 
@@ -56,7 +57,7 @@ interface ShortcutDao {
      * 別々にすると、同時に2回toggleしたときに両方が「未登録」と判断して、同じ項目が2行挿入される。
      */
     @Transaction
-    suspend fun toggle(itemId: String, type: Int) {
+    suspend fun toggle(itemId: String, type: ItemType) {
         if (exists(itemId, type)) {
             deleteByItemIdAndType(itemId, type)
         } else {

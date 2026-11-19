@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.tcode.thinmp.constant.ItemType
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -119,9 +120,9 @@ class SqliteVariableLimitTest {
     @Test
     fun shortcutsCanBeDeletedByMoreIdsThanSqliteBinds() = runTest {
         val dao = db.shortcutDao()
-        dao.insert(ShortcutEntity(itemId = "1", type = 0, order = 1))
-        dao.insert(ShortcutEntity(itemId = "2", type = 0, order = 2))
-        dao.insert(ShortcutEntity(itemId = "3", type = 0, order = 3))
+        dao.insert(ShortcutEntity(itemId = "1", type = ItemType.ARTIST, order = 1))
+        dao.insert(ShortcutEntity(itemId = "2", type = ItemType.ARTIST, order = 2))
+        dao.insert(ShortcutEntity(itemId = "3", type = ItemType.ARTIST, order = 3))
         val ids = dao.findAll().map { it.id }
 
         dao.deleteByIds(spread(ids))

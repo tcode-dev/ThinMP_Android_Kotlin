@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "41d563001817d19c967de63b9daf0307",
+    "identityHash": "e5cabdf2b91c21d2ec3d1e610c05e6b7",
     "entities": [
       {
         "tableName": "favorite_songs",
@@ -108,7 +108,7 @@
       },
       {
         "tableName": "shortcuts",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `item_id` TEXT NOT NULL, `type` INTEGER NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `item_id` TEXT NOT NULL, `type` TEXT NOT NULL, `order` INTEGER NOT NULL, PRIMARY KEY(`id`))",
         "fields": [
           {
             "fieldPath": "id",
@@ -125,7 +125,7 @@
           {
             "fieldPath": "type",
             "columnName": "type",
-            "affinity": "INTEGER",
+            "affinity": "TEXT",
             "notNull": true
           },
           {
@@ -157,7 +157,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '41d563001817d19c967de63b9daf0307')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e5cabdf2b91c21d2ec3d1e610c05e6b7')"
     ]
   }
 }

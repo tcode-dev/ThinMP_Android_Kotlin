@@ -78,7 +78,20 @@ class ShortcutRepositoryTest {
     fun addRecordsTheItemType() = runTest {
         repository.add(AlbumId("1"))
 
-        assertEquals(ItemType.ALBUM.ordinal, repository.findAll().first().type)
+        assertEquals(ItemType.ALBUM, repository.findAll().first().type)
+    }
+
+    /**
+     * ordinalで保存すると、ItemTypeの並び順を変えたときに既存の行が別の種類として読まれる。
+     */
+    @Test
+    fun theItemTypeIsStoredByName() = runTest {
+        repository.add(AlbumId("1"))
+
+        db.openHelper.readableDatabase.query("SELECT type FROM shortcuts").use { cursor ->
+            assertTrue(cursor.moveToFirst())
+            assertEquals("ALBUM", cursor.getString(0))
+        }
     }
 
     @Test

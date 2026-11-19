@@ -17,9 +17,9 @@ class ShortcutRepository(
 
     suspend fun exists(shortcutItemId: ShortcutItemId): Boolean {
         return when (shortcutItemId) {
-            is ArtistId -> dao.exists(shortcutItemId.id, ItemType.ARTIST.ordinal)
-            is AlbumId -> dao.exists(shortcutItemId.id, ItemType.ALBUM.ordinal)
-            is PlaylistId -> dao.exists(shortcutItemId.id, ItemType.PLAYLIST.ordinal)
+            is ArtistId -> dao.exists(shortcutItemId.id, ItemType.ARTIST)
+            is AlbumId -> dao.exists(shortcutItemId.id, ItemType.ALBUM)
+            is PlaylistId -> dao.exists(shortcutItemId.id, ItemType.PLAYLIST)
             else -> throw IllegalArgumentException("Unknown expression")
         }
     }
@@ -35,18 +35,18 @@ class ShortcutRepository(
 
     suspend fun toggle(shortcutItemId: ShortcutItemId) {
         when (shortcutItemId) {
-            is ArtistId -> dao.toggle(shortcutItemId.id, ItemType.ARTIST.ordinal)
-            is AlbumId -> dao.toggle(shortcutItemId.id, ItemType.ALBUM.ordinal)
-            is PlaylistId -> dao.toggle(shortcutItemId.id, ItemType.PLAYLIST.ordinal)
+            is ArtistId -> dao.toggle(shortcutItemId.id, ItemType.ARTIST)
+            is AlbumId -> dao.toggle(shortcutItemId.id, ItemType.ALBUM)
+            is PlaylistId -> dao.toggle(shortcutItemId.id, ItemType.PLAYLIST)
             else -> throw IllegalArgumentException("Unknown expression")
         }
     }
 
     suspend fun delete(shortcutItemId: ShortcutItemId) {
         when (shortcutItemId) {
-            is ArtistId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ARTIST.ordinal)
-            is AlbumId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ALBUM.ordinal)
-            is PlaylistId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.PLAYLIST.ordinal)
+            is ArtistId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ARTIST)
+            is AlbumId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.ALBUM)
+            is PlaylistId -> dao.deleteByItemIdAndType(shortcutItemId.id, ItemType.PLAYLIST)
             else -> throw IllegalArgumentException("Unknown expression")
         }
     }
@@ -80,6 +80,6 @@ class ShortcutRepository(
     }
 
     private suspend fun add(itemId: String, itemType: ItemType) {
-        dao.insertAtEnd(itemId, itemType.ordinal)
+        dao.insertAtEnd(itemId, itemType)
     }
 }

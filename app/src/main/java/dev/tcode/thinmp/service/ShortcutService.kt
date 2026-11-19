@@ -29,45 +29,45 @@ class ShortcutService(
     suspend fun findAll(): List<ShortcutModel> {
         val shortcutEntities = shortcutRepository.findAll()
         val group = shortcutEntities.groupBy { it.type }
-        val map = mutableMapOf(ItemType.ARTIST.ordinal to emptyList<ShortcutModel>(), ItemType.ALBUM.ordinal to emptyList(), ItemType.PLAYLIST.ordinal to emptyList())
+        val map = mutableMapOf(ItemType.ARTIST to emptyList<ShortcutModel>(), ItemType.ALBUM to emptyList(), ItemType.PLAYLIST to emptyList())
 
-        if (group.containsKey(ItemType.ARTIST.ordinal)) {
-            val artistIds = group[ItemType.ARTIST.ordinal]!!.map { ArtistId(it.itemId) }
+        if (group.containsKey(ItemType.ARTIST)) {
+            val artistIds = group[ItemType.ARTIST]!!.map { ArtistId(it.itemId) }
             val artists = artistRepository.findByIds(artistIds)
 
-            map[ItemType.ARTIST.ordinal] = artists.map { artist ->
+            map[ItemType.ARTIST] = artists.map { artist ->
                 val albums = albumRepository.findByArtistId(artist.id)
                 // アルバムのテーブルはアルバムごとにアーティストを1人しか持たないので、
                 // コンピレーションにだけ参加しているアーティストにはアルバムがない。
                 // メイン画面の読み込み中なので、例外にせず画像なしにする。
                 val imageUri = albums.firstOrNull()?.getImageUri() ?: Uri.EMPTY
-                val id = group[ItemType.ARTIST.ordinal]!!.first { shortcut -> shortcut.itemId == artist.id }.id
+                val id = group[ItemType.ARTIST]!!.first { shortcut -> shortcut.itemId == artist.id }.id
 
                 ShortcutModel(ShortcutId(id), artist.artistId, artist.name, resources.getString(R.string.artist), imageUri, ItemType.ARTIST)
             }
         }
 
-        if (group.containsKey(ItemType.ALBUM.ordinal)) {
-            val albumIds = group[ItemType.ALBUM.ordinal]!!.map { AlbumId(it.itemId) }
+        if (group.containsKey(ItemType.ALBUM)) {
+            val albumIds = group[ItemType.ALBUM]!!.map { AlbumId(it.itemId) }
             val albums = albumRepository.findByIds(albumIds)
 
-            map[ItemType.ALBUM.ordinal] = albums.map { album ->
-                val id = group[ItemType.ALBUM.ordinal]!!.first { shortcut -> shortcut.itemId == album.id }.id
+            map[ItemType.ALBUM] = albums.map { album ->
+                val id = group[ItemType.ALBUM]!!.first { shortcut -> shortcut.itemId == album.id }.id
 
                 ShortcutModel(ShortcutId(id), album.albumId, album.name, resources.getString(R.string.album), album.getImageUri(), ItemType.ALBUM)
             }
         }
 
-        if (group.containsKey(ItemType.PLAYLIST.ordinal)) {
-            val playlistIds = group[ItemType.PLAYLIST.ordinal]!!.map { PlaylistId(it.itemId) }
+        if (group.containsKey(ItemType.PLAYLIST)) {
+            val playlistIds = group[ItemType.PLAYLIST]!!.map { PlaylistId(it.itemId) }
             val playlists = playlistRepository.findByIds(playlistIds)
 
-            map[ItemType.PLAYLIST.ordinal] = playlists.map { playlist ->
+            map[ItemType.PLAYLIST] = playlists.map { playlist ->
                 val playlistSongs = playlistRepository.findSongsByPlaylistId(PlaylistId(playlist.id))
                 val firstSong = playlistSongs.firstOrNull()
                 val songModel = firstSong?.let { songRepository.findById(it.songId) }
                 val imageUri = songModel?.getImageUri() ?: Uri.EMPTY
-                val id = group[ItemType.PLAYLIST.ordinal]!!.first { shortcut -> shortcut.itemId == playlist.id }.id
+                val id = group[ItemType.PLAYLIST]!!.first { shortcut -> shortcut.itemId == playlist.id }.id
 
                 ShortcutModel(ShortcutId(id), PlaylistId(playlist.id), playlist.name, resources.getString(R.string.playlist), imageUri, ItemType.PLAYLIST)
             }
@@ -88,7 +88,7 @@ class ShortcutService(
     private suspend fun removeMissing(shortcutEntities: List<ShortcutEntity>, shortcutModels: List<ShortcutModel>) {
         val deleteShortcutIds = shortcutEntities.filter { shortcutEntity ->
             // アーティストとアルバムのidはどちらもMediaStoreの_IDで、同じ文字列になりうるので種類も比べる。
-            shortcutModels.none { it.type.ordinal == shortcutEntity.type && it.itemId.toId(it.type) == shortcutEntity.itemId }
+            shortcutModels.none { it.type == shortcutEntity.type && it.itemId.toId(it.type) == shortcutEntity.itemId }
         }.map { it.id }
 
         if (deleteShortcutIds.isEmpty()) return
