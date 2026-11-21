@@ -29,7 +29,7 @@ class SongRepository(context: Context, uri: Uri = MediaStore.Audio.Media.EXTERNA
     private val trackSortOrder = "${numberSortOrder(MediaStore.Audio.Media.DISC_NUMBER)}, ${numberSortOrder(MediaStore.Audio.Media.CD_TRACK_NUMBER)}"
 
     suspend fun findById(songId: SongId): SongModel? {
-        return get(MediaStore.Audio.Media._ID + " = ?", arrayOf(songId.id))
+        return get(MediaStore.Audio.Media._ID + " = ? AND " + MediaStore.Audio.Media.IS_MUSIC + " = 1", arrayOf(songId.id))
     }
 
     suspend fun findByIds(songIds: List<SongId>): List<SongModel> {
