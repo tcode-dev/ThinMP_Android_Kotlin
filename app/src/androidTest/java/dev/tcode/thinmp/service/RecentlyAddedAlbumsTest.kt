@@ -6,6 +6,7 @@ import android.provider.MediaStore
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.tcode.thinmp.model.media.AlbumModel
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -23,7 +24,8 @@ private const val ALBUM_PREFIX = "thinmp_test_recent_album_"
  * idの大小は追加日時と関係がない。
  * アルバムのテーブルには日付の列もないので、曲の追加日時から順序を決める。
  *
- * 3つのアルバムを古い順に追加し、新しい順に返ることを確かめる(この順はidの順と一致しない)。
+ * 3つのアルバムを古い順に追加し、新しい順に返ることを確かめる。
+ * idの順がたまたま追加の順と一致すると、_idで並べる誤った実装でも通るので、一致しないことを前提として確かめる。
  *
  * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
  */
@@ -51,8 +53,10 @@ class RecentlyAddedAlbumsTest {
         assumeTrue("MediaStore gave the three tracks the same date_added", addedDates().distinct().size == 3)
 
         val albums = MainService(context).getRecentlyAlbums().filter { it.name.startsWith(ALBUM_PREFIX) }
+        val expected = listOf("${ALBUM_PREFIX}c", "${ALBUM_PREFIX}b", "${ALBUM_PREFIX}a")
 
-        assertEquals(listOf("${ALBUM_PREFIX}c", "${ALBUM_PREFIX}b", "${ALBUM_PREFIX}a"), albums.map { it.name })
+        assumeIdOrderDiffersFrom(expected, albums)
+        assertEquals(expected, albums.map { it.name })
     }
 
     /**
@@ -62,14 +66,26 @@ class RecentlyAddedAlbumsTest {
      */
     @Test
     fun anAlbumIsAsRecentAsItsNewestTrack() = runBlocking {
-        insertTrack("a")
         insertTrack("b")
-        insertTrack("a", suffix = "2")
+        insertTrack("a")
+        insertTrack("b", suffix = "2")
         assumeTrue("MediaStore gave the three tracks the same date_added", addedDates().distinct().size == 3)
 
         val albums = MainService(context).getRecentlyAlbums().filter { it.name.startsWith(ALBUM_PREFIX) }
+        val expected = listOf("${ALBUM_PREFIX}b", "${ALBUM_PREFIX}a")
 
-        assertEquals(listOf("${ALBUM_PREFIX}a", "${ALBUM_PREFIX}b"), albums.map { it.name })
+        assumeIdOrderDiffersFrom(expected, albums)
+        assertEquals(expected, albums.map { it.name })
+    }
+
+    /**
+     * idはアルバム名から決まるので、名前を変えない限り毎回同じ結果になる。
+     * スキップされるようになったら、アルバム名を変える。
+     */
+    private fun assumeIdOrderDiffersFrom(expected: List<String>, albums: List<AlbumModel>) {
+        val byIdDescending = albums.sortedByDescending { it.albumId.id.toLong() }.map { it.name }
+
+        assumeTrue("the album ids happen to be in the order the albums were added", byIdDescending != expected)
     }
 
     /**
