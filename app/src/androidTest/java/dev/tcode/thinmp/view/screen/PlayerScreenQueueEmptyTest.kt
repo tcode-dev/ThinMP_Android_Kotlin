@@ -167,13 +167,16 @@ class PlayerScreenQueueEmptyTest {
 
     /**
      * [timeout]の間に画面が閉じようとした回数。
-     * 1回目で待つのをやめる。
+     * 1回目が届いたら、遅れて届く2回目も数えられるよう、そこから[settleMs]待つ。
      */
     private fun awaitBack(timeout: Long): Int {
         val deadline = SystemClock.uptimeMillis() + timeout
 
         while (SystemClock.uptimeMillis() < deadline) {
-            if (navigator.backCount.get() > 0) break
+            if (navigator.backCount.get() > 0) {
+                Thread.sleep(settleMs)
+                break
+            }
 
             Thread.sleep(pollMs)
         }
