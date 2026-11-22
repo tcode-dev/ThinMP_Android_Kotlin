@@ -17,6 +17,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -61,15 +62,25 @@ class MusicServiceConfigLoadTest {
     }
 
     /**
-     * タップ後はALLとtrue、保存値はOFFとfalseなので、読み込みがタップを上書きした場合だけ結果が変わる。
+     * 保存値はONEとfalse、タップはALLとtrueなので、読み込みがタップを上書きした場合だけ結果が変わる。
+     *
+     * リピートの保存値を既定値(OFF)とも違う値にして、タップを送る時点でまだ読み込みが反映されていなかったかを記録する。
+     * 接続コールバックでコントローラーがOFFを示していれば、タップは読み込みより先に送られている。
+     *
+     * サービスはテストと同じプロセスで動くので、DataStoreはすでに読み込み済みで、data.first()は中断せずに値を返す。
+     * そのためloadConfig()はonCreate()の中で終わり、タップが先に届く試行は普通は起きない。
+     * そのような試行が1回もなければ何も確かめていないので、通さずにスキップする。
      */
     @Test
     fun tappingBeforeTheConfigLoadsKeepsTheTap() = runBlocking {
-        for (attempt in 1..attempts) {
-            assertEquals("attempt $attempt did not start from a stored OFF", RepeatState.OFF, config.getRepeat())
-            assertFalse("attempt $attempt did not start from a stored false", config.getShuffle())
+        var tappedBeforeLoad = 0
 
+        for (attempt in 1..attempts) {
+            storeConfig()
+
+            var beforeLoad = false
             val controller = connect {
+                beforeLoad = it.repeatMode == Player.REPEAT_MODE_OFF
                 it.repeatMode = Player.REPEAT_MODE_ALL
                 it.shuffleModeEnabled = true
             }
@@ -79,9 +90,13 @@ class MusicServiceConfigLoadTest {
             assertEquals("the stored repeat overwrote the tap on attempt $attempt", Player.REPEAT_MODE_ALL, onMain { controller.repeatMode })
             assertTrue("the stored shuffle overwrote the tap on attempt $attempt", onMain { controller.shuffleModeEnabled })
 
+            // 接続コールバックはメインスレッドで動くので、メインスレッドで読めばその後になる。
+            if (onMain { beforeLoad }) tappedBeforeLoad++
+
             unbind()
-            resetConfig()
         }
+
+        assumeTrue("the config loaded before the tap on every attempt, so nothing was checked", tappedBeforeLoad > 0)
     }
 
     /**
@@ -96,6 +111,14 @@ class MusicServiceConfigLoadTest {
 
         await("the stored repeat was never applied") { onMain { controller.repeatMode } == Player.REPEAT_MODE_ONE }
         await("the stored shuffle was never applied") { onMain { controller.shuffleModeEnabled } }
+    }
+
+    private suspend fun storeConfig() {
+        config.saveRepeat(RepeatState.ONE)
+        config.saveShuffle(false)
+
+        assertEquals("the stored repeat was not saved", RepeatState.ONE, config.getRepeat())
+        assertFalse("the stored shuffle was not saved", config.getShuffle())
     }
 
     private suspend fun resetConfig() {
