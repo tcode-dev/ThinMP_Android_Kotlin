@@ -5,10 +5,13 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
+import dev.tcode.thinmp.repository.FavoriteArtistRepository
 import dev.tcode.thinmp.repository.FavoriteSongRepository
 import dev.tcode.thinmp.repository.PlaylistRepository
+import dev.tcode.thinmp.repository.ShortcutRepository
 import dev.tcode.thinmp.repository.SongRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -38,10 +41,14 @@ import org.junit.runner.RunWith
  * コンストラクター直後にsave()を呼んでも、読み込みより先になるとは限らない。
  * withContextは処理がすぐ終われば中断せずに戻るので、データベースが温まっていてテーブルが小さいと、
  * 読み込みがコンストラクターの中で終わることがある。
- * そのため下の2つのテストは、どちらの順でも成り立つこと(開いてすぐ完了を押しても何も消えない)を
- * 確かめる。
+ * そのためRoomだけを読む画面のテストは、save()を呼んだ時点で読み込みが終わっていたかを記録し、
+ * 終わっていれば保存の完了を、終わっていなければ保存しなかったことを待ってからデータベースを確かめる。
  * ガード自体は、終わっても状態を埋めない読み込みを使うsavingWithoutLoadedStateReportsNothingで、
  * 競争に頼らずに確かめる。
+ *
+ * MediaStoreも読む画面は、Dispatchers.IOに切り替えてから戻るので、コンストラクターと同じメインスレッドの処理の中では
+ * 読み込みが終わらない。
+ * そのため、読み込み前に保存しないことを順序に頼らずに確かめられる。
  *
  * これらのview modelは自分でリポジトリを作るので、インメモリではなく端末のアプリのデータベースを使う。
  * 各テストは触るデータを前後で消す。
@@ -53,6 +60,7 @@ class EditSaveBeforeLoadTest {
 
     private lateinit var application: Application
     private var songIdValue: String = ""
+    private var artistIdValue: String = ""
 
     @Before
     fun setUp() = runBlocking {
@@ -63,6 +71,7 @@ class EditSaveBeforeLoadTest {
         val songs = SongRepository(application).findAll()
         assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
         songIdValue = songs.first().songId.id
+        artistIdValue = songs.first().artistId.id
     }
 
     @After
@@ -76,8 +85,9 @@ class EditSaveBeforeLoadTest {
         repository.create(SongId(songIdValue), "first")
         repository.create(SongId(songIdValue), "second")
 
-        val viewModel = onMain { PlaylistsEditViewModel(application).also { it.save() } }
+        val (viewModel, loadedAtSave) = onMain { PlaylistsEditViewModel(application).let { it to saveRightAway(it::save) { it.uiState.value.loaded } } }
         awaitLoaded { viewModel.uiState.value.loaded }
+        awaitSaveOutcome(loadedAtSave, viewModel.saved)
 
         assertEquals(listOf("first", "second"), repository.findAll().map { it.name })
     }
@@ -87,10 +97,50 @@ class EditSaveBeforeLoadTest {
         val repository = FavoriteSongRepository()
         repository.add(SongId(songIdValue))
 
-        val viewModel = onMain { FavoriteSongsEditViewModel(application, MediaStoreFailure()).also { it.save() } }
+        val (viewModel, loadedAtSave) = onMain {
+            FavoriteSongsEditViewModel(application, MediaStoreFailure()).let { it to saveRightAway(it::save) { it.uiState.value.loaded } }
+        }
         awaitLoaded { viewModel.uiState.value.loaded }
+        awaitSaveOutcome(loadedAtSave, viewModel.saved)
 
         assertEquals(listOf(songIdValue), repository.findAll().map { it.id })
+    }
+
+    /**
+     * 読み込み前に保存すると、ショートカットが空の一覧で並べ直されてすべて消える。
+     */
+    @Test
+    fun savingBeforeTheMainMenuLoadsReportsNothing() = runBlocking {
+        val repository = ShortcutRepository()
+        repository.add(ArtistId(artistIdValue))
+
+        val (viewModel, loadedAtSave) = onMain {
+            MainEditViewModel(application, MediaStoreFailure()).let { it to saveRightAway(it::save) { it.uiState.value.loaded } }
+        }
+
+        assertFalse(loadedAtSave)
+
+        awaitLoaded { viewModel.uiState.value.loaded }
+        awaitSaveOutcome(loadedAtSave, viewModel.saved)
+
+        assertEquals(listOf(artistIdValue), repository.findAll().map { it.itemId })
+    }
+
+    @Test
+    fun savingBeforeTheFavouriteArtistsLoadReportsNothing() = runBlocking {
+        val repository = FavoriteArtistRepository()
+        repository.add(ArtistId(artistIdValue))
+
+        val (viewModel, loadedAtSave) = onMain {
+            FavoriteArtistsEditViewModel(application, MediaStoreFailure()).let { it to saveRightAway(it::save) { it.uiState.value.loaded } }
+        }
+
+        assertFalse(loadedAtSave)
+
+        awaitLoaded { viewModel.uiState.value.loaded }
+        awaitSaveOutcome(loadedAtSave, viewModel.saved)
+
+        assertEquals(listOf(ArtistId(artistIdValue)), repository.findAll())
     }
 
     /**
@@ -149,6 +199,29 @@ class EditSaveBeforeLoadTest {
         assertEquals(emptyList<String>(), repository.findAll().map { it.name })
     }
 
+    /**
+     * save()を呼び、その時点で読み込みが終わっていたかを返す。
+     * どちらもメインスレッドで続けて行うので、save()が見たのと同じ状態になる。
+     */
+    private fun saveRightAway(save: () -> Unit, loaded: () -> Boolean): Boolean {
+        save()
+
+        return loaded()
+    }
+
+    /**
+     * 読み込みの後に保存したなら、書き込みが終わるまで待つ。
+     * 読み込みの前なら、保存しなかったこと(savedが届かないこと)を確かめる。
+     * OneShotEventは受け取られるまで値を残すので、先に届いていても取りこぼさない。
+     */
+    private suspend fun awaitSaveOutcome(loadedAtSave: Boolean, saved: OneShotEvent<Unit>) {
+        if (loadedAtSave) {
+            withTimeout(timeoutMs) { saved.flow.first() }
+        } else {
+            assertNull(withTimeoutOrNull(quietMs) { saved.flow.first() })
+        }
+    }
+
     private suspend fun awaitLoaded(loaded: () -> Boolean) {
         withTimeout(timeoutMs) {
             while (!loaded()) {
@@ -178,5 +251,13 @@ class EditSaveBeforeLoadTest {
         val favourites = FavoriteSongRepository()
 
         favourites.deleteByIds(favourites.findAll())
+
+        val favouriteArtists = FavoriteArtistRepository()
+
+        favouriteArtists.deleteByIds(favouriteArtists.findAll())
+
+        val shortcuts = ShortcutRepository()
+
+        shortcuts.deleteByIds(shortcuts.findAll().map { it.id })
     }
 }
