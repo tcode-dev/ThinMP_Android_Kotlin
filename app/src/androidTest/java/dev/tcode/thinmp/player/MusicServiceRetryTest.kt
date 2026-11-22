@@ -120,6 +120,21 @@ class MusicServiceRetryTest {
     }
 
     /**
+     * 最後の曲が失敗したら、次の曲がないので1つ前の曲に移る。
+     * 先頭に戻ったり停止したりしないことを、前の曲が先頭ではないキューで確かめる。
+     */
+    @Test
+    fun movesToThePreviousSongWhenTheLastOneIsMissing() {
+        val (first, second) = twoSongs()
+
+        prepare(listOf(first, second, missingSong("999999998")))
+        runOnMain { controller.seekTo(2, 0) }
+
+        awaitSettled(2)
+        assertEquals(second.id, runOnMain { controller.currentMediaItem?.mediaId })
+    }
+
+    /**
      * シャッフル中は、外した曲のシャッフル順で次の曲に移る。
      * シャッフル順が最後なら1つ前の曲に移る。
      *

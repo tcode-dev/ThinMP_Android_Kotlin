@@ -89,16 +89,29 @@ class PlaylistRegisterPopupRegisteredTest {
         assertFalse(closed)
     }
 
+    /**
+     * 印が付く前にタップすると、入っていないプレイリストに誤って印が付いていても押せてしまうので、印を待ってからタップする。
+     * 書き込みはviewModelScopeで行い、コールバックはその完了を待たないので、データベースに入るまで待つ。
+     */
     @Test
     fun stillAddsToAPlaylistTheSongIsNotIn() {
         var closed = false
 
         showPopup { closed = true }
 
+        awaitRegisteredMark()
+
         composeTestRule.onNodeWithText(otherName).performClick()
         composeTestRule.waitForIdle()
 
         assertTrue(closed)
+
+        val repository = PlaylistRepository()
+        val otherId = runBlocking { repository.findAll().single { it.name == otherName }.id }
+
+        composeTestRule.waitUntil(timeoutMs) {
+            runBlocking { repository.findPlaylistIdsBySongId(songId) }.contains(PlaylistId(otherId))
+        }
     }
 
     /**

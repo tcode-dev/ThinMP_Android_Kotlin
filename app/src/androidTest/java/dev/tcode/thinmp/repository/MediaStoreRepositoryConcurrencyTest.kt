@@ -84,6 +84,7 @@ class MediaStoreRepositoryConcurrencyTest {
     /**
      * アルバムが別々の3曲。
      * アルバムidで検索すると必ず1行だけ返る。
+     * 挿入が黙って失敗して0件になると、どのテストも何も比べずに通るので、件数を確かめる。
      */
     private suspend fun insertTracks(): List<SongModel> {
         listOf("a", "b", "c").forEach { name ->
@@ -100,7 +101,11 @@ class MediaStoreRepositoryConcurrencyTest {
             context.contentResolver.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values)
         }
 
-        return SongRepository(context).findAll().filter { it.name.startsWith(TITLE_PREFIX) }
+        val songs = SongRepository(context).findAll().filter { it.name.startsWith(TITLE_PREFIX) }
+
+        assertEquals(3, songs.size)
+
+        return songs
     }
 
     /**
