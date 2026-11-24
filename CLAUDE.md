@@ -22,10 +22,10 @@ ThinMPはKotlinで書いた軽量なAndroid用の音楽プレーヤー。
 ### インストルメンテーションテストの実行
 
 `JAVA_HOME`は`.claude/settings.json`の`env`で設定しているので、`./gradlew`に前置きは要らない。
-Android SDKは`PATH`に入っていないので、エミュレーターとadbはフルパスで呼ぶ。
+`adb`と`emulator`は`PATH`に入っている(`tools/`のスクリプトも素の`adb`を呼ぶ)。
 
 ```bash
-~/Library/Android/sdk/emulator/emulator -avd Medium_Phone_API_36.1 -no-boot-anim
+emulator -avd Medium_Phone_API_36.1 -no-boot-anim
 ```
 
 - `tools/push-test-audio.sh`で端末に音声を入れる。
