@@ -6,30 +6,30 @@ plugins {
 }
 
 android {
-    compileSdk 37
+    compileSdk = 37
 
     defaultConfig {
-        applicationId 'dev.tcode.thinmp'
-        minSdk 33
-        targetSdk 36
-        versionCode 1
-        versionName '1.0'
+        applicationId = 'dev.tcode.thinmp'
+        minSdk = 33
+        targetSdk = 36
+        versionCode = 1
+        versionName = '1.0'
 
-        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        testInstrumentationRunner = 'androidx.test.runner.AndroidJUnitRunner'
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled = false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     buildFeatures {
-        compose true
+        compose = true
     }
     sourceSets {
         androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
@@ -39,7 +39,7 @@ android {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
         }
     }
-    namespace 'dev.tcode.thinmp'
+    namespace = 'dev.tcode.thinmp'
 }
 
 dependencies {
@@ -74,7 +74,7 @@ dependencies {
     debugImplementation 'androidx.compose.ui:ui-test-manifest:1.12.1'
 }
 kapt {
-    correctErrorTypes true
+    correctErrorTypes = true
     arguments {
         arg('room.schemaLocation', "$projectDir/schemas")
     }
