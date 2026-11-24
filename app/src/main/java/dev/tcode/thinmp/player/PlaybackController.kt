@@ -8,6 +8,7 @@ import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionCommand
+import androidx.media3.session.SessionError
 import androidx.media3.session.SessionResult
 import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.Futures
@@ -87,7 +88,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
     private val controllerListener = object : MediaController.Listener {
         override fun onCustomCommand(controller: MediaController, command: SessionCommand, args: Bundle): ListenableFuture<SessionResult> {
             if (command.customAction != MusicService.SONG_REMOVED.customAction) {
-                return Futures.immediateFuture(SessionResult(SessionResult.RESULT_ERROR_NOT_SUPPORTED))
+                return Futures.immediateFuture(SessionResult(SessionError.ERROR_NOT_SUPPORTED))
             }
 
             _songRemoved.tryEmit(Unit)

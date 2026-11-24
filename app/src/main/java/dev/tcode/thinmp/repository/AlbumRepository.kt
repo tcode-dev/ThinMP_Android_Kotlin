@@ -35,23 +35,23 @@ class AlbumRepository(context: Context, uri: Uri = MediaStore.Audio.Albums.EXTER
     }
 
     private fun getId(cursor: Cursor): AlbumId {
-        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums._ID)) ?: ""
+        val id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)) ?: ""
 
         return AlbumId(id)
     }
 
     private fun getArtistId(cursor: Cursor): ArtistId {
-        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
+        val id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
 
         return ArtistId(id)
     }
 
     private fun getArtistName(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)) ?: ""
     }
 
     private fun getAlbumName(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Albums.ALBUM)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)) ?: ""
     }
 
     private fun getAlbum(cursor: Cursor): AlbumModel {
