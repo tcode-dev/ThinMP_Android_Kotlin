@@ -31,21 +31,21 @@ class ArtistRepository(context: Context, uri: Uri = MediaStore.Audio.Artists.EXT
     }
 
     private fun getId(cursor: Cursor): ArtistId {
-        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists._ID)) ?: ""
+        val id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)) ?: ""
 
         return ArtistId(id)
     }
 
     private fun getArtistName(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)) ?: ""
     }
 
     private fun getNumberOfAlbums(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)) ?: ""
     }
 
     private fun getNumberOfTracks(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)) ?: ""
     }
 
     private fun getArtist(cursor: Cursor): ArtistModel {

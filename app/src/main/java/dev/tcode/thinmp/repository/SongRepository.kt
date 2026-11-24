@@ -95,41 +95,41 @@ class SongRepository(context: Context, uri: Uri = MediaStore.Audio.Media.EXTERNA
     }
 
     private fun getId(cursor: Cursor): SongId {
-        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media._ID)) ?: ""
+        val id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media._ID)) ?: ""
 
         return SongId(id)
     }
 
     private fun getTitle(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)) ?: ""
     }
 
     private fun getArtistId(cursor: Cursor): ArtistId {
-        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
+        val id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID)) ?: ""
 
         return ArtistId(id)
     }
 
     private fun getArtistName(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)) ?: ""
     }
 
     private fun getAlbumId(cursor: Cursor): AlbumId {
-        val id = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)) ?: ""
+        val id = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)) ?: ""
 
         return AlbumId(id)
     }
 
     private fun getAlbumName(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM)) ?: ""
     }
 
     private fun getDuration(cursor: Cursor): Int {
-        return cursor.getInt(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION))
+        return cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION))
     }
 
     private fun getTrackNumber(cursor: Cursor): String {
-        return cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.CD_TRACK_NUMBER)) ?: ""
+        return cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.CD_TRACK_NUMBER)) ?: ""
     }
 
     private fun getSong(cursor: Cursor): SongModel {
