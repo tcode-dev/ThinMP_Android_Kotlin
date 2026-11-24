@@ -182,6 +182,24 @@ class EditSaveBeforeLoadTest {
     }
 
     /**
+     * 保存が終わった後にもう一度タップしても、保存済みは1回しか通知しない。
+     * 2回通知すると、画面を閉じる遷移の途中でbackFromEvent()がもう一度呼ばれ、前の画面まで閉じてしまう。
+     */
+    @Test
+    fun savingTwiceReportsOnce() = runBlocking {
+        val repository = PlaylistRepository()
+        repository.create(SongId(songIdValue), "first")
+
+        val viewModel = onMain { PlaylistsEditViewModel(application) }
+        awaitLoaded { viewModel.uiState.value.loaded }
+        onMain { viewModel.save() }
+        withTimeout(timeoutMs) { viewModel.saved.flow.first() }
+        onMain { viewModel.save() }
+
+        assertNull(withTimeoutOrNull(quietMs) { viewModel.saved.flow.first() })
+    }
+
+    /**
      * スワイプで空にした一覧も保存できる。
      * すべて消せなければならない。
      */

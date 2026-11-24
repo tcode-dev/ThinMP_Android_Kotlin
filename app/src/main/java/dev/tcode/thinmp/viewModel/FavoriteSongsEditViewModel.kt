@@ -70,7 +70,7 @@ class FavoriteSongsEditViewModel @Inject constructor(application: Application, p
      * PlaylistsEditViewModel.save()を参照。
      */
     fun save() {
-        if (saveJob?.isActive == true) return
+        if (saveJob != null) return
         if (!uiState.value.loaded) return
 
         saveJob = viewModelScope.launch {

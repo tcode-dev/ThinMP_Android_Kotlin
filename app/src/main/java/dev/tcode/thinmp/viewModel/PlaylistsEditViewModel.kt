@@ -76,9 +76,13 @@ class PlaylistsEditViewModel @Inject constructor(application: Application) : And
      * ここに来るのは状態が画面に反映される前にタップがすり抜けたときだけ。
      * そのときは保存せず、保存済みの通知も出さない。
      * 何も保存していないのに画面が閉じるより、タップが効かなかったように見えるほうがよい。
+     *
+     * 保存は1つの画面で1回だけで、終わった後もやり直さない。
+     * 閉じる遷移のアニメーション中も画面はタップを受け付け、OnEventも残っているので、
+     * 2回目を保存するとbackFromEvent()がもう一度呼ばれ、前の画面まで閉じてしまう。
      */
     fun save() {
-        if (saveJob?.isActive == true) return
+        if (saveJob != null) return
         if (!uiState.value.loaded) return
 
         saveJob = viewModelScope.launch {
