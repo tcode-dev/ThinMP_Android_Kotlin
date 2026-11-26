@@ -13,6 +13,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.MainActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.repository.SongRepository
 import dev.tcode.thinmp.viewModel.MiniPlayerUiState
@@ -22,7 +23,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -32,7 +32,7 @@ import org.junit.runner.RunWith
  * アプリと同じくActivityが接続する。
  *
  * どのテストも実在の曲を再生するので、端末に音声ファイルが必要で、
- * なければスキップする(tools/push-test-audio.sh)。
+ * なければ失敗する(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class PlaybackControllerTest {
@@ -51,7 +51,7 @@ class PlaybackControllerTest {
         grantPermission("android.permission.READ_MEDIA_AUDIO")
 
         val songs = runBlocking { SongRepository(context).findAll() }
-        assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
+        assertHasAudio(songs.size)
         song = songs.first()
 
         MusicServiceWatcher.stopAndAwait(context, timeoutMs)
@@ -64,7 +64,10 @@ class PlaybackControllerTest {
 
     @After
     fun tearDown() {
-        onMain { controller.pause() }
+        // setUpが途中で失敗したときは、初期化していないプロパティがある。
+        // 参照するとUninitializedPropertyAccessExceptionになり、setUpの失敗の報告を隠してしまう。
+        if (!::scenario.isInitialized) return
+        if (::controller.isInitialized) onMain { controller.pause() }
         scenario.close()
         context.stopService(Intent(context, MusicService::class.java))
     }

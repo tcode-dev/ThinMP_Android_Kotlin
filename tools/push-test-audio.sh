@@ -1,8 +1,7 @@
 #!/bin/sh
 # tools/testdataのテスト用の音声を、接続中の端末かエミュレーターに入れる。
 #
-# アプリはMediaStoreにある曲を表示するので、音声がない端末では画面が空になり、
-# DuplicateEntryServiceTestはスキップされる。
+# インストルメンテーションテストの多くは実在の曲を使うので、音声がない端末では失敗する。
 set -eu
 
 directory=$(dirname "$0")

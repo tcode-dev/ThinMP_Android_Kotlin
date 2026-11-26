@@ -30,7 +30,7 @@ import org.junit.runner.RunWith
  * 止まったサービスもすぐ新しいインスタンスで起動し、
  * 動いているかどうかでは区別できない(失われるのは古いインスタンスのキューだけ)。
  *
- * 再生はしないので、音声ファイルがなくてもスキップしない。
+ * 再生はしないので、音声ファイルは要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class MainApplicationConfigChangeTest {

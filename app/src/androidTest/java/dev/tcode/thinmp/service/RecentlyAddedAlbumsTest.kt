@@ -27,7 +27,7 @@ private const val ALBUM_PREFIX = "thinmp_test_recent_album_"
  * 3つのアルバムを古い順に追加し、新しい順に返ることを確かめる。
  * idの順がたまたま追加の順と一致すると、_idで並べる誤った実装でも通るので、一致しないことを前提として確かめる。
  *
- * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
+ * 曲はテストがMediaStoreに追加するので、tools/push-test-audio.shの音声は要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class RecentlyAddedAlbumsTest {

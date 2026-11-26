@@ -5,6 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
@@ -22,7 +23,6 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -69,7 +69,7 @@ class EditSaveBeforeLoadTest {
         clear()
 
         val songs = SongRepository(application).findAll()
-        assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
+        assertHasAudio(songs.size)
         songIdValue = songs.first().songId.id
         artistIdValue = songs.first().artistId.id
     }

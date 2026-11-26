@@ -31,7 +31,7 @@ import java.util.concurrent.TimeUnit
  * 読み込み中や読み込みに失敗した曲は接続と一緒に消えてしまう。
  * 再生は、それを始めた画面より長く続かなければならない。
  *
- * 存在しない曲を使うので、音声ファイルがなくてもスキップしない。
+ * 存在しない曲を使うので、音声ファイルは要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServiceLifetimeTest {
