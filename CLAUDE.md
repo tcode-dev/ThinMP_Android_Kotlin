@@ -29,7 +29,7 @@ emulator -avd Medium_Phone_API_36.1 -no-boot-anim
 ```
 
 - `tools/push-test-audio.sh`で端末に音声を入れる。
-  入れないと、MediaStoreを使うテストは自分をスキップする。
+  入れないと、実在の曲を使うテストは失敗する。
   `tools/push-compilation-audio.sh`は、アルバムを持たないアーティストがいる状態を手で作るためのもの
 - 起動したばかりのエミュレーターで`Starting 0 tests`→`Process crashed`になることがある。
   これはエミュレーターの不調ではなく、APKが入っていないだけ(`adb logcat`に`Unable to find instrumentation info`が出る)。

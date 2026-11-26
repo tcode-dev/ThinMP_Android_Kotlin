@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteConstraintException
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
@@ -38,7 +39,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  * そのため、削除が起きる状態でRoomを何回読んだかをクエリのコールバックで数え、1回であることを確かめる。
  * MediaStoreはidの順に返さないので、Roomの順に並べ直していることも確かめる。
  *
- * 端末に音声ファイルが必要で、なければスキップする。
+ * 端末に音声ファイルが必要で、なければ失敗する(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class DuplicateEntryServiceTest {
@@ -61,7 +62,7 @@ class DuplicateEntryServiceTest {
         db = createTestDatabase { queries.add(it) }
 
         songs = SongRepository(context).findAll()
-        assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
+        assertHasAudio(songs.size)
         realSongIdValue = songs.first().songId.id
     }
 
@@ -216,7 +217,7 @@ class DuplicateEntryServiceTest {
      * この順で登録すれば、MediaStoreの結果をそのまま返す実装では逆になる。
      */
     private suspend fun reverseOfMediaStoreOrder(): List<SongId> {
-        assumeTrue("needs at least two audio files in MediaStore", songs.size >= 2)
+        assertHasAudio(songs.size, 2)
 
         return SongRepository(context).findByIds(songs.take(2).map { it.songId }).map { it.songId }.reversed()
     }

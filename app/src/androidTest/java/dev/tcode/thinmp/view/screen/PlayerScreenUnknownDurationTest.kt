@@ -17,6 +17,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.HiltTestActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.player.MusicService
 import dev.tcode.thinmp.player.PlaybackController
@@ -26,7 +27,6 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -44,7 +44,7 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
  * 画面はプレーヤーがファイルから知った長さを使うので、どれも起きないことを確かめる。
  *
  * 再生するので曲は実在するものを使い、長さだけをタグのないファイルと同じ0に差し替える。
- * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
+ * 端末に音声ファイルが必要で、なければ失敗する(tools/push-test-audio.sh)。
  * テスト用の曲は2秒なので、長さの表示は00:02になる。
  */
 @RunWith(AndroidJUnit4::class)
@@ -74,9 +74,9 @@ class PlayerScreenUnknownDurationTest {
         context = ApplicationProvider.getApplicationContext()
         grantPermission("android.permission.READ_MEDIA_AUDIO")
 
-        val song = runBlocking { SongRepository(context).findAll() }.firstOrNull()
-        assumeTrue("needs at least one audio file in MediaStore", song != null)
-        untaggedSong = withoutDuration(song!!)
+        val songs = runBlocking { SongRepository(context).findAll() }
+        assertHasAudio(songs.size)
+        untaggedSong = withoutDuration(songs.first())
 
         // 画面が読むPlaybackControllerは、アプリではMainActivityが接続するが、ここにはない。
         // 接続を待って、前のテストの状態ではなくこのサービスの状態から始める。

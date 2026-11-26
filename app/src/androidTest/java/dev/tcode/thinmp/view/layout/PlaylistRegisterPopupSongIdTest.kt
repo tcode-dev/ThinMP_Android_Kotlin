@@ -14,6 +14,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.HiltTestActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.valueObject.PlaylistId
 import dev.tcode.thinmp.model.media.valueObject.SongId
 import dev.tcode.thinmp.repository.PlaylistRepository
@@ -23,7 +24,6 @@ import dev.tcode.thinmp.view.nav.LocalNavigator
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -45,7 +45,7 @@ import dev.tcode.thinmp.model.media.valueObject.ArtistId
  * ポップアップは自分でPlaylistsViewModelを作るので、インメモリではなくアプリのデータベースを使い、
  * テストの前後でプレイリストを消す。
  * アプリが削除しない行になるよう、MediaStoreに実在する曲idを使う。
- * 端末に音声ファイルがなければスキップする(tools/push-test-audio.sh)。
+ * 端末に音声ファイルがなければ失敗する(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class PlaylistRegisterPopupSongIdTest {
@@ -66,7 +66,7 @@ class PlaylistRegisterPopupSongIdTest {
         clear()
 
         val songs = SongRepository(application).findAll()
-        assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
+        assertHasAudio(songs.size)
         songIdValue = songs.first().songId.id
     }
 

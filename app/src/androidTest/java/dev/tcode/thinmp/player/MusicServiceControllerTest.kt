@@ -11,6 +11,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.MainActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
@@ -31,7 +32,7 @@ import org.junit.runner.RunWith
  * リピートがオフでキューの最後まで再生したら、再生順で最初の曲に戻って止まる。
  * リピートとシャッフルの変更は、アプリから操作したときと同じく保存されなければならない。
  *
- * シークのテストは端末に音声ファイルが2つ必要で、なければスキップする(tools/push-test-audio.sh)。
+ * シークのテストは端末に音声ファイルが2つ必要で、なければ失敗する(tools/push-test-audio.sh)。
  * 設定のテストは再生しない。
  */
 @RunWith(AndroidJUnit4::class)
@@ -165,7 +166,7 @@ class MusicServiceControllerTest {
     private fun twoSongs(): List<SongModel> {
         val songs = runBlocking { SongRepository(context).findAll() }
 
-        assumeTrue("needs at least two audio files in MediaStore", songs.size >= 2)
+        assertHasAudio(songs.size, 2)
 
         return songs.take(2)
     }

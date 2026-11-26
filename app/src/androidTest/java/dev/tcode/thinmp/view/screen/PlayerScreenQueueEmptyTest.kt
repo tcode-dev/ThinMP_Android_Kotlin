@@ -10,6 +10,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.HiltTestActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -30,7 +31,6 @@ import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -48,7 +48,7 @@ import dev.tcode.thinmp.model.media.valueObject.PlaylistId
  *
  * 画面が閉じるのは「曲がある」状態から「曲がない」状態になったときだけなので、
  * どちらのテストもまず実在の曲を再生し、画面にタイトルが出たのを確かめてから失敗する曲を入れる。
- * そのため端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
+ * そのため端末に音声ファイルが必要で、なければ失敗する(tools/push-test-audio.sh)。
  */
 @RunWith(AndroidJUnit4::class)
 class PlayerScreenQueueEmptyTest {
@@ -72,9 +72,9 @@ class PlayerScreenQueueEmptyTest {
         grantPermission("android.permission.READ_MEDIA_AUDIO")
 
         // 画面はタイトルで確かめるので、失敗する曲と名前が違う曲を選ぶ。
-        val song = runBlocking { SongRepository(context).findAll() }.firstOrNull { it.name != missingName }
-        assumeTrue("needs at least one audio file in MediaStore", song != null)
-        realSong = song!!
+        val songs = runBlocking { SongRepository(context).findAll() }.filter { it.name != missingName }
+        assertHasAudio(songs.size)
+        realSong = songs.first()
 
         // 画面が読むPlaybackControllerは、アプリではMainActivityが接続するが、ここにはない。
         // 接続を待って、前のテストの状態ではなくこのサービスの状態から始める。

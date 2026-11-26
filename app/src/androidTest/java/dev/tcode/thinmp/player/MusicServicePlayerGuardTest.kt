@@ -38,7 +38,7 @@ import java.util.concurrent.TimeUnit
  * 操作はセッション経由で届くので、クラッシュはここには投げられず、テストランナーごとプロセスが落ちる。
  * そのため全操作を送って処理の時間を置き、サービスがまだ応答することで確かめる。
  *
- * 再生はしないので、音声ファイルがなくてもスキップしない。
+ * 再生はしないので、音声ファイルは要らない。
  */
 @RunWith(AndroidJUnit4::class)
 class MusicServicePlayerGuardTest {

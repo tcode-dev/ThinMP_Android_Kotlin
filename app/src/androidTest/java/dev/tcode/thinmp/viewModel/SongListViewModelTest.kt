@@ -14,6 +14,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.MainActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.model.media.SongModel
 import dev.tcode.thinmp.model.media.valueObject.AlbumId
 import dev.tcode.thinmp.model.media.valueObject.ArtistId
@@ -25,7 +26,6 @@ import dev.tcode.thinmp.repository.SongRepository
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -82,7 +82,7 @@ class SongListViewModelTest {
     }
 
     /**
-     * 実在の曲は再生しないので、音声ファイルがなくてもスキップしない。
+     * 実在の曲は再生しないので、音声ファイルは要らない。
      */
     @Test
     fun reloadsWhenTheServiceDropsASong() {
@@ -95,14 +95,15 @@ class SongListViewModelTest {
 
     /**
      * 曲がキューにあるときに初めて開いた一覧(子画面など)は、最初からミニプレーヤーを表示する。
-     * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
+     * 端末に音声ファイルが必要で、なければ失敗する(tools/push-test-audio.sh)。
      */
     @Test
     fun aListOpenedWhileASongIsQueuedShowsTheMiniPlayerFromTheStart() {
-        val song = runBlocking { SongRepository(context).findAll() }.firstOrNull()
-        assumeTrue("needs at least one audio file in MediaStore", song != null)
+        val songs = runBlocking { SongRepository(context).findAll() }
+        assertHasAudio(songs.size)
+        val song = songs.first()
 
-        onMain { controller.start(listOf(song!!), 0) }
+        onMain { controller.start(listOf(song), 0) }
         await("the song never reached the queue") { onMain { controller.state.value.hasQueue } }
 
         val isVisible = onMain { create { SongsViewModel(it, PlaybackController.from(it), MediaStoreFailure()) }.isVisiblePlayer.value }

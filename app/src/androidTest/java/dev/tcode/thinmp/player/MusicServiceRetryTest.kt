@@ -11,6 +11,7 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import dev.tcode.thinmp.activity.MainActivity
+import dev.tcode.thinmp.assertHasAudio
 import dev.tcode.thinmp.config.ConfigStore
 import dev.tcode.thinmp.config.RepeatState
 import dev.tcode.thinmp.model.media.SongModel
@@ -24,7 +25,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
-import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -38,7 +38,7 @@ import org.junit.runner.RunWith
  * 一時停止中に失敗した場合は、再生を始めずに次の曲に移らなければならない。
  * 次の曲はシャッフル順で決まり、キューの並び順ではない。
  *
- * 端末に音声ファイルが必要で、なければスキップする(tools/push-test-audio.sh)。
+ * 端末に音声ファイルが必要で、なければ失敗する(tools/push-test-audio.sh)。
  * 一時停止とシャッフルのテストは2つ必要。
  */
 @RunWith(AndroidJUnit4::class)
@@ -60,7 +60,7 @@ class MusicServiceRetryTest {
         grantPermission("android.permission.READ_MEDIA_AUDIO")
 
         songs = SongRepository(context).findAll()
-        assumeTrue("needs at least one audio file in MediaStore", songs.isNotEmpty())
+        assertHasAudio(songs.size)
         realSong = songs.first()
 
         // シャッフルは保存され、サービスは起動時にそれを読む。
@@ -76,7 +76,11 @@ class MusicServiceRetryTest {
 
     @After
     fun tearDown() = runBlocking {
-        runOnMain { controller.release() }
+        // setUpが途中で失敗したときは、初期化していないプロパティがある。
+        // 参照するとUninitializedPropertyAccessExceptionになり、setUpの失敗の報告を隠してしまう。
+        // scenarioがなければ再生していないので、設定は変わっておらず、resetConfig()も要らない。
+        if (!::scenario.isInitialized) return@runBlocking
+        if (::controller.isInitialized) runOnMain { controller.release() }
         context.stopService(Intent(context, MusicService::class.java))
         scenario.close()
         resetConfig()
@@ -170,7 +174,7 @@ class MusicServiceRetryTest {
     }
 
     private fun twoSongs(): Pair<SongModel, SongModel> {
-        assumeTrue("needs at least two audio files in MediaStore", songs.size >= 2)
+        assertHasAudio(songs.size, 2)
 
         return songs[0] to songs[1]
     }
