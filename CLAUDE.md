@@ -28,6 +28,9 @@ ThinMPはKotlinで書いた軽量なAndroid用の音楽プレーヤー。
 emulator -avd Medium_Phone_API_36.1 -no-boot-anim
 ```
 
+- テストはエミュレーターで流し、実機では流さない。
+  テストは自分が作った行に限らず、アプリのプレイリスト、お気に入り、ショートカット、リピートとシャッフルの設定をすべて消す。
+  debugとreleaseのapplicationIdは同じなので、普段使っている端末で流すと、そのデータが消える
 - `tools/push-test-audio.sh`で端末に音声を入れる。
   入れないと、実在の曲を使うテストは失敗する。
   `tools/push-compilation-audio.sh`は、アルバムを持たないアーティストがいる状態を手で作るためのもの
