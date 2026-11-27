@@ -43,6 +43,7 @@ data class PlayerUiState(
 /**
  * PlaybackController.stateに追従する。
  * stateにないシークバーの位置は、再生中は1秒ごと、位置が飛んだときはその都度currentPosition()から読む。
+ * ドラッグ中は指の位置を表示し、再生位置では上書きしない。
  */
 @HiltViewModel
 class PlayerViewModel @Inject constructor(application: Application, private val playbackController: PlaybackController) : AndroidViewModel(application), CustomLifecycleEventObserverListener, FavoriteArtistRegister,
@@ -52,6 +53,12 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
     private var seekBarJob: Job? = null
     private var hadQueue = false
     private var isStopped = false
+
+    /**
+     * ドラッグ中の位置(0〜1)で、ドラッグしていないときはnull。
+     * 1歩ごとにシークすると音が飛び続けて聞き取れないので、離したときに1回だけシークする。
+     */
+    private var dragPosition: Float? = null
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
     val queueEmptied = OneShotEvent<Unit>()
@@ -68,7 +75,7 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
     }
 
     fun toggle() {
-        if (playbackController.state.value.isPlaying) {
+        if (playbackController.state.value.showsPauseButton) {
             playbackController.pause()
         } else {
             playbackController.play()
@@ -87,14 +94,28 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
         cancelSeekBarProgressTask()
 
         val song = currentSong() ?: return
-        val ms = (durationMs(song).toFloat() * value).toLong()
 
-        playbackController.seekTo(ms)
-
-        seekBarProgress()
+        dragPosition = value
+        _uiState.update { currentState ->
+            currentState.copy(
+                sliderPosition = value,
+                currentTime = formatTime(positionMs(song, value)),
+            )
+        }
     }
 
     fun seekFinished() {
+        val value = dragPosition ?: return
+
+        dragPosition = null
+
+        val song = currentSong()
+
+        if (song != null) {
+            playbackController.seekTo(positionMs(song, value))
+            seekBarProgress()
+        }
+
         setSeekBarProgressTask()
     }
 
@@ -129,8 +150,13 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
         setSeekBarProgressTask()
     }
 
+    /**
+     * 画面を離れるとonValueChangeFinishedが来ないことがあるので、ドラッグは取り消す。
+     * 残すと、戻ったときにシークバーが止まったままになる。
+     */
     override fun onStop() {
         isStopped = true
+        dragPosition = null
         cancelSeekBarProgressTask()
     }
 
@@ -151,6 +177,8 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
         hadQueue = state.hasQueue
 
         val song = state.currentSong ?: return
+        val isSongChanged = _uiState.value.songId != song.songId
+        val isDragging = dragPosition != null
 
         _uiState.update { currentState ->
             currentState.copy(
@@ -158,16 +186,20 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
                 primaryText = song.name,
                 secondaryText = song.artistName,
                 imageUri = song.getImageUri(),
-                sliderPosition = getSliderPosition(),
-                currentTime = formatTime(playbackController.currentPosition()),
+                sliderPosition = if (isDragging) currentState.sliderPosition else getSliderPosition(),
+                currentTime = if (isDragging) currentState.currentTime else formatTime(playbackController.currentPosition()),
                 durationTime = formatTime(durationMs(song)),
-                isPlaying = state.isPlaying,
+                isPlaying = state.showsPauseButton,
                 repeat = state.repeat,
                 shuffle = state.shuffle
             )
         }
 
-        updateFavorites(song.artistId, song.songId)
+        // 再生状態はシークのたびにバッファリングを挟んで変わるので、そのたびにRoomを読み直さない。
+        if (isSongChanged) {
+            updateFavorites(song.artistId, song.songId)
+        }
+
         setSeekBarProgressTask()
     }
 
@@ -189,6 +221,8 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
      * 曲が変わった時点ではプレーヤーがまだファイルを読んでおらず、MediaStoreの長さを表示していることがあるからだ。
      */
     private fun seekBarProgress() {
+        if (dragPosition != null) return
+
         val song = currentSong()
 
         _uiState.update { currentState ->
@@ -201,7 +235,7 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
     }
 
     private fun setSeekBarProgressTask() {
-        if (isStopped || !playbackController.state.value.isPlaying) return
+        if (isStopped || dragPosition != null || !playbackController.state.value.isPlaying) return
 
         cancelSeekBarProgressTask()
         seekBarJob = viewModelScope.launch {
@@ -241,6 +275,10 @@ class PlayerViewModel @Inject constructor(application: Application, private val 
         val song = currentSong() ?: return 0f
 
         return sliderPosition(playbackController.currentPosition(), durationMs(song))
+    }
+
+    private fun positionMs(song: SongModel, value: Float): Long {
+        return (durationMs(song).toFloat() * value).toLong()
     }
 
     /**

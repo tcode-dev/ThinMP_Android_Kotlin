@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.core.content.ContextCompat
 import androidx.media3.common.C
 import androidx.media3.common.Player
+import androidx.media3.common.util.Util
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionCommand
 import androidx.media3.session.SessionError
@@ -32,6 +33,11 @@ import javax.inject.Singleton
 data class PlaybackState(
     val currentSong: SongModel? = null,
     val isPlaying: Boolean = false,
+    /**
+     * 再生と一時停止のボタンに一時停止を出すかどうか。
+     * isPlayingはシークのたびにバッファリングを挟んでfalseになるので、ボタンはこちらで判定する。
+     */
+    val showsPauseButton: Boolean = false,
     val repeat: RepeatState = RepeatState.OFF,
     val shuffle: Boolean = false,
     val hasQueue: Boolean = false,
@@ -233,6 +239,7 @@ class PlaybackController @Inject constructor(@ApplicationContext private val con
         val state = PlaybackState(
             currentSong = if (hasQueue) player.currentMediaItem?.toSongModel() else null,
             isPlaying = player.isPlaying,
+            showsPauseButton = !Util.shouldShowPlayButton(player),
             repeat = repeatStateOf(player.repeatMode),
             shuffle = player.shuffleModeEnabled,
             hasQueue = hasQueue,

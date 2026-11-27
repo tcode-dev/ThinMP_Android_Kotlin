@@ -29,7 +29,7 @@ class MiniPlayerViewModel @Inject constructor(application: Application, private 
         playbackController.state.map { toUiState(it) }.stateIn(viewModelScope, SharingStarted.Eagerly, toUiState(playbackController.state.value))
 
     fun toggle() {
-        if (playbackController.state.value.isPlaying) {
+        if (playbackController.state.value.showsPauseButton) {
             playbackController.pause()
         } else {
             playbackController.play()
@@ -45,6 +45,6 @@ class MiniPlayerViewModel @Inject constructor(application: Application, private 
 
         if (!state.hasQueue || song == null) return MiniPlayerUiState()
 
-        return MiniPlayerUiState(primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = state.isPlaying)
+        return MiniPlayerUiState(primaryText = song.name, imageUri = song.getImageUri(), isVisible = true, isPlaying = state.showsPauseButton)
     }
 }
